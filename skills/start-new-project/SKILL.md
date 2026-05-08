@@ -18,7 +18,7 @@ Before asking any questions, explain the following to the user:
 > that every project needs.
 >
 > When you create a new project, this template is copied to a fresh directory (under
-> `/mnt/c/Users/Jammy/Results/<project_name>/`). The new project starts mostly empty — you then
+> `<NEW_PROJECT>/`). The new project starts mostly empty — you then
 > populate it with your datasets, modeling scripts, simulators, and reference context.
 >
 > **Modeling scripts, simulators, and context files** are normally adapted from the **workspace
@@ -38,11 +38,11 @@ Ask the user:
 
 > **What should this project be called?**
 >
-> This will be the folder name, created at `/mnt/c/Users/Jammy/Results/<project_name>/`.
+> This will be the folder name, created at `<NEW_PROJECT>/`.
 > Use a short, descriptive name (e.g. `slacs_subhalo`, `euclid_pilot`, `bells_mge`).
 
 Store the answer as `PROJECT_NAME`. Confirm the full path will be
-`/mnt/c/Users/Jammy/Results/<PROJECT_NAME>/`.
+`<NEW_PROJECT>/`.
 
 ## Step 2 — Project description
 
@@ -176,34 +176,34 @@ rsync -av \
   --exclude='hpc/batch_cpu/submit' \
   --exclude='hpc/batch_cpu/template' \
   --exclude='skills/' \
-  /mnt/c/Users/Jammy/Code/PyAutoLabs/autolens_base_project/ \
-  /mnt/c/Users/Jammy/Results/<PROJECT_NAME>/
+  <BASE_PROJECT>/ \
+  <NEW_PROJECT>/
 ```
 
 ### 7b — Copy datasets
 
 If the user provided dataset paths, copy them into
-`/mnt/c/Users/Jammy/Results/<PROJECT_NAME>/dataset/<sample_name>/`. Verify each dataset
+`<NEW_PROJECT>/dataset/<sample_name>/`. Verify each dataset
 directory has at least `data.fits` and `info.json`.
 
 ### 7c — Copy modeling scripts
 
 If the user provided or selected scripts, copy them into
-`/mnt/c/Users/Jammy/Results/<PROJECT_NAME>/scripts/`.
+`<NEW_PROJECT>/scripts/`.
 
 ### 7d — Copy simulator files
 
 If the user provided or selected simulators, copy them into
-`/mnt/c/Users/Jammy/Results/<PROJECT_NAME>/simulators/`.
+`<NEW_PROJECT>/simulators/`.
 
 ### 7e — Copy context files
 
 If the user provided or selected context files, copy them into
-`/mnt/c/Users/Jammy/Results/<PROJECT_NAME>/context/`.
+`<NEW_PROJECT>/context/`.
 
 ### 7f — Update CLAUDE.md
 
-Open `/mnt/c/Users/Jammy/Results/<PROJECT_NAME>/CLAUDE.md`. Add a project-specific section
+Open `<NEW_PROJECT>/CLAUDE.md`. Add a project-specific section
 at the very top, before the existing template instructions:
 
 ```markdown
@@ -220,7 +220,7 @@ at the very top, before the existing template instructions:
 Convert all shell scripts and Python files to Unix line endings:
 
 ```bash
-find /mnt/c/Users/Jammy/Results/<PROJECT_NAME>/ \
+find <NEW_PROJECT>/ \
   -type f \( -name "*.py" -o -name "*.sh" -o -name "submit*" -o -name "template*" \) \
   | xargs dos2unix
 ```
@@ -232,7 +232,7 @@ Append a `Project<Name>()` function to `~/.bashrc`:
 ```bash
 Project<ProjectName>() {
   source ~/venv/PyAuto/bin/activate
-  cd /mnt/c/Users/Jammy/Results/<PROJECT_NAME>
+  cd <NEW_PROJECT>
 }
 ```
 
@@ -292,7 +292,7 @@ Thumbs.db
 ### 8b — Initialize git and create the repo
 
 ```bash
-cd /mnt/c/Users/Jammy/Results/<PROJECT_NAME>
+cd <NEW_PROJECT>
 git init
 git add -A
 git commit -m "Initial project setup from autolens_base_project template"
@@ -328,7 +328,7 @@ Report:
 ## Step 9 — Final summary
 
 Report a summary:
-- Project path: `/mnt/c/Users/Jammy/Results/<PROJECT_NAME>/`
+- Project path: `<NEW_PROJECT>/`
 - What was copied: datasets, scripts, simulators, context (or "none" for each)
 - Bash alias added
 - GitHub repo (if created): URL and visibility

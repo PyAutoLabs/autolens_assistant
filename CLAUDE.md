@@ -7,7 +7,7 @@ new project from this template, follow the conventions below.
 
 ## Creating a New Project
 
-New projects live outside this repo (e.g. `/mnt/c/Users/Jammy/Results/<project_name>/`).
+New projects live outside this repo (e.g. `<NEW_PROJECT>/`).
 Use `rsync` to copy the template, excluding what isn't needed.
 
 The HPC folder contains one submit script per script type (`submit_imaging`,
@@ -36,8 +36,8 @@ rsync -av \
   --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
-  /mnt/c/Users/Jammy/Code/PyAutoLabs/autolens_base_project/ \
-  /path/to/new/project/
+  <BASE_PROJECT>/ \
+  <NEW_PROJECT>/
 ```
 
 ### Interferometer-only project
@@ -58,8 +58,8 @@ rsync -av \
   --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
-  /mnt/c/Users/Jammy/Code/PyAutoLabs/autolens_base_project/ \
-  /path/to/new/project/
+  <BASE_PROJECT>/ \
+  <NEW_PROJECT>/
 ```
 
 ### Group-only project
@@ -80,8 +80,8 @@ rsync -av \
   --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
-  /mnt/c/Users/Jammy/Code/PyAutoLabs/autolens_base_project/ \
-  /path/to/new/project/
+  <BASE_PROJECT>/ \
+  <NEW_PROJECT>/
 ```
 
 ### Multiple data types
@@ -203,12 +203,13 @@ Each script type (`imaging`, `interferometer`, `group`) has a submit script in b
 |---|---|---|
 | Partition | `--partition=gpu` | `--partition=cpu` |
 | GPU | `--gres=gpu:1` | none |
-| CPUs | `--cpus-per-task=1` | `--cpus-per-task=8` |
+| CPUs | `--cpus-per-task=1` | `--cpus-per-task=4` |
 | Memory | `--mem=32gb` | `--mem=64gb` |
 | Wall time | `--time=08:00:00` | `-t 18:00:00` |
 | JAX platform | (uses GPU by default) | Forces `JAX_PLATFORM_NAME=cpu` |
 | Thread pinning | none | Sets `OPENBLAS/MKL/OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK` |
 | Echo block | Includes `nvidia-smi` | No `nvidia-smi` |
+| Python args | `--sample --dataset` | `--sample --dataset --use_cpu --number_of_cores=$THREADS` |
 
 **CPU scripts set these environment variables** to pin threads and force CPU-only JAX:
 
@@ -233,7 +234,8 @@ All submit scripts follow the same pattern:
 3. **Sample** — `sample=<sample_name>` matches subdirectory under `dataset/`
 4. **Dataset list** — `datasets=(...)` array, one dataset name per line
 5. **Array task selection** — `dataset="${datasets[$SLURM_ARRAY_TASK_ID]}"`
-6. **Run** — `python3 $PROJECT_PATH/scripts/<type>.py --sample=$sample --dataset=$dataset`
+6. **Run** — GPU: `python3 $PROJECT_PATH/scripts/<type>.py --sample=$sample --dataset=$dataset`
+   CPU: `python3 $PROJECT_PATH/scripts/<type>.py --sample=$sample --dataset=$dataset --use_cpu --number_of_cores=$THREADS`
 
 ### HPC Script Checklist (after copying)
 
@@ -426,8 +428,11 @@ non-linear searches complete almost instantly with a trivial number of samples. 
 this to verify the full pipeline executes without errors before submitting to the HPC.
 
 ```bash
-# Imaging
+# Imaging (GPU mode — default)
 PYAUTOFIT_TEST_MODE=1 python3 scripts/imaging.py --sample=<sample> --dataset=<dataset>
+
+# Imaging (CPU mode — disables JAX, enables multicore Nautilus)
+PYAUTOFIT_TEST_MODE=1 python3 scripts/imaging.py --sample=<sample> --dataset=<dataset> --use_cpu --number_of_cores=4
 
 # Interferometer
 PYAUTOFIT_TEST_MODE=1 python3 scripts/interferometer.py --sample=<sample> --dataset=<dataset>
@@ -452,7 +457,7 @@ grouped with the other `Project*` functions:
 ```bash
 Project<ProjectName>() {
   source ~/venv/PyAuto/bin/activate
-  cd /mnt/c/Users/Jammy/Results/<project_name>
+  cd <NEW_PROJECT>
 }
 ```
 

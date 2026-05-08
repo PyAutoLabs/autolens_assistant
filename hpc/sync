@@ -183,9 +183,8 @@ pull_logs() {
         mkdir -p "$local_dir"
         echo "    ${dir}/"
         "${RSYNC[@]}" "${EXCLUDES[@]}" --update ${dryrun} \
-            "${remote_dir}" "${local_dir}" &
+            "${remote_dir}" "${local_dir}" || true
     done
-    wait
 }
 
 pull() {
@@ -194,6 +193,7 @@ pull() {
     pull_logs "${dryrun}"
     echo ""
     echo "<== [pull] results  ←  ${REMOTE}"
+    local zip_count=0
     for dir in "${PULL_DIRS[@]}"; do
         echo "    ${dir}/"
         # Ensure the remote directory exists before pulling; if jobs haven't run
@@ -203,14 +203,27 @@ pull() {
         fi
         # --update          skip local files that are newer than the remote copy
         # --exclude         omit search_internal (large sampler state, not needed locally)
+        # Tolerate rsync partial-transfer warnings (exit 23/24) which are
+        # normal when jobs are still writing files on the remote side.
         "${RSYNC[@]}" "${EXCLUDES[@]}" \
             --update \
             --exclude='search_internal' \
             ${dryrun} \
             "${REMOTE}/${dir}/" \
-            "${PROJECT_ROOT}/${dir}/" &
+            "${PROJECT_ROOT}/${dir}/" || true
+
+        # Unzip any new .zip files immediately after rsync
+        if [[ -z "$dryrun" ]]; then
+            while IFS= read -r -d '' zipfile; do
+                local target="${zipfile%.zip}"
+                if [[ ! -d "$target" ]]; then
+                    unzip -q -o "$zipfile" -d "$target" && (( zip_count++ ))
+                fi
+            done < <(find "${PROJECT_ROOT}/${dir}" -name '*.zip' -print0 2>/dev/null)
+        fi
     done
-    wait
+    echo ""
+    echo "    extracted ${zip_count} archive(s)"
 }
 
 pull_full() {
@@ -234,6 +247,16 @@ pull_full() {
                 "tar cf - --exclude='search_internal' -C '${HPC_BASE}/${PROJECT_NAME}' '${dir}'" | \
                 tar xf - -C "${PROJECT_ROOT}/"
         fi
+
+        # Unzip any new .zip files immediately after download
+        local zip_count=0
+        while IFS= read -r -d '' zipfile; do
+            local target="${zipfile%.zip}"
+            if [[ ! -d "$target" ]]; then
+                unzip -q -o "$zipfile" -d "$target" && (( zip_count++ ))
+            fi
+        done < <(find "${PROJECT_ROOT}/${dir}" -name '*.zip' -print0 2>/dev/null)
+        echo "    extracted ${zip_count} archive(s)"
     done
 }
 
