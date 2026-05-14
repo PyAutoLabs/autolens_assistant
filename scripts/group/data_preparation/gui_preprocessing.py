@@ -34,10 +34,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
 from scipy.ndimage import center_of_mass
+from scribbler import Scribbler
 
 # ── PyAutoLens / PyAutoGalaxy ─────────────────────────────────────────────────
 import autolens as al
-import autolens.plot as aplt
 from autogalaxy import Clicker
 from autoarray.plot.utils import _conf_imshow_origin
 
@@ -52,7 +52,7 @@ except ImportError:
 # USER SETTINGS — edit these before running
 # ─────────────────────────────────────────────────────────────────────────────
 
-dataset_name = "Tile102007299RA0702283866574DECNEG0660415308762"
+dataset_name = "Tile102016415RA0355866659367DECNEG0534932652580"
 dataset_path = path.join("..", "..", "..", "dataset", "sample_group", dataset_name)
 
 pixel_scales = 0.1   # arcsec / pixel
@@ -96,7 +96,10 @@ def _load_rgb(dataset_path):
     for rgb_path in possible_files:
         if path.exists(rgb_path):
             try:
-                return np.array(PILImage.open(rgb_path))
+                img = np.array(PILImage.open(rgb_path))
+                if rgb_path.endswith((".jpg", ".jpeg")):
+                    img = np.flipud(img)
+                return img
             except Exception:
                 pass
 
@@ -237,6 +240,35 @@ def _select_positions(log_data, raw_data, ext, rgb_image):
     return result
 
 
+def _run_scribbler_mask(raw_data, main_mask, rgb_image, dataset_name, dataset_path):
+    """
+    Open the Scribbler GUI so the user can paint regions of the data to mask.
+    """
+    print("  [data mask] Opening Scribbler -- paint regions to mask, then press Esc / q.")
+    scrib = Scribbler(
+        image=raw_data.native,
+        brush_width=0.05,
+        mask_overlay=main_mask,
+        rgb_image=rgb_image,
+    )
+    painted_mask_arr = scrib.show_mask()  # boolean numpy array, shape == image.shape_native
+
+    # Only save if the user actually painted something
+    if not np.any(painted_mask_arr):
+        print("  [data mask] No regions painted -- skipped, FITS not written.")
+        return False
+
+    out_path = path.join(dataset_path, f"{dataset_name}_masked.fits")
+    al.output_to_fits(
+        values=painted_mask_arr.astype("float"),
+        file_path=out_path,
+        overwrite=True,
+    )
+
+    print(f"  [data mask] Saved -> {path.basename(out_path)}")
+    return True
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # SUMMARY PREVIEW
 # ─────────────────────────────────────────────────────────────────────────────
@@ -280,7 +312,8 @@ def main():
     print("=" * 70)
 
     # ── Load raw data ──────────────────────────────────────────────────────
-    data_fits = path.join(dataset_path, "data.fits")
+    #data_fits = path.join(dataset_path, "data.fits")
+    data_fits = path.join(dataset_path, f"{dataset_name}.fits")
     print(f"\nLoading: {data_fits}")
     raw_data = al.Array2D.from_fits(file_path=data_fits, pixel_scales=pixel_scales, hdu=1)
     raw_data = al.Array2D(
@@ -320,7 +353,7 @@ def main():
     # ══════════════════════════════════════════════════════════════════════
     # STEP 1 — Main lens centres  (required)
     # ══════════════════════════════════════════════════════════════════════
-    print("\n[1/4] Main lens centres (required)")
+    print("\n[1/5] Main lens centres (required)")
     main_lens_centres = _select_centres(
         log_data, masked_data, ext, rgb_image,
         label="Main lens centres",
@@ -336,7 +369,7 @@ def main():
     # ══════════════════════════════════════════════════════════════════════
     # STEP 2 — Extra galaxy centres  (optional)
     # ══════════════════════════════════════════════════════════════════════
-    print("\n[2/4] Extra galaxy centres (optional — close without clicking to skip)")
+    print("\n[2/5] Extra galaxy centres (optional — close without clicking to skip)")
     extra_galaxies_centres = _select_centres(
         log_data, masked_data, ext, rgb_image,
         label="Extra galaxy centres",
@@ -355,7 +388,7 @@ def main():
     # ══════════════════════════════════════════════════════════════════════
     # STEP 3 — Scaling galaxy centres  (optional)
     # ══════════════════════════════════════════════════════════════════════
-    print("\n[3/4] Scaling galaxy centres (optional — close without clicking to skip)")
+    print("\n[3/5] Scaling galaxy centres (optional — close without clicking to skip)")
     scaling_galaxies_centres = _select_centres(
         log_data, masked_data, ext, rgb_image,
         label="Scaling galaxy centres",
@@ -374,7 +407,7 @@ def main():
     # ══════════════════════════════════════════════════════════════════════
     # STEP 4 — Source positions  (required)
     # ══════════════════════════════════════════════════════════════════════
-    print("\n[4/4] Source positions (required — double-click on each lensed image)")
+    print("\n[4/5] Source positions (required — double-click on each lensed image)")
     positions = _select_positions(log_data, masked_data, ext, rgb_image)
     al.output_to_json(
         obj=positions,
@@ -383,16 +416,28 @@ def main():
     print("  Saved → positions.json")
 
     # ══════════════════════════════════════════════════════════════════════
+    # STEP 5 — Data mask  (optional)
+    # ══════════════════════════════════════════════════════════════════════
+    print("\n[5/5] Data mask (optional — press Esc immediately to skip)")
+    mask_written = _run_scribbler_mask(
+        raw_data=raw_data,
+        main_mask=main_mask,
+        rgb_image=rgb_image,
+        dataset_name=dataset_name,
+        dataset_path=dataset_path,
+    )
+
+    # ══════════════════════════════════════════════════════════════════════
     # Summary preview
     # ══════════════════════════════════════════════════════════════════════
     print("\nGenerating summary preview …")
     _save_summary_plot(
         log_data=log_data,
         centres_dict={
-            "Main lens":        main_lens_centres,
-            "Extra galaxies":   extra_galaxies_centres,
+            "Main lens": main_lens_centres,
+            "Extra galaxies": extra_galaxies_centres,
             "Scaling galaxies": scaling_galaxies_centres,
-            "Positions":        positions,
+            "Positions": positions,
         },
         ext=ext,
         dataset_path=dataset_path,
@@ -402,11 +447,13 @@ def main():
     print("All preprocessing steps complete.")
     print(f"Output directory: {path.abspath(dataset_path)}")
     print("Files written:")
+    masked_fits_name = f"{dataset_name}_masked.fits"
     for fname in [
         "main_lens_centres.json",
         "extra_galaxies_centres.json",
         "scaling_galaxies_centres.json",
         "positions.json",
+        masked_fits_name,
         "gui_preprocessing_summary.png",
     ]:
         full = path.join(dataset_path, fname)
