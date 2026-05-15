@@ -99,8 +99,8 @@ import numpy as np
 from pathlib import Path
 import autofit as af
 import autolens as al
-import autolens.plot as aplt
 from astropy.io import fits
+import json
 
 def dataset_instrument_hdu_dict_via_fits_from(
     dataset_path, dataset_fits_name, image_tag: str = "_FLUX"
@@ -164,12 +164,97 @@ the total number of galaxies across all three categories.
 """
 
 
-def source_lp_0(
+# def source_lp_0(
+#     dataset,
+#     settings_search,
+#     main_lens_centres,
+#     extra_lens_centres,
+#     scaling_lens_centres,
+#     mask_radius,
+#     redshift_lens,
+#     n_batch=50,
+# ):
+#     analysis = al.AnalysisImaging(dataset=dataset)
+#
+#     # --- main lens light models (one per centre, light only) ---
+#     lens_dict = {}
+#     for i, centre in enumerate(main_lens_centres):
+#         bulge = al.model_util.mge_model_from(
+#             mask_radius=mask_radius,
+#             total_gaussians=30,
+#             gaussian_per_basis=2,
+#             centre_prior_is_uniform=False,
+#             centre=(centre[0], centre[1]),
+#             centre_sigma=0.1,
+#             ell_comps_prior_is_uniform=True,
+#             ell_comps_uniform_width=0.5,
+#         )
+#         lens_dict[f"lens_{i}"] = af.Model(
+#             al.Galaxy, redshift=redshift_lens, bulge=bulge, disk=None, point=None
+#         )
+#
+#     # --- extra lens galaxy light models ---
+#     extra_light_models = []
+#     for centre in extra_lens_centres:
+#         bulge = al.model_util.mge_model_from(
+#             mask_radius=mask_radius,
+#             total_gaussians=10,
+#             centre_prior_is_uniform=False,
+#             centre=(centre[0], centre[1]),
+#             centre_sigma=0.1,
+#             ell_comps_prior_is_uniform=True,
+#             ell_comps_uniform_width=0.5,
+#         )
+#         extra_light_models.append(
+#             af.Model(al.Galaxy, redshift=redshift_lens, bulge=bulge)
+#         )
+#
+#     extra_galaxies = af.Collection(extra_light_models) if extra_light_models else None
+#
+#     # --- scaling galaxy light models ---
+#     scaling_light_models = []
+#     for centre in scaling_lens_centres:
+#         bulge = al.model_util.mge_model_from(
+#             mask_radius=mask_radius,
+#             total_gaussians=10,
+#             centre_prior_is_uniform=True,
+#             centre=(centre[0], centre[1]),
+#             ell_comps_prior_is_uniform=True,
+#             ell_comps_uniform_width=0.5,
+#         )
+#         scaling_light_models.append(
+#             af.Model(al.Galaxy, redshift=redshift_lens, bulge=bulge)
+#         )
+#
+#     scaling_galaxies = (
+#         af.Collection(scaling_light_models) if scaling_light_models else None
+#     )
+#
+#     n_extra = len(extra_galaxies) if extra_galaxies is not None else 0
+#     n_scaling = len(scaling_galaxies) if scaling_galaxies is not None else 0
+#     n_live = 100 + 30 * len(lens_dict) + 30 * n_extra + 30 * n_scaling
+#
+#     model = af.Collection(
+#         galaxies=af.Collection(**lens_dict),
+#         extra_galaxies=extra_galaxies,
+#         scaling_galaxies=scaling_galaxies,
+#     )
+#
+#     search = af.Nautilus(
+#         name="source_lp[0]",
+#         **settings_search.search_dict,
+#         n_live=n_live,
+#         n_batch=n_batch,
+#         n_like_max=100000,
+#     )
+#
+#     return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+def lens_light_1(
     dataset,
     settings_search,
     main_lens_centres,
     extra_lens_centres,
-    scaling_lens_centres,
     mask_radius,
     redshift_lens,
     n_batch=50,
@@ -210,6 +295,73 @@ def source_lp_0(
         )
 
     extra_galaxies = af.Collection(extra_light_models) if extra_light_models else None
+    scaling_galaxies = None
+
+    n_extra = len(extra_galaxies) if extra_galaxies is not None else 0
+    n_live = 100 + 30 * len(lens_dict) + 30 * n_extra
+
+    model = af.Collection(
+        galaxies=af.Collection(**lens_dict),
+        extra_galaxies=extra_galaxies,
+        scaling_galaxies=scaling_galaxies,
+    )
+
+    search = af.Nautilus(
+        name="lens_light[1]",
+        **settings_search.search_dict,
+        n_live=n_live,
+        n_batch=n_batch,
+        n_like_max=50000,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+def lens_light_2(
+    dataset,
+    settings_search,
+    lens_light_result_1,
+    scaling_lens_centres,
+    mask_radius,
+    redshift_lens,
+    n_batch=50,
+):
+    analysis = al.AnalysisImaging(dataset=dataset)
+
+    n_main = sum(
+        1 for k in vars(lens_light_result_1.instance.galaxies) if k.startswith("lens_")
+    )
+
+    n_extra = (
+        len(list(lens_light_result_1.instance.extra_galaxies))
+        if lens_light_result_1.instance.extra_galaxies is not None
+        else 0
+    )
+
+    # --- main lens light models (one per centre, light only) ---
+    lens_dict = {}
+    for i in range(n_main):
+        lp1_lens = getattr(lens_light_result_1.instance.galaxies, f"lens_{i}")
+
+        lens_dict[f"lens_{i}"] = af.Model(
+            al.Galaxy,
+            redshift=redshift_lens,
+            bulge=lp1_lens.bulge,
+            disk=lp1_lens.disk,
+            point=lp1_lens.point,
+        )
+
+    # --- extra lens galaxy models (one per centre, light only) ---
+    extra_mass_models = []
+    for i in range(n_extra):
+        lp1_extra = lens_light_result_1.instance.extra_galaxies[i]
+
+        extra_mass_models.append(
+            af.Model(
+                al.Galaxy, redshift=redshift_lens, bulge=lp1_extra.bulge,
+            )
+        )
+
+    extra_galaxies = af.Collection(extra_mass_models) if extra_mass_models else None
 
     # --- scaling galaxy light models ---
     scaling_light_models = []
@@ -230,9 +382,8 @@ def source_lp_0(
         af.Collection(scaling_light_models) if scaling_light_models else None
     )
 
-    n_extra = len(extra_galaxies) if extra_galaxies is not None else 0
     n_scaling = len(scaling_galaxies) if scaling_galaxies is not None else 0
-    n_live = 100 + 30 * len(lens_dict) + 30 * n_extra + 30 * n_scaling
+    n_live = 100 + 30 * n_scaling
 
     model = af.Collection(
         galaxies=af.Collection(**lens_dict),
@@ -241,11 +392,11 @@ def source_lp_0(
     )
 
     search = af.Nautilus(
-        name="source_lp[0]",
+        name="lens_light[2]",
         **settings_search.search_dict,
         n_live=n_live,
         n_batch=n_batch,
-        n_like_max=100000,
+        n_like_max=50000,
     )
 
     return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
@@ -268,12 +419,13 @@ Multiple main-lens galaxies each get an `Isothermal` mass; only `lens_0` carries
 def source_lp_1(
     dataset,
     settings_search,
-    source_lp_result_0,
+    lens_light_result,
     positions,
     pixel_scale,
     redshift_lens,
     redshift_source,
     source_mge_radius,
+    upper_einstein_radius=5.0,
     n_batch=50,
 ):
     analysis = al.AnalysisImaging(
@@ -282,28 +434,28 @@ def source_lp_1(
     )
 
     n_main = sum(
-        1 for k in vars(source_lp_result_0.instance.galaxies) if k.startswith("lens_")
+        1 for k in vars(lens_light_result.instance.galaxies) if k.startswith("lens_")
     )
     n_extra = (
-        len(list(source_lp_result_0.instance.extra_galaxies))
-        if source_lp_result_0.instance.extra_galaxies is not None
+        len(list(lens_light_result.instance.extra_galaxies))
+        if lens_light_result.instance.extra_galaxies is not None
         else 0
     )
     n_scaling = (
-        len(list(source_lp_result_0.instance.scaling_galaxies))
-        if source_lp_result_0.instance.scaling_galaxies is not None
+        len(list(lens_light_result.instance.scaling_galaxies))
+        if lens_light_result.instance.scaling_galaxies is not None
         else 0
     )
 
     tracer = (
-        source_lp_result_0.max_log_likelihood_fit.tracer_linear_light_profiles_to_light_profiles
+        lens_light_result.max_log_likelihood_fit.tracer_linear_light_profiles_to_light_profiles
     )
 
     # Source MGE centred on primary lens bulge from stage 0.
     source_bulge = al.model_util.mge_model_from(
         mask_radius=source_mge_radius,
         total_gaussians=30,
-        centre=source_lp_result_0.instance.galaxies.lens_0.bulge.centre,
+        centre=lens_light_result.instance.galaxies.lens_0.bulge.centre,
         centre_prior_is_uniform=False,
         centre_sigma=0.6,
     )
@@ -312,11 +464,11 @@ def source_lp_1(
     # Only lens_0 carries the ExternalShear; one shear per group system.
     lens_dict = {}
     for i in range(n_main):
-        lp0_lens = getattr(source_lp_result_0.instance.galaxies, f"lens_{i}")
+        lp0_lens = getattr(lens_light_result.instance.galaxies, f"lens_{i}")
 
         mass = af.Model(al.mp.Isothermal)
         mass.centre = lp0_lens.bulge.centre
-        mass.einstein_radius = af.UniformPrior(lower_limit=0.0, upper_limit=5.0)
+        mass.einstein_radius = af.UniformPrior(lower_limit=0.0, upper_limit=upper_einstein_radius)
 
         lens_dict[f"lens_{i}"] = af.Model(
             al.Galaxy,
@@ -332,7 +484,7 @@ def source_lp_1(
     # Tracer order: [lens_0..lens_{n_main-1}, extra_0..extra_{n_extra-1}, scaling_0..]
     extra_mass_models = []
     for i in range(n_extra):
-        lp0_extra = source_lp_result_0.instance.extra_galaxies[i]
+        lp0_extra = lens_light_result.instance.extra_galaxies[i]
 
         mass = af.Model(al.mp.Isothermal)
         mass.centre = lp0_extra.bulge.centre
@@ -343,9 +495,10 @@ def source_lp_1(
             for g in tracer.galaxies[n_main + i].bulge.profile_list
         ]
         total_luminosity = np.sum(luminosity_per_gaussian_list) / pixel_scale**2
+        upper_einstein_radius = min(upper_einstein_radius, 5.0)
         mass.einstein_radius = af.UniformPrior(
             lower_limit=0.0,
-            upper_limit=min(5 * 0.5 * total_luminosity**0.6, 5.0),
+            upper_limit=min(5 * 0.5 * total_luminosity**0.6, upper_einstein_radius),
         )
 
         extra_mass_models.append(
@@ -362,7 +515,7 @@ def source_lp_1(
 
     scaling_mass_models = []
     for i in range(n_scaling):
-        lp0_scaling = source_lp_result_0.instance.scaling_galaxies[i]
+        lp0_scaling = lens_light_result.instance.scaling_galaxies[i]
 
         mass = af.Model(al.mp.Isothermal)
         mass.centre = lp0_scaling.bulge.centre
@@ -484,7 +637,7 @@ def source_pix_1(
         adapt_images=adapt_images,
         positions_likelihood_list=[
             source_lp_result_1.positions_likelihood_from(
-                factor=2.0, positions=positions, minimum_threshold=0.2
+                factor=2.0, positions=positions, minimum_threshold=0.2, maximum_threshold=0.8
             )
         ],
     )
@@ -680,7 +833,7 @@ and scaling galaxies are fully fixed from `source_pix[2]`.
 def light_lp(
     dataset,
     settings_search,
-    source_lp_result_0,
+    lens_light_result,
     source_pix_result_1,
     source_pix_result_2,
     adapt_images,
@@ -705,7 +858,7 @@ def light_lp(
     # --- main lens light models (MGE centred on stage-0 bulge centre) ---
     lens_bulge_list = []
     for i in range(n_lenses):
-        lp0_lens = getattr(source_lp_result_0.instance.galaxies, f"lens_{i}")
+        lp0_lens = getattr(lens_light_result.instance.galaxies, f"lens_{i}")
         bulge = al.model_util.mge_model_from(
             mask_radius=mask_radius,
             total_gaussians=30,
@@ -867,13 +1020,14 @@ def mass_total(
         adapt_images=adapt_images,
         positions_likelihood_list=[
             source_lp_result_1.positions_likelihood_from(
-                factor=2.0, positions=positions, minimum_threshold=0.2
+                factor=2.0, positions=positions, minimum_threshold=0.2, maximum_threshold=0.8
             )
         ],
     )
 
     source = al.util.chaining.source_from(result=source_pix_result_2)
 
+    # --- main lens galaxies: powerlaw ---
     lens_dict = {}
     for i in range(n_lenses):
         lens_model = getattr(source_pix_result_1.model.galaxies, f"lens_{i}")
@@ -919,61 +1073,92 @@ __Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
-dataset_name = "102021990_NEG650312660474055399"
+dataset_name = "Tile102018221RA0658168278639DECNEG0516738405643"
 dataset_path = Path("dataset") / "sample_group" / dataset_name
 
 """
-__Dataset Auto-Simulation__
+__Mask / Pixel-scale Parameters__
 
-If the dataset does not already exist on your system, it will be created by running the corresponding
-simulator script. This ensures that all example scripts can be run without manually simulating data first.
+These three values can be supplied in two ways:
+
+1. **Loaded automatically** from ``info.json`` inside ``dataset_path``::
+
+       {
+           "pixel_scale": 0.1,
+           "mask_radius": 4.0,
+           "mask_centre": [0.0, 0.0]
+       }
+
+2. **Set manually** by un-commenting the override lines below and assigning the
+   desired values.  A manual value always wins over whatever is in the JSON file.
 """
-# if not dataset_path.exists():
-#     import subprocess
-#     import sys
-#
-#     subprocess.run(
-#         [sys.executable, "scripts/group/simulator.py"],
-#         check=True,
-#     )
 
-pixel_scale = 0.1
-mask_radius = 3.5
-mask_centre = (0.0, 0.0)
+_info_path = dataset_path / "info.json"
+if _info_path.exists():
+    with open(_info_path) as _f:
+        _info = json.load(_f)
+    pixel_scale = _info["pixel_scale"]
+    mask_radius = _info["mask_radius"]
+    mask_centre = tuple(_info["mask_centre"])
+else:
+    # Fallback defaults used when info.json is absent
+    pixel_scale = 0.1
+    mask_radius = 4.0
+    mask_centre = (0.0, 0.0)
+
+# ── Manual overrides (un-comment any line to override the JSON value) ──────────
+# pixel_scale = 0.1
+# mask_radius = 4.0
+# mask_centre = (0.0, 0.0)
+# ──────────────────────────────────────────────────────────────────────────────
+
 redshift_lens = 0.5
 redshift_source = 1.0
 source_mge_radius = 1.0
 n_batch = 20
 
+# try:
+#     dataset_index_dict = dataset_instrument_hdu_dict_via_fits_from(
+#         dataset_path=dataset_path,
+#         dataset_fits_name=f"{dataset_name}_masked.fits",
+#         # image_tag="_FLUX",
+#         image_tag="_BGSUB"
+#     )
+# except FileNotFoundError:
+#     dataset_index_dict = dataset_instrument_hdu_dict_via_fits_from(
+#         dataset_path=dataset_path,
+#         dataset_fits_name=f"{dataset_name}.fits",
+#         # image_tag="_FLUX",
+#         image_tag="_BGSUB"
+#     )
 
-# dataset_index_dict = dataset_instrument_hdu_dict_via_fits_from(
-#     dataset_path=dataset_path,
-#     dataset_fits_name="data.fits",
-#     image_tag="_FLUX",
-# )
-#
-# vis_index = dataset_index_dict["vis"]
-#
-# dataset = al.Imaging.from_fits(
-#     data_path=dataset_path / "data.fits",
-#     data_hdu=vis_index * 3 + 1,
-#     noise_map_path=dataset_path / "data.fits",
-#     noise_map_hdu=vis_index * 3 + 3,
-#     psf_path=dataset_path / "data.fits",
-#     psf_hdu=vis_index * 3 + 2,
-#     pixel_scales=pixel_scale,
-#     check_noise_map=False,
-# )
-
-dataset = al.Imaging.from_fits(
-    data_path=dataset_path / "data.fits",
-    psf_path=dataset_path / "psf.fits",
-    noise_map_path=dataset_path / "noise_map.fits",
-    pixel_scales=pixel_scale,
+dataset_index_dict = dataset_instrument_hdu_dict_via_fits_from(
+    dataset_path=dataset_path,
+    dataset_fits_name=f"{dataset_name}.fits",
+    #image_tag="_FLUX",
+    image_tag="_BGSUB"
 )
 
+vis_index = dataset_index_dict["vis"]
 
-#aplt.subplot_imaging_dataset(dataset=dataset)
+dataset = al.Imaging.from_fits(
+    data_path=dataset_path / f"{dataset_name}.fits",
+    data_hdu=vis_index * 3 + 1,
+    noise_map_path=dataset_path / f"{dataset_name}.fits",
+    noise_map_hdu=vis_index * 3 + 3,
+    psf_path=dataset_path / f"{dataset_name}.fits",
+    psf_hdu=vis_index * 3 + 2,
+    pixel_scales=pixel_scale,
+    check_noise_map=False,
+)
+
+# dataset = al.Imaging.from_fits(
+#     data_path=dataset_path / "data.fits",
+#     psf_path=dataset_path / "psf.fits",
+#     noise_map_path=dataset_path / "noise_map.fits",
+#     pixel_scales=pixel_scale,
+# )
+
 
 """
 __Galaxy Centres__
@@ -1057,25 +1242,50 @@ settings_search = af.SettingsSearch(
 """
 __SLaM Pipeline__
 """
-source_lp_result_0 = source_lp_0(
-    dataset=dataset_larger,
+# source_lp_result_0 = source_lp_0(
+#     dataset=dataset_larger,
+#     settings_search=settings_search,
+#     main_lens_centres=main_lens_centres,
+#     extra_lens_centres=extra_lens_centres,
+#     scaling_lens_centres=scaling_lens_centres,
+#     mask_radius=mask_radius_larger,
+#     redshift_lens=redshift_lens,
+# )
+
+lens_light_result_1 = lens_light_1(
+    dataset=dataset,
     settings_search=settings_search,
     main_lens_centres=main_lens_centres,
     extra_lens_centres=extra_lens_centres,
-    scaling_lens_centres=scaling_lens_centres,
-    mask_radius=mask_radius_larger,
+    mask_radius=mask_radius,
     redshift_lens=redshift_lens,
 )
+
+if len(scaling_lens_centres) > 0:
+    lens_light_result_2 = lens_light_2(
+        dataset=dataset_larger,
+        settings_search=settings_search,
+        lens_light_result_1=lens_light_result_1,
+        scaling_lens_centres=scaling_lens_centres,
+        mask_radius=mask_radius_larger,
+        redshift_lens=redshift_lens,
+    )
+
+if len(scaling_lens_centres) > 0:
+    lens_light_result = lens_light_result_2
+else:
+    lens_light_result = lens_light_result_1
 
 source_lp_result_1 = source_lp_1(
     dataset=dataset,
     settings_search=settings_search,
-    source_lp_result_0=source_lp_result_0,
+    lens_light_result=lens_light_result,
     positions=positions,
     pixel_scale=pixel_scale,
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
     source_mge_radius=source_mge_radius,
+    upper_einstein_radius=mask_radius
 )
 
 source_pix_result_1, dataset, adapt_images = source_pix_1(
@@ -1105,7 +1315,7 @@ source_pix_result_2, dataset, adapt_images = source_pix_2(
 light_result = light_lp(
     dataset=dataset_larger,
     settings_search=settings_search,
-    source_lp_result_0=source_lp_result_0,
+    lens_light_result=lens_light_result,
     source_pix_result_1=source_pix_result_1,
     source_pix_result_2=source_pix_result_2,
     adapt_images=adapt_images,
