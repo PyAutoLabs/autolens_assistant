@@ -1,6 +1,6 @@
 """
-GUI Preprocessing: All-in-One (Main Lens, Extra Galaxies, Scaling Galaxies, Positions)
-========================================================================================
+GUI Preprocessing: All-in-One (Main Lens, Extra Galaxies, Scaling Galaxies, Positions, Extra Masking)
+=======================================================================================================
 
 This script runs a single interactive GUI session to collect all preprocessing inputs needed
 before running a SLaM group-scale pipeline:
@@ -9,11 +9,16 @@ before running a SLaM group-scale pipeline:
   2. **Extra galaxy centres**     → `extra_galaxies_centres.json`   (optional — close without clicking to skip)
   3. **Scaling galaxy centres**   → `scaling_galaxies_centres.json` (optional — close without clicking to skip)
   4. **Source positions**         → `positions.json`                (required)
+  5. **Extra masking**            → `extra_masking.fits`            (optional — close without painting to skip)
 
 JSON file names match exactly what `slam.py` / `_load_centres()` expects.
 
-Each GUI step opens a two-panel figure: the log-scaled data on the left and, when
+Steps 1–4 open a two-panel figure: the log-scaled data on the left and, when
 `rgb_0.png` exists in the dataset folder, the RGB preview on the right.
+
+Step 5 uses the Scribbler GUI: spray-paint over any extra-galaxy regions whose emission
+should be masked out of the data. Press Esc when finished. If no regions are painted
+the step is skipped and no .fits file is written.
 
 Double-click on the data panel to record a position (snapped to the brightest pixel
 within the search box).  Close the window to advance to the next step.
@@ -26,7 +31,6 @@ Edit the USER SETTINGS block below, then run::
 """
 
 # ── standard library ──────────────────────────────────────────────────────────
-import json
 from os import path
 
 # ── third-party ───────────────────────────────────────────────────────────────
@@ -52,13 +56,13 @@ except ImportError:
 # USER SETTINGS — edit these before running
 # ─────────────────────────────────────────────────────────────────────────────
 
-dataset_name = "Tile102016415RA0355866659367DECNEG0534932652580"
+dataset_name = "102160336_2685084962682049281"
 dataset_path = path.join("..", "..", "..", "dataset", "sample_group", dataset_name)
 
 pixel_scales = 0.1   # arcsec / pixel
 
 # Circular mask applied to the data before all GUI steps
-mask_radius = 4.5
+mask_radius = 5.0
 mask_centre = (0.0, 0.0)   # (y, x) arcsec — overridden by info.json if present
 
 # Search box (pixels) — area around each click searched for the brightest pixel
@@ -117,7 +121,6 @@ def _physical_to_pixel(physical_coordinates, pixel_size, image_size, image_exten
     """Convert (y, x) arcsec to (row, col) pixel indices clipped to image bounds."""
     min_y, max_y, min_x, max_x = image_extent
 
-    # Ensure the pixel coordinates are within the image bounds
     y_pixel = int(np.clip((physical_coordinates[0] - min_y) / pixel_size, 0, image_size[0] - 1))
     x_pixel = int(np.clip((physical_coordinates[1] - min_x) / pixel_size, 0, image_size[1] - 1))
     return y_pixel, x_pixel
@@ -136,7 +139,6 @@ def _find_subpixel_centroid(image, center_physical, pixel_size, image_extent, wi
     x_min = max(center_pixel[1] - half, 0)
     x_max = min(center_pixel[1] + half + 1, image.shape_native[1])
 
-    # Flip y-axis so physical and array orientations agree
     sub_image = image.native[::-1, :][y_min:y_max, x_min:x_max]
     y_c, x_c = center_of_mass(sub_image)
 
@@ -146,7 +148,7 @@ def _find_subpixel_centroid(image, center_physical, pixel_size, image_extent, wi
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# GUI RUNNER
+# GUI RUNNERS
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _run_clicker_gui(log_data, ext, clicker, rgb_image=None, title=""):
@@ -167,7 +169,6 @@ def _run_clicker_gui(log_data, ext, clicker, rgb_image=None, title=""):
 
     fig.suptitle(title, fontsize=13)
 
-    # Data panel
     norm = plt.Normalize(vmin=np.nanmin(log_data.native), vmax=np.nanmax(log_data.native))
     im = ax_data.imshow(log_data.native, cmap="jet", norm=norm, extent=ext, origin=_conf_imshow_origin())
     ax_data.set_title("Data (log10)  —  double-click to mark")
@@ -175,7 +176,6 @@ def _run_clicker_gui(log_data, ext, clicker, rgb_image=None, title=""):
     ax_data.set_ylabel("y / arcsec")
     plt.colorbar(im, ax=ax_data, fraction=0.046, pad=0.02)
 
-    # RGB panel
     if ax_rgb is not None:
         ax_rgb.imshow(rgb_image, extent=ext, origin="lower")
         ax_rgb.set_title("RGB preview")
@@ -186,6 +186,35 @@ def _run_clicker_gui(log_data, ext, clicker, rgb_image=None, title=""):
     plt.show()
     fig.canvas.mpl_disconnect(cid)
     plt.close(fig)
+
+
+def _run_scribbler_gui(raw_data):
+    """
+    Open the Scribbler GUI for spray-painting the extra-galaxy mask.
+
+    Press Esc when finished painting. Returns an al.Mask2D, or None if the
+    user closed without painting anything.
+    """
+    scribbler_mask = al.Mask2D.circular(
+        shape_native=raw_data.shape_native,
+        pixel_scales=raw_data.pixel_scales,
+        radius=mask_radius + 1.0,
+        centre=mask_centre,
+    )
+
+    log_data = _load_log_data(raw_data)
+
+    scribbler = al.Scribbler(image=log_data.native,
+                             mask_overlay=scribbler_mask,
+                             brush_width=0.01)
+    painted_mask = scribbler.show_mask()
+
+    # If nothing was painted, the mask will be all False (unmasked) or match
+    # only the overlay. We detect a "skip" as: no True pixels at all.
+    if not np.any(painted_mask):
+        return None
+
+    return al.Mask2D(mask=painted_mask, pixel_scales=pixel_scales)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -240,44 +269,51 @@ def _select_positions(log_data, raw_data, ext, rgb_image):
     return result
 
 
-def _run_scribbler_mask(raw_data, main_mask, rgb_image, dataset_name, dataset_path):
+def _paint_extra_mask(raw_data):
     """
-    Open the Scribbler GUI so the user can paint regions of the data to mask.
+    Run the Scribbler GUI to paint extra-galaxy regions.
+
+    Returns an al.Mask2D if regions were painted, or None if skipped.
     """
-    print("  [data mask] Opening Scribbler -- paint regions to mask, then press Esc / q.")
-    scrib = Scribbler(
-        image=raw_data.native,
-        brush_width=0.05,
-        mask_overlay=main_mask,
-        rgb_image=rgb_image,
-    )
-    painted_mask_arr = scrib.show_mask()  # boolean numpy array, shape == image.shape_native
+    print("  Spray-paint over extra-galaxy regions. Press Esc when done.")
+    print("  Close the window without painting to skip this step.")
 
-    # Only save if the user actually painted something
-    if not np.any(painted_mask_arr):
-        print("  [data mask] No regions painted -- skipped, FITS not written.")
-        return False
+    extra_mask = _run_scribbler_gui(raw_data)
 
-    out_path = path.join(dataset_path, f"{dataset_name}_masked.fits")
-    al.output_to_fits(
-        values=painted_mask_arr.astype("float"),
-        file_path=out_path,
-        overwrite=True,
-    )
+    if extra_mask is None:
+        print("  [extra masking] skipped — no regions painted.")
+        return None
 
-    print(f"  [data mask] Saved -> {path.basename(out_path)}")
-    return True
+    print(f"  [extra masking] mask created — {np.sum(extra_mask)} pixels masked.")
+    return extra_mask
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SUMMARY PREVIEW
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _save_summary_plot(log_data, centres_dict, ext, dataset_path):
-    """Overlay all selected centres/positions on the log-data image and save a PNG."""
+def _save_summary_plot(log_data, centres_dict, extra_mask, ext, dataset_path):
+    """
+    Overlay all selected centres/positions (and the extra mask, if any) on the
+    log-data image and save a PNG.
+    """
     fig, ax = plt.subplots(figsize=(10, 10))
     norm = plt.Normalize(vmin=np.nanmin(log_data.native), vmax=np.nanmax(log_data.native))
     ax.imshow(log_data.native, cmap="jet", norm=norm, extent=ext, origin=_conf_imshow_origin())
+
+    # Overlay the extra mask as a semi-transparent hatched region
+    if extra_mask is not None:
+        mask_display = np.where(extra_mask.native, 1.0, np.nan)
+        ax.imshow(
+            mask_display,
+            extent=ext,
+            origin=_conf_imshow_origin(),
+            cmap="Reds",
+            alpha=0.4,
+            vmin=0,
+            vmax=1,
+            label="Extra mask",
+        )
 
     colours = ["white", "cyan", "lime", "purple"]
     markers = ["x", "x", "x", "x"]
@@ -290,7 +326,7 @@ def _save_summary_plot(log_data, centres_dict, ext, dataset_path):
                        label=label, zorder=5)
 
     ax.legend(loc="upper right", fontsize=9)
-    ax.set_title("All selected centres & positions")
+    ax.set_title("All selected centres, positions & extra mask")
     ax.set_xlabel("x / arcsec")
     ax.set_ylabel("y / arcsec")
     plt.tight_layout()
@@ -312,7 +348,6 @@ def main():
     print("=" * 70)
 
     # ── Load raw data ──────────────────────────────────────────────────────
-    #data_fits = path.join(dataset_path, "data.fits")
     data_fits = path.join(dataset_path, f"{dataset_name}.fits")
     print(f"\nLoading: {data_fits}")
     raw_data = al.Array2D.from_fits(file_path=data_fits, pixel_scales=pixel_scales, hdu=1)
@@ -321,23 +356,12 @@ def main():
         mask=raw_data.mask,
     )
 
-    # ── Read mask parameters (info.json overrides USER SETTINGS) ──────────
-    _mask_radius = mask_radius
-    _mask_centre = mask_centre
-    # info_path = path.join(dataset_path, "info.json")
-    # if path.exists(info_path):
-    #     with open(info_path) as f:
-    #         info = json.load(f)
-    #     _mask_radius = info.get("mask_radius", mask_radius) + 1.5
-    #     _mask_centre = tuple(info.get("mask_centre", list(mask_centre)))
-    #     print(f"  info.json found — mask_radius={_mask_radius}, mask_centre={_mask_centre}")
-
     # ── Apply circular mask ────────────────────────────────────────────────
     main_mask = al.Mask2D.circular(
         shape_native=raw_data.shape_native,
         pixel_scales=raw_data.pixel_scales,
-        radius=_mask_radius,
-        centre=_mask_centre,
+        radius=mask_radius,
+        centre=mask_centre,
     )
     masked_data = raw_data.apply_mask(mask=main_mask)
     log_data    = _load_log_data(masked_data)
@@ -416,16 +440,21 @@ def main():
     print("  Saved → positions.json")
 
     # ══════════════════════════════════════════════════════════════════════
-    # STEP 5 — Data mask  (optional)
+    # STEP 5 — Extra masking via Scribbler  (optional)
     # ══════════════════════════════════════════════════════════════════════
-    print("\n[5/5] Data mask (optional — press Esc immediately to skip)")
-    mask_written = _run_scribbler_mask(
-        raw_data=raw_data,
-        main_mask=main_mask,
-        rgb_image=rgb_image,
-        dataset_name=dataset_name,
-        dataset_path=dataset_path,
-    )
+    print("\n[5/5] Extra masking — Scribbler (optional — close without painting to skip)")
+    print("      Use this to mask extra-galaxy emission not captured by the centres above.")
+    extra_mask = _paint_extra_mask(raw_data)
+
+    if extra_mask is not None:
+        al.output_to_fits(
+            values=extra_mask.astype(np.uint8),
+            file_path=path.join(dataset_path, "extra_masking.fits"),
+            overwrite=True,
+        )
+        print("  Saved → extra_masking.fits")
+    else:
+        print("  Skipped — extra_masking.fits not written.")
 
     # ══════════════════════════════════════════════════════════════════════
     # Summary preview
@@ -439,6 +468,7 @@ def main():
             "Scaling galaxies": scaling_galaxies_centres,
             "Positions": positions,
         },
+        extra_mask=extra_mask,
         ext=ext,
         dataset_path=dataset_path,
     )
@@ -447,16 +477,15 @@ def main():
     print("All preprocessing steps complete.")
     print(f"Output directory: {path.abspath(dataset_path)}")
     print("Files written:")
-    masked_fits_name = f"{dataset_name}_masked.fits"
-    for fname in [
-        "main_lens_centres.json",
-        "extra_galaxies_centres.json",
-        "scaling_galaxies_centres.json",
-        "positions.json",
-        masked_fits_name,
-        "gui_preprocessing_summary.png",
+    for fname, written in [
+        ("main_lens_centres.json",        True),
+        ("extra_galaxies_centres.json",   len(extra_galaxies_centres.in_list) > 0),
+        ("scaling_galaxies_centres.json", len(scaling_galaxies_centres.in_list) > 0),
+        ("positions.json",                True),
+        ("extra_masking.fits",            extra_mask is not None),
+        ("gui_preprocessing_summary.png", True),
     ]:
-        full = path.join(dataset_path, fname)
+        full   = path.join(dataset_path, fname)
         status = "✓" if path.exists(full) else "— (skipped)"
         print(f"  {status}  {fname}")
     print("=" * 70)
