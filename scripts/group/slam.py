@@ -268,7 +268,7 @@ def lens_light_1(
             mask_radius=mask_radius,
             total_gaussians=30,
             gaussian_per_basis=2,
-            centre_prior_is_uniform=False,
+            centre_prior_is_uniform=True,
             centre=(centre[0], centre[1]),
             centre_sigma=0.1,
             ell_comps_prior_is_uniform=True,
@@ -284,7 +284,7 @@ def lens_light_1(
         bulge = al.model_util.mge_model_from(
             mask_radius=mask_radius,
             total_gaussians=10,
-            centre_prior_is_uniform=False,
+            centre_prior_is_uniform=True,
             centre=(centre[0], centre[1]),
             centre_sigma=0.1,
             ell_comps_prior_is_uniform=True,
@@ -1073,7 +1073,7 @@ __Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
-dataset_name = "Tile102018221RA0658168278639DECNEG0516738405643"
+dataset_name = "Tile102022016RA0845191674116DECNEG0475870747274"
 dataset_path = Path("dataset") / "sample_group" / dataset_name
 
 """
@@ -1159,7 +1159,6 @@ dataset = al.Imaging.from_fits(
 #     pixel_scales=pixel_scale,
 # )
 
-
 """
 __Galaxy Centres__
 
@@ -1187,6 +1186,17 @@ dist_galaxies = np.sqrt(all_galaxy_centres[:,0]**2 + all_galaxy_centres[:,1]**2)
 """
 __Mask__
 """
+
+try:
+    extra_masking = al.Mask2D.from_fits(
+            file_path=dataset_path / "extra_masking.fits",
+            pixel_scales=pixel_scale,
+            invert=True,
+    )
+    dataset = dataset.apply_noise_scaling(mask=extra_masking)
+except FileNotFoundError:
+    pass
+
 # Set up a larger mask for the parts where luminosity profiles for the extra galaxies / scaling galaxies are fitted
 mask_radius_larger = max(mask_radius, dist_galaxies.max() + 0.5)
 
