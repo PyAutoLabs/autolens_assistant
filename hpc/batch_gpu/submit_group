@@ -1,12 +1,12 @@
 #!/bin/bash -l
 
-#SBATCH -J 814
+#SBATCH -J 274
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32gb
-#SBATCH --time=30:00:00
+#SBATCH --time=50:00:00
 #SBATCH --array=0-0
 #SBATCH -o output/output.%A_%a.out
 #SBATCH -e error/error.%A_%a.err

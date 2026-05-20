@@ -1,0 +1,2 @@
+/mnt/ral/c4072114/PyAuto/PyAutoArray/autoarray/mask/mask_2d_util.py:564: UserWarning: Mask padded from (100, 100) to (110, 110) (parity preserved) to support kernel footprint (21, 21).
+  warnings.warn(

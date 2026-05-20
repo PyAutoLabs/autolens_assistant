@@ -51,3 +51,4 @@ test:
   disable_positions_lh_inversion_check: true
 version:
   python_version_check: False
+  workspace_version_check: False
