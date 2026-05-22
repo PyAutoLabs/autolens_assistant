@@ -48,14 +48,17 @@ configured) via symlinks; the canonical files live here.
 - [`start-new-project.md`](./start-new-project.md) — interactive setup wizard for forking
   `autolens_base_project` into a fresh science project (name, datasets, scripts,
   simulators, context).
+- [`contribute-upstream.md`](./contribute-upstream.md) — prepare a scoped change in your
+  fork, push it to your GitHub remote, and open a draft PR into
+  `PyAutoLabs/autolens_base_project`.
 - [`init-slam.md`](./init-slam.md) — populate an empty `scripts/` folder with SLaM
   pipeline script(s) copied from `autolens_workspace` and tailored to the chosen data
   type.
 
 ### Data preparation
 
-- [`al_prepare_imaging_data.md`](./al_prepare_imaging_data.md) — load FITS imaging,
-  measure noise, mask, prepare PSF.
+- [`al_prepare_imaging_data.md`](./al_prepare_imaging_data.md) — load and preprocess
+  FITS imaging, decide masking for real data, measure noise, prepare PSF.
 - [`al_simulate_dataset.md`](./al_simulate_dataset.md) — synthesise a lens dataset
   (imaging or interferometer) from a ground-truth model.
 

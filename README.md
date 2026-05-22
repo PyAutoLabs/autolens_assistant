@@ -200,6 +200,24 @@ session start and already knows the project conventions.
 (default-yes) to add a `wiki/project/YYYY-MM-DD-<slug>.md` entry. Say yes —
 that's how future sessions stay in context across days and weeks.
 
+**Contribute back to the template.** If you want your fork to be able to open
+PRs into [`PyAutoLabs/autolens_base_project`](https://github.com/PyAutoLabs/autolens_base_project),
+set up a two-remote layout that matches this workspace's conventions:
+
+```bash
+git remote rename origin fork
+git remote add origin https://github.com/PyAutoLabs/autolens_base_project.git
+git fetch origin
+```
+
+`fork` is then your writable remote, and `origin` is the upstream template you
+want to target with PRs. From an agent session you can then say:
+
+- *"Use `contribute-upstream` to prepare a PR back to the base template."*
+
+That skill checks remotes and branch state, stages only the intended files,
+pushes to your fork, and opens a **draft PR** against upstream.
+
 ---
 
 ## The three-layer architecture
@@ -376,6 +394,9 @@ When generating a simulated dataset with `simulators/base.py`, `info.json` is wr
 automatically alongside the data.
 
 For real observational data, create `info.json` manually or with a preprocessing script.
+Before modelling begins, explicitly check preprocessing choices like the mask radius
+and whether you need a separate exclusion mask for nearby objects, artifacts, or other
+regions that should not contribute to the fit.
 
 ---
 
