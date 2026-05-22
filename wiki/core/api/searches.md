@@ -40,6 +40,9 @@ af.Nautilus(
 Source: `PyAutoFit:autofit/non_linear/search/nest/nautilus.py`. Optional dep:
 `nautilus-sampler` (pinned to 1.0.5 in the stack).
 
+Reference: Lange (2023), arXiv:2306.16923 — see
+[`wiki/literature/sources/bayesian-inference-methods.md`](../../literature/sources/bayesian-inference-methods.md#lange-2023--nautilus).
+
 ### `af.DynestyStatic` / `af.DynestyDynamic`
 
 Static = fixed live-point count throughout. Dynamic = focuses live points where
@@ -52,6 +55,9 @@ af.DynestyDynamic(path_prefix=..., name=..., nlive_init=100)
 
 Source: `PyAutoFit:autofit/non_linear/search/nest/dynesty.py`. Pinned: `dynesty==2.1.4`.
 
+Reference: Speagle (2020), arXiv:1904.02180 — see
+[`wiki/literature/sources/bayesian-inference-methods.md`](../../literature/sources/bayesian-inference-methods.md#speagle-2020--dynesty).
+
 ### `af.UltraNest`
 
 Reactive nested sampling — scales to high-dim problems with strong constraints.
@@ -62,6 +68,11 @@ af.UltraNest(path_prefix=..., name=..., num_live_points=200)
 ```
 
 Source: `PyAutoFit:autofit/non_linear/search/nest/ultranest.py`. Optional dep.
+
+Reference: Buchner — algorithmic foundation in
+[`wiki/literature/concepts/nested-sampling.md`](../../literature/concepts/nested-sampling.md)
+(Skilling 2006); UltraNest itself is documented at
+https://johannesbuchner.github.io/UltraNest.
 
 ## MCMC
 
@@ -76,6 +87,9 @@ af.Emcee(path_prefix=..., name=..., nwalkers=50, nsteps=10000)
 
 Source: `PyAutoFit:autofit/non_linear/search/mcmc/emcee.py`. Pinned: `emcee>=3.1.6`.
 
+Reference: Foreman-Mackey et al. (2013), arXiv:1202.3665 — see
+[`wiki/literature/sources/bayesian-inference-methods.md`](../../literature/sources/bayesian-inference-methods.md#foreman-mackey-2013--emcee).
+
 ### `af.Zeus`
 
 Ensemble slice sampler. Handles correlated posteriors better than Emcee, similar
@@ -86,6 +100,9 @@ af.Zeus(path_prefix=..., name=..., nwalkers=50, nsteps=10000)
 ```
 
 Source: `PyAutoFit:autofit/non_linear/search/mcmc/zeus.py`. Optional dep.
+
+Reference: Karamanis, Beutler & Peacock (2021), arXiv:2105.03468 — see
+[`wiki/literature/sources/bayesian-inference-methods.md`](../../literature/sources/bayesian-inference-methods.md#karamanis-2021--zeus).
 
 ## Optimisation (no posterior)
 

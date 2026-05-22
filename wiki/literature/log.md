@@ -45,3 +45,44 @@ Dark_Matter_Detection (2), DarkMatterModels (5).
 The format follows Karpathy's LLM Wiki pattern (April 2026 gist): raw PDFs
 are immutable, the wiki layer is compiled and cross-linked, and the
 schema lives in `CLAUDE.md` so the maintaining LLM has a stable contract.
+
+---
+
+## 2026-05-22 — Optimiser papers ingested
+
+**By:** Claude (Opus 4.7), Round 6 of the `feat/natural-language` work.
+
+**Scope:** Six canonical-paper entries added to ground PyAutoFit's
+non-linear search catalogue in citable literature. Three full reads
+(`drafted`), three single-paragraph stubs (`stub`):
+
+- Skilling 2006 — Nested sampling foundation (drafted)
+- Speagle 2020 — Dynesty, arXiv:1904.02180 (drafted)
+- Lange 2023 — Nautilus, arXiv:2306.16923 (drafted)
+- Foreman-Mackey 2013 — emcee, arXiv:1202.3665 (stub)
+- Karamanis 2021 — zeus, arXiv:2105.03468 (stub)
+- Hoffman 2014 — NUTS, arXiv:1111.4246 (stub)
+
+**Files created:**
+
+- `sources/bayesian-inference-methods.md` — per-paper bibliography.
+- `concepts/nested-sampling.md` — concept page tying Skilling, Dynesty,
+  Nautilus together.
+- `concepts/mcmc-sampling.md` — concept page tying Emcee, Zeus, NUTS
+  together.
+
+**Cross-references added** into `wiki/core/`:
+
+- `wiki/core/concepts/non_linear_search.md` — "Further reading" pointers
+  to the two new literature concept pages.
+- `wiki/core/api/searches.md` — one-line "Reference:" footers under each
+  of Nautilus / DynestyStatic-Dynamic / UltraNest / Emcee / Zeus.
+
+**Out of scope this pass:** BFGS / LBFGS / PySwarms / Drawer / NSS — no
+single canonical paper to cite (classic numerical-methods textbooks or
+no published reference). The JAX-native NSS has no preprint as of this
+writing.
+
+**Source of content:** arXiv abstract pages (and projecteuclid for the
+Skilling 2006 journal paper). No local PDFs were used — the `**File:**`
+field in each entry points at the arXiv or DOI URL.

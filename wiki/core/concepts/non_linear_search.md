@@ -117,3 +117,15 @@ each piece.
 - [`samples_and_posteriors`](./samples_and_posteriors.md) — what to do with the
   posterior.
 - [`slam_pipeline`](./slam_pipeline.md) — chained-search pipeline.
+
+## Further reading
+
+The canonical papers behind each algorithm family live in the literature
+sub-wiki:
+
+- [`wiki/literature/concepts/nested-sampling`](../../literature/concepts/nested-sampling.md)
+  — Skilling, Dynesty, Nautilus.
+- [`wiki/literature/concepts/mcmc-sampling`](../../literature/concepts/mcmc-sampling.md)
+  — Emcee, Zeus, NUTS.
+- [`wiki/literature/sources/bayesian-inference-methods`](../../literature/sources/bayesian-inference-methods.md)
+  — per-paper bibliography.
