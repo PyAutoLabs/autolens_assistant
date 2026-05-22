@@ -28,20 +28,26 @@ npm install -g @anthropic-ai/claude-code
 npm install -g @openai/codex
 ```
 
-2. Clone your fork of the template.
+2. Fork this repository on GitHub.
+
+- Open <https://github.com/PyAutoLabs/autolens_base_project>.
+- Click `Fork` in the top-right corner.
+- Create the fork under your own GitHub account.
+
+3. Clone your fork of the template.
 
 ```bash
 git clone https://github.com/<you>/autolens_base_project.git
 cd autolens_base_project
 ```
 
-3. Start the agent.
+4. Start the agent.
 
 ```bash
 claude        # or `codex`
 ```
 
-4. Ask for the first thing you need.
+5. Ask for the first thing you need.
 
 - *"Set up the Python environment."*
 - *"What skills do you have?"*
