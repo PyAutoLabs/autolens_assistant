@@ -1,20 +1,20 @@
 ---
 name: init-slam
-description: Initialize SLaM (Source, Light and Mass) modeling scripts for a new PyAutoLens project. Use this skill when starting a new strong-lens modeling project, when the Scripts/ folder is empty and needs pipeline scripts, when a user says "set up scripts", "add a pipeline", "copy the slam script", or "initialize this project". Shows categorized options from autolens_workspace, copies chosen script(s) to Scripts/, creates slam_claude.md with full SLaM context, and adds reference banners to each copied script.
+description: Initialize SLaM (Source, Light and Mass) modeling scripts for a new PyAutoLens project. Use this skill when starting a new strong-lens modeling project, when the scripts/ folder is empty and needs pipeline scripts, when a user says "set up scripts", "add a pipeline", "copy the slam script", or "initialize this project". Shows categorized options from autolens_workspace, copies chosen script(s) to scripts/, creates slam_claude.md with full SLaM context, and adds reference banners to each copied script.
 ---
 
 # SLaM Script Initializer
 
 Sets up lens modeling scripts for a new PyAutoLens project. Selects from available SLaM pipelines
-in `autolens_workspace`, copies them to `Scripts/`, and creates `slam_claude.md` so that future
+in `autolens_workspace`, copies them to `scripts/`, and creates `slam_claude.md` so that future
 AI sessions have full SLaM context without needing to read the workspace guides.
 
 ## Step 1 — Locate the project
 
-The project root has a `Scripts/` folder (empty in a fresh template). Confirm it exists. If the
+The project root has a `scripts/` folder (empty in a fresh template). Confirm it exists. If the
 user hasn't specified a project path, use the current working directory.
 
-Check whether `Scripts/` already contains scripts — if so, note which are present and ask whether
+Check whether `scripts/` already contains scripts — if so, note which are present and ask whether
 to add more or replace.
 
 Also verify that `../autolens_workspace/` exists relative to the project root. If not, ask the
@@ -26,7 +26,7 @@ Show the user these options grouped by category. Ask them to pick one or more (e
 
 **Imaging — Standard** (most projects start here)
 
-| # | Filename in Scripts/ | Description |
+| # | Filename in scripts/ | Description |
 |---|----------------------|-------------|
 | A | `imaging.py` | MGE lens light (2x20 Gaussians) + pixelized source — standard choice for HST/Euclid |
 | B | `imaging.py` | Pixelized source + parametric Sersic lens light |
@@ -35,7 +35,7 @@ Show the user these options grouped by category. Ask them to pick one or more (e
 
 **Imaging — Advanced** (add on top of a standard script)
 
-| # | Filename in Scripts/ | Description |
+| # | Filename in scripts/ | Description |
 |---|----------------------|-------------|
 | E | `imaging_extra_galaxies.py` | Extra galaxy light/mass within the mask |
 | F | `imaging_stellar_dark.py` | Stellar + dark matter (NFW) mass decomposition |
@@ -44,20 +44,20 @@ Show the user these options grouped by category. Ask them to pick one or more (e
 
 **Interferometer**
 
-| # | Filename in Scripts/ | Description |
+| # | Filename in scripts/ | Description |
 |---|----------------------|-------------|
 | I | `interferometer.py` | Standard pixelized source for ALMA/interferometer data (no lens light stage) |
 | J | `interferometer_extra_galaxies.py` | Interferometer pipeline with extra galaxy components |
 
 **Group Scale**
 
-| # | Filename in Scripts/ | Description |
+| # | Filename in scripts/ | Description |
 |---|----------------------|-------------|
 | K | `group.py` | Group-scale lensing — multiple lens galaxies and extra perturbers |
 
 ## Step 3 — Copy scripts
 
-For each chosen option, copy the source file from `autolens_workspace/scripts/` to `Scripts/`
+For each chosen option, copy the source file from `autolens_workspace/scripts/` to `scripts/`
 using the destination filename from the table above.
 
 Source paths (relative to `autolens_workspace/scripts/`):
@@ -96,7 +96,7 @@ module docstrings (the `"""..."""` blocks that appear outside function bodies �
 explanatory sections between the function definitions, including the module docstring, pipeline
 stage descriptions, and dataset setup comments).
 
-Write `Scripts/slam_claude.md` with this structure:
+Write `scripts/slam_claude.md` with this structure:
 
 ```markdown
 # SLaM (Source, Light and Mass) — Project Reference

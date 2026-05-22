@@ -266,8 +266,7 @@ and follows this shape:
 - **General reference** — [RTD: <page title>](<expanded URL>): canonical PyAutoLens
   documentation page.
 - **Experienced PyAutoLens user** — [workspace/lens: <script name>](<expanded URL>):
-  production-style example to fork from. (Cite a local `context/<path>` too if the
-  file has been copied into this fork.)
+  production-style example to fork from.
 ```
 
 Rules:

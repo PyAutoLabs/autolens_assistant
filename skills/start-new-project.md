@@ -129,41 +129,14 @@ Ask the user:
 If the user asks for a workspace scan, search `simulators/` in the workspace and present
 options. Otherwise copy specified files or skip.
 
-## Step 6 — Context
-
-Ask the user:
-
-> **Do you want to add any context files?**
->
-> The `context/` folder holds tutorials, examples, and reference material from workspace
-> repositories. These files give AI agents the scientific and technical background needed to
-> work on the project — for example, explaining how pixelization works, what MGE profiles are,
-> or how subhalo sensitivity mapping is done.
->
-> Context files are copied from workspace repos like `autolens_workspace/scripts/` or
-> `autolens_workspace/notebooks/`.
->
-> You can either:
-> - **Point me to specific files** to include
-> - **Describe topics you'll need context for** and I'll scan the workspace for relevant
->   tutorials and examples
-> - **Skip for now** — context can be added at any time as the project evolves
->
-> If you're not sure yet, that's fine — it's easy to add context later as you discover what
-> background the AI needs.
-
-If the user asks for a scan, search the workspace for relevant tutorials, guides, and feature
-examples. Present findings and let the user pick. Otherwise copy specified files or skip.
-
-## Step 7 — Execute
+## Step 6 — Execute
 
 Once all questions are answered, perform these actions:
 
-### 7a — rsync the template
+### 6a — rsync the template
 
-Copy the base template to the new project directory. Always exclude `dataset/`, `output/`,
-`simulators/`, `__pycache__/`, `*.pyc`, and legacy files (`submit` and `template` without
-suffix):
+Copy the base template to the new project directory. Always exclude `dataset/`,
+`output/`, `simulators/`, `__pycache__/`, and `*.pyc`:
 
 ```bash
 rsync -av \
@@ -172,9 +145,6 @@ rsync -av \
   --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
-  --exclude='hpc/batch_gpu/submit' \
-  --exclude='hpc/batch_cpu/submit' \
-  --exclude='hpc/batch_cpu/template' \
   --exclude='skills/' \
   --exclude='wiki/project/profile.md' \
   --exclude='wiki/project/[0-9]*-*.md' \
@@ -187,28 +157,23 @@ they drop any parent-fork `profile.md` and any dated `YYYY-MM-DD-<slug>.md` entr
 while keeping `README.md` and `_profile_template.md`. The new project gets a clean
 slate to record its own decisions and user profile.
 
-### 7b — Copy datasets
+### 6b — Copy datasets
 
 If the user provided dataset paths, copy them into
 `<NEW_PROJECT>/dataset/<sample_name>/`. Verify each dataset
 directory has at least `data.fits` and `info.json`.
 
-### 7c — Copy modeling scripts
+### 6c — Copy modeling scripts
 
 If the user provided or selected scripts, copy them into
 `<NEW_PROJECT>/scripts/`.
 
-### 7d — Copy simulator files
+### 6d — Copy simulator files
 
 If the user provided or selected simulators, copy them into
 `<NEW_PROJECT>/simulators/`.
 
-### 7e — Copy context files
-
-If the user provided or selected context files, copy them into
-`<NEW_PROJECT>/context/`.
-
-### 7f — Update CLAUDE.md
+### 6e — Update CLAUDE.md
 
 Open `<NEW_PROJECT>/CLAUDE.md`. Add a project-specific section
 at the very top, before the existing template instructions:
@@ -222,17 +187,17 @@ at the very top, before the existing template instructions:
 
 ```
 
-### 7g — Run dos2unix
+### 6f — Run dos2unix
 
 Convert all shell scripts and Python files to Unix line endings:
 
 ```bash
 find <NEW_PROJECT>/ \
-  -type f \( -name "*.py" -o -name "*.sh" -o -name "submit*" -o -name "template*" \) \
+  -type f \( -name "*.py" -o -name "*.sh" -o -name "submit*" \) \
   | xargs dos2unix
 ```
 
-### 7h — Add bash alias
+### 6g — Add bash alias
 
 Append a `Project<Name>()` function to `~/.bashrc`:
 
@@ -245,7 +210,7 @@ Project<ProjectName>() {
 
 Use PascalCase for the function name (e.g. `SlacsSubhalo` for project `slacs_subhalo`).
 
-## Step 8 — GitHub repository
+## Step 7 — GitHub repository
 
 Ask the user:
 
@@ -253,7 +218,7 @@ Ask the user:
 >
 > A GitHub repo lets you manage the project remotely — edit scripts, push changes, and
 > trigger HPC jobs from your phone or any device. Only **code** goes in the repo (scripts,
-> config, HPC submit files, context). Large data files (`dataset/`, `output/`) stay excluded
+> config, HPC submit files). Large data files (`dataset/`, `output/`) stay excluded
 > via `.gitignore` — data is already on the HPC from `hpc/sync push` and doesn't need to
 > live in GitHub.
 >
@@ -264,7 +229,7 @@ Ask the user:
 
 If the user wants a repo:
 
-### 8a — Create .gitignore
+### 7a — Create .gitignore
 
 Write a `.gitignore` at the project root with these entries:
 
@@ -278,7 +243,6 @@ simulators/output/
 
 # HPC local config (host-specific paths, never committed)
 hpc/sync.conf
-hpc/sync_jump.conf
 
 # SLURM logs (pulled from HPC, not version-controlled)
 hpc/batch_gpu/output/
@@ -296,7 +260,7 @@ __pycache__/
 Thumbs.db
 ```
 
-### 8b — Initialize git and create the repo
+### 7b — Initialize git and create the repo
 
 ```bash
 cd <NEW_PROJECT>
@@ -323,20 +287,20 @@ gh repo create <GH_USER>/<PROJECT_NAME> --public --source=. --push
 
 Use `--private` or `--public` based on the user's choice.
 
-### 8c — Confirm
+### 7c — Confirm
 
 Report:
 - Repo URL: `https://github.com/<GH_USER>/<PROJECT_NAME>`
-- What's tracked: scripts, config, HPC submit files, slam_pipeline, context
+- What's tracked: scripts, config, HPC submit files, skills, wiki
 - What's excluded: dataset/, output/, SLURM logs, sync configs
 - Remind them: data stays on the HPC. To work from your phone, edit code via GitHub,
   then SSH to the HPC to pull and submit jobs.
 
-## Step 9 — Final summary
+## Step 8 — Final summary
 
 Report a summary:
 - Project path: `<NEW_PROJECT>/`
-- What was copied: datasets, scripts, simulators, context (or "none" for each)
+- What was copied: datasets, scripts, simulators (or "none" for each)
 - Bash alias added
 - GitHub repo (if created): URL and visibility
 - Remind the user of next steps:

@@ -121,13 +121,6 @@ in [`wiki/core/external/skill_citation_map.md`](./wiki/core/external/skill_citat
 and are the source of every `al_*` skill's `## Further reading` block. The
 audience-routing matrix lives in `skills/_style.md` "Adaptive depth".
 
-**`context/` vs `wiki/core/external/workspace.md`.** The workspace index page (and the
-RTD/HowToLens pages alongside it) are **curated URL lists with summaries**. The
-`context/` folder (see Part 2 §context) is a per-project dump of **local copies** of
-upstream files. When a skill cites a workspace resource and a local copy exists in
-`context/`, cite both — the URL for the canonical version, the `context/` path for the
-offline copy the user can read alongside their code.
-
 ## Wiki layout — three sub-wikis
 
 The wiki is split into three independently maintained sub-wikis:
@@ -202,7 +195,7 @@ When the user asks for something a skill already covers:
 1. Read the skill file end-to-end.
 2. Follow its Orient → Ask → Branch → Combine arc (defined in `skills/_style.md`).
 3. Produce Python where the skill calls for it. Agent-generated exploration scripts go to
-   `./work/` (gitignored). **Never write into `output/`, `sources/`, or `slam_pipeline/`**.
+   `./work/` (gitignored). **Never write into `output/` or `sources/`**.
    Persistent project pipelines belong in `scripts/` and are maintained by the user, not
    replaced wholesale.
 4. If the skill points at a wiki page for context, read that page before writing code.
@@ -364,9 +357,9 @@ New projects live outside this repo (e.g. `<NEW_PROJECT>/`).
 Use `rsync` to copy the template, excluding what isn't needed.
 
 The HPC folder contains one submit script per script type (`submit_imaging`,
-`submit_interferometer`, `submit_group`) in both `batch_gpu/` and `batch_cpu/`.
-Use the rsync exclusions below to copy **only** the submit scripts that match
-the chosen SLaM pipeline(s) — exclude everything else.
+`submit_interferometer`) in both `batch_gpu/` and `batch_cpu/`. Use the rsync
+exclusions below to copy **only** the submit scripts that match the chosen
+SLaM pipeline(s) — exclude everything else.
 
 To run a single dataset as a test, just put one entry in the `datasets=()` array
 in the submit script; no separate template file is needed.
@@ -376,14 +369,8 @@ in the submit script; no separate template file is needed.
 ```bash
 rsync -av \
   --exclude='scripts/interferometer.py' \
-  --exclude='scripts/group.py' \
   --exclude='hpc/batch_gpu/submit_interferometer' \
-  --exclude='hpc/batch_gpu/submit_group' \
-  --exclude='hpc/batch_gpu/submit' \
   --exclude='hpc/batch_cpu/submit_interferometer' \
-  --exclude='hpc/batch_cpu/submit_group' \
-  --exclude='hpc/batch_cpu/submit' \
-  --exclude='hpc/batch_cpu/template' \
   --exclude='dataset/' \
   --exclude='output/' \
   --exclude='simulators/' \
@@ -398,36 +385,8 @@ rsync -av \
 ```bash
 rsync -av \
   --exclude='scripts/imaging.py' \
-  --exclude='scripts/group.py' \
   --exclude='hpc/batch_gpu/submit_imaging' \
-  --exclude='hpc/batch_gpu/submit_group' \
-  --exclude='hpc/batch_gpu/submit' \
   --exclude='hpc/batch_cpu/submit_imaging' \
-  --exclude='hpc/batch_cpu/submit_group' \
-  --exclude='hpc/batch_cpu/submit' \
-  --exclude='hpc/batch_cpu/template' \
-  --exclude='dataset/' \
-  --exclude='output/' \
-  --exclude='simulators/' \
-  --exclude='__pycache__/' \
-  --exclude='*.pyc' \
-  <BASE_PROJECT>/ \
-  <NEW_PROJECT>/
-```
-
-### Group-only project
-
-```bash
-rsync -av \
-  --exclude='scripts/imaging.py' \
-  --exclude='scripts/interferometer.py' \
-  --exclude='hpc/batch_gpu/submit_imaging' \
-  --exclude='hpc/batch_gpu/submit_interferometer' \
-  --exclude='hpc/batch_gpu/submit' \
-  --exclude='hpc/batch_cpu/submit_imaging' \
-  --exclude='hpc/batch_cpu/submit_interferometer' \
-  --exclude='hpc/batch_cpu/submit' \
-  --exclude='hpc/batch_cpu/template' \
   --exclude='dataset/' \
   --exclude='output/' \
   --exclude='simulators/' \
@@ -440,7 +399,6 @@ rsync -av \
 ### Multiple data types
 
 Omit the exclusions for any script types you need; keep all others.
-Always exclude `submit` and `template` (no suffix) — those are legacy files.
 
 ### What to always exclude
 
@@ -517,29 +475,22 @@ hpc/
 ├── batch_gpu/                  # GPU submit scripts + SLURM log dirs
 │   ├── submit_imaging          # SLURM batch script for imaging pipeline
 │   ├── submit_interferometer   # SLURM batch script for interferometer pipeline
-│   ├── submit_group            # SLURM batch script for group pipeline
-│   ├── submit                  # LEGACY — do not use, do not modify
 │   ├── output/                 # SLURM stdout logs (*.out)
 │   └── error/                  # SLURM stderr logs (*.err)
 ├── batch_cpu/                  # CPU submit scripts + SLURM log dirs
 │   ├── submit_imaging
 │   ├── submit_interferometer
-│   ├── submit_group
-│   ├── submit                  # LEGACY — do not use, do not modify
-│   ├── template                # LEGACY — do not use, do not modify
 │   ├── output/
 │   └── error/
 ├── sync                        # Bidirectional sync script (local ↔ HPC)
 ├── sync.conf.example           # Template config for sync
-├── sync_jump                   # Two-hop relay sync (local → jump → build → cosma → local)
-├── sync_jump.conf.example      # Template config for sync_jump
-├── .gitignore                  # Ignores sync.conf, sync_jump.conf, subhalo/
+├── .gitignore                  # Ignores sync.conf, subhalo/
 └── __init__.py
 ```
 
 ### Submit Scripts — GPU vs CPU
 
-Each script type (`imaging`, `interferometer`, `group`) has a submit script in both
+Each script type (`imaging`, `interferometer`) has a submit script in both
 `batch_gpu/` and `batch_cpu/`. The key differences:
 
 | | GPU (`batch_gpu/`) | CPU (`batch_cpu/`) |
@@ -582,7 +533,7 @@ All submit scripts follow the same pattern:
 
 ### HPC Script Checklist (after copying)
 
-For each script type present in the project (`imaging`, `interferometer`, `group`),
+For each script type present in the project (`imaging`, `interferometer`),
 update these fields in both `hpc/batch_gpu/submit_<type>` and
 `hpc/batch_cpu/submit_<type>`:
 
@@ -595,13 +546,6 @@ The GPU submit scripts have `nvidia-smi` in the echo block — leave it in place
 
 To test a single lens, temporarily set `--array=0-0` and put just that lens in
 `datasets=(...)` — no separate template file is needed.
-
-### Legacy Files
-
-`batch_gpu/submit`, `batch_cpu/submit`, and `batch_cpu/template` (no suffix) are
-**legacy files**. Do not use, modify, or copy them to new projects. Always exclude
-them in rsync commands. They use an older format without `--sample` / `--dataset`
-separation and reference `scripts/base.py` instead of the typed scripts.
 
 ### `hpc/sync` — Bidirectional Project Sync
 
@@ -658,7 +602,7 @@ The remote path is `$HPC_HOST:$HPC_BASE/$PROJECT_NAME`.
 
 **What gets synced:**
 
-- **Push (code):** `config/`, `hpc/`, `scripts/`, `slam_pipeline/`, `simulators/` + root files (`activate.sh`, `util.py`, `__init__.py`, `README.rst`, `LICENSE`). Changed files are updated normally.
+- **Push (code):** `config/`, `hpc/`, `scripts/`, `simulators/` + root files (`activate.sh`, `__init__.py`, `README.md`, `LICENSE`). Changed files are updated normally.
 - **Push (data):** `dataset/` — uses `--ignore-existing` so FITS files already on the HPC are never re-transferred.
 - **Pull (logs):** `hpc/batch_gpu/output/`, `hpc/batch_gpu/error/`, `hpc/batch_cpu/output/`, `hpc/batch_cpu/error/`
 - **Pull (results):** `output/` — excludes `search_internal/` (large sampler state not needed locally).
@@ -666,77 +610,23 @@ The remote path is `$HPC_HOST:$HPC_BASE/$PROJECT_NAME`.
 
 **rsync options:** archive mode, compression (skipping FITS/gz/bz2/xz/zst), partial resume, SSH ControlMaster connection reuse.
 
-### `hpc/sync_jump` — Two-Hop Relay Sync
-
-For topologies where results live on a build server only reachable via a jump host,
-and must be staged through an intermediate server before reaching your local machine:
-
-```
-local  ──ssh──►  JUMP_HOST  ──ssh──►  BUILD_HOST
-                                           │
-                                      rsync/tar
-                                           │
-                                           ▼
-local  ◄──rsync──  COSMA_HOST  ◄──rsync──  BUILD_HOST
-```
-
-**Setup:**
-```bash
-cp hpc/sync_jump.conf.example hpc/sync_jump.conf
-# Edit sync_jump.conf with your host names and paths.
-```
-
-**Config fields** (`sync_jump.conf`):
-- `JUMP_HOST` — first hop from local machine (e.g. `euclid_jump`)
-- `BUILD_HOST` — build server, only reachable via JUMP_HOST (e.g. `euclid-ral-build`)
-- `BUILD_OUTPUT_PATH` — path to `output/` on the build server
-- `COSMA_HOST` — intermediate staging server (e.g. `cosma8`)
-- `COSMA_STAGING_DIR` — staging directory on COSMA_HOST
-- `PROJECT_NAME` — used to namespace archives; defaults to local folder name
-
-**Commands:**
-
-| Command | Description |
-|---|---|
-| `hpc/sync_jump push` | Relay output from build server → cosma staging (rsync) |
-| `hpc/sync_jump push --zip` | Same, but via a single tar.gz archive |
-| `hpc/sync_jump pull` | Download cosma staging → local `output/` |
-| `hpc/sync_jump pull --zip` | Download archive then extract locally |
-| `hpc/sync_jump sync [--zip]` | Push then pull (default) |
-| `hpc/sync_jump status` | Dry run — show what would transfer |
-
-**Options:**
-- `--zip` — transfer a single tar.gz instead of many small files (faster when `output/` has thousands of files)
-- `--include-search-internal` — include `search_internal/` dirs (excluded by default)
-
-**Requires:** `ssh-agent` running with your key loaded (`ssh-add -L` should list a key).
-
 ### `.gitignore`
 
 The `hpc/.gitignore` ignores:
 - `subhalo/` — subhalo grid search output (generated at runtime)
 - `sync.conf` — local HPC connection config (contains host-specific paths)
-- `sync_jump.conf` — local jump-host connection config
 
 ---
 
 ## Scripts and info.json
 
-`scripts/imaging.py` reads all dataset-specific values from `info.json` using
-`info.get(key, default)`. Hard-coded values for `mask_radius`,
-`subhalo_grid_dimensions_arcsec`, `pixel_scale`, and `n_batch` should never appear
-in the script body — always source them from info.json.
-
-`scripts/interferometer.py` similarly reads `pixel_scale`, `n_batch`,
-`real_space_shape`, and `mask_radius` from info.json.
-
----
-
-## slam_pipeline/ — Do Not Modify
-
-`slam_pipeline/` is dataset-type agnostic. Never modify these files when setting up
-a new project. Project-specific changes belong in `scripts/imaging.py` or
-`scripts/interferometer.py`.
+`scripts/imaging.py` and `scripts/interferometer.py` are **not shipped by the
+template** — they are populated by the [`init-slam`](./skills/init-slam.md)
+skill, which copies the right SLaM driver from `autolens_workspace` into
+`scripts/`. Once populated, each script reads all dataset-specific values from
+`info.json` using `info.get(key, default)` (e.g. `pixel_scale`, `n_batch`,
+`mask_radius`, `subhalo_grid_dimensions_arcsec`, `real_space_shape`). Never
+hard-code those values in the script body.
 
 ---
 
@@ -770,6 +660,10 @@ A "test run" means running a script with `PYAUTOFIT_TEST_MODE=1`, which makes al
 non-linear searches complete almost instantly with a trivial number of samples. Use
 this to verify the full pipeline executes without errors before submitting to the HPC.
 
+> **Prerequisite:** the typed scripts (`scripts/imaging.py`,
+> `scripts/interferometer.py`) are populated by the
+> [`init-slam`](./skills/init-slam.md) skill — run it first.
+
 ```bash
 # Imaging (GPU mode — default)
 PYAUTOFIT_TEST_MODE=1 python3 scripts/imaging.py --sample=<sample> --dataset=<dataset>
@@ -779,9 +673,6 @@ PYAUTOFIT_TEST_MODE=1 python3 scripts/imaging.py --sample=<sample> --dataset=<da
 
 # Interferometer
 PYAUTOFIT_TEST_MODE=1 python3 scripts/interferometer.py --sample=<sample> --dataset=<dataset>
-
-# Group
-PYAUTOFIT_TEST_MODE=1 python3 scripts/group.py --sample=<sample> --dataset=<dataset>
 ```
 
 `PYAUTOFIT_TEST_MODE=1` (project scripts) and `PYAUTO_TEST_MODE=1` (agent-generated
@@ -791,7 +682,6 @@ running already supports.
 Example datasets for each script type live at:
 - Imaging: `dataset/sample_imaging/example_imaging/`
 - Interferometer: `dataset/sample_interferometer/example_interferometer/`
-- Group: `dataset/sample_group/102021990_NEG650312660474055399/`
 
 ---
 
@@ -812,59 +702,15 @@ Use the `PyAuto` venv unless the project requires a different one.
 
 ---
 
-## Context (`context/`)
-
-The `context/` folder provides AI agents with the scientific and technical background
-needed to work on the project. It contains files copied from the software's workspace
-repository (e.g. `autolens_workspace`) — tutorials, feature examples, guide scripts,
-and reference material that explain how the APIs, modeling conventions, and science
-cases work.
-
-**Purpose:** When an agent needs to understand how a feature works, interpret modeling
-results, or make decisions about pipeline configuration, `context/` is where it looks
-first. The files bridge the gap between the raw API and the science — they explain
-*why* certain choices are made, not just *how* to call the code.
-
-**Relationship to `wiki/core/`:** `wiki/core/` is a curated, source-derived reference
-maintained by `al_update_wiki`. `context/` is a free-form, per-project dump of upstream
-tutorials and feature examples copied in as-is. Both are read-only background; the
-difference is provenance. If a piece of information is missing from `wiki/core/` and
-turns up in `context/`, that's a candidate for promotion via `al_update_wiki`.
-
-**When to read:** Always read relevant files in `context/` before modifying scripts,
-interpreting results, or advising on modeling choices. For example:
-- Before changing pixelization settings → read the pixelization tutorial/example
-- Before interpreting subhalo results → read the subhalo modeling guide
-- Before adjusting mass model configuration → read the relevant feature example
-
-**Typical contents** (varies per project):
-- Feature examples (e.g., pixelization, subhalo modeling, multi-Gaussian expansion)
-- Guide scripts explaining API usage or modeling conventions
-- Reference outputs or worked examples relevant to the science case
-- Tutorials from `autolens_workspace/notebooks/` converted or copied as `.py` scripts
-
-**Population:** The `context/` folder is empty in a fresh rsync of the base template.
-It is populated manually per-project by copying relevant files from the workspace
-repository (e.g. `autolens_workspace/scripts/`, `autolens_workspace/notebooks/`).
-There is no automated population step — the user selects which files are relevant
-to the specific science case and copies them in.
-
-**Source repositories** (common):
-- `autolens_workspace` — PyAutoLens tutorials, feature examples, guides
-- `autofit_workspace` — PyAutoFit non-linear search tutorials, analysis examples
-- `autogalaxy_workspace` — galaxy modeling tutorials (light profiles, mass profiles)
-
----
-
 ## Modeling Scripts (`scripts/`)
 
 The `scripts/` folder holds the project's persistent modeling pipelines (one per
-data type: `imaging.py`, `interferometer.py`, `group.py`). After rsync-ing the
-template into a new project, use the `init-slam` skill
-([`skills/init-slam.md`](./skills/init-slam.md)) to select and copy the appropriate SLaM
-pipeline script(s) from `autolens_workspace` into `scripts/`. The skill presents
-categorized options, copies the chosen script(s), and creates `scripts/slam_claude.md`
-with full SLaM context for future AI sessions.
+data type: `imaging.py`, `interferometer.py`). A fresh template ships only
+`scripts/template.py` — the typed scripts are populated by the `init-slam` skill
+([`skills/init-slam.md`](./skills/init-slam.md)), which selects and copies the
+appropriate SLaM pipeline script(s) from `autolens_workspace` into `scripts/`.
+The skill presents categorized options, copies the chosen script(s), and
+creates `scripts/slam_claude.md` with full SLaM context for future AI sessions.
 
 For quick exploration scripts that don't belong to the pipeline, write to `work/`
 instead (gitignored, agent scratch space).
@@ -877,12 +723,14 @@ instead (gitignored, agent scratch space).
 2. **Run the `init-slam` skill** to select and copy SLaM pipeline script(s) into `scripts/`
 3. Copy or symlink the dataset into `dataset/<sample_name>/`
 4. Verify every lens has an `info.json` with at least `pixel_scale` and `n_batch`
-   (or confirm the defaults in `scripts/imaging.py` are correct for the instrument)
+   (or confirm the defaults in the populated `scripts/imaging.py` are correct
+   for the instrument)
 5. Update `hpc/batch_gpu/submit_<type>` and `hpc/batch_cpu/submit_<type>` for each
    chosen script type: job name, `--array`, `sample=`, `datasets=(...)`
 6. **Run `dos2unix` on all shell scripts and Python files** to ensure Unix line endings
 7. **Add a `Project<Name>()` function to `~/.bashrc`** (see Bash Project Alias above)
-8. Test locally on one lens before submitting the full array:
+8. Test locally on one lens before submitting the full array (requires step 2
+   to have populated the typed script):
    ```bash
    python3 scripts/imaging.py --sample=<sample> --dataset=<one_lens>
    ```

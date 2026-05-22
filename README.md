@@ -67,8 +67,9 @@ the inference machinery, which is what makes hard lens modelling tractable:
   source) into a sequence of tractable ones.
 - **SLaM pipelines** (Source-Light-Mass) — an automated, model-comparison-driven
   chain from initial parametric fit through pixelised source reconstruction
-  and optional subhalo detection. The `slam_pipeline/` here ships the modular
-  stages; the [`scripts/`](./scripts/) drivers run them end-to-end.
+  and optional subhalo detection. The [`/init-slam`](./skills/init-slam.md)
+  skill copies a SLaM driver into [`scripts/`](./scripts/) tailored to your
+  data type.
 - **Database aggregator** — once you've run a sample of fits, query results
   across the sample with PyAutoFit's `Aggregator` API; ideal for surveys.
 - **JAX acceleration** on GPU for the likelihood (`autolens[jax]` extra) —
@@ -111,7 +112,7 @@ way.
 
 ## What you get
 
-- **18 lensing skills** for data prep, model building, fitting, debugging,
+- **17 lensing skills** for data prep, model building, fitting, debugging,
   results, and visualisation — see [`skills/README.md`](./skills/README.md) for
   the index. Each skill is a procedural how-to with the Python recipe inline;
   the output is a runnable `.py` you keep and modify.
@@ -253,12 +254,11 @@ autolens_base_project/
 │   ├── batch_cpu/    # CPU job scripts + SLURM output/error logs
 │   └── batch_gpu/    # GPU job scripts + SLURM output/error logs
 ├── output/           # Analysis results (written automatically by PyAutoFit)
-├── scripts/          # Persistent modeling pipelines — run locally or on the HPC unchanged
-│   ├── imaging.py    # SLaM pipeline for imaging data
-│   ├── interferometer.py  # SLaM pipeline for interferometer data
-│   └── group/        # SLaM pipeline for group-scale lensing
+├── scripts/          # Persistent modeling pipelines — populated by `/init-slam`
+│   ├── template.py   # HPC interface template that the populated scripts copy from
+│   ├── imaging.py    # SLaM pipeline for imaging data (created by `/init-slam`)
+│   └── interferometer.py  # SLaM pipeline for interferometer data (created by `/init-slam`)
 ├── simulators/       # Scripts for generating simulated datasets
-├── slam_pipeline/    # SLaM pipeline stage definitions (dataset-type agnostic)
 │
 ├── skills/           # Agent skills (procedural)
 ├── .claude/skills/   # Symlinks for Claude Code
@@ -270,11 +270,11 @@ autolens_base_project/
 ```
 
 A fresh clone ships only the parts that don't depend on your data: `config/`,
-`hpc/`, `skills/`, `wiki/`, and a stub `scripts/`. `scripts/imaging.py` /
-`interferometer.py` / `group/` are populated by the
+`hpc/`, `skills/`, `wiki/`, and `scripts/template.py`. The typed
+`scripts/imaging.py` / `interferometer.py` are populated by the
 [`start-new-project`](./skills/start-new-project.md) and
-[`init-slam`](./skills/init-slam.md) skills; `slam_pipeline/`,
-`dataset/`, and `output/` arrive when you run them.
+[`init-slam`](./skills/init-slam.md) skills; `dataset/` and `output/` arrive
+when you run them.
 
 `work/` holds the Python scripts and Markdown notes the agent generates
 during sessions — these are **committed** alongside the matching
@@ -381,6 +381,10 @@ For real observational data, create `info.json` manually or with a preprocessing
 
 ## Running Scripts
 
+> **Prerequisite:** `scripts/imaging.py` and `scripts/interferometer.py` are
+> populated by the [`/init-slam`](./skills/init-slam.md) skill — run it once
+> per fork before any of the commands below.
+
 ### Locally
 
 Run from anywhere — paths are resolved relative to the script's location:
@@ -390,7 +394,8 @@ python3 scripts/imaging.py --sample=<sample> --dataset=<dataset>
 python3 scripts/interferometer.py --sample=<sample> --dataset=<dataset>
 ```
 
-The included examples:
+Against the bundled example datasets (once `/init-slam` has populated the
+scripts):
 
 ```bash
 python3 scripts/imaging.py --sample=sample_imaging --dataset=example_imaging
@@ -445,8 +450,9 @@ sbatch submit_interferometer   # interferometer
 |--------|---------|
 | `hpc/batch_cpu/submit_imaging` | CPU array job for imaging datasets |
 | `hpc/batch_cpu/submit_interferometer` | CPU array job for interferometer datasets |
-| `hpc/batch_cpu/template_imaging` | Single-dataset imaging job template |
-| `hpc/batch_cpu/template_interferometer` | Single-dataset interferometer job template |
+
+To run a single dataset, set `--array=0-0` in the submit script and put that
+one entry in the `datasets=()` array.
 
 ```bash
 cd hpc/batch_cpu
@@ -487,7 +493,7 @@ hpc/sync status   # Dry run — see what would transfer without moving anything
 
 | Direction | Folders | Strategy |
 |-----------|---------|----------|
-| push | `config/` `hpc/` `scripts/` `slam_pipeline/` `simulators/` | Normal sync — only changed files |
+| push | `config/` `hpc/` `scripts/` `simulators/` | Normal sync — only changed files |
 | push | `dataset/` | `--ignore-existing` — skips files already on HPC, avoiding re-checksumming large FITS archives |
 | pull | `output/` | `--update --exclude=search_internal` — only downloads files newer than local copies, omits large sampler internals |
 
@@ -520,19 +526,12 @@ Key config files:
 
 ## SLaM Pipeline
 
-`slam_pipeline/` contains the modular pipeline stages:
-
-| Module | Stage |
-|--------|-------|
-| `source_lp.py` | Parametric source (light profile) |
-| `source_pix.py` | Pixelised source (mesh + regularization) |
-| `light_lp.py` | Lens light |
-| `mass_total.py` | Total mass |
-| `subhalo/detection.py` | Dark matter subhalo detection |
-
-To set up a fresh `scripts/` folder against one of these pipelines, invoke the
-[`init-slam`](./skills/init-slam.md) skill — it copies the right SLaM driver
-from `autolens_workspace` and tailors it to your data type.
+To set up a fresh `scripts/` folder against a SLaM pipeline, invoke the
+[`init-slam`](./skills/init-slam.md) skill. It picks the right driver from
+`autolens_workspace` (parametric or pixelised source, MGE lens light, subhalo
+detection, group scale, …), copies it into `scripts/`, and writes a
+`scripts/slam_claude.md` reference so future sessions inherit the SLaM
+context without re-reading the workspace guides.
 
 ---
 
