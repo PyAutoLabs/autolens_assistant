@@ -27,6 +27,15 @@ mass model]] without manual intervention. Phases include:
 Each phase passes its posterior as a prior to the next via PyAutoFit
 search chaining ([[bayesian-inference-lensing]]).
 
+## Canonical citation
+
+**Etherington et al. 2022** — "Automated galaxy-galaxy strong lens
+modelling: no lens left behind" (arXiv:2202.09201, MNRAS 517, 3275).
+The "no lens left behind" demonstration on 59 HST lenses with ~1%
+Einstein-radius precision is the production-validation paper for this
+pipeline. Full read-up in
+[[sources-lens-modeling-methods]].
+
 ## See also
 
 - [[pyautolens]]

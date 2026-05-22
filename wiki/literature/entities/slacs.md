@@ -39,9 +39,17 @@ SLACS lenses are the standard benchmark sample. Most of the
 Etherington / Nightingale PyAutoLens development was tested on SLACS-like
 data. The Shu/Bolton parametric models are the reference comparison.
 
+## Founding citation
+
+**Bolton et al. 2006** — "The Sloan Lens ACS Survey. I." (arXiv:astro-ph/0511453,
+ApJ 638, 703). The paper that defines SLACS' spectroscopic-selection
+methodology and reports the first 19 confirmed lenses. Full read-up in
+[[sources-lens-surveys]].
+
 ## See also
 
 - [[bells-gallery]]
 - [[selection-effects]]
 - [[bulge-halo-decomposition]]
 - [[sources-lens-statistics]]
+- [[sources-lens-surveys]]

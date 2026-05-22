@@ -26,9 +26,17 @@ subsample with sources at z_s ~ 2–3.
 - Used in [[dark-matter-substructure|substructure detection]] work
   (Ritondale 2018) and to access higher-z lensing kinematics.
 
+## Founding citation
+
+**Brownstein et al. 2012** — "The BOSS Emission-Line Lens Survey (BELLS).
+I." (arXiv:1112.3683, ApJ 744, 41). Extends the SLACS methodology to
+BOSS spectra, defining the higher-redshift BELLS sample. Full read-up
+in [[sources-lens-surveys]].
+
 ## See also
 
 - [[slacs]]
 - [[dark-matter-substructure]]
 - [[lensed-source-science]]
 - [[sources-lens-finding]]
+- [[sources-lens-surveys]]

@@ -23,10 +23,75 @@ reconstruction with applications.
 
 ## Koopmans 2005 — gravitational imaging
 
-**File:** `Strong_Lens/Koopmans2005GravImaging.pdf`
-**Concepts:** [[gravitational-imaging]], [[source-reconstruction]]
-**Summary (stub):** Foundational paper introducing the pixelated
-potential-correction formalism for subhalo detection in extended arcs.
+**File:** https://arxiv.org/abs/astro-ph/0501324 (MNRAS 363, 1136)
+**Concepts:** [[gravitational-imaging]], [[source-reconstruction]],
+[[dark-matter-substructure]]
+**Status:** drafted
+
+**Summary (drafted):** Koopmans introduces **gravitational imaging** —
+the foundational method for detecting and quantifying luminous and dark
+mass substructure in galaxy-scale lenses by using highly-magnified
+Einstein rings and arcs as sensitive probes of the lens potential.
+Rather than parametrising the lens-galaxy mass distribution and fitting,
+the method **reconstructs the lens potential non-parametrically on a
+grid** alongside the source-plane intensity, treating any substructure
+in the host lens as a localised perturbation to a smooth underlying
+potential.
+
+The paper's headline result is the demonstration on numerical
+simulations that the algorithm recovers the smooth mass distribution of
+a typical lens galaxy with sensible signal-to-noise and *additionally*
+recovers compact substructure with masses as low as
+M_sub ≈ 10⁻³ M_lens. The key insight is that the arc residuals after
+subtracting the best-fit smooth model encode the substructure signal
+directly — gravitational imaging trades parametric assumptions about
+the substructure for the high information content of the Einstein-ring
+pixels.
+
+This is the **foundational citation for substructure-detection
+methodology** that PyAutoLens' subhalo-scan and pixelised-potential
+modes implement. Vegetti & Koopmans 2009 (below in
+`sources/dark-matter-substructure.md`) extends the method to an adaptive
+source grid + nested sampling for objective evidence-based detection;
+Nightingale 2022 implements the production scan in PyAutoLens. Cite
+Koopmans 2005 when justifying *why* gravitational imaging is the method
+of choice over parametric perturber fits.
+
+## Suyu 2006 — Bayesian regularised source inversion
+
+**File:** https://arxiv.org/abs/astro-ph/0601493 (MNRAS 371, 983)
+**Concepts:** [[source-reconstruction]], [[bayesian-inference-lensing]],
+[[regularization]]
+**Status:** drafted
+
+**Summary (drafted):** Suyu, Marshall, Hobson & Blandford introduce the
+**Bayesian analysis of regularised pixelised source inversions** that
+PyAutoLens uses by default. Building on Warren & Dye (2003)'s linear
+source-inversion method, the paper shows how to use Bayesian model
+comparison to (a) determine the optimal regularisation *strength* for a
+given regularisation form, and (b) objectively choose between
+regularisation *forms* — zeroth-order, gradient, or curvature — based on
+the marginal-likelihood evidence.
+
+The mathematical core is the closed-form Bayesian evidence for a
+Gaussian source prior under a Gaussian likelihood: marginalising over
+the source-pixel intensities analytically yields the `log Z = -½χ² -
+½log|LᵀC⁻¹L + λH| + ½log|λH| - ½N log(2π)` term that
+[[bayesian-inference-lensing]] cites verbatim. This is the "Suyu /
+Koopmans evidence" quoted across the lensing community — it reduces the
+effective sampler dimensionality by analytically integrating out
+hundreds to thousands of source-plane pixels, leaving only the
+mass-model and regularisation hyper-parameters for the non-linear
+search to explore.
+
+The paper demonstrates the method on simulated data with the exact
+lens potential, finding that the optimal regularisation form depends on
+the source's intrinsic morphology (smoother sources prefer
+zeroth-order, structured sources prefer curvature). In PyAutoLens, this
+choice is exposed as a model option and selected per-fit by the same
+evidence-based comparison the paper introduced. **This is the citation
+to give whenever PyAutoLens' pixelised-source likelihood term is
+invoked in a paper.**
 
 ## Ding 2016 — SHARP IX source reconstruction
 

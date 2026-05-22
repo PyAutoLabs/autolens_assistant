@@ -34,9 +34,16 @@ mass-model assumptions, yielding broader uncertainty but consistent with
 both Planck and the distance ladder. The methodology shift was central
 to the post-2020 [[hubble-tension|Hubble-tension]] story.
 
+## Founding citation
+
+**Suyu et al. 2017** — "H0LiCOW I." (arXiv:1607.00017, MNRAS 468, 2590).
+Program-overview paper defining the H0LiCOW methodology and the
+five-lens target set. Full read-up in [[sources-lens-surveys]].
+
 ## See also
 
 - [[time-delay-cosmography]]
 - [[tdcosmo]]
 - [[hubble-tension]]
 - [[sources-time-delay-cosmography]]
+- [[sources-lens-surveys]]

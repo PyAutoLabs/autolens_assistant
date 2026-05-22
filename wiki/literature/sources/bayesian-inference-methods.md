@@ -165,3 +165,20 @@ Stan and BUGS-style probabilistic-programming systems. PyAutoFit exposes
 NUTS via BlackJAX (`af.BlackJAXNUTS`); usable in PyAutoLens whenever the
 likelihood pipeline is JAX-traceable, which is the route to gradient-based
 sampling for the JAX-backed PyAutoLens likelihoods.
+
+## Cabezas 2024 — BlackJAX
+
+**File:** https://arxiv.org/abs/2402.10797
+**Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
+**Status:** stub
+
+**Summary (stub):** Cabezas et al. introduce **BlackJAX**, a Python
+library implementing sampling and variational-inference algorithms on
+top of JAX. Designed for composability — algorithms are decomposed into
+"atoms" (initialise, propose, accept) that users can recombine — and for
+performance via JAX's JIT-compilation onto CPU / GPU / TPU. BlackJAX
+integrates by working directly with an un-normalised log-density
+function, which makes it a natural backend for probabilistic-programming
+languages and for PyAutoFit's JAX-backed search wrapper. PyAutoFit
+exposes BlackJAX's NUTS implementation as `af.BlackJAXNUTS`; cite this
+paper when invoking the gradient-based MCMC path in PyAutoLens fits.

@@ -9,6 +9,40 @@ status: stub
 
 Per-paper stubs of substructure-detection literature. All marked stub.
 
+## Vegetti & Koopmans 2009 — adaptive grids + nested sampling
+
+**File:** https://arxiv.org/abs/0805.0201 (MNRAS 392, 945)
+**Concepts:** [[dark-matter-substructure]], [[gravitational-imaging]],
+[[source-reconstruction]], [[bayesian-inference-lensing]]
+**Status:** drafted
+
+**Summary (drafted):** Vegetti & Koopmans introduce the **adaptive,
+Bayesian, grid-based gravitational-imaging framework** for objectively
+detecting substructure in galaxy-scale lenses. Three core ingredients
+distinguish this paper from Koopmans 2005:
+
+1. The source-plane discretisation is **adaptive** — a Delaunay
+   tessellation built by lens-mapping a regular image-plane grid back
+   to the source plane, so source pixels naturally cluster where the
+   lens model says signal lives.
+2. The regularisation strength on both the source and the potential
+   correction is selected by **Bayesian evidence** (in the Suyu 2006
+   sense), so the user does not tune it manually.
+3. A **nested-sampling** sweep over the non-linear mass-model
+   parameters returns the full evidence Z, allowing **objective
+   model ranking** between smooth-only and smooth + perturber models.
+
+The paper validates the method on a suite of simulated lens systems —
+one smooth-only system, twelve systems with a single NFW perturber at
+varying masses and positions, one system with two NFW perturbers.
+Recovery is demonstrated down to ~10⁷ M_⊙ for perturbers on the
+Einstein ring, ~10⁹ M_⊙ for perturbers off the ring. The framework
+became the production method behind the Vegetti / Nightingale subhalo
+searches in real SLACS / BELLS data (Vegetti 2010, 2012; Ritondale 2018;
+Nightingale 2022) and is the algorithm that PyAutoLens'
+subhalo-scanning workflow generalises. **Cite this paper when invoking
+evidence-based substructure detection.**
+
 ## Vegetti 2018 — sterile-neutrino constraints
 
 **File:** `Substructure/Vegetti2018StellarNeutrinos.pdf`
