@@ -3,7 +3,7 @@
 Curated reference content for the PyAuto\* lensing stack. The core wiki documents
 *what* the API contains; the skills in [`../../skills/`](../../skills/) document
 *how* to use it. The two siblings — [`../literature/`](../literature/) and
-[`../project/`](../project/) — hold external papers and a per-fork journal
+[`../project/`](../project/) — hold external papers and a per-clone journal
 respectively (see [`../README.md`](../README.md) for the overview).
 
 ## Organisation

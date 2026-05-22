@@ -1,17 +1,25 @@
-# AutoLens Template
+# AutoLens Assistant
 
 <p align="center">
   <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" alt="PyAutoLens demo" width="600">
 </p>
 
+> ⚠️ **Prototype.** This is an early, experimental project. The conventional
+> entry points to PyAutoLens — the [readthedocs](https://pyautolens.readthedocs.io/),
+> the [autolens_workspace](https://github.com/Jammy2211/autolens_workspace), and
+> the [HowToLens](https://github.com/PyAutoLabs/HowToLens) lecture series — remain
+> the recommended starting points. The assistant is offered alongside them for
+> users who prefer to drive PyAutoLens by conversation.
+
 When two or more galaxies are aligned perfectly down our line-of-sight, the
 background galaxy appears multiple times. This is strong gravitational lensing,
 and **PyAutoLens** makes it simple to model strong gravitational lenses.
 
-This repository is a forkable PyAutoLens project template for doing real
-strong-lensing science. It bundles an AI-agent workspace that turns your data,
-science goals, and modelling questions into runnable Python workflows and
-explanations that stay in your repo.
+This repository is the **PyAutoLens AI Assistant**: an agent workspace you
+clone and converse with. Describe your data, science goal, or modelling
+question, and the assistant turns it into runnable Python workflows and
+explanations that stay in your repo. The same conventions also let you spin
+off a separate workspace for a specific science case when you want one.
 
 ---
 
@@ -106,8 +114,8 @@ plot residuals, tell me if anything looks structured"*. The wiki has the API,
 the skills are the command-line ergonomics, and the agent stays out of your
 way.
 
-**Contribute back to the template.** If you're a collaborator on
-[`PyAutoLabs/autolens_base_project`](https://github.com/PyAutoLabs/autolens_base_project),
+**Contribute upstream.** If you're a collaborator on
+[`PyAutoLabs/autolens_assistant`](https://github.com/PyAutoLabs/autolens_assistant),
 keep that repository as `origin`, branch from `main`, and open PRs directly
 from that clone:
 
@@ -120,19 +128,19 @@ git checkout -b docs/<topic>
 
 From an agent session you can then say:
 
-- *"Prepare this as a PR on PyAutoLabs/autolens_base_project."*
+- *"Prepare this as a PR on PyAutoLabs/autolens_assistant."*
 
 If you do **not** have push access to the upstream repo, keep a two-remote
 layout instead:
 
 ```bash
 git remote rename origin fork
-git remote add origin https://github.com/PyAutoLabs/autolens_base_project.git
+git remote add origin https://github.com/PyAutoLabs/autolens_assistant.git
 git fetch origin
 ```
 
 In that mode, `fork` is your writable remote and `origin` is the upstream
-template you want to target with PRs. The `contribute-upstream` skill supports
+assistant you want to target with PRs. The `contribute-upstream` skill supports
 both layouts and chooses the correct push target from the detected remotes.
 
 ---
@@ -176,25 +184,26 @@ npm install -g @anthropic-ai/claude-code
 npm install -g @openai/codex
 ```
 
-**2. Clone the project.**
+**2. Clone the assistant.**
 
 If you're working from a personal fork:
 
 ```bash
-git clone https://github.com/<you>/autolens_base_project.git
-cd autolens_base_project
+git clone https://github.com/<you>/autolens_assistant.git
+cd autolens_assistant
 ```
 
 If you're a collaborator working directly against `PyAutoLabs`:
 
 ```bash
-git clone https://github.com/PyAutoLabs/autolens_base_project.git
-cd autolens_base_project
+git clone https://github.com/PyAutoLabs/autolens_assistant.git
+cd autolens_assistant
 ```
 
-…or from an existing agent session, invoke the
-[`start-new-project`](./skills/start-new-project.md) skill to rsync into a
-fresh directory with a clean project journal.
+…or, when you want a separate workspace for a particular science case, ask
+the assistant to invoke the [`start-new-project`](./skills/start-new-project.md)
+skill — it rsyncs the assistant's structure into a fresh directory and resets
+the project journal.
 
 **3. Open a session.**
 
@@ -246,9 +255,9 @@ that's how future sessions stay in context across days and weeks.
      reference. Schema in
      [`wiki/literature/CLAUDE.md`](./wiki/literature/CLAUDE.md); add papers
      via [`al_ingest_paper`](./skills/al_ingest_paper.md).
-   - [`wiki/project/`](./wiki/project/) — per-fork journal of decisions,
-     experiments, and `profile.md` (the user record). Reset on fork by the
-     `start-new-project` rsync.
+   - [`wiki/project/`](./wiki/project/) — per-clone journal of decisions,
+     experiments, and `profile.md` (the user record). Reset by the
+     `start-new-project` rsync when you spin off a science workspace.
 
 Together these three layers are what let the workspace do more than generate
 code snippets: the agent has instructions for how to operate, procedures for
@@ -266,7 +275,7 @@ source, draft a new skill in the workspace style, and link it into the wiki.
 
 `sources.yaml` is the single source of truth for which source repos this
 workspace knows about, recorded by **git URL** rather than local path so the
-fork is portable across machines. Everything else cites those repos by
+clone is portable across machines. Everything else cites those repos by
 *project name + path relative to the repo root*
 (`PyAutoFit:autofit/non_linear/search/nest/nautilus.py`).
 
@@ -275,7 +284,7 @@ fork is portable across machines. Everything else cites those repos by
 ## Project structure
 
 ```
-autolens_base_project/
+autolens_assistant/
 ├── config/           # PyAutoLens configuration (priors, non-linear samplers, visualisation)
 ├── dataset/          # Imaging and interferometer data (see Dataset Layout below)
 ├── hpc/              # HPC batch submission scripts
@@ -292,7 +301,7 @@ autolens_base_project/
 └── wiki/
     ├── core/         # Curated PyAuto* reference
     ├── literature/   # Strong-lensing scientific reference (papers, concepts)
-    └── project/      # Running journal for this fork
+    └── project/      # Running journal for this clone
 ```
 
 A fresh clone ships only the parts that don't depend on your data: `config/`,
@@ -413,7 +422,7 @@ regions that should not contribute to the fit.
 
 > **Prerequisite:** `scripts/imaging.py` and `scripts/interferometer.py` are
 > populated by the [`/init-slam`](./skills/init-slam.md) skill — run it once
-> per fork before any of the commands below.
+> per clone before any of the commands below.
 
 ### Locally
 
@@ -574,8 +583,8 @@ context without re-reading the workspace guides.
 
 ## Simulating Data
 
-Simulation remains a first-class workflow, but the base template no longer
-ships a local `simulators/` tree. Instead:
+Simulation remains a first-class workflow, but the assistant does not ship a
+local `simulators/` tree. Instead:
 
 - **From an agent session**, ask for it: the agent runs
   [`al_simulate_dataset`](./skills/al_simulate_dataset.md), which synthesises
@@ -589,6 +598,6 @@ ships a local `simulators/` tree. Instead:
 
 ## License
 
-This template ships agent instructions and reference material derived from the public
+The assistant ships agent instructions and reference material derived from the public
 PyAuto\* repositories. The underlying libraries are released under their own licenses
 (see each repo).

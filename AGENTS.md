@@ -1,4 +1,4 @@
-# AGENTS.md — Generic agent instructions for the lenskills workspace
+# AGENTS.md — Generic agent instructions for autolens_assistant
 
 This file is the agent-agnostic version of [`CLAUDE.md`](./CLAUDE.md). Codex, GitHub
 Copilot, and any other coding agent should read this; Claude Code should prefer
@@ -6,7 +6,7 @@ Copilot, and any other coding agent should read this; Claude Code should prefer
 
 ## The three-layer model
 
-Lenskills is organised into three layers:
+`autolens_assistant` is organised into three layers:
 
 1. **Instructions** (this file, `CLAUDE.md`, `README.md`) — meta.
 2. **Skills** (`skills/*.md`) — *procedural*. How to do a lensing task. Each skill
@@ -41,7 +41,7 @@ cross-references into `wiki/core/` and `wiki/literature/`.
 ## Maintainer mode
 
 On session start, check for `.maintainer` at the repo root. If present, the
-session is template-maintenance work, not user science:
+session is assistant-maintenance work, not user science:
 
 - Skip the profile.md read/create.
 - Skip newcomer-mode defaults.
