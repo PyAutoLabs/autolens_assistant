@@ -53,7 +53,7 @@ claude        # or `codex`
 - *"I'm new to lensing - can you teach me what a caustic is?"*
 
 The agent will read the workspace instructions, pick the right skill, and
-produce Python in [`work/`](./work/) rather than giving you vague API advice.
+produce Python in [`work/`](./work/).
 After non-trivial work it also offers to add a dated project note so later
 sessions keep their context.
 
@@ -63,8 +63,6 @@ Quickstart docs for Claude Code: <https://docs.claude.com/claude-code/quickstart
 
 - **18 lensing skills** for data prep, model building, fitting, debugging,
   results, and visualisation — see [`skills/README.md`](./skills/README.md).
-- **Grounded code generation** from pinned PyAuto\* source citations in
-  [`sources.yaml`](./sources.yaml), not generic text-only advice.
 - **A project memory** in [`wiki/project/`](./wiki/project/) plus curated
   reference material in [`wiki/core/`](./wiki/core/) and
   [`wiki/literature/`](./wiki/literature/).
