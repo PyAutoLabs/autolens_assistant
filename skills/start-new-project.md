@@ -1,6 +1,6 @@
 ---
 name: start-new-project
-description: Create a new science project from the autolens_base_project template. Use this skill when the user says "start a new project", "create a project", "set up a new project", "new project from template", or wants to initialize a fresh project directory with datasets, scripts, simulators, and context. Walks through project name, description, datasets, modeling scripts, simulators, and context folder step by step.
+description: Create a new science project from the autolens_base_project template. Use this skill when the user says "start a new project", "create a project", "set up a new project", or "new project from template". Walks through project name, description, datasets, and modeling scripts, then scaffolds the project directory and optional GitHub repo.
 user-invocable: true
 ---
 
@@ -19,15 +19,15 @@ Before asking any questions, explain the following to the user:
 >
 > When you create a new project, this template is copied to a fresh directory (under
 > `<NEW_PROJECT>/`). The new project starts mostly empty — you then
-> populate it with your datasets, modeling scripts, simulators, and reference context.
+> populate it with your datasets and modeling scripts.
 >
-> **Modeling scripts, simulators, and context files** are normally adapted from the **workspace
+> **Modeling scripts** are normally adapted from the **workspace
 > repository** of the software you're using. For example, if you're using PyAutoLens, the
-> `autolens_workspace` repository contains template scripts for different modeling pipelines,
-> simulator examples, and tutorials that you can copy and customize for your science case.
+> `autolens_workspace` repository contains template scripts for different modeling pipelines
+> and tutorials that you can copy and customize for your science case.
 > Other workspaces include `autofit_workspace`, `autogalaxy_workspace`, etc.
 >
-> I'll walk you through six steps to set everything up. Most steps are optional — you can
+> I'll walk you through five steps to set everything up. Most steps are optional — you can
 > always add things later.
 
 Then proceed to Step 1.
@@ -107,42 +107,19 @@ If the user points to specific files, copy them to `scripts/` in the project.
 
 If they skip, move on.
 
-## Step 5 — Simulators
-
-Ask the user:
-
-> **Do you want to set up any simulators?**
->
-> The `simulators/` folder contains scripts that generate mock/simulated data for your project.
-> This is useful for testing your pipeline on known inputs before running on real data, or for
-> sensitivity analyses (e.g. simulating subhalos at different masses and positions).
->
-> Simulator templates are normally found in the workspace repository — for example,
-> `autolens_workspace/scripts/simulators/` has examples for imaging, interferometer, and
-> group-scale data.
->
-> You can either:
-> - **Point me to specific simulator scripts** and I'll copy them in
-> - **Describe what you want to simulate** and I'll scan the workspace for relevant examples
-> - **Skip for now** — simulators can be added any time
-
-If the user asks for a workspace scan, search `simulators/` in the workspace and present
-options. Otherwise copy specified files or skip.
-
-## Step 6 — Execute
+## Step 5 — Execute
 
 Once all questions are answered, perform these actions:
 
-### 6a — rsync the template
+### 5a — rsync the template
 
 Copy the base template to the new project directory. Always exclude `dataset/`,
-`output/`, `simulators/`, `__pycache__/`, and `*.pyc`:
+`output/`, `__pycache__/`, and `*.pyc`:
 
 ```bash
 rsync -av \
   --exclude='dataset/' \
   --exclude='output/' \
-  --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
   --exclude='skills/' \
@@ -157,23 +134,18 @@ they drop any parent-fork `profile.md` and any dated `YYYY-MM-DD-<slug>.md` entr
 while keeping `README.md` and `_profile_template.md`. The new project gets a clean
 slate to record its own decisions and user profile.
 
-### 6b — Copy datasets
+### 5b — Copy datasets
 
 If the user provided dataset paths, copy them into
 `<NEW_PROJECT>/dataset/<sample_name>/`. Verify each dataset
 directory has at least `data.fits` and `info.json`.
 
-### 6c — Copy modeling scripts
+### 5c — Copy modeling scripts
 
 If the user provided or selected scripts, copy them into
 `<NEW_PROJECT>/scripts/`.
 
-### 6d — Copy simulator files
-
-If the user provided or selected simulators, copy them into
-`<NEW_PROJECT>/simulators/`.
-
-### 6e — Update CLAUDE.md
+### 5d — Update CLAUDE.md
 
 Open `<NEW_PROJECT>/CLAUDE.md`. Add a project-specific section
 at the very top, before the existing template instructions:
@@ -187,7 +159,7 @@ at the very top, before the existing template instructions:
 
 ```
 
-### 6f — Run dos2unix
+### 5e — Run dos2unix
 
 Convert all shell scripts and Python files to Unix line endings:
 
@@ -197,7 +169,7 @@ find <NEW_PROJECT>/ \
   | xargs dos2unix
 ```
 
-### 6g — Add bash alias
+### 5f — Add bash alias
 
 Append a `Project<Name>()` function to `~/.bashrc`:
 
@@ -210,7 +182,7 @@ Project<ProjectName>() {
 
 Use PascalCase for the function name (e.g. `SlacsSubhalo` for project `slacs_subhalo`).
 
-## Step 7 — GitHub repository
+## Step 6 — GitHub repository
 
 Ask the user:
 
@@ -229,7 +201,7 @@ Ask the user:
 
 If the user wants a repo:
 
-### 7a — Create .gitignore
+### 6a — Create .gitignore
 
 Write a `.gitignore` at the project root with these entries:
 
@@ -238,11 +210,9 @@ Write a `.gitignore` at the project root with these entries:
 dataset/
 output/
 
-# Simulator output (generated data)
-simulators/output/
-
 # HPC local config (host-specific paths, never committed)
 hpc/sync.conf
+hpc/sync_jump.conf
 
 # SLURM logs (pulled from HPC, not version-controlled)
 hpc/batch_gpu/output/
@@ -260,7 +230,7 @@ __pycache__/
 Thumbs.db
 ```
 
-### 7b — Initialize git and create the repo
+### 6b — Initialize git and create the repo
 
 ```bash
 cd <NEW_PROJECT>
@@ -287,7 +257,7 @@ gh repo create <GH_USER>/<PROJECT_NAME> --public --source=. --push
 
 Use `--private` or `--public` based on the user's choice.
 
-### 7c — Confirm
+### 6c — Confirm
 
 Report:
 - Repo URL: `https://github.com/<GH_USER>/<PROJECT_NAME>`
@@ -296,11 +266,11 @@ Report:
 - Remind them: data stays on the HPC. To work from your phone, edit code via GitHub,
   then SSH to the HPC to pull and submit jobs.
 
-## Step 8 — Final summary
+## Step 7 — Final summary
 
 Report a summary:
 - Project path: `<NEW_PROJECT>/`
-- What was copied: datasets, scripts, simulators (or "none" for each)
+- What was copied: datasets, scripts (or "none" for each)
 - Bash alias added
 - GitHub repo (if created): URL and visibility
 - Remind the user of next steps:

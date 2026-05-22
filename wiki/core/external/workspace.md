@@ -22,8 +22,8 @@ Audience: experienced lensing scientists, returning PyAutoLens users.
 
 **URL template:** `https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/<relative-path>`
 
-When the file also exists in this fork's `context/` folder, **cite both** — the
-URL for the upstream canonical version, the `context/` path for the local copy.
+Use these URLs as the canonical workspace citations when a production-style
+example is the right reference for the user.
 
 ## Imaging
 

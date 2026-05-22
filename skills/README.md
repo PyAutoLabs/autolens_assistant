@@ -44,7 +44,7 @@ configured) via symlinks; the canonical files live here.
 
 - [`start-new-project.md`](./start-new-project.md) — interactive setup wizard for forking
   `autolens_base_project` into a fresh science project (name, datasets, scripts,
-  simulators, context).
+  GitHub repo).
 - [`init-slam.md`](./init-slam.md) — populate an empty `scripts/` folder with SLaM
   pipeline script(s) copied from `autolens_workspace` and tailored to the chosen data
   type.

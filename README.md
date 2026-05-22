@@ -184,7 +184,7 @@ session start and already knows the project conventions.
 
 **4. Ask.** Prompts that work cold, on a fresh fork:
 
-- *"What skills do you have?"* — lists the 18 lensing skills + the project
+- *"What skills do you have?"* — lists the 17 lensing skills + the project
   workflow skills.
 - *"Set up the Python environment."* — agent runs
   [`al_setup_environment`](./skills/al_setup_environment.md) (pip mode for
@@ -258,8 +258,6 @@ autolens_base_project/
 │   ├── template.py   # HPC interface template that the populated scripts copy from
 │   ├── imaging.py    # SLaM pipeline for imaging data (created by `/init-slam`)
 │   └── interferometer.py  # SLaM pipeline for interferometer data (created by `/init-slam`)
-├── simulators/       # Scripts for generating simulated datasets
-│
 ├── skills/           # Agent skills (procedural)
 ├── .claude/skills/   # Symlinks for Claude Code
 ├── work/             # Agent working directory — see note below
@@ -372,7 +370,8 @@ For interferometer datasets, two additional optional fields are supported:
 | `real_space_shape` | [int, int] | Height × width of the real-space reconstruction grid (default `[256, 256]`)    |
 | `mask_radius`      | float      | Circular mask radius in arcseconds (default `3.5`)                             |
 
-When generating a simulated dataset with `simulators/base.py`, `info.json` is written
+When generating a simulated dataset with
+[`al_simulate_dataset`](./skills/al_simulate_dataset.md), `info.json` is written
 automatically alongside the data.
 
 For real observational data, create `info.json` manually or with a preprocessing script.
@@ -461,6 +460,11 @@ sbatch submit_imaging          # imaging
 sbatch submit_interferometer   # interferometer
 ```
 
+The generic `hpc/batch_gpu/submit`, `hpc/batch_cpu/submit`, and
+`hpc/batch_cpu/template` files are kept as compatibility/reference examples
+for custom cluster setups. For normal use, prefer the typed
+`submit_imaging` / `submit_interferometer` scripts.
+
 SLURM logs are written to the `output/` and `error/` subdirectories inside each batch folder.
 
 ---
@@ -479,6 +483,8 @@ cp hpc/sync.conf.example hpc/sync.conf
 ```
 
 `sync.conf` is gitignored and stays on your local machine only.
+`hpc/sync_jump.conf.example` is also kept as a reference for relay / jump-host
+topologies that need a second local config.
 
 ### Commands
 
@@ -493,7 +499,7 @@ hpc/sync status   # Dry run — see what would transfer without moving anything
 
 | Direction | Folders | Strategy |
 |-----------|---------|----------|
-| push | `config/` `hpc/` `scripts/` `simulators/` | Normal sync — only changed files |
+| push | `config/` `hpc/` `scripts/` | Normal sync — only changed files |
 | push | `dataset/` | `--ignore-existing` — skips files already on HPC, avoiding re-checksumming large FITS archives |
 | pull | `output/` | `--update --exclude=search_internal` — only downloads files newer than local copies, omits large sampler internals |
 
@@ -537,27 +543,16 @@ context without re-reading the workspace guides.
 
 ## Simulating Data
 
-Two ways to do this:
+Simulation remains a first-class workflow, but the base template no longer
+ships a local `simulators/` tree. Instead:
 
 - **From an agent session**, ask for it: the agent runs
   [`al_simulate_dataset`](./skills/al_simulate_dataset.md), which synthesises
   a `Tracer` to your spec (lens redshift, mass model, source) and writes the
-  FITS files. Useful for sensitivity studies and pipeline validation against
-  known truths.
-- **From the command line** with `simulators/base.py` — edit the dataset
-  properties at the top of the file (`pixel_scale`, `shape_native`,
-  `n_batch`) and run:
-
-  ```bash
-  # Single simulated dataset
-  python3 simulators/base.py
-
-  # Named subdirectory
-  python3 simulators/base.py my_dataset
-  ```
-
-Either path writes `info.json` automatically, so analysis scripts will pick up
-the correct `pixel_scale` and `n_batch` without any further configuration.
+  FITS files plus `info.json`.
+- **From workspace examples**, copy the relevant script from
+  `autolens_workspace` into your project if you want a persistent simulator
+  alongside your modeling pipeline.
 
 ---
 

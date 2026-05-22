@@ -3,7 +3,7 @@
 You are working inside **autolens_base_project**, the forkable template for PyAutoLens
 science projects. The repo is both:
 
-- a **science-project template** (HPC infra, simulators, scripts, configs, dataset
+- a **science-project template** (HPC infra, scripts, configs, dataset
   layout, sync tooling), and
 - an **agent workspace** with a three-layer instructions/skills/wiki stack so you can
   help users do lensing without re-discovering the API from scratch each session.
@@ -373,7 +373,6 @@ rsync -av \
   --exclude='hpc/batch_cpu/submit_interferometer' \
   --exclude='dataset/' \
   --exclude='output/' \
-  --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
   <BASE_PROJECT>/ \
@@ -389,7 +388,6 @@ rsync -av \
   --exclude='hpc/batch_cpu/submit_imaging' \
   --exclude='dataset/' \
   --exclude='output/' \
-  --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
   <BASE_PROJECT>/ \
@@ -404,8 +402,6 @@ Omit the exclusions for any script types you need; keep all others.
 
 - `dataset/` — add real datasets separately (see below)
 - `output/` — never pre-populate; written by PyAutoFit at runtime
-- `simulators/` — only needed when generating simulated data
-
 ---
 
 ## Dataset Handling
@@ -475,16 +471,20 @@ hpc/
 ├── batch_gpu/                  # GPU submit scripts + SLURM log dirs
 │   ├── submit_imaging          # SLURM batch script for imaging pipeline
 │   ├── submit_interferometer   # SLURM batch script for interferometer pipeline
+│   ├── submit                  # Generic compatibility submit script kept as a reference
 │   ├── output/                 # SLURM stdout logs (*.out)
 │   └── error/                  # SLURM stderr logs (*.err)
 ├── batch_cpu/                  # CPU submit scripts + SLURM log dirs
 │   ├── submit_imaging
 │   ├── submit_interferometer
+│   ├── submit                  # Generic compatibility submit script kept as a reference
+│   ├── template                # Single-dataset CPU template kept as a reference
 │   ├── output/
 │   └── error/
 ├── sync                        # Bidirectional sync script (local ↔ HPC)
 ├── sync.conf.example           # Template config for sync
-├── .gitignore                  # Ignores sync.conf, subhalo/
+├── sync_jump.conf.example      # Example config for two-hop / relay topologies
+├── .gitignore                  # Ignores sync.conf, sync_jump.conf, subhalo/
 └── __init__.py
 ```
 
@@ -504,6 +504,11 @@ Each script type (`imaging`, `interferometer`) has a submit script in both
 | Thread pinning | none | Sets `OPENBLAS/MKL/OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK` |
 | Echo block | Includes `nvidia-smi` | No `nvidia-smi` |
 | Python args | `--sample --dataset` | `--sample --dataset --use_cpu --number_of_cores=$THREADS` |
+
+The generic `batch_gpu/submit`, `batch_cpu/submit`, and `batch_cpu/template`
+files are kept as compatibility/reference examples for sites that want a
+minimal or custom launcher. For normal use, prefer the typed
+`submit_imaging` / `submit_interferometer` scripts.
 
 **CPU scripts set these environment variables** to pin threads and force CPU-only JAX:
 
@@ -602,7 +607,7 @@ The remote path is `$HPC_HOST:$HPC_BASE/$PROJECT_NAME`.
 
 **What gets synced:**
 
-- **Push (code):** `config/`, `hpc/`, `scripts/`, `simulators/` + root files (`activate.sh`, `__init__.py`, `README.md`, `LICENSE`). Changed files are updated normally.
+- **Push (code):** `config/`, `hpc/`, `scripts/` + root files (`activate.sh`, `__init__.py`, `README.md`, `LICENSE`). Changed files are updated normally.
 - **Push (data):** `dataset/` — uses `--ignore-existing` so FITS files already on the HPC are never re-transferred.
 - **Pull (logs):** `hpc/batch_gpu/output/`, `hpc/batch_gpu/error/`, `hpc/batch_cpu/output/`, `hpc/batch_cpu/error/`
 - **Pull (results):** `output/` — excludes `search_internal/` (large sampler state not needed locally).
@@ -615,6 +620,7 @@ The remote path is `$HPC_HOST:$HPC_BASE/$PROJECT_NAME`.
 The `hpc/.gitignore` ignores:
 - `subhalo/` — subhalo grid search output (generated at runtime)
 - `sync.conf` — local HPC connection config (contains host-specific paths)
+- `sync_jump.conf` — local relay / jump-host config
 
 ---
 

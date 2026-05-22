@@ -35,11 +35,8 @@ profile exists yet, infer from the immediate conversation cues (see
 
 ## Local copies vs URL pointers
 
-`workspace.md` is a curated **index of URLs**. The `context/` folder (see
-[`CLAUDE.md`](../../../CLAUDE.md) Part 2 §context) is a per-project dump of **actual
-files** copied from upstream workspaces. When a skill cites a workspace resource and
-that resource has also been copied into `context/`, cite both: the URL for the
-canonical version, the `context/` path for the local copy the user can read offline.
+`workspace.md` is a curated **index of URLs** for upstream resources the agent can
+point users to when a workspace example is the right reference.
 
 ## See also
 
