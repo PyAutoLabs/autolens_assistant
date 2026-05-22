@@ -4,19 +4,14 @@
   <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" alt="PyAutoLens demo" width="600">
 </p>
 
-When two or more galaxies are aligned along our line of sight, the background
-galaxy can appear multiple times. This is strong gravitational lensing, and
-**PyAutoLens** makes it straightforward to model strong lenses.
+When two or more galaxies are aligned perfectly down our line-of-sight, the
+background galaxy appears multiple times. This is strong gravitational lensing,
+and **PyAutoLens** makes it simple to model strong gravitational lenses.
 
-This repository is a forkable PyAutoLens project template bundled with an
-AI-agent workspace built to help people do gravitational-lensing science and
-learn it at the same time. Describe your data, science goal, or modelling
-problem, and the agent turns that into runnable Python workflows, explanations,
-and project notes that stay in your repo.
-
-The focus is the science: building end-to-end lens-modelling workflows,
-understanding the physics and statistics behind them, and lowering the barrier
-to entry for newcomers without reducing everything to a black box.
+This repository is a forkable PyAutoLens project template for doing real
+strong-lensing science. It bundles an AI-agent workspace that turns your data,
+science goals, and modelling questions into runnable Python workflows and
+explanations that stay in your repo.
 
 ---
 
