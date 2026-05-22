@@ -1,4 +1,4 @@
-# autolens_base_project
+# AutoLens Template
 
 <p align="center">
   <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" alt="PyAutoLens demo" width="600">
