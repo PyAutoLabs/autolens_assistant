@@ -26,6 +26,7 @@ failed/
 # in `work/plots/<context>/`; FITS / numpy / pickle dumps in `work/output/`.
 work/plots/
 work/output/
+work/audit/
 work/*.png
 work/*.pdf
 work/*.jpg

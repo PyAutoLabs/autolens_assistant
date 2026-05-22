@@ -37,6 +37,9 @@ configured) via symlinks; the canonical files live here.
   (pip or editable-clone), configure sandbox cache directories, verify imports.
 - [`al_update_wiki.md`](./al_update_wiki.md) — refresh `wiki/core/` pages whose pinned
   source commits have moved; surface new public APIs for review.
+- [`al_audit_skill_apis.md`](./al_audit_skill_apis.md) — verify every PyAuto\* symbol
+  cited in `skills/` and `wiki/core/api+stack/` resolves in the installed stack;
+  report stale references with suggested replacements.
 - [`al_ingest_paper.md`](./al_ingest_paper.md) — add a strong-lensing paper (local PDF
   or arxiv URL) to `wiki/literature/`: per-paper stub, concept cross-links, log entry.
 

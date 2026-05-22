@@ -44,6 +44,7 @@ Pick notebook vs script per audience (default `.ipynb` for student-leaning users
 | al_plot_fit_residuals | chapter_1_introduction/tutorial_7_fitting | general/likelihood_function | imaging/results/start_here.py |
 | al_inspect_source_reconstruction | chapter_4_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/pixelization/modeling.py |
 | al_update_wiki | _ | _ | _ |
+| al_audit_skill_apis | _ | _ | _ |
 | al_ingest_paper | _ | _ | _ |
 
 Cells set to `_` mean the resource has no direct match for this skill (omit the
