@@ -5,74 +5,33 @@
 </p>
 
 A forkable template for **PyAutoLens** strong-lensing science projects, bundled
-with an AI-agent workspace so you can do real lens modelling by conversation,
-without needing to know the PyAutoLens codebase up front. Describe your data
-or modelling goal, and the agent turns that into a runnable Python workflow
-for your project.
+with an AI-agent workspace so you can develop and run your own lensing or
+optimisation project largely through natural language. Describe your data,
+science goal, or modelling problem, and the agent turns that into runnable
+Python workflows for your repository.
 
-This repo comes bundled with skills so agents can run the full modelling workflow — data prep, model building, fitting, 
-debugging, and results visualisation — plus wikis so agents know how to write PyAutoLens code, understand the science
-and keep a track of what you've done. 
+This is not a generic coding assistant pointed at a lensing repo. The workspace
+ships with procedural skills, scientific reference material, and project memory
+so the agent can:
 
-## Quickstart
+- build end-to-end PyAutoLens workflows for real science use cases, from data
+  preparation and model design to fitting, debugging, visualisation, and HPC
+  execution;
+- work with domain context, because it already knows the background science,
+  the PyAutoLens / PyAutoFit APIs, and the conventions of this workspace;
+- teach as it goes, adjusting depth for newcomers and explaining the physics,
+  statistics, and implementation choices behind the code it writes.
 
-1. Install an agent client.
+The result is a workspace where you can say things like:
 
-```bash
-# Claude Code
-npm install -g @anthropic-ai/claude-code
+- *"I have HST imaging of <lens name>; help me fit this system."*
+- *"Build an optimisation workflow for a new lens model and explain each stage."*
+- *"I'm new to strong lensing; teach me what a caustic is, then show me where it enters the model."*
 
-# or Codex
-npm install -g @openai/codex
-```
-
-2. Fork this repository on GitHub.
-
-- Open <https://github.com/PyAutoLabs/autolens_base_project>.
-- Click `Fork` in the top-right corner.
-- Create the fork under your own GitHub account.
-
-3. Clone your fork of the template.
-
-```bash
-git clone https://github.com/<you>/autolens_base_project.git
-cd autolens_base_project
-```
-
-4. Start the agent.
-
-```bash
-claude        # or `codex`
-```
-
-5. Ask for the first thing you need.
-
-- *"Set up the Python environment."*
-- *"What skills do you have?"*
-- *"I have HST imaging of <lens name> - walk me through fitting it."*
-- *"I'm new to lensing - can you teach me what a caustic is?"*
-
-The agent will read the workspace instructions, pick the right skill, and
-produce Python in [`work/`](./work/).
-After non-trivial work it also offers to add a dated project note so later
-sessions keep their context.
-
-Quickstart docs for Claude Code: <https://docs.claude.com/claude-code/quickstart>.
-
-## What you get
-
-- **18 lensing skills** for data prep, model building, fitting, debugging,
-  results, and visualisation — see [`skills/README.md`](./skills/README.md).
-- **A project memory** in [`wiki/project/`](./wiki/project/) plus curated
-  reference material in [`wiki/core/`](./wiki/core/) and
-  [`wiki/literature/`](./wiki/literature/).
-- **Local and HPC workflows** that share the same scripts and conventions.
-
-## Learn more below
-
-The rest of this README covers the science background, what PyAutoLens can do,
-who this workspace is for, the repo structure, and the HPC / SLaM workflow in
-more detail.
+The tone is intentionally ambitious but grounded: the agent can accelerate real
+research work and lower the barrier to entry, but the outputs are still normal
+Python scripts and notes that stay in your repo, can be inspected, and can be
+iterated on with you.
 
 ---
 
@@ -200,35 +159,24 @@ both layouts and chooses the correct push target from the detected remotes.
 
 ## What you get
 
-- **17 lensing skills** for data prep, model building, fitting, debugging,
-  results, and visualisation — see [`skills/README.md`](./skills/README.md) for
-  the index. Each skill is a procedural how-to with the Python recipe inline;
-  the output is a runnable `.py` you keep and modify.
-- **Knows how to code.** The agent reads PyAuto\* source through pinned
-  citations (`<Project>:<path>`, resolved via
-  [`sources.yaml`](./sources.yaml)) and produces idiomatic, working code —
-  not API-hallucinated text. The python-first rule is in
-  [`skills/_style.md`](./skills/_style.md).
-- **Grounded in science.** Every claim points at source code or a paper.
-  [`wiki/core/`](./wiki/core/) is the curated PyAuto\* reference (refreshed
-  against pinned source commits); [`wiki/literature/`](./wiki/literature/) is
-  the strong-lensing scientific reference (concepts, entities, papers, with
-  `[[wiki-link]]` cross-refs). Add a paper with
-  [`al_ingest_paper`](./skills/al_ingest_paper.md).
-- **Tracks what you've done.** A per-fork journal at
-  [`wiki/project/`](./wiki/project/) — dated entries cover domain motivation,
-  statistical motivation, and the script produced. The agent offers
-  (default-yes) to add an entry after every non-trivial piece of work. A
-  light-touch [`profile.md`](./wiki/project/_profile_template.md) records your
-  level, instrument, and science goal so future sessions don't make you repeat
-  yourself.
-- **Plots that don't disappear.** Plot-producing skills save through
-  `aplt.Output(...)` into `work/plots/<context>/`. The agent quotes the
-  absolute path and offers *"want me to `open <path>`?"* — see
-  [`CLAUDE.md`](./CLAUDE.md) Part 1 "Conventions".
-- **HPC-ready out of the box.** SLURM submit scripts for GPU and CPU,
-  bidirectional [`hpc/sync`](./hpc/) for code ↔ HPC, and the same Python
-  scripts run locally or on the cluster unchanged.
+- **Natural-language project development.** The agent can take you from a rough
+  science objective to a concrete PyAutoLens workflow, including lensing
+  analysis, optimisation strategy, debugging, result inspection, and iteration.
+- **Grounded scientific assistance.** It reads the workspace skills and wiki,
+  cites pinned PyAuto\* source via [`sources.yaml`](./sources.yaml), and uses
+  curated scientific reference material instead of guessing its way through the
+  problem.
+- **Teach-as-you-go guidance.** If you are new to lensing or to PyAutoLens, the
+  agent can slow down, explain concepts, connect them to the code, and use
+  beginner-friendly references before moving on.
+- **A durable project memory.** [`wiki/project/`](./wiki/project/) keeps dated
+  notes on what you tried and why, while the broader wiki captures reusable
+  scientific and implementation knowledge for future sessions.
+- **Runnable outputs you keep.** The agent writes normal Python scripts in
+  [`work/`](./work/), with plots in `work/plots/` and standard PyAutoLens
+  outputs in `output/`, so the workflow remains inspectable and reproducible.
+- **Local and HPC execution.** The same scripts and conventions work locally or
+  on a cluster, with SLURM helpers and sync tooling included in [`hpc/`](./hpc/).
 
 ---
 
@@ -279,7 +227,7 @@ session start and already knows the project conventions.
 
 **4. Ask.** Prompts that work cold, on a fresh clone:
 
-- *"What skills do you have?"* — lists the 17 lensing skills + the project
+- *"What skills do you have?"* — lists the lensing skills + the project
   workflow skills.
 - *"Set up the Python environment."* — agent runs
   [`al_setup_environment`](./skills/al_setup_environment.md) (pip mode for
@@ -321,6 +269,11 @@ that's how future sessions stay in context across days and weeks.
    - [`wiki/project/`](./wiki/project/) — per-fork journal of decisions,
      experiments, and `profile.md` (the user record). Reset on fork by the
      `start-new-project` rsync.
+
+Together these three layers are what let the workspace do more than generate
+code snippets: the agent has instructions for how to operate, procedures for
+how to carry out lensing tasks, and reference knowledge for why those tasks are
+done that way.
 
 ### Asking the agent for something new
 
