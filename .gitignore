@@ -54,3 +54,6 @@ papers/
 # the session as template maintenance work (no profile capture, no auto-commit,
 # no newcomer-mode defaults). See CLAUDE.md Part 1 "Maintainer mode".
 .maintainer
+
+# Claude Code agent worktrees — ephemeral, machine-local.
+.claude/worktrees/
