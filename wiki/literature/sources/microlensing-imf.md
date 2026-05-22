@@ -2,7 +2,7 @@
 title: Sources — microlensing IMF
 type: sources
 topics: [galaxy-structure]
-status: stub
+status: drafted
 ---
 
 # Sources: microlensing IMF
@@ -11,8 +11,12 @@ status: stub
 
 **File:** `Strong_Lens/Medevilla2019QuasarIMF.pdf`
 **Concepts:** [[microlensing-imf]]
-**Summary (stub):** Quasar microlensing constraints on the stellar IMF
-in lens galaxies. Filename misspelt — Mediavilla.
+**Summary:** Uses microlensing magnifications from 24 lensed quasars to
+infer the stellar mass spectrum of the lens galaxies without assuming a
+fixed IMF shape a priori. The paper finds a relatively heavy low-mass end
+compared with a Milky-Way-like IMF and demonstrates that quasar
+microlensing can constrain the stellar-mass budget of lens galaxies
+directly, complementing lensing-plus-dynamics analyses.
 
 ## See also
 

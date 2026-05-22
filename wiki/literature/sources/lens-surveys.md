@@ -2,23 +2,23 @@
 title: Sources — lens surveys
 type: sources
 topics: [surveys, samples]
-status: stub
+status: drafted
 ---
 
 # Sources: lens surveys
 
 Founding papers for the three lens surveys most often referenced in
-PyAutoLens fits. Each is a stub — one paragraph identifying the
-survey-defining publication, its selection method, and what a fork user
-gets when they load data from it.
+PyAutoLens fits. Each paragraph identifies the survey-defining
+publication, its selection method, and what a fork user gets when they
+load data from it.
 
 ## Bolton 2006 — SLACS-I
 
 **File:** https://arxiv.org/abs/astro-ph/0511453 (ApJ 638, 703)
 **Concepts:** [[slacs]], [[lens-finding]]
-**Status:** stub
+**Status:** drafted
 
-**Summary (stub):** The founding SLACS (Sloan Lens ACS) paper. Defines the
+**Summary:** The founding SLACS (Sloan Lens ACS) paper. Defines the
 spectroscopic selection method — scan SDSS galaxy spectra for nebular
 emission lines at a redshift discrepant from the target's, then confirm
 with HST/ACS snapshot imaging. Reports the first 19 confirmed galaxy-scale
@@ -32,9 +32,9 @@ Nightingale / Etherington PyAutoLens development. When a fork user says
 
 **File:** https://arxiv.org/abs/1112.3683 (ApJ 744, 41)
 **Concepts:** [[bells-gallery]], [[lens-finding]]
-**Status:** stub
+**Status:** drafted
 
-**Summary (stub):** The founding BELLS (BOSS Emission-Line Lens Survey)
+**Summary:** The founding BELLS (BOSS Emission-Line Lens Survey)
 paper. Extends the SLACS spectroscopic-selection methodology to higher
 redshift (z_l ≈ 0.4–0.7) using BOSS spectra instead of SDSS-I/II. Reports
 25 definite + 11 probable lenses from the first six months of BOSS data,
@@ -48,9 +48,9 @@ Ritondale 2018 in `sources/dark-matter-substructure.md`).
 
 **File:** https://arxiv.org/abs/1607.00017 (MNRAS 468, 2590)
 **Concepts:** [[h0licow]], [[time-delay-cosmography]], [[hubble-tension]]
-**Status:** stub
+**Status:** drafted
 
-**Summary (stub):** Program-overview paper for H0LiCOW (H₀ Lenses in
+**Summary:** Program-overview paper for H0LiCOW (H₀ Lenses in
 COSMOGRAIL's Wellspring), a multi-institution collaboration measuring H₀
 from time-delay distances in five quadruply-imaged quasar lens systems
 (B1608+656, RXJ1131-1231, HE0435-1223, WFI2033-4723, HE1104-1805). The
