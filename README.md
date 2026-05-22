@@ -5,13 +5,72 @@
 </p>
 
 A forkable template for **PyAutoLens** strong-lensing science projects, bundled
-with an AI-agent workspace so you can do real lens modelling by **conversation
-alone** — never opening a code file unless you want to. The agent already
-understands the PyAuto\* stack (PyAutoConf, PyAutoArray, PyAutoFit, PyAutoGalaxy,
-PyAutoLens), the **SLaM pipeline**, the configuration system,
-and the HPC submit flow. You describe what you want; it composes skills and
-produces a runnable Python script for *your* data, narrating the physics, the
-statistics, and the code.
+with an AI-agent workspace so you can do real lens modelling by conversation,
+without needing to know the PyAutoLens codebase up front. Describe your data
+or modelling goal, and the agent turns that into a runnable Python workflow
+for your project.
+
+This repo is opinionated in a useful way: it already knows the PyAuto\* stack,
+the SLaM pipeline, the project conventions, and how to keep a per-project
+journal in [`wiki/project/`](./wiki/project/). Claude Code reads
+[`CLAUDE.md`](./CLAUDE.md); Codex, Copilot, and other agents read
+[`AGENTS.md`](./AGENTS.md).
+
+## Quickstart
+
+1. Install an agent client.
+
+```bash
+# Claude Code
+npm install -g @anthropic-ai/claude-code
+
+# or Codex
+npm install -g @openai/codex
+```
+
+2. Clone your fork of the template.
+
+```bash
+git clone https://github.com/<you>/autolens_base_project.git
+cd autolens_base_project
+```
+
+3. Start the agent.
+
+```bash
+claude        # or `codex`
+```
+
+4. Ask for the first thing you need.
+
+- *"Set up the Python environment."*
+- *"What skills do you have?"*
+- *"I have HST imaging of <lens name> - walk me through fitting it."*
+- *"I'm new to lensing - can you teach me what a caustic is?"*
+
+The agent will read the workspace instructions, pick the right skill, and
+produce Python in [`work/`](./work/) rather than giving you vague API advice.
+After non-trivial work it also offers to add a dated project note so later
+sessions keep their context.
+
+Quickstart docs for Claude Code: <https://docs.claude.com/claude-code/quickstart>.
+
+## What you get
+
+- **18 lensing skills** for data prep, model building, fitting, debugging,
+  results, and visualisation — see [`skills/README.md`](./skills/README.md).
+- **Grounded code generation** from pinned PyAuto\* source citations in
+  [`sources.yaml`](./sources.yaml), not generic text-only advice.
+- **A project memory** in [`wiki/project/`](./wiki/project/) plus curated
+  reference material in [`wiki/core/`](./wiki/core/) and
+  [`wiki/literature/`](./wiki/literature/).
+- **Local and HPC workflows** that share the same scripts and conventions.
+
+## Learn more below
+
+The rest of this README covers the science background, what PyAutoLens can do,
+who this workspace is for, the repo structure, and the HPC / SLaM workflow in
+more detail.
 
 ---
 
@@ -80,8 +139,6 @@ For the agent: the skills in [`skills/`](./skills/) cover every step of this
 flow, from data preparation through model building, sampler configuration,
 search chaining, and result inspection.
 
----
-
 ## Who this is for
 
 Pick the row that fits — the agent calibrates depth from cues in your first
@@ -106,99 +163,6 @@ then produces a script for your data.
 plot residuals, tell me if anything looks structured"*. The wiki has the API,
 the skills are the command-line ergonomics, and the agent stays out of your
 way.
-
----
-
-## What you get
-
-- **18 lensing skills** for data prep, model building, fitting, debugging,
-  results, and visualisation — see [`skills/README.md`](./skills/README.md) for
-  the index. Each skill is a procedural how-to with the Python recipe inline;
-  the output is a runnable `.py` you keep and modify.
-- **Knows how to code.** The agent reads PyAuto\* source through pinned
-  citations (`<Project>:<path>`, resolved via
-  [`sources.yaml`](./sources.yaml)) and produces idiomatic, working code —
-  not API-hallucinated text. The python-first rule is in
-  [`skills/_style.md`](./skills/_style.md).
-- **Grounded in science.** Every claim points at source code or a paper.
-  [`wiki/core/`](./wiki/core/) is the curated PyAuto\* reference (refreshed
-  against pinned source commits); [`wiki/literature/`](./wiki/literature/) is
-  the strong-lensing scientific reference (concepts, entities, papers, with
-  `[[wiki-link]]` cross-refs). Add a paper with
-  [`al_ingest_paper`](./skills/al_ingest_paper.md).
-- **Tracks what you've done.** A per-fork journal at
-  [`wiki/project/`](./wiki/project/) — dated entries cover domain motivation,
-  statistical motivation, and the script produced. The agent offers
-  (default-yes) to add an entry after every non-trivial piece of work. A
-  light-touch [`profile.md`](./wiki/project/_profile_template.md) records your
-  level, instrument, and science goal so future sessions don't make you repeat
-  yourself.
-- **Plots that don't disappear.** Plot-producing skills save through
-  `aplt.Output(...)` into `work/plots/<context>/`. The agent quotes the
-  absolute path and offers *"want me to `open <path>`?"* — see
-  [`CLAUDE.md`](./CLAUDE.md) Part 1 "Conventions".
-- **HPC-ready out of the box.** SLURM submit scripts for GPU and CPU,
-  bidirectional [`hpc/sync`](./hpc/) for code ↔ HPC, and the same Python
-  scripts run locally or on the cluster unchanged.
-
----
-
-## Quick start with an agent
-
-You'll need an agent client. Claude Code is the smoothest fit (this repo's
-[`CLAUDE.md`](./CLAUDE.md) is the canonical instruction set); Codex, Copilot,
-and other agents read the mirror at [`AGENTS.md`](./AGENTS.md).
-
-**1. Install the agent.**
-
-```bash
-# Claude Code
-npm install -g @anthropic-ai/claude-code
-
-# or Codex
-npm install -g @openai/codex
-```
-
-Quickstart docs: <https://docs.claude.com/claude-code/quickstart>.
-
-**2. Get the template.** Either fork this repo on GitHub and clone your fork:
-
-```bash
-git clone https://github.com/<you>/autolens_base_project.git
-cd autolens_base_project
-```
-
-…or from an existing agent session, invoke the
-[`start-new-project`](./skills/start-new-project.md) skill to rsync into a
-fresh directory with a clean project journal.
-
-**3. Open a session.**
-
-```bash
-claude        # or `codex`
-```
-
-The agent reads [`CLAUDE.md`](./CLAUDE.md) (or [`AGENTS.md`](./AGENTS.md)) on
-session start and already knows the project conventions.
-
-**4. Ask.** Prompts that work cold, on a fresh fork:
-
-- *"What skills do you have?"* — lists the 18 lensing skills + the project
-  workflow skills.
-- *"Set up the Python environment."* — agent runs
-  [`al_setup_environment`](./skills/al_setup_environment.md) (pip mode for
-  read-only use, or editable-clone of all five source repos for
-  source-level access).
-- *"I have HST imaging of <lens name> — walk me through fitting it."* —
-  agent composes data prep → model build → search → results, narrating
-  physics and statistics as it goes.
-- *"I'm new to lensing — can you teach me what a caustic is?"* — agent
-  enters newcomer mode: leads with the HowToLens notebook, one concept at
-  a time.
-
-**5. Let the journal build.** After non-trivial work the agent offers
-(default-yes) to add a `wiki/project/YYYY-MM-DD-<slug>.md` entry. Say yes —
-that's how future sessions stay in context across days and weeks.
 
 **Contribute back to the template.** If you want your fork to be able to open
 PRs into [`PyAutoLabs/autolens_base_project`](https://github.com/PyAutoLabs/autolens_base_project),
