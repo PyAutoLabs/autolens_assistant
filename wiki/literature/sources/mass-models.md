@@ -36,22 +36,28 @@ specific science target.
 
 **File:** `Strong_Lens/Shajib2021MassSlopeNFW.pdf`
 **Concepts:** [[mass-models]], [[radial-angular-degeneracy]]
-**Summary:** Studies the recovered mass slope under composite
-Sérsic + NFW modelling.
+**Summary:** Uses a SLACS-like sample to show that lensing-only
+constraints on the total mass-density slope are consistent with joint
+lensing+dynamics analyses, and that the dark-matter haloes of massive
+ellipticals are on average compatible with an uncontracted NFW profile.
 
 ## Shajib 2019 — is every strong lens happy
 
 **File:** `Strong_Lens/Shajib2019IsEveryStrongLensHappy.pdf`
 **Concepts:** [[mass-models]]
-**Summary:** Methodology and data-quality paper on robust
-lens modelling across a sample.
+**Summary:** Uniformly models a sample of 13 quadruply imaged quasar
+lenses, showing that different systems fail in different ways under
+overly simple macromodel assumptions and motivating more flexible,
+system-by-system model comparison.
 
 ## Tian — Einstein rings mass discrepancy
 
 **File:** `Strong_Lens/Tian_Einstein_rings_MASss_Discrepancy.pdf`
 **Concepts:** [[einstein-radius]], [[radial-angular-degeneracy]]
-**Summary:** Discrepancy between Einstein-mass estimates and
-other mass tracers — likely population study.
+**Summary:** Examines discrepancies between masses inferred from
+Einstein radii and those inferred from other tracers, using ring-based
+lensing masses as a population-level cross-check on simplified dynamical
+or isothermal estimates.
 
 ## Li 2018 — SIS / Einstein-mass discrepancy
 

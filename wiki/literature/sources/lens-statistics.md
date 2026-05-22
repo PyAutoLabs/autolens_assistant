@@ -11,20 +11,28 @@ status: drafted
 
 **File:** `Strong_Lens/Sonnenfeld2021StatsI.pdf`
 **Concepts:** [[lens-statistics]]
-**Summary:** First in the Sonnenfeld hierarchical lens-statistics
-series.
+**Summary:** Introduces the hierarchical statistical-strong-lensing
+programme, showing with mock samples of order 10^3 lenses that ensemble
+analysis can calibrate stellar masses and constrain the average inner
+dark-matter density profile of massive galaxies.
 
 ## Sonnenfeld 2021 — stats II
 
 **File:** `Strong_Lens/Sonnenfeld2021StatsII.pdf`
 **Concepts:** [[lens-statistics]]
-**Summary:** Stats II companion paper.
+**Summary:** Extends the hierarchical framework to time-delay lenses and
+asks how well a population model can break the H0-versus-structure
+degeneracy, finding that lensing-only data can approach percent-level H0
+only with strong prior knowledge or much larger samples.
 
 ## Sonnenfeld 2022 — stats
 
 **File:** `Strong_Lens/Sonnenfeld2022Stats.pdf`
 **Concepts:** [[lens-statistics]]
-**Summary:** Continued statistics series.
+**Summary:** Develops the complete-sample formalism for statistical
+strong lensing, showing how lenses plus non-detections with a known
+selection function can recover unbiased population distributions in
+Einstein radius and density slope.
 
 ## Li 2023 — lens populations
 

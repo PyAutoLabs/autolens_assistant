@@ -114,9 +114,11 @@ clusters as well as DM subhaloes.
 
 **File:** `Strong_Lens/He2022Preprint.pdf`
 **Concepts:** [[dark-matter-substructure]]
-**Summary:** Substructure-related paper whose exact angle needs the PDF,
-but it sits in the perturber-identification and detection-methods part
-of the literature.
+**Summary:** Tests subhalo-detection pipelines on mock strong lenses
+generated from a cosmological hydrodynamical simulation, showing that
+simple power-law macromodels can create false positives when the true
+lens has non-elliptical structure and that decomposed stellar+dark-matter
+models recover the injected perturber more reliably.
 
 ## Loudas 2022 — millilensing
 

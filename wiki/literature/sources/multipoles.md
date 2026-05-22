@@ -25,8 +25,9 @@ analyses.
 
 **File:** `Strong_Lens/Stacey2024MultipolesALMA.pdf`
 **Concepts:** [[multipoles]], [[interferometric-lensing]]
-**Summary:** ALMA-resolved lenses show clear m=4 signal and require
-for fits and contaminates substructure inference if omitted.
+**Summary:** Shows that ALMA-resolved lenses can exhibit clear m=4
+angular structure, and that including these multipoles materially
+improves the fit and reduces false substructure inferences.
 
 ## Amvrosiadis 2025 — m=1 multipole
 
