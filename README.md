@@ -22,7 +22,7 @@ so the agent can:
 - teach as it goes, adjusting depth for newcomers and explaining the physics,
   statistics, and implementation choices behind the code it writes.
 
-The result is a workspace where you can say things like:
+In practice, that means you can say things like:
 
 - *"I have HST imaging of <lens name>; help me fit this system."*
 - *"Build an optimisation workflow for a new lens model and explain each stage."*
@@ -157,7 +157,7 @@ both layouts and chooses the correct push target from the detected remotes.
 
 ---
 
-## What you get
+## Why this workspace is different
 
 - **Natural-language project development.** The agent can take you from a rough
   science objective to a concrete PyAutoLens workflow, including lensing
@@ -180,7 +180,7 @@ both layouts and chooses the correct push target from the detected remotes.
 
 ---
 
-## Quick start with an agent
+## Quick start
 
 You'll need an agent client. Claude Code is the smoothest fit (this repo's
 [`CLAUDE.md`](./CLAUDE.md) is the canonical instruction set); Codex, Copilot,
