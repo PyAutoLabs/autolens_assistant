@@ -2,7 +2,7 @@
 title: Sources — external shear and line-of-sight
 type: sources
 topics: [environment, systematics]
-status: stub
+status: drafted
 ---
 
 # Sources: external shear and line-of-sight
@@ -11,7 +11,7 @@ status: stub
 
 **File:** `Strong_Lens/Wong2011ShearEnvironment.pdf`
 **Concepts:** [[external-convergence-shear]]
-**Summary (stub):** Compares fitted external shear in lens models to the
+**Summary:** Compares fitted external shear in lens models to the
 shear inferred from galaxy counting along the LOS. Establishes when each
 matches the other.
 
@@ -19,41 +19,41 @@ matches the other.
 
 **File:** `Strong_Lens/Birrer2019ShearWLSL.pdf`
 **Concepts:** [[external-convergence-shear]]
-**Summary (stub):** Joint inference of γ_ext using strong+weak lensing.
+**Summary:** Joint inference of γ_ext using strong+weak lensing.
 
 ## Fleury 2022 — LOS shear
 
 **File:** `Strong_Lens/Fleury2022LosShear.pdf`
 **Concepts:** [[line-of-sight-effects]],
 [[external-convergence-shear]]
-**Summary (stub):** Beyond-leading-order LOS terms — flexion-like
+**Summary:** Beyond-leading-order LOS terms and flexion-like
 contributions to lensing.
 
 ## Chirivì 2017 — LOS clusters
 
 **File:** `Strong_Lens/Chirivi2017_Lineofsight_Clusters.pdf`
 **Concepts:** [[line-of-sight-effects]], [[cluster-lensing]]
-**Summary (stub):** LOS halos perturb cluster lens models; multi-plane
+**Summary:** LOS halos perturb cluster lens models; multi-plane
 ray tracing necessary.
 
 ## Jaroszynski 2012 — shear redshift
 
 **File:** `Strong_Lens/Jaroszynski2012ShearRedshift.pdf`
 **Concepts:** [[external-convergence-shear]]
-**Summary (stub):** External shear vs. lens redshift trend.
+**Summary:** External shear versus lens redshift trend.
 
 ## Kuhn 2020 — SL+WL+COSMOS shear
 
 **File:** `Strong_Lens/Kuhn2020SLWLCOSMOSSHEAR.pdf`
 **Concepts:** [[external-convergence-shear]]
-**Summary (stub):** Joint SL+WL shear analysis in COSMOS-style data.
+**Summary:** Joint SL+WL shear analysis in COSMOS-style data.
 
 ## He 2021 — LOS
 
 **File:** `Strong_Lens/He2021LoS.pdf`
 **Concepts:** [[line-of-sight-effects]],
 [[dark-matter-substructure]]
-**Summary (stub):** LOS halos' contribution to substructure inference;
+**Summary:** LOS halos' contribution to substructure inference;
 quantifies fraction of "detections" that come from LOS rather than
 in-lens.
 

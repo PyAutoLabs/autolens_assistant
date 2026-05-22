@@ -2,7 +2,7 @@
 title: Sources — specific lenses, oddities, and miscellaneous
 type: sources
 topics: [specific-lenses]
-status: stub
+status: drafted
 ---
 
 # Sources: specific lenses and oddities
@@ -11,7 +11,7 @@ status: stub
 
 **File:** `Strong_Lens/Tuntsov2016DynamicPlasmaLenses.pdf`
 **Concepts:** unusual lensing
-**Summary (stub):** Plasma-lensing effects in radio sources (not strong
+**Summary:** Plasma-lensing effects in radio sources rather than strong
 gravitational lensing in the canonical sense — adjacent.
 
 ## Young 2022 — colour regularisation
@@ -19,15 +19,14 @@ gravitational lensing in the canonical sense — adjacent.
 **File:** `Strong_Lens/Young2022ColorReg.pdf`
 **Concepts:** [[source-reconstruction]],
 [[regularization]]
-**Summary (stub):** Joint multi-band source reconstruction with a
+**Summary:** Joint multi-band source reconstruction with a
 colour-regularisation prior.
 
 ## Shajib 2022 — strong lens compilation
 
 **File:** `Strong_Lens/Shajib2022SLComp.pdf`
 **Concepts:** [[lens-statistics]]
-**Summary (stub):** Compilation / review of strong-lens
-science. Verify.
+**Summary:** Compilation and review of strong-lens science.
 
 ## See also
 

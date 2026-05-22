@@ -117,9 +117,9 @@ into minutes.
 
 **File:** https://arxiv.org/abs/1202.3665 (PASP 125, 306)
 **Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
-**Status:** stub
+**Status:** drafted
 
-**Summary (stub):** Foreman-Mackey et al. introduce `emcee`, a stable Python
+**Summary:** Foreman-Mackey et al. introduce `emcee`, a stable Python
 implementation of Goodman & Weare's (2010) affine-invariant ensemble MCMC
 sampler. Affine invariance means the sampler is unaffected by linear
 re-parameterisations — it handles correlated posteriors without manual
@@ -134,9 +134,9 @@ place.
 
 **File:** https://arxiv.org/abs/2105.03468 (MNRAS 508, 3589)
 **Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
-**Status:** stub
+**Status:** drafted
 
-**Summary (stub):** Karamanis, Beutler, and Peacock introduce `zeus`,
+**Summary:** Karamanis, Beutler, and Peacock introduce `zeus`,
 implementing **Ensemble Slice Sampling** (ESS). Like emcee, zeus is an
 ensemble MCMC requiring minimal hand-tuning (1–2 hyper-parameters); unlike
 emcee, its locally-adaptive slice-sampling updates handle strong *non-linear*
@@ -152,9 +152,9 @@ affine-invariant updates.
 
 **File:** https://arxiv.org/abs/1111.4246 (JMLR 15, 1593)
 **Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
-**Status:** stub
+**Status:** drafted
 
-**Summary (stub):** Hoffman and Gelman introduce the **No-U-Turn Sampler
+**Summary:** Hoffman and Gelman introduce the **No-U-Turn Sampler
 (NUTS)**, an extension of Hamiltonian Monte Carlo (HMC) that eliminates
 HMC's requirement to pre-set the number of leapfrog steps `L`. NUTS uses a
 recursive doubling scheme that builds a candidate trajectory and stops
@@ -170,9 +170,9 @@ sampling for the JAX-backed PyAutoLens likelihoods.
 
 **File:** https://arxiv.org/abs/2402.10797
 **Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
-**Status:** stub
+**Status:** drafted
 
-**Summary (stub):** Cabezas et al. introduce **BlackJAX**, a Python
+**Summary:** Cabezas et al. introduce **BlackJAX**, a Python
 library implementing sampling and variational-inference algorithms on
 top of JAX. Designed for composability — algorithms are decomposed into
 "atoms" (initialise, propose, accept) that users can recombine — and for

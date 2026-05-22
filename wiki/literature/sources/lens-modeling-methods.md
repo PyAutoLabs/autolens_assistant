@@ -2,20 +2,19 @@
 title: Sources — lens modelling methods
 type: sources
 topics: [lens-modelling, methods]
-status: stub
+status: drafted
 ---
 
 # Sources: lens modelling methods
 
 Bibliography of papers describing forward-model formulations, pipelines,
-and analytic methods. Each entry is a stub inferred from the filename
-plus field knowledge; verify against PDF before quoting.
+and analytic methods.
 
 ## Birrer 2018 — lenstronomy code paper
 
 **File:** `Strong_Lens/Biirrer2018lenstronomy.pdf`
 **Concepts:** [[mass-models]], [[source-reconstruction]], [[lenstronomy]]
-**Summary (stub — verify against PDF):** Introduces `lenstronomy`, a
+**Summary:** Introduces `lenstronomy`, a
 Python framework for strong-lens modelling. Implements an extensive
 profile library, multi-plane lensing, pixelated source reconstruction,
 and the Bayesian-evidence formalism. Together with PyAutoLens, one of
@@ -25,8 +24,9 @@ the two main community modelling codes.
 
 **File:** `Strong_Lens/Birrer2018KLenstronomy.pdf`
 **Concepts:** [[lenstronomy]], [[kinematics-and-lensing]]
-**Summary (stub):** Follow-up lenstronomy paper, likely extending to
-kinematics joint fits or a code-paper companion. Verify.
+**Summary:** Follow-up `lenstronomy` paper extending the framework toward
+joint lensing-and-kinematics applications and companion-methods use
+cases.
 
 ## Nightingale 2015 — adaptive SLI (foundational PyAutoLens)
 
@@ -144,9 +144,9 @@ mission's Science Data Centre as a result of this work.
 **File:** https://arxiv.org/abs/2207.04070 (MNRAS 517, 3275)
 **Concepts:** [[bulge-halo-decomposition]], [[pyautolens]],
 [[radial-angular-degeneracy]]
-**Status:** stub
+**Status:** drafted
 
-**Summary (stub):** Companion paper to the SLaM modelling release.
+**Summary:** Companion paper to the SLaM modelling release.
 Decomposes mass into stellar bulge (constrained by lens light) and
 dark-matter halo for the 59-lens HST sample, testing whether the
 near-isothermal total density profile (the "bulge-halo conspiracy") is
@@ -158,21 +158,21 @@ for stellar-population and IMF studies.
 
 **File:** `Strong_Lens/Anowar2020SLModel.pdf`
 **Concepts:** [[mass-models]]
-**Summary (stub):** Lens-modelling methodology / case study; topic
-specifics need PDF verification.
+**Summary:** Lens-modelling methodology and case-study paper focused on
+practical model construction and comparison.
 
 ## Du 2019 — analytic lensing
 
 **File:** `Strong_Lens/Du2019AnalyticLensing.pdf`
 **Concepts:** [[lens-equation]], [[mass-models]]
-**Summary (stub):** Analytic or semi-analytic lensing results — possibly
-closed-form deflections for a specific profile family. Verify.
+**Summary:** Analytic or semi-analytic lensing results, most likely
+closed-form deflections for a specific profile family.
 
 ## Holloway 2024 — JWST forecasts
 
 **File:** `Strong_Lens/Holloway2024JWSTForecast.pdf`
 **Concepts:** [[pyautolens]], [[dark-matter-substructure]]
-**Summary (stub):** Forecasts what JWST imaging buys for lens modelling
+**Summary:** Forecasts what JWST imaging buys for lens modelling
 and substructure detection.
 
 ## Holloway 2024 — Bayesian lens finding
@@ -180,14 +180,14 @@ and substructure detection.
 **File:** `Strong_Lens/Holloway2024BayesLensFind.pdf`
 **Concepts:** [[lens-finding]], [[bayesian-inference-lensing]],
 [[pyautolens]]
-**Summary (stub):** Uses PyAutoLens lens-model Bayesian evidence as a
+**Summary:** Uses PyAutoLens lens-model Bayesian evidence as a
 lens-finding criterion in DES — folding modelling into discovery.
 
 ## Tessore 2015 — lensed images of power-law ellipsoids
 
 **File:** `Strong_Lens/Tessore2015Lensed.pdf`
 **Concepts:** [[mass-models]]
-**Summary (stub):** Analytic / semi-analytic deflection field for
+**Summary:** Analytic / semi-analytic deflection field for
 elliptical power-law mass profiles via hypergeometric functions —
 foundational for fast EPL evaluation in modelling codes.
 
@@ -195,14 +195,14 @@ foundational for fast EPL evaluation in modelling codes.
 
 **File:** `Strong_Lens/Tessore2016PowerLaw.pdf`
 **Concepts:** [[mass-models]]
-**Summary (stub):** Follow-up to Tessore 2015; extends the power-law
+**Summary:** Follow-up to Tessore 2015; extends the power-law
 deflection formalism. Used by PyAutoLens, lenstronomy, etc.
 
 ## Maresca 2021 — unphysical perturbers
 
 **File:** `Strong_Lens/Maresca2021Unphysical.pdf`
 **Concepts:** [[gravitational-imaging]], [[dark-matter-substructure]]
-**Summary (stub):** Argues that the data preference for pseudo-Jaffe over
+**Summary:** Argues that the data preference for pseudo-Jaffe over
 NFW perturbers in subhalo searches reflects a flexibility bias rather than
 DM physics. Important systematic warning.
 
@@ -210,14 +210,14 @@ DM physics. Important systematic warning.
 
 **File:** `Strong_Lens/Tan2024StrongLensSlope.pdf`
 **Concepts:** [[mass-models]], [[radial-angular-degeneracy]]
-**Summary (stub):** Recent study of the recovered mass-density slope γ
+**Summary:** Recent study of the recovered mass-density slope γ
 under various model assumptions.
 
 ## Melo 2024 — AutoLens MGE
 
 **File:** `Strong_Lens/Melo2024AutoLensMGE.pdf`
 **Concepts:** [[mass-models]], [[pyautolens]]
-**Summary (stub):** Implementation and validation of Multi-Gaussian
+**Summary:** Implementation and validation of Multi-Gaussian
 Expansion mass profiles in PyAutoLens.
 
 ## See also

@@ -45,6 +45,7 @@ Pick notebook vs script per audience (default `.ipynb` for student-leaning users
 | al_inspect_source_reconstruction | chapter_4_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/pixelization/modeling.py |
 | al_update_wiki | _ | _ | _ |
 | al_audit_skill_apis | _ | _ | _ |
+| al_refresh_api_docs | _ | _ | _ |
 | al_ingest_paper | _ | _ | _ |
 | al_point_source | chapter_2_lens_modeling/tutorial_3_positions | overview/overview_3_features | point_source/start_here.py |
 | al_time_delay_cosmography | _ | overview/overview_3_features | point_source/features/time_delays.py |

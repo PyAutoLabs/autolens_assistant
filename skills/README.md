@@ -40,6 +40,9 @@ configured) via symlinks; the canonical files live here.
 - [`al_audit_skill_apis.md`](./al_audit_skill_apis.md) — verify every PyAuto\* symbol
   cited in `skills/` and `wiki/core/api+stack/` resolves in the installed stack;
   report stale references with suggested replacements.
+- [`al_refresh_api_docs.md`](./al_refresh_api_docs.md) — orchestrate a full maintenance
+  sweep across skill recipes, wiki API pages, and pinned-source drift after a PyAuto\*
+  upgrade or source refresh.
 - [`al_ingest_paper.md`](./al_ingest_paper.md) — add a strong-lensing paper (local PDF
   or arxiv URL) to `wiki/literature/`: per-paper stub, concept cross-links, log entry.
 

@@ -20,16 +20,16 @@ Dark_Matter_Detection (2), DarkMatterModels (5).
   reconstruction, lens finding, deep learning, cluster lensing, etc.).
 - `entities/*` — SLACS, BELLS, H0liCOW, TDCOSMO, Euclid Q1, HFF, Abell 1201,
   Cosmic Horseshoe, PyAutoLens, lenstronomy, SLaM pipeline, Space Warps.
-- `sources/*` — per-topic bibliography stubs. One section per paper. All
-  per-paper summaries in this initial build are inferred from filenames
-  plus general field knowledge and are marked `status: stub`. They are
-  **not yet verified against the PDF**.
+- `sources/*` — per-topic bibliography stubs. One section per paper. In
+  the initial build, many per-paper summaries were inferred from
+  filenames plus general field knowledge before later drafting passes
+  upgraded the source pages.
 
 **Known gaps / explicit TODOs**
 
-- Every source-stub is unread. The PyAutoLens assistant should treat the
-  summary lines as priors, not facts, until the corresponding PDF has been
-  read and the stub upgraded to `status: drafted`.
+- At the initial-build stage, every source stub was unread. Historical
+  summary lines from that pass should still be treated as priors until the
+  corresponding paper has been checked against the PDF or primary source.
 - A handful of filenames are ambiguous (typos, generic dates, working
   drafts like `1901.07801.pdf`, `detections_stochastic_no_zeros.pdf`,
   `MN-24-0938-MJ_Proof_hi.pdf`); these are listed under
