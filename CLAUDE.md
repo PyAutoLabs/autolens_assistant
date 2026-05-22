@@ -1,16 +1,15 @@
-# CLAUDE.md — Agent instructions for autolens_base_project
+# CLAUDE.md — Agent instructions for autolens_assistant
 
-You are working inside **autolens_base_project**, the forkable template for PyAutoLens
-science projects. The repo is both:
-
-- a **science-project template** (HPC infra, scripts, configs, dataset
-  layout, sync tooling), and
-- an **agent workspace** with a three-layer instructions/skills/wiki stack so you can
-  help users do lensing without re-discovering the API from scratch each session.
+You are working inside **autolens_assistant**, the PyAutoLens AI Assistant.
+The user clones this repo once and drives lens modelling through natural-language
+conversation with you. The repo is organised as an **agent workspace** with a
+three-layer instructions/skills/wiki stack, plus the underlying science-project
+machinery (HPC infra, scripts, configs, dataset layout, sync tooling) that the
+assistant uses to run real lens modelling on the user's behalf.
 
 Read this file end-to-end before doing anything. The first half describes how you, the
 agent, operate; the second half describes the science-project conventions you must
-respect when modifying the project itself.
+respect when running lens modelling for the user.
 
 ---
 
@@ -69,11 +68,11 @@ them, and pick up cues as you go.
 ## Maintainer mode
 
 The First-interaction protocol above assumes the user is a **lensing scientist**
-working on their fork of this template. When the user is instead a **maintainer
-of the template itself** (editing CLAUDE.md, evolving skills, refactoring the wiki
-schema), the protocol gets in the way: profile capture is irrelevant, newcomer-mode
-defaults waste tokens, and auto-commits (see "Commit cadence" below) collide with
-the maintainer's own commit cadence.
+using the assistant. When the user is instead a **maintainer of the assistant
+itself** (editing CLAUDE.md, evolving skills, refactoring the wiki schema), the
+protocol gets in the way: profile capture is irrelevant, newcomer-mode defaults
+waste tokens, and auto-commits (see "Commit cadence" below) collide with the
+maintainer's own commit cadence.
 
 **Sentinel file.** On session start, check whether `.maintainer` exists at the
 repo root. If it does, the agent is in maintainer mode for this session.
@@ -88,15 +87,15 @@ forks, never enters CI.
 
 **What changes in maintainer mode:**
 
-- **Skip the profile.md read / create.** A maintainer isn't a lensing user of this
-  fork; the file is irrelevant.
+- **Skip the profile.md read / create.** A maintainer isn't a lensing user; the
+  file is irrelevant.
 - **Skip newcomer-mode defaults.** The maintainer is presumed fluent in PyAutoLens
-  and the template's design. Resource routing in `_style.md` still applies if the
+  and the assistant's design. Resource routing in `_style.md` still applies if the
   maintainer asks a learn-this question, but it is not the default lens.
 - **Skip auto-commit** (per "Commit cadence" below). The maintainer drives commits.
 - **Skill activations still work**, but `wiki/project/YYYY-MM-DD-*.md` entries
-  are not offered — `wiki/project/` is for the user's science, not for template
-  work.
+  are not offered — `wiki/project/` is for the user's science, not for assistant
+  maintenance.
 
 **What does not change.** The bulk-edit safety rule, the never-rewrite-history
 rule, source-of-truth resolution, and every other agent-safety convention apply
@@ -134,7 +133,7 @@ The wiki is split into three independently maintained sub-wikis:
   [`wiki/literature/CLAUDE.md`](./wiki/literature/CLAUDE.md), uses `[[wiki-link]]`
   cross-references, and is compiled from PDFs typically kept outside this repo. Extend it
   when a new paper is read; follow the schema in its CLAUDE.md.
-- **`wiki/project/`** — a running journal of what *this fork* has done: decisions,
+- **`wiki/project/`** — a running journal of what *this clone* has done: decisions,
   experiments, results, blockers. Two pieces live here:
   - `profile.md` — one living record of who the user is and what they're doing
     (created on demand from `_profile_template.md`; see "First-interaction
@@ -172,7 +171,7 @@ Any time you cite source code, you must:
   repo's git URL (from `sources.yaml`) into a temporary working directory under
   `./sources/<project>/` (this path is gitignored) and read from there.
 
-This rule is the reason the workspace is portable. Anyone who forks this template onto a
+This rule is the reason the workspace is portable. Anyone who clones this assistant onto a
 new machine can resolve every reference without having seen your home directory.
 
 ## Skill introspection — how to answer "what can you do?"
@@ -211,7 +210,7 @@ If the user wants a capability and no existing skill fits, follow the protocol i
    accessible (locally or via `pip` install).
 4. **Read inside the cloned repos** to derive the API. Never guess.
 5. Draft the new skill at `skills/<name>.md`. Lensing-API skills get the `al_` prefix;
-   project-workflow skills (template manipulation, repo-level operations) get a plain
+   project-workflow skills (assistant maintenance, repo-level operations) get a plain
    kebab-case name like `init-slam.md` or `start-new-project.md`. Cite source code as
    `<Project>:<path>`.
 6. If the new skill needs wiki content that doesn't exist, draft a `wiki/core/` page in the
@@ -338,23 +337,28 @@ If the working tree needs a clean state, the **only** correct sequence is:
     git reset --hard origin/main
     git clean -fd
 
-This applies to humans and every agent equally. `autolens_base_project` has an `origin`
-on GitHub (`PyAutoLabs/autolens_base_project`) — these rules apply to the `master` branch
+This applies to humans and every agent equally. `autolens_assistant` has an `origin`
+on GitHub (`PyAutoLabs/autolens_assistant`) — these rules apply to the `main` branch
 of this repo as much as to any of the PyAuto\* source repos.
 
 ---
 
-# Part 2 — Science-project conventions (carried forward from the base template)
+# Part 2 — Science-project conventions
 
-This is the **base template** for PyAutoLens science projects. When asked to create a
-new project from this template, follow the conventions below.
+These conventions describe how the assistant manages real lens-modelling work
+on the user's behalf: dataset layout, HPC submission, sync tooling, modelling
+scripts. They apply whether the user is working directly inside this repo or
+asking the assistant to spin off a separate science workspace (see "Spinning
+up a New Science Workspace" below).
 
 ---
 
-## Creating a New Project
+## Spinning up a New Science Workspace
 
-New projects live outside this repo (e.g. `<NEW_PROJECT>/`).
-Use `rsync` to copy the template, excluding what isn't needed.
+Sometimes the user wants a separate workspace for a specific science case (a
+survey, a paper, a sample) rather than running everything inside the assistant
+repo itself. The new workspace lives outside this repo (e.g. `<NEW_PROJECT>/`).
+Use `rsync` to copy the assistant's structure, excluding what isn't needed.
 
 The HPC folder contains one submit script per script type (`submit_imaging`,
 `submit_interferometer`) in both `batch_gpu/` and `batch_cpu/`. Use the rsync
@@ -375,7 +379,7 @@ rsync -av \
   --exclude='output/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
-  <BASE_PROJECT>/ \
+  <ASSISTANT>/ \
   <NEW_PROJECT>/
 ```
 
@@ -390,7 +394,7 @@ rsync -av \
   --exclude='output/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
-  <BASE_PROJECT>/ \
+  <ASSISTANT>/ \
   <NEW_PROJECT>/
 ```
 
@@ -626,8 +630,8 @@ The `hpc/.gitignore` ignores:
 
 ## Scripts and info.json
 
-`scripts/imaging.py` and `scripts/interferometer.py` are **not shipped by the
-template** — they are populated by the [`init-slam`](./skills/init-slam.md)
+`scripts/imaging.py` and `scripts/interferometer.py` are **not shipped by
+default** — they are populated by the [`init-slam`](./skills/init-slam.md)
 skill, which copies the right SLaM driver from `autolens_workspace` into
 `scripts/`. Once populated, each script reads all dataset-specific values from
 `info.json` using `info.get(key, default)` (e.g. `pixel_scale`, `n_batch`,
@@ -711,7 +715,7 @@ Use the `PyAuto` venv unless the project requires a different one.
 ## Modeling Scripts (`scripts/`)
 
 The `scripts/` folder holds the project's persistent modeling pipelines (one per
-data type: `imaging.py`, `interferometer.py`). A fresh template ships only
+data type: `imaging.py`, `interferometer.py`). A fresh clone ships only
 `scripts/template.py` — the typed scripts are populated by the `init-slam` skill
 ([`skills/init-slam.md`](./skills/init-slam.md)), which selects and copies the
 appropriate SLaM pipeline script(s) from `autolens_workspace` into `scripts/`.
@@ -723,9 +727,9 @@ instead (gitignored, agent scratch space).
 
 ---
 
-## Typical New-Project Workflow
+## Typical New-Workspace Workflow
 
-1. `rsync` the template (with appropriate exclusions)
+1. `rsync` from the assistant (with appropriate exclusions)
 2. **Run the `init-slam` skill** to select and copy SLaM pipeline script(s) into `scripts/`
 3. Copy or symlink the dataset into `dataset/<sample_name>/`
 4. Verify every lens has an `info.json` with at least `pixel_scale` and `n_batch`

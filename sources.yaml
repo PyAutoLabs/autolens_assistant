@@ -39,10 +39,10 @@ projects:
     role: tutorial-scripts # existing example scripts (read-only reference)
     git: https://github.com/Jammy2211/autolens_workspace
 
-  - name: autolens_base_project
+  - name: autolens_assistant
     import: null
-    role: project-template # this repo — forkable PyAutoLens science-project template
-    git: https://github.com/PyAutoLabs/autolens_base_project
+    role: assistant        # this repo — PyAutoLens AI Assistant
+    git: https://github.com/PyAutoLabs/autolens_assistant
 
 # Dependency chain (top-to-bottom). Skills target the top; lower layers
 # surface in the wiki when the user needs to understand them.

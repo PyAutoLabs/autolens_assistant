@@ -99,7 +99,7 @@ defaults, and user-level config wins over both.
 
 For workspace-level overrides, drop YAMLs into the project's own `config/`
 directory at the repo root and `export WORKSPACE_CONFIG_PATH=$(pwd)/config`. The
-`autolens_base_project` template ships a `config/` already populated with project
+`autolens_assistant` repo ships a `config/` already populated with project
 defaults — extend or override entries there rather than editing the library YAMLs.
 
 ## Common tweaks

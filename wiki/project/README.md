@@ -1,9 +1,9 @@
 # wiki/project/
 
-A running journal for *this fork* of `autolens_base_project`. Two things live here:
+A running journal for *this clone* of `autolens_assistant`. Two things live here:
 
 - [`profile.md`](./profile.md) — **one** living file describing who's working on this
-  fork and what they're doing. Built up incrementally as the agent picks up cues from
+  clone and what they're doing. Built up incrementally as the agent picks up cues from
   conversation. Light-touch: the agent only writes when it learns something durable
   (level, instrument, science goal). The template is [`_profile_template.md`](./_profile_template.md).
 - **Dated entries** — `YYYY-MM-DD-<slug>.md`. Every meaningful session — a modeling
@@ -38,7 +38,7 @@ something durable. If `last_touched` is older than ~10 sessions, ask the user wh
 anything has changed before relying on it.
 
 **Maintainer mode skips profile capture.** When `.maintainer` exists at the repo
-root, the agent is editing the template itself, not doing science — see
+root, the agent is editing the assistant itself, not doing science — see
 `CLAUDE.md` Part 1 "Maintainer mode".
 
 **Dated entries.** When you finish a piece of work that the user will want to recall

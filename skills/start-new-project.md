@@ -1,25 +1,29 @@
 ---
 name: start-new-project
-description: Create a new science project from the autolens_base_project template. Use this skill when the user says "start a new project", "create a project", "set up a new project", or "new project from template". Walks through project name, description, datasets, and modeling scripts, then scaffolds the project directory and optional GitHub repo.
+description: Spin up a new PyAutoLens science workspace from the assistant. Use this skill when the user says "start a new project", "create a project", "set up a new project", or "new science workspace". Walks through project name, description, datasets, and modeling scripts, then scaffolds the project directory and optional GitHub repo.
 user-invocable: true
 ---
 
 # Start New Project
 
-Interactive setup for a new science project from the `autolens_base_project` template. Guides the user
-through naming, describing, and populating a project step by step.
+Interactive setup for a new PyAutoLens science workspace, scaffolded from the
+`autolens_assistant` repo. Guides the user through naming, describing, and
+populating a project step by step.
 
-## Intro — Explain the base project
+## Intro — Explain the spin-off
 
 Before asking any questions, explain the following to the user:
 
-> This repository (`autolens_base_project`) is a **template** for scientific modeling projects. It contains
-> the standard directory structure, HPC submission scripts, sync tools, and pipeline scaffolding
-> that every project needs.
+> This repository (`autolens_assistant`) is the **PyAutoLens AI Assistant** —
+> the directory structure, HPC submission scripts, sync tools, skills, wiki,
+> and pipeline scaffolding that lets you do lens modelling by conversation.
 >
-> When you create a new project, this template is copied to a fresh directory (under
-> `<NEW_PROJECT>/`). The new project starts mostly empty — you then
-> populate it with your datasets and modeling scripts.
+> When you want a separate workspace dedicated to a specific science case (a
+> survey, a paper, a sample), this skill copies the assistant's structure into
+> a fresh directory (`<NEW_PROJECT>/`) and **resets the project journal** so
+> the new workspace gets a clean slate. You then populate it with your
+> datasets and modeling scripts; the assistant's skills and wiki come along
+> for the ride.
 >
 > **Modeling scripts** are normally adapted from the **workspace
 > repository** of the software you're using. For example, if you're using PyAutoLens, the
@@ -111,10 +115,10 @@ If they skip, move on.
 
 Once all questions are answered, perform these actions:
 
-### 5a — rsync the template
+### 5a — rsync from the assistant
 
-Copy the base template to the new project directory. Always exclude `dataset/`,
-`output/`, `__pycache__/`, and `*.pyc`:
+Copy the assistant's structure into the new project directory. Always exclude
+`dataset/`, `output/`, `__pycache__/`, and `*.pyc`:
 
 ```bash
 rsync -av \
@@ -125,12 +129,12 @@ rsync -av \
   --exclude='skills/' \
   --exclude='wiki/project/profile.md' \
   --exclude='wiki/project/[0-9]*-*.md' \
-  <BASE_PROJECT>/ \
+  <ASSISTANT>/ \
   <NEW_PROJECT>/
 ```
 
-The two `wiki/project/` exclusions **reset the project journal in the new fork**:
-they drop any parent-fork `profile.md` and any dated `YYYY-MM-DD-<slug>.md` entries,
+The two `wiki/project/` exclusions **reset the project journal in the new workspace**:
+they drop any prior `profile.md` and any dated `YYYY-MM-DD-<slug>.md` entries,
 while keeping `README.md` and `_profile_template.md`. The new project gets a clean
 slate to record its own decisions and user profile.
 
@@ -148,7 +152,7 @@ If the user provided or selected scripts, copy them into
 ### 5d — Update CLAUDE.md
 
 Open `<NEW_PROJECT>/CLAUDE.md`. Add a project-specific section
-at the very top, before the existing template instructions:
+at the very top, before the existing assistant instructions:
 
 ```markdown
 # <PROJECT_NAME>
@@ -236,7 +240,7 @@ Thumbs.db
 cd <NEW_PROJECT>
 git init
 git add -A
-git commit -m "Initial project setup from autolens_base_project template"
+git commit -m "Initial science workspace from autolens_assistant"
 ```
 
 Then determine the user's GitHub username:
