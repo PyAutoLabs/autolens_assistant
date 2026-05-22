@@ -125,3 +125,16 @@ all 4+ phases will short-circuit, but you'll catch import / config errors fast.
   SOURCE PIX phase produces the pixelised source you'd want to inspect.
 - [`al_debug_fit_failure`](./al_debug_fit_failure.md) — SLaM failures usually point to
   one specific phase; the debug skill walks the post-mortem.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Standard Lens Analysis Method
+  (SLaM)](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_search_chaining/tutorial_6_slam.ipynb):
+  what SLaM is and why it works — best-practice multi-stage chaining encoded as a
+  ready-made pipeline.
+- **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
+  SLaM sits alongside pixelization, MGE, subhalo detection and multi-wavelength on
+  the feature tour.
+- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/slam_start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/modeling/slam_start_here.py):
+  the canonical SLaM invocation script — all other SLaM scripts in the workspace are
+  documented relative to it.

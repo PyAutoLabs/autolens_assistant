@@ -84,3 +84,15 @@ what each residual pattern usually means physically. Common cases:
 - [`al_inspect_source_reconstruction`](./al_inspect_source_reconstruction.md) — for
   pixelised inversion diagnostics.
 - [`al_plot_tracer`](./al_plot_tracer.md) — model-only plots (no dataset needed).
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Fitting lens models to observational
+  data](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_7_fitting.ipynb):
+  introduces the fit object, residuals, and chi-squared — what each diagnostic plot
+  is *telling* you.
+- **General reference** — [RTD: Likelihood function](https://pyautolens.readthedocs.io/en/latest/general/likelihood_function.html):
+  how PyAutoLens computes the likelihood the residuals contribute to — useful for
+  interpreting structured residuals statistically.
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/results/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/results/start_here.py):
+  production-quality fit inspection — residuals, chi-squared, FITS exports.

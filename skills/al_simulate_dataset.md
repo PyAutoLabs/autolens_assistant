@@ -119,3 +119,14 @@ After simulating:
   ground-truth `tracer.json` to verify your pipeline.
 - Generate a sample of N datasets and use the database utilities in PyAutoFit to query
   aggregate behaviour — see `PyAutoFit:autofit/aggregator/`.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Critical curves, caustics, cosmological
+  coordinates](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_3_more_ray_tracing.ipynb):
+  ray-tracing through to caustics and physical (kpc) coordinates — the forward physics
+  the simulator runs.
+- **General reference** — [RTD: Start here](https://pyautolens.readthedocs.io/en/latest/overview/overview_1_start_here.html):
+  core PyAutoLens concepts in practice — grids, profiles, ray-tracing with `Tracer`.
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/simulators/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/simulators/start_here.py):
+  canonical instrument-realistic simulation when no real data are on hand.

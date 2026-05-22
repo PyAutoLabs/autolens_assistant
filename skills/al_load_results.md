@@ -184,3 +184,15 @@ output/imaging/<dataset>/modeling/<unique_hash>/
 ```
 
 Sub-paths vary for interferometer / multi-wavelength fits.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Accessing fit results and samples](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_7_results.ipynb):
+  the `Result` object — max-likelihood fit, tracer, lens model, posterior samples.
+  How to pull parameter values + uncertainties.
+- **General reference** — [RTD: Likelihood function](https://pyautolens.readthedocs.io/en/latest/general/likelihood_function.html):
+  how PyAutoLens computes likelihoods — useful when interpreting a loaded
+  `samples.csv` or `model.results`.
+- **Experienced PyAutoLens user** — [workspace/lens: guides/results/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/results/start_here.py):
+  loading single fits from JSON/CSV and the aggregator pattern for hundreds of fits
+  at once.

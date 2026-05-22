@@ -123,3 +123,14 @@ tail -f output/imaging/<your_lens>/sie_sersic/*/search.log
 - [`al_chain_searches`](./al_chain_searches.md) — feed the result into a follow-up
   search with tighter priors.
 - [`al_debug_fit_failure`](./al_debug_fit_failure.md) — if the fit converged badly.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Output management and result
+  interpretation](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_2_practicalities.ipynb):
+  the practical side of running fits — output structure, reviewing results,
+  managing run times.
+- **General reference** — [RTD: New user guide](https://pyautolens.readthedocs.io/en/latest/overview/overview_2_new_user_guide.html):
+  decision-tree routing for a new user about which fit to run first.
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/start_here.py):
+  the minimal end-to-end imaging fit on GPU — production pattern this skill mirrors.

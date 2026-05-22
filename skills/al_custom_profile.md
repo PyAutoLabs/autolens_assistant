@@ -172,3 +172,16 @@ For mass profiles, also sanity-check `convergence_2d_from` against a known case 
 - [`al_update_wiki`](./al_update_wiki.md) — if the profile becomes a permanent
   fixture, add it to the wiki catalogue (`wiki/core/api/light_profile_catalog.md` or
   `mass_profile_catalog.md`).
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Grids, light profiles, and galaxy
+  objects](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_1_grids_and_galaxies.ipynb):
+  how built-in profiles plug into `Galaxy` and grids — the API your custom profile
+  has to fit into.
+- **General reference** — [RTD: Model cookbook](https://pyautolens.readthedocs.io/en/latest/general/model_cookbook.html):
+  systematic model-composition reference; covers using non-standard profiles
+  inside `Model` and `Collection`.
+- **Experienced PyAutoLens user** — [workspace/lens: guides/profiles/light.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/profiles/light.py):
+  catalog of the built-in light profiles in `al.lp.*` — the patterns your subclass
+  should match.

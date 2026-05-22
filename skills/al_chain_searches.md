@@ -104,3 +104,15 @@ doesn't match your problem.
 - [`al_load_results`](./al_load_results.md) — load any phase's results independently.
 - [`al_debug_fit_failure`](./al_debug_fit_failure.md) — if a later phase fails because
   earlier-phase priors were too tight.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Breaking modeling into sequential
+  searches](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_search_chaining/tutorial_1_search_chaining.ipynb):
+  introduces chaining — why a sequence of fits beats a single high-dimensional one.
+  Chapter 3 as a whole develops the pattern.
+- **General reference** — [RTD: Model cookbook](https://pyautolens.readthedocs.io/en/latest/general/model_cookbook.html):
+  systematic reference for inheriting and adjusting priors between models, the
+  mechanical core of chaining.
+- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/slam_start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/modeling/slam_start_here.py):
+  SLaM is the canonical multi-phase chain; this script overviews it stage-by-stage.

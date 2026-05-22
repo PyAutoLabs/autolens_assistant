@@ -1,8 +1,14 @@
 # wiki/project/
 
-A running journal for *this fork* of `autolens_base_project`. Every meaningful session
-— a modeling decision, a dataset change, a pipeline tweak, a result interpretation —
-gets one entry here.
+A running journal for *this fork* of `autolens_base_project`. Two things live here:
+
+- [`profile.md`](./profile.md) — **one** living file describing who's working on this
+  fork and what they're doing. Built up incrementally as the agent picks up cues from
+  conversation. Light-touch: the agent only writes when it learns something durable
+  (level, instrument, science goal). The template is [`_profile_template.md`](./_profile_template.md).
+- **Dated entries** — `YYYY-MM-DD-<slug>.md`. Every meaningful session — a modeling
+  decision, a dataset change, a pipeline tweak, a result interpretation — gets one
+  entry here.
 
 ## File naming
 
@@ -23,7 +29,16 @@ words at most.
 
 ## How an agent should use this folder
 
-When you finish a piece of work that the user will want to recall later, ask:
+**Profile (`profile.md`).** On session start, read it if it exists. Use it as
+context for adaptive-depth decisions (see `skills/_style.md` "Adaptive depth"). When
+the user volunteers something durable that the profile doesn't already record
+(or that contradicts a recorded fact), update the profile and bump `last_touched`.
+**Do not create `profile.md` reflexively** — wait until the user has volunteered
+something durable. If `last_touched` is older than ~10 sessions, ask the user whether
+anything has changed before relying on it.
+
+**Dated entries.** When you finish a piece of work that the user will want to recall
+later, ask:
 
 > Want me to add a `wiki/project/` entry summarising this?
 
@@ -32,7 +47,16 @@ encountered, a result the user wants to come back to. Default to **no** for: typ
 fixes, comment edits, exploratory throwaway scripts.
 
 When the user says yes, copy [`_template.md`](./_template.md), fill it in, and commit
-alongside the work it describes.
+alongside the work it describes. The entry must cover:
+
+1. **Domain motivation** — what physics question this work is in service of.
+2. **Statistical motivation** — what's being inferred, and how (search, priors,
+   likelihood shape).
+3. **Implementation choice** — the script(s) produced and the key decisions.
+
+Cross-link every named concept and profile/model into `wiki/core/` and
+`wiki/literature/` using `[[wiki-link]]` slugs (e.g. `[[Sersic1968]]`,
+`[[NavarroFrenkWhite1996]]`, `[[mass-sheet-degeneracy]]`).
 
 ## How to read this folder
 
@@ -45,4 +69,5 @@ already?"**:
    decisions on the topic.
 
 The journal is the project's memory across sessions. Treat it as part of the
-context-gathering step, like reading `CLAUDE.md` and the relevant `core/` pages.
+context-gathering step, like reading `CLAUDE.md`, the relevant `core/` pages, and
+`profile.md`.

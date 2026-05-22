@@ -153,3 +153,9 @@ Now you can:
   [`al_load_results`](./al_load_results.md).
 - Refresh the wiki against installed sources with
   [`al_update_wiki`](./al_update_wiki.md).
+
+## Further reading
+
+- **General reference** — [RTD: Installation overview](https://pyautolens.readthedocs.io/en/latest/installation/overview.html):
+  canonical PyAutoLens installation guide — Python version, JAX/GPU setup,
+  dependencies. The conda/pip/source/troubleshooting sub-pages each link from here.

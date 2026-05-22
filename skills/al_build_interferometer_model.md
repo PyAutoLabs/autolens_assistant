@@ -97,3 +97,12 @@ for a complete example.
 - [`al_inspect_source_reconstruction`](./al_inspect_source_reconstruction.md) — pixelised
   source diagnostics.
 - [`al_load_results`](./al_load_results.md) — load a completed interferometer fit.
+
+## Further reading
+
+- **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
+  tour of advanced features including interferometry, where the visibility-plane fit
+  fits alongside MGE / pixelization / multi-wavelength capabilities.
+- **Experienced PyAutoLens user** — [workspace/lens: interferometer/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/interferometer/start_here.py):
+  canonical strong-lens fit of radio/mm interferometer data — NUFFT-based forward
+  model, scaling to millions of visibilities.

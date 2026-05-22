@@ -176,9 +176,16 @@ rsync -av \
   --exclude='hpc/batch_cpu/submit' \
   --exclude='hpc/batch_cpu/template' \
   --exclude='skills/' \
+  --exclude='wiki/project/profile.md' \
+  --exclude='wiki/project/[0-9]*-*.md' \
   <BASE_PROJECT>/ \
   <NEW_PROJECT>/
 ```
+
+The two `wiki/project/` exclusions **reset the project journal in the new fork**:
+they drop any parent-fork `profile.md` and any dated `YYYY-MM-DD-<slug>.md` entries,
+while keeping `README.md` and `_profile_template.md`. The new project gets a clean
+slate to record its own decisions and user profile.
 
 ### 7b — Copy datasets
 

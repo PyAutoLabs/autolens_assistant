@@ -119,3 +119,14 @@ Once `dataset` is loaded and masked, hand it to:
 
 If you're new to *what* this dataset represents physically, read
 [`wiki/core/concepts/lensing_basics.md`](../wiki/core/concepts/lensing_basics.md) first.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Real telescope imaging and
+  instrumental effects](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_6_data.ipynb):
+  CCD imaging from instruments like HST, telescope optics, exposure, detector noise.
+- **General reference** — [RTD: New user guide](https://pyautolens.readthedocs.io/en/latest/overview/overview_2_new_user_guide.html):
+  decision-tree routing by lens scale and data type — orients a new PyAutoLens user
+  before they touch FITS data.
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/data_preparation/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/data_preparation/start_here.py):
+  canonical reference for getting telescope data analysis-ready.

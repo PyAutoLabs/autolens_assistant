@@ -97,3 +97,16 @@ explanation.
 - [`al_plot_fit_residuals`](./al_plot_fit_residuals.md) — fit quality plots.
 - [`al_inspect_source_reconstruction`](./al_inspect_source_reconstruction.md) — for
   pixelised sources, the reconstruction is a `FitImaging` property.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Ray tracing and deflection
+  angles](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_2_ray_tracing.ipynb):
+  the physics under every tracer plot — how light deflects, how critical curves and
+  caustics arise.
+- **General reference** — [RTD: Start here](https://pyautolens.readthedocs.io/en/latest/overview/overview_1_start_here.html):
+  the `Tracer` object in action — building one, evaluating it on a grid, plotting
+  the result.
+- **Experienced PyAutoLens user** — [workspace/lens: guides/tracer.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/tracer.py):
+  full pattern for inspecting an inferred `Tracer` — ray tracing, profiles, numpy
+  arrays, visualization.

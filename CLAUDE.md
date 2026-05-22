@@ -32,6 +32,66 @@ The repo is organised into three layers. Map every user request onto one or more
 > the user asks a *what is X / which X / why X* question, reach for the wiki. When the user
 > asks to *build something*, compose multiple skills and cite wiki pages as you go.
 
+## First-interaction protocol
+
+The interface is **natural-language-first**. The user — student, lensing expert, or
+returning PyAutoLens user — should be able to do real strong-lensing work by
+conversation alone, never opening a code file unless they want to.
+
+At the start of every session:
+
+1. **Check `wiki/project/profile.md`.** If it exists, read it. It records the user's
+   background (lensing, PyAutoLens), current science goal, and data on hand. Use it
+   as context for adaptive-depth decisions throughout the session — see
+   `skills/_style.md` "Adaptive depth".
+2. **If it doesn't exist, don't trigger heavy onboarding.** Pick up cues from the
+   conversation as it unfolds. Calibrate depth from the first sentence. If a
+   decision genuinely depends on something you don't know, ask **one** disambiguating
+   question — never the longest possible explanation by default.
+3. **Create `profile.md` only when the user volunteers something durable** — a level
+   ("I'm new to lensing"), an instrument ("I have HST imaging of SLACS0737"), or a
+   science goal ("I want to constrain H0 from time delays"). Copy
+   `wiki/project/_profile_template.md`, fill in what you've learned, set
+   `last_touched: YYYY-MM-DD`. Don't fabricate fields the user hasn't volunteered.
+4. **Append incrementally over the session.** Every time you learn something new
+   that the profile doesn't record (or contradicts what's recorded), update the
+   profile and bump `last_touched`. If the recorded fact contradicts the user, flag
+   it ("you said earlier you were new to lensing; want me to update that?") rather
+   than silently overwrite.
+5. **Stale-profile policy.** If `last_touched` is older than roughly ten sessions
+   ago, ask the user whether anything has changed before relying on the recorded
+   facts. The profile is a live record, not an archive.
+
+The aim of the profile is to keep the **science front and centre** without making the
+user repeat themselves. It is not a gate — if the user just wants to dive in, let
+them, and pick up cues as you go.
+
+## External resources
+
+Three external resources sit alongside this repo and inform the way you cite material:
+
+- **HowToLens** ([github.com/PyAutoLabs/HowToLens](https://github.com/PyAutoLabs/HowToLens))
+  — student-aimed pedagogy from first principles. Lead with this for lensing
+  newcomers.
+- **PyAutoLens RTD** ([pyautolens.readthedocs.io](https://pyautolens.readthedocs.io/en/latest/))
+  — canonical PyAutoLens docs: overview series, feature tour, API. Mixed audience.
+- **`autolens_workspace`** ([github.com/Jammy2211/autolens_workspace](https://github.com/Jammy2211/autolens_workspace))
+  — production-style example scripts per science case. Lead with this for users
+  fluent in lensing.
+
+Per-resource indexes with summaries and URLs live in
+[`wiki/core/external/`](./wiki/core/external/index.md). Per-skill citation rows live
+in [`wiki/core/external/skill_citation_map.md`](./wiki/core/external/skill_citation_map.md)
+and are the source of every `al_*` skill's `## Further reading` block. The
+audience-routing matrix lives in `skills/_style.md` "Adaptive depth".
+
+**`context/` vs `wiki/core/external/workspace.md`.** The workspace index page (and the
+RTD/HowToLens pages alongside it) are **curated URL lists with summaries**. The
+`context/` folder (see Part 2 §context) is a per-project dump of **local copies** of
+upstream files. When a skill cites a workspace resource and a local copy exists in
+`context/`, cite both — the URL for the canonical version, the `context/` path for the
+offline copy the user can read alongside their code.
+
 ## Wiki layout — three sub-wikis
 
 The wiki is split into three independently maintained sub-wikis:
@@ -46,9 +106,17 @@ The wiki is split into three independently maintained sub-wikis:
   cross-references, and is compiled from PDFs typically kept outside this repo. Extend it
   when a new paper is read; follow the schema in its CLAUDE.md.
 - **`wiki/project/`** — a running journal of what *this fork* has done: decisions,
-  experiments, results, blockers. Each entry follows `wiki/project/_template.md` and is
-  named `YYYY-MM-DD-<slug>.md`. When the user does something worth remembering, ask
-  whether to add a project-wiki entry.
+  experiments, results, blockers. Two pieces live here:
+  - `profile.md` — one living record of who the user is and what they're doing
+    (created on demand from `_profile_template.md`; see "First-interaction
+    protocol" above).
+  - Dated entries `YYYY-MM-DD-<slug>.md` following `wiki/project/_template.md`.
+    When you produce a non-trivial script via a skill, **offer (default-yes) to add
+    an entry** covering (a) domain motivation, (b) statistical motivation, (c)
+    implementation choice. Cross-link concepts and named profiles/models into
+    `wiki/core/` and `wiki/literature/` using `[[wiki-link]]` slugs (e.g.
+    `[[Sersic1968]]`, `[[NavarroFrenkWhite1996]]`, `[[mass-sheet-degeneracy]]`).
+    See `skills/_style.md` property #5 for the full rule.
 
 When a skill references "the wiki", it means `wiki/core/` unless it explicitly names
 `literature/` or `project/`.

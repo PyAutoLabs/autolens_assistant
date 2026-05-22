@@ -106,3 +106,14 @@ a different `unique_tag` so the search starts fresh, and compare evidences.
 Once you've identified the issue, the fix usually means re-running with adjusted
 inputs — [`al_run_search`](./al_run_search.md) — and re-loading the new result —
 [`al_load_results`](./al_load_results.md). If the diagnosis was wrong, iterate.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Recovering from local maxima](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_4_dealing_with_failure.ipynb):
+  the three canonical recoveries — prior tuning, multi-start, model simplification.
+- **General reference** — [RTD: Demagnified solutions](https://pyautolens.readthedocs.io/en/latest/general/demagnified_solutions.html):
+  how unphysical demagnified-source reconstructions arise in pixelised fits, and how
+  `PositionsLH` penalties prevent them.
+- **Experienced PyAutoLens user** — [workspace/lens: guides/tracer.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/tracer.py):
+  inspecting an inferred model via `Tracer` — the patterns this skill uses to
+  pull apart a failed fit.

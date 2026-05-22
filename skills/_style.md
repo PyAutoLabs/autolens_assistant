@@ -19,11 +19,13 @@ can run. The deliverable is *understanding + a runnable script*, not a chat answ
 The agent reads the skill when activated (either by the user typing `/al_<name>` or by
 the agent matching the skill's frontmatter `description` to the user's request).
 
-## The four properties every skill must have
+## The five properties every skill must have
 
-1. **Scientific context first.** Before showing API calls, set the physics. *Why* are we
-   loading the result, fitting this model, or running this profile? The API is in service
-   of the science, not the other way around.
+1. **Scientific and statistical context first.** Before showing API calls, set both the
+   physics and the inference. *Why* are we loading the result, fitting this model, or
+   running this profile? *What is being inferred*, with what likelihood, what priors,
+   what search? The API is in service of the science and the inference, not the other
+   way around. Both framings come before code — neither is optional.
 
 2. **Encourage reading the wiki.** Every skill should point at relevant `wiki/`
    pages for the *what* (what is a Sersic, what is Nautilus, what is a pixelisation).
@@ -37,6 +39,16 @@ the agent matching the skill's frontmatter `description` to the user's request).
 4. **Skills compose.** Each skill should leave breadcrumbs to other skills that build on
    it. Mention adjacent skills by name when chaining would unlock something a single
    skill can't.
+
+5. **Records work to the project wiki.** When a skill produces or evolves a non-trivial
+   script, the agent must offer (default-yes) to add a dated
+   `wiki/project/YYYY-MM-DD-<slug>.md` entry covering (a) *domain motivation* — what
+   physics question this is in service of, (b) *statistical motivation* — what's being
+   inferred and how, (c) *implementation choice* — the script produced and the key
+   decisions. Cross-link every named concept and profile/model into `wiki/core/` and
+   `wiki/literature/` using `[[wiki-link]]` slugs (e.g. `[[Sersic1968]]`,
+   `[[NavarroFrenkWhite1996]]`, `[[mass-sheet-degeneracy]]`). Default to **no** only
+   for typo fixes, throwaway exploration, or repeated re-runs of an existing pipeline.
 
 ## Python-first
 
@@ -85,6 +97,25 @@ Pick depth from cues in the user's question. *"I'm new to lensing"* → newcomer
 do I get the caustics?"* → already knows lensing. *"Load `output/.../abc/`"* → returning
 user. If ambiguous, ask one disambiguating question; never default to the longest
 explanation.
+
+Read `wiki/project/profile.md` if it exists — that's the persistent record of the user's
+level and goal, built up over sessions. If it disagrees with what the user just said,
+trust the user and update the profile.
+
+### Resource routing by audience
+
+The three external resources cover different audiences. Match the user's level to
+the source, and pull the URL from
+[`wiki/core/external/skill_citation_map.md`](../wiki/core/external/skill_citation_map.md):
+
+| Audience | Lead resource | Secondary |
+|----------|---------------|-----------|
+| Lensing newcomer | **HowToLens** notebook for the concept | RTD `overview_1_start_here` |
+| PyAutoLens newcomer (lensing-fluent) | **RTD** `overview_2_new_user_guide` + `overview_3_features` | Workspace example script |
+| Returning PyAutoLens user | **Workspace** script for the science case | RTD API reference |
+
+Never dump all three on the user unprejudiced — pick one to lead, optionally cite a
+second.
 
 ## The conversation arc — Orient → Ask → Branch → Combine
 
@@ -158,6 +189,35 @@ format (see `wiki/README.md`) and cite source code by `<Project>:<path>`.
 
 The reverse is also true: don't write a wiki page nobody references. The wiki exists to
 back up the skills.
+
+## External resource citation
+
+Every `al_*` skill ends with a single `## Further reading` block above the agent
+checklist (if present). The block is generated from one row of
+[`wiki/core/external/skill_citation_map.md`](../wiki/core/external/skill_citation_map.md)
+and follows this shape:
+
+```markdown
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: <tutorial title>](<expanded URL>): one
+  line on what the tutorial teaches.
+- **General reference** — [RTD: <page title>](<expanded URL>): canonical PyAutoLens
+  documentation page.
+- **Experienced PyAutoLens user** — [workspace/lens: <script name>](<expanded URL>):
+  production-style example to fork from. (Cite a local `context/<path>` too if the
+  file has been copied into this fork.)
+```
+
+Rules:
+
+- Three bullets max, one per audience. Omit any whose row cell is `_`.
+- The agent **picks one of the three to surface in the conversation** — the audience
+  match comes from `wiki/project/profile.md` (or, lacking that, from the user's
+  immediate cues). The other two stay in the block as references the user can fall
+  back on.
+- For non-`al_*` skills (project workflow, meta), this section is optional; include
+  it only if a single external resource is the canonical reference.
 
 ## Iteration
 

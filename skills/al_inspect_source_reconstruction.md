@@ -96,3 +96,16 @@ appear.
   a parametric source fit to a pixelised one.
 - [`al_run_slam_pipeline`](./al_run_slam_pipeline.md) — automated pipeline that
   handles the parametric → pixelised transition.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Reconstructing source light via
+  least-squares](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_4_pixelizations/tutorial_3_inversions.ipynb):
+  the inversion at its heart — least-squares solution for source-plane pixel
+  intensities. Chapter 4 as a whole covers mappers, regularization, adaptive grids.
+- **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
+  the pixelization feature sits here alongside MGE / interferometry / shapelets —
+  links into deeper docs.
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/pixelization/modeling.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/features/pixelization/modeling.py):
+  rectangular-mesh + constant-regularization pixelization model — production
+  pattern for extended-arc sources.

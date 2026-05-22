@@ -140,3 +140,16 @@ Natural next steps:
 - [`al_run_search`](./al_run_search.md) — `search.fit(model=model, analysis=analysis)`.
 - [`al_chain_searches`](./al_chain_searches.md) — chain a fast Sersic source fit into
   a slower pixelised one, inheriting priors.
+
+## Further reading
+
+- **Student / new to lensing** — [HowToLens: Non-linear searches and parameter
+  inference](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_1_non_linear_search.ipynb):
+  how non-linear searches find a best-fit model — parameter spaces, likelihoods,
+  priors. The statistical foundation under model composition.
+- **General reference** — [RTD: Model cookbook](https://pyautolens.readthedocs.io/en/latest/general/model_cookbook.html):
+  systematic reference for building lens models with `Model` and `Collection` —
+  two-component to multi-galaxy, prior customisation, parameter pairing, MGE.
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/modeling/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/modeling/start_here.py):
+  the canonical imaging-modeling script — light-profile choice (Sersic vs. MGE),
+  non-linear-search configuration, JAX/GPU fitting.

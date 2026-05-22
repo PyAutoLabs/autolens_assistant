@@ -18,6 +18,43 @@ When the user asks *how do I do X*, reach for a skill. When the user asks *what 
 why*, reach for the wiki. When the user asks to *build something end-to-end*, compose
 skills and cite wiki pages.
 
+## First-interaction protocol
+
+The interface is natural-language-first. On session start:
+
+1. **Read `wiki/project/profile.md` if it exists** — it captures the user's lensing /
+   PyAutoLens background, current science goal, and data on hand. Use it to calibrate
+   depth.
+2. **If absent, don't trigger heavy onboarding.** Pick up cues from the conversation.
+   Ask **one** disambiguating question if a decision genuinely depends on it.
+3. **Create `profile.md` only when the user volunteers something durable.** Copy
+   `wiki/project/_profile_template.md`, fill in what's been said, set `last_touched`.
+4. **Append incrementally.** Update profile and bump `last_touched` each session. If
+   the recorded fact contradicts the user, flag rather than overwrite. If
+   `last_touched` is older than ~10 sessions, ask whether anything has changed.
+
+After producing a non-trivial script via a skill, offer (default-yes) to add a
+`wiki/project/YYYY-MM-DD-<slug>.md` entry covering (a) domain motivation, (b)
+statistical motivation, (c) implementation choice — with `[[wiki-link]]`
+cross-references into `wiki/core/` and `wiki/literature/`.
+
+## External resources
+
+Three external resources sit alongside this repo. Per-resource indexes with
+summaries and URLs live in [`wiki/core/external/`](./wiki/core/external/index.md);
+the per-skill citation rows are in
+[`wiki/core/external/skill_citation_map.md`](./wiki/core/external/skill_citation_map.md).
+
+- **HowToLens** — student-aimed pedagogy. Lead with this for lensing newcomers.
+- **PyAutoLens RTD** — canonical docs. Mixed audience; lead with this for
+  PyAutoLens newcomers fluent in lensing.
+- **`autolens_workspace`** — production-style examples. Lead with this for returning
+  PyAutoLens users.
+
+When citing a workspace script that has also been copied into this fork's `context/`
+folder, cite both — the URL for the canonical version and the `context/` path for the
+local copy.
+
 ## Source-of-truth resolution
 
 The PyAuto\* libraries live in separate repos listed in [`sources.yaml`](./sources.yaml).
