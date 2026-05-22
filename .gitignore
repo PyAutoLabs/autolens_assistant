@@ -1,11 +1,59 @@
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.egg-info/
+.venv/
+venv/
+env/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
 
 # HPC sync config — machine-specific, contains personal paths
 hpc/sync.conf
+hpc/sync_jump.conf
 
 # PyAutoFit output — generated, typically too large to commit
 output/
+failed/
+
+# Agent working directory — Python scripts and Markdown notes get committed;
+# plot outputs and data dumps do not. Convention: skill-generated plots land
+# in `work/plots/<context>/`; FITS / numpy / pickle dumps in `work/output/`.
+work/plots/
+work/output/
+work/audit/
+work/*.png
+work/*.pdf
+work/*.jpg
+work/*.jpeg
+work/*.fits
+work/*.npy
+work/*.pkl
+work/*.hdf5
+work/*.h5
+
+# Sandbox caches
+.numba_cache/
+.matplotlib/
+
+# Cloned source repos (when set up via al_setup_environment in dev mode).
+# Users may keep these elsewhere; if cloned as siblings, they live outside
+# this repo. If cloned inside, ignore them.
+/sources/
+
+# Literature wiki PDFs — keep locally, never commit. `papers/` is the in-repo
+# convention used by `al_ingest_paper`, but PDFs can live anywhere.
+papers/
+
+# Maintainer-mode sentinel — when present at the repo root, the agent treats
+# the session as template maintenance work (no profile capture, no auto-commit,
+# no newcomer-mode defaults). See CLAUDE.md Part 1 "Maintainer mode".
+.maintainer
+
+# Claude Code agent worktrees — ephemeral, machine-local.
+.claude/worktrees/

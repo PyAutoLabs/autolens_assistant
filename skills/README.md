@@ -1,0 +1,145 @@
+# skills/
+
+Procedural how-to-do-X skills for the PyAuto\* lensing stack. Each skill is a single
+Markdown file with YAML frontmatter; the body teaches an agent (and through them, the
+user) how to write Python that accomplishes one lensing task.
+
+Skills are also exposed at `.claude/skills/` (Claude Code) and `~/.codex/skills/` (when
+configured) via symlinks; the canonical files live here.
+
+## Conventions
+
+- File names use the `al_<task>` convention for lensing-API skills, e.g. `al_run_search.md`.
+- Project-workflow skills (repo-level operations, template manipulation) use a plain
+  kebab-case name, e.g. `init-slam.md`, `start-new-project.md`.
+- Meta-skills (writing guide, bootstrap protocol) start with `_`.
+- Every lensing-API skill is **python-first**: the deliverable is a runnable `.py` script
+  + the understanding to evolve it. Project-workflow skills may instead drive `rsync`,
+  `cp`, or other repo-level operations.
+- Source citations use the project-name + repo-relative-path form,
+  e.g. `PyAutoFit:autofit/non_linear/search/nest/nautilus.py`, resolved via
+  [`../sources.yaml`](../sources.yaml).
+- Wiki references use workspace-relative paths,
+  e.g. `wiki/core/concepts/non_linear_search.md`.
+
+## Index
+
+### Meta
+
+- [`_style.md`](./_style.md) — writing guide every skill is authored against. Read first
+  before adding or editing any skill.
+- [`_bootstrap_skill.md`](./_bootstrap_skill.md) — protocol for authoring a new skill on
+  demand when a user requests a capability not yet covered.
+
+### Setup & maintenance
+
+- [`al_setup_environment.md`](./al_setup_environment.md) — install the PyAuto\* stack
+  (pip or editable-clone), configure sandbox cache directories, verify imports.
+- [`al_update_wiki.md`](./al_update_wiki.md) — refresh `wiki/core/` pages whose pinned
+  source commits have moved; surface new public APIs for review.
+- [`al_audit_skill_apis.md`](./al_audit_skill_apis.md) — verify every PyAuto\* symbol
+  cited in `skills/` and `wiki/core/api+stack/` resolves in the installed stack;
+  report stale references with suggested replacements.
+- [`al_ingest_paper.md`](./al_ingest_paper.md) — add a strong-lensing paper (local PDF
+  or arxiv URL) to `wiki/literature/`: per-paper stub, concept cross-links, log entry.
+
+### Project workflow
+
+- [`start-new-project.md`](./start-new-project.md) — interactive setup wizard for forking
+  `autolens_base_project` into a fresh science project (name, datasets, scripts,
+  GitHub repo).
+- [`contribute-upstream.md`](./contribute-upstream.md) — prepare a scoped change,
+  push it either to your collaborator branch on `PyAutoLabs/autolens_base_project`
+  or to your fork, and open a draft PR into `PyAutoLabs/autolens_base_project`.
+- [`init-slam.md`](./init-slam.md) — populate an empty `scripts/` folder with SLaM
+  pipeline script(s) copied from `autolens_workspace` and tailored to the chosen data
+  type.
+
+### Data preparation
+
+- [`al_prepare_imaging_data.md`](./al_prepare_imaging_data.md) — load and preprocess
+  FITS imaging, decide masking for real data, measure noise, prepare PSF.
+- [`al_simulate_dataset.md`](./al_simulate_dataset.md) — synthesise a lens dataset
+  (imaging or interferometer) from a ground-truth model.
+
+### Model building
+
+- [`al_build_imaging_model.md`](./al_build_imaging_model.md) — compose a `Tracer` from
+  light + mass profiles and wrap it in an `AnalysisImaging`.
+- [`al_build_interferometer_model.md`](./al_build_interferometer_model.md) — same, but
+  for visibility-plane data.
+- [`al_custom_profile.md`](./al_custom_profile.md) — write a new light or mass profile
+  subclass and register it for use in models.
+
+### Fitting
+
+- [`al_configure_search.md`](./al_configure_search.md) — pick and tune a non-linear
+  search (Nautilus, Dynesty, Emcee, Zeus, …) for your problem.
+- [`al_run_search.md`](./al_run_search.md) — execute `search.fit(model=..., analysis=...)`
+  and monitor convergence.
+- [`al_chain_searches.md`](./al_chain_searches.md) — sequence searches so a later phase
+  inherits priors from an earlier one.
+- [`al_run_slam_pipeline.md`](./al_run_slam_pipeline.md) — run a Source-Light-Mass
+  pipeline (the canonical automated lensing workflow).
+- [`al_debug_fit_failure.md`](./al_debug_fit_failure.md) — diagnose a fit that didn't
+  converge or produced unphysical results.
+
+### Results & visualisation
+
+- [`al_load_results.md`](./al_load_results.md) — load a completed fit's `Tracer`,
+  `Samples`, dataset and FITS products from its output folder.
+- [`al_plot_tracer.md`](./al_plot_tracer.md) — plot ray tracing, critical curves,
+  caustics, magnification maps.
+- [`al_plot_fit_residuals.md`](./al_plot_fit_residuals.md) — plot model image,
+  residuals, normalised residuals, chi-squared map.
+- [`al_inspect_source_reconstruction.md`](./al_inspect_source_reconstruction.md) —
+  inspect a pixelised inversion: regularisation, source-plane image, reconstruction
+  diagnostics.
+
+### Pending — stubbed (need full recipes)
+
+Drafted as scaffolds during the 2026-05-22 coverage audit against
+`autolens_workspace/scripts/`. Each has frontmatter + Orient/Ask/Branch/Combine
+structure + `Further reading`; the `Branch` recipes are TODO markers. Fill in
+one at a time, paired with their companion wiki/core stub.
+
+**Data types and regimes**
+
+- [`al_point_source.md`](./al_point_source.md) (stub) — quasar / multi-image
+  position fits, flux ratios, point-source deblending.
+- [`al_time_delay_cosmography.md`](./al_time_delay_cosmography.md) (stub) — H0
+  from time-delay strong lenses.
+- [`al_group_lensing.md`](./al_group_lensing.md) (stub) — extra galaxies,
+  scaling-relation members.
+- [`al_cluster_csv_api.md`](./al_cluster_csv_api.md) (stub) — cluster-scale
+  CSV-driven model composition.
+- [`al_multi_dataset.md`](./al_multi_dataset.md) (stub) — joint imaging +
+  interferometer, multi-band, wavelength-dependent sources.
+- [`al_weak_lensing.md`](./al_weak_lensing.md) (stub) — shear catalogue fits
+  (`WeakDataset` / `AnalysisWeak`).
+- [`al_datacube_modeling.md`](./al_datacube_modeling.md) (stub) — interferometer
+  spectral cubes.
+
+**Dark-matter substructure**
+
+- [`al_subhalo_detect.md`](./al_subhalo_detect.md) (stub) — Bayesian-evidence
+  grid search for perturbing subhaloes.
+- [`al_sensitivity_mapping.md`](./al_sensitivity_mapping.md) (stub) — quantitative
+  detectability calibration.
+
+**Advanced techniques**
+
+- [`al_hierarchical_inference.md`](./al_hierarchical_inference.md) (stub) —
+  population-level / graphical models, expectation propagation.
+- [`al_aggregator_bulk_analysis.md`](./al_aggregator_bulk_analysis.md) (stub) —
+  bulk operations across many completed fits, optional result database.
+- [`al_adaptive_pixelization.md`](./al_adaptive_pixelization.md) (stub) — adaptive
+  mesh + adaptive regularisation source reconstructions.
+- [`al_mge_decomposition.md`](./al_mge_decomposition.md) (stub) — Multi-Gaussian
+  Expansion workflows for lens / source.
+- [`al_custom_analysis.md`](./al_custom_analysis.md) (stub) — subclassing
+  `Analysis` to add custom likelihood terms.
+
+**Queue (catalogued, not yet stubbed):** `al_multi_plane`, `al_los_halos`,
+`al_over_sampling`, `al_workflow_outputs`, `al_data_prep_interactive`,
+`al_bayesian_model_comparison`.

@@ -1,0 +1,54 @@
+# Canonical project → git URL map for the PyAuto* stack.
+#
+# Every reference in this workspace (skills, wiki) that points at source code
+# must resolve to one of the projects below. Inside-repo paths are relative
+# to the repo root and written as `<project_name>:<relative/path>`.
+#
+# To add a new dependency, append a project entry with the four required
+# fields. `pinned_commit` is optional; if absent, tooling treats `main` as
+# the reference branch.
+
+projects:
+  - name: PyAutoConf
+    import: autoconf
+    role: config           # YAML config loading, prior resolution
+    git: https://github.com/rhayes777/PyAutoConf
+
+  - name: PyAutoArray
+    import: autoarray
+    role: arrays           # numpy arrays, grids, masks, geometry, structures
+    git: https://github.com/Jammy2211/PyAutoArray
+
+  - name: PyAutoFit
+    import: autofit
+    role: modelling        # model composition, non-linear searches, samples, aggregator
+    git: https://github.com/rhayes777/PyAutoFit
+
+  - name: PyAutoGalaxy
+    import: autogalaxy
+    role: galaxies         # light + mass profiles, galaxy, cosmology, plane
+    git: https://github.com/Jammy2211/PyAutoGalaxy
+
+  - name: PyAutoLens
+    import: autolens
+    role: lensing          # tracer, ray tracing, lensing-specific analysis
+    git: https://github.com/Jammy2211/PyAutoLens
+
+  - name: autolens_workspace
+    import: null
+    role: tutorial-scripts # existing example scripts (read-only reference)
+    git: https://github.com/Jammy2211/autolens_workspace
+
+  - name: autolens_base_project
+    import: null
+    role: project-template # this repo — forkable PyAutoLens science-project template
+    git: https://github.com/PyAutoLabs/autolens_base_project
+
+# Dependency chain (top-to-bottom). Skills target the top; lower layers
+# surface in the wiki when the user needs to understand them.
+dependency_chain:
+  - PyAutoConf
+  - PyAutoArray
+  - PyAutoFit
+  - PyAutoGalaxy
+  - PyAutoLens

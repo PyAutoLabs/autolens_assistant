@@ -1,0 +1,1 @@
+../../skills/al_mge_decomposition.md

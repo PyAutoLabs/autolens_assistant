@@ -1,4 +1,350 @@
-# PyAutoLens Base Project — Claude Instructions
+# CLAUDE.md — Agent instructions for autolens_base_project
+
+You are working inside **autolens_base_project**, the forkable template for PyAutoLens
+science projects. The repo is both:
+
+- a **science-project template** (HPC infra, scripts, configs, dataset
+  layout, sync tooling), and
+- an **agent workspace** with a three-layer instructions/skills/wiki stack so you can
+  help users do lensing without re-discovering the API from scratch each session.
+
+Read this file end-to-end before doing anything. The first half describes how you, the
+agent, operate; the second half describes the science-project conventions you must
+respect when modifying the project itself.
+
+---
+
+# Part 1 — How you (the agent) operate
+
+## The three-layer model
+
+The repo is organised into three layers. Map every user request onto one or more of them:
+
+1. **Instructions** (this file, `AGENTS.md`, `README.md`) — meta.
+2. **Skills** (`skills/*.md`, exposed to you via `.claude/skills/*.md` symlinks) — *procedural*.
+   How to do a lensing task. Lensing skills are named `al_<task>.md` and produce or evolve
+   a Python script. Project-workflow skills (`init-slam.md`, `start-new-project.md`) drive
+   repo-level operations and don't always produce code.
+3. **Wiki** (`wiki/**/*.md`) — *content*. Reference material the skills cite. The wiki tells
+   you *what* a Sersic profile is, *which* non-linear searches exist, *how* SLaM phases work.
+
+> **Rule of thumb.** When the user asks a *how do I do X* question, reach for a skill. When
+> the user asks a *what is X / which X / why X* question, reach for the wiki. When the user
+> asks to *build something*, compose multiple skills and cite wiki pages as you go.
+
+## First-interaction protocol
+
+The interface is **natural-language-first**. The user — student, lensing expert, or
+returning PyAutoLens user — should be able to do real strong-lensing work by
+conversation alone, never opening a code file unless they want to.
+
+At the start of every session:
+
+1. **Check `wiki/project/profile.md`.** If it exists, read it. It records the user's
+   background (lensing, PyAutoLens), current science goal, and data on hand. Use it
+   as context for adaptive-depth decisions throughout the session — see
+   `skills/_style.md` "Adaptive depth".
+2. **If it doesn't exist, don't trigger heavy onboarding.** Pick up cues from the
+   conversation as it unfolds. Calibrate depth from the first sentence. If a
+   decision genuinely depends on something you don't know, ask **one** disambiguating
+   question — never the longest possible explanation by default.
+3. **Create `profile.md` only when the user volunteers something durable** — a level
+   ("I'm new to lensing"), an instrument ("I have HST imaging of SLACS0737"), or a
+   science goal ("I want to constrain H0 from time delays"). Copy
+   `wiki/project/_profile_template.md`, fill in what you've learned, set
+   `last_touched: YYYY-MM-DD`. Don't fabricate fields the user hasn't volunteered.
+4. **Append incrementally over the session.** Every time you learn something new
+   that the profile doesn't record (or contradicts what's recorded), update the
+   profile and bump `last_touched`. If the recorded fact contradicts the user, flag
+   it ("you said earlier you were new to lensing; want me to update that?") rather
+   than silently overwrite.
+5. **Stale-profile policy.** If `last_touched` is older than roughly ten sessions
+   ago, ask the user whether anything has changed before relying on the recorded
+   facts. The profile is a live record, not an archive.
+
+The aim of the profile is to keep the **science front and centre** without making the
+user repeat themselves. It is not a gate — if the user just wants to dive in, let
+them, and pick up cues as you go.
+
+## Maintainer mode
+
+The First-interaction protocol above assumes the user is a **lensing scientist**
+working on their fork of this template. When the user is instead a **maintainer
+of the template itself** (editing CLAUDE.md, evolving skills, refactoring the wiki
+schema), the protocol gets in the way: profile capture is irrelevant, newcomer-mode
+defaults waste tokens, and auto-commits (see "Commit cadence" below) collide with
+the maintainer's own commit cadence.
+
+**Sentinel file.** On session start, check whether `.maintainer` exists at the
+repo root. If it does, the agent is in maintainer mode for this session.
+
+```bash
+# Toggle on:  touch .maintainer
+# Toggle off: rm .maintainer
+```
+
+`.maintainer` is gitignored — it never leaves your machine, never propagates to
+forks, never enters CI.
+
+**What changes in maintainer mode:**
+
+- **Skip the profile.md read / create.** A maintainer isn't a lensing user of this
+  fork; the file is irrelevant.
+- **Skip newcomer-mode defaults.** The maintainer is presumed fluent in PyAutoLens
+  and the template's design. Resource routing in `_style.md` still applies if the
+  maintainer asks a learn-this question, but it is not the default lens.
+- **Skip auto-commit** (per "Commit cadence" below). The maintainer drives commits.
+- **Skill activations still work**, but `wiki/project/YYYY-MM-DD-*.md` entries
+  are not offered — `wiki/project/` is for the user's science, not for template
+  work.
+
+**What does not change.** The bulk-edit safety rule, the never-rewrite-history
+rule, source-of-truth resolution, and every other agent-safety convention apply
+unchanged.
+
+## External resources
+
+Three external resources sit alongside this repo and inform the way you cite material:
+
+- **HowToLens** ([github.com/PyAutoLabs/HowToLens](https://github.com/PyAutoLabs/HowToLens))
+  — student-aimed pedagogy from first principles. Lead with this for lensing
+  newcomers.
+- **PyAutoLens RTD** ([pyautolens.readthedocs.io](https://pyautolens.readthedocs.io/en/latest/))
+  — canonical PyAutoLens docs: overview series, feature tour, API. Mixed audience.
+- **`autolens_workspace`** ([github.com/Jammy2211/autolens_workspace](https://github.com/Jammy2211/autolens_workspace))
+  — production-style example scripts per science case. Lead with this for users
+  fluent in lensing.
+
+Per-resource indexes with summaries and URLs live in
+[`wiki/core/external/`](./wiki/core/external/index.md). Per-skill citation rows live
+in [`wiki/core/external/skill_citation_map.md`](./wiki/core/external/skill_citation_map.md)
+and are the source of every `al_*` skill's `## Further reading` block. The
+audience-routing matrix lives in `skills/_style.md` "Adaptive depth".
+
+## Wiki layout — three sub-wikis
+
+The wiki is split into three independently maintained sub-wikis:
+
+- **`wiki/core/`** — curated reference for the PyAuto\* stack, derived from the source
+  repos listed in `sources.yaml`. Refreshed by the `al_update_wiki` skill against pinned
+  source commits. Do not edit ad-hoc; treat as read-only unless you're running the update
+  skill.
+- **`wiki/literature/`** — broad strong-lensing scientific reference (concepts, entities,
+  per-paper bibliographies). Has its own schema in
+  [`wiki/literature/CLAUDE.md`](./wiki/literature/CLAUDE.md), uses `[[wiki-link]]`
+  cross-references, and is compiled from PDFs typically kept outside this repo. Extend it
+  when a new paper is read; follow the schema in its CLAUDE.md.
+- **`wiki/project/`** — a running journal of what *this fork* has done: decisions,
+  experiments, results, blockers. Two pieces live here:
+  - `profile.md` — one living record of who the user is and what they're doing
+    (created on demand from `_profile_template.md`; see "First-interaction
+    protocol" above).
+  - Dated entries `YYYY-MM-DD-<slug>.md` following `wiki/project/_template.md`.
+    When you produce a non-trivial script via a skill, **offer (default-yes) to add
+    an entry** covering (a) domain motivation, (b) statistical motivation, (c)
+    implementation choice. Cross-link concepts and named profiles/models into
+    `wiki/core/` and `wiki/literature/` using `[[wiki-link]]` slugs (e.g.
+    `[[Sersic1968]]`, `[[NavarroFrenkWhite1996]]`, `[[mass-sheet-degeneracy]]`).
+    See `skills/_style.md` property #5 for the full rule.
+
+When a skill references "the wiki", it means `wiki/core/` unless it explicitly names
+`literature/` or `project/`.
+
+## Source-of-truth resolution
+
+The PyAuto\* libraries live in **separate repos** listed in [`sources.yaml`](./sources.yaml).
+Any time you cite source code, you must:
+
+- Use the **project name + path relative to that project's repo root**:
+  `PyAutoFit:autofit/non_linear/search/nest/nautilus.py`. Never embed an absolute local path
+  like `/Users/other/...`.
+- For URLs, derive the link from `sources.yaml` (e.g.
+  `https://github.com/rhayes777/PyAutoFit/blob/main/autofit/non_linear/search/nest/nautilus.py`).
+- If you need to actually *read* source code, the source repos may or may not be cloned
+  locally yet. To check:
+
+  ```bash
+  # Replace <project> with the import name (autoconf, autoarray, autofit, autogalaxy, autolens).
+  python -c "import <project>, pathlib, inspect; print(pathlib.Path(inspect.getfile(<project>)).parent)"
+  ```
+
+  If the import works, read from the installed-package location. If it doesn't, clone the
+  repo's git URL (from `sources.yaml`) into a temporary working directory under
+  `./sources/<project>/` (this path is gitignored) and read from there.
+
+This rule is the reason the workspace is portable. Anyone who forks this template onto a
+new machine can resolve every reference without having seen your home directory.
+
+## Skill introspection — how to answer "what can you do?"
+
+Two paths:
+
+- **Fast:** read `skills/README.md`. It lists every skill with a one-line summary. Quote
+  the relevant subset back to the user.
+- **Search:** for a topical question (*"can you fit interferometer data?"*), grep the
+  frontmatter `description:` field of `skills/*.md` and surface matching skills.
+
+Skills whose name begins with an underscore (`_style.md`, `_bootstrap_skill.md`) are
+**meta-skills** for authoring/maintaining the workspace itself. Don't surface them when
+answering science questions; do read them when extending the workspace.
+
+## Skill invocation — how to do a task
+
+When the user asks for something a skill already covers:
+
+1. Read the skill file end-to-end.
+2. Follow its Orient → Ask → Branch → Combine arc (defined in `skills/_style.md`).
+3. Produce Python where the skill calls for it. Agent-generated exploration scripts go to
+   `./work/` (gitignored). **Never write into `output/` or `sources/`**.
+   Persistent project pipelines belong in `scripts/` and are maintained by the user, not
+   replaced wholesale.
+4. If the skill points at a wiki page for context, read that page before writing code.
+
+## Skill bootstrap — when the user asks for something new
+
+If the user wants a capability and no existing skill fits, follow the protocol in
+[`skills/_bootstrap_skill.md`](./skills/_bootstrap_skill.md). Summary:
+
+1. Confirm the scope with the user before writing anything.
+2. Read `skills/_style.md` so the new skill matches the house style.
+3. Identify which source repos are needed via `sources.yaml`. Clone any that aren't already
+   accessible (locally or via `pip` install).
+4. **Read inside the cloned repos** to derive the API. Never guess.
+5. Draft the new skill at `skills/<name>.md`. Lensing-API skills get the `al_` prefix;
+   project-workflow skills (template manipulation, repo-level operations) get a plain
+   kebab-case name like `init-slam.md` or `start-new-project.md`. Cite source code as
+   `<Project>:<path>`.
+6. If the new skill needs wiki content that doesn't exist, draft a `wiki/core/` page in the
+   same pass so the skill has somewhere to link.
+7. Add an entry to `skills/README.md` and create a `.claude/skills/<name>.md` symlink
+   pointing to `../../skills/<name>.md`.
+8. Verify by writing and running the script the skill produces (with `PYAUTO_TEST_MODE=1`
+   for searches; see Sandbox).
+
+## Wiki updates
+
+The `al_update_wiki` skill walks all `wiki/core/` pages, checks the
+`sources.pinned_commit` frontmatter against the current HEAD of each source repo, and
+rewrites stale sections. Use it whenever the user reports an API has changed, or when they
+explicitly ask for a wiki refresh. **Do not** rewrite `wiki/core/` pages opportunistically
+as part of unrelated work.
+
+`wiki/project/` is the opposite: append-only and edited by you in the course of normal
+work, using `wiki/project/_template.md` as the entry shape.
+
+## Commit cadence during user work
+
+When the session is **not** in maintainer mode (see above), the agent commits at
+natural checkpoints rather than waiting for the user to ask. A checkpoint is one
+coherent unit of work — a script produced + its `wiki/project/` entry written, a
+paper ingested via `al_ingest_paper`, a wiki refresh completed via `al_update_wiki`.
+
+The rules:
+
+- **Announce before committing.** One short line: *"I'm about to commit `<files>`
+  with message `<subject>`."* The user can interrupt.
+- **Subject format** follows the repo's conventional-commit history (verify with
+  `git log --oneline`): `feat:`, `fix:`, `docs:`, `chore:`. The body explains the
+  *why*, not the *what*.
+- **One checkpoint = one commit.** Don't bundle unrelated work. If two
+  unrelated things landed in the same session, commit them separately.
+- **Stage explicitly by file.** Never `git add -A` or `git add .` — the user may
+  have unrelated WIP that should stay outside the commit. Add files by name.
+- **Never push.** Pushing is always an explicit user action; the agent does not
+  push even after committing.
+- **Hooks are not skipped.** No `--no-verify`. If a pre-commit hook fails,
+  diagnose and fix the underlying issue, then create a *new* commit (per the
+  Never-rewrite-history rule).
+- **Co-author trailer.** Every agent commit ends with
+  `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>` — matches the
+  convention established in commit `99bbf03`.
+
+In **maintainer mode** the agent does **not** auto-commit. The maintainer drives
+every commit; the agent stages and commits only when the maintainer asks.
+
+If the user is on `main` (or any branch tracked as `origin/HEAD`), the agent
+should pause and confirm before committing rather than assuming the user
+wants commits landing directly there.
+
+## Conventions
+
+- **Standard imports** for any Python you write here:
+  ```python
+  import autofit as af
+  import autolens as al
+  import autolens.plot as aplt
+  ```
+- **Agent working directory**: `./work/`. Python scripts and Markdown notes
+  there are **committed** alongside the `wiki/project/` entry that describes
+  them — they're the most reusable artefact of a session. Plots go to
+  `./work/plots/<context>/` and data dumps (FITS / npy / pickle / hdf5) to
+  `./work/output/`; both subdirectories are gitignored, as are any top-level
+  `work/*.png|pdf|jpg|fits|npy|pkl|hdf5|h5` files.
+- **Project working directory** for persistent modeling pipelines: `scripts/` — see Part 2.
+- **Output of `search.fit(...)`**: goes under `./output/<dataset>/modeling/<hash>/` by
+  default (per PyAutoFit's own conventions).
+- **Plot output and path announcement.** Skill-generated plots are saved
+  through `aplt.Output(path="work/plots/<context>/", filename=..., format="png")`
+  so they persist on disk. The Python recipe `print(...)`s each plot's
+  absolute path. After running the script, the agent **quotes the absolute
+  path** of every saved plot and offers *"want me to `open <path>`?"* (macOS
+  default). Don't just say "plot saved" — the user shouldn't have to guess
+  where. One offer per plot, not nagging.
+
+## Sandbox / restricted environments
+
+`numba` and `matplotlib` write caches to the home directory or installed-package
+`__pycache__` paths by default. In restricted environments (Codex, sandboxed CI, read-only
+filesystems, `/mnt/c/...` imports under WSL) override them:
+
+```bash
+NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python ./work/script.py
+```
+
+PyAutoFit ships a short-circuit mode that skips non-linear search sampling, for fast
+end-to-end smoke testing:
+
+```bash
+PYAUTO_TEST_MODE=1 python ./work/script.py
+```
+
+Use `PYAUTO_TEST_MODE=1` whenever you're verifying a script you wrote runs end-to-end and
+the user does not need a real posterior. The project's own pipeline scripts in `scripts/`
+honour the older `PYAUTOFIT_TEST_MODE=1` variable — see Part 2's Test Runs section.
+
+## Bulk-edit safety
+
+When editing the same region across many skill or wiki files in one pass, **use `Edit`,
+not `Write`**, unless you have first read the entire current contents of the target file.
+A whole-file `Write` based on a header skim will silently delete every section below the
+header. This rule exists because of an actual incident in the sibling `autolens_workspace`
+repo where a header-only rewrite wiped ~80% of 17 scripts.
+
+## Never rewrite history
+
+NEVER perform these operations on any repo with a remote:
+
+- `git init` in a directory already tracked by git
+- `rm -rf .git && git init`
+- Commit with subject "Initial commit", "Fresh start", "Start fresh", "Reset for AI workflow",
+  or any equivalent message on a branch with a remote
+- `git push --force` to `main` (or any branch tracked as `origin/HEAD`)
+- `git filter-repo` / `git filter-branch` on shared branches
+- `git rebase -i` rewriting commits already pushed to a shared branch
+
+If the working tree needs a clean state, the **only** correct sequence is:
+
+    git fetch origin
+    git reset --hard origin/main
+    git clean -fd
+
+This applies to humans and every agent equally. `autolens_base_project` has an `origin`
+on GitHub (`PyAutoLabs/autolens_base_project`) — these rules apply to the `master` branch
+of this repo as much as to any of the PyAuto\* source repos.
+
+---
+
+# Part 2 — Science-project conventions (carried forward from the base template)
 
 This is the **base template** for PyAutoLens science projects. When asked to create a
 new project from this template, follow the conventions below.
@@ -11,9 +357,9 @@ New projects live outside this repo (e.g. `<NEW_PROJECT>/`).
 Use `rsync` to copy the template, excluding what isn't needed.
 
 The HPC folder contains one submit script per script type (`submit_imaging`,
-`submit_interferometer`, `submit_group`) in both `batch_gpu/` and `batch_cpu/`.
-Use the rsync exclusions below to copy **only** the submit scripts that match
-the chosen SLaM pipeline(s) — exclude everything else.
+`submit_interferometer`) in both `batch_gpu/` and `batch_cpu/`. Use the rsync
+exclusions below to copy **only** the submit scripts that match the chosen
+SLaM pipeline(s) — exclude everything else.
 
 To run a single dataset as a test, just put one entry in the `datasets=()` array
 in the submit script; no separate template file is needed.
@@ -23,17 +369,10 @@ in the submit script; no separate template file is needed.
 ```bash
 rsync -av \
   --exclude='scripts/interferometer.py' \
-  --exclude='scripts/group.py' \
   --exclude='hpc/batch_gpu/submit_interferometer' \
-  --exclude='hpc/batch_gpu/submit_group' \
-  --exclude='hpc/batch_gpu/submit' \
   --exclude='hpc/batch_cpu/submit_interferometer' \
-  --exclude='hpc/batch_cpu/submit_group' \
-  --exclude='hpc/batch_cpu/submit' \
-  --exclude='hpc/batch_cpu/template' \
   --exclude='dataset/' \
   --exclude='output/' \
-  --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
   <BASE_PROJECT>/ \
@@ -45,39 +384,10 @@ rsync -av \
 ```bash
 rsync -av \
   --exclude='scripts/imaging.py' \
-  --exclude='scripts/group.py' \
   --exclude='hpc/batch_gpu/submit_imaging' \
-  --exclude='hpc/batch_gpu/submit_group' \
-  --exclude='hpc/batch_gpu/submit' \
   --exclude='hpc/batch_cpu/submit_imaging' \
-  --exclude='hpc/batch_cpu/submit_group' \
-  --exclude='hpc/batch_cpu/submit' \
-  --exclude='hpc/batch_cpu/template' \
   --exclude='dataset/' \
   --exclude='output/' \
-  --exclude='simulators/' \
-  --exclude='__pycache__/' \
-  --exclude='*.pyc' \
-  <BASE_PROJECT>/ \
-  <NEW_PROJECT>/
-```
-
-### Group-only project
-
-```bash
-rsync -av \
-  --exclude='scripts/imaging.py' \
-  --exclude='scripts/interferometer.py' \
-  --exclude='hpc/batch_gpu/submit_imaging' \
-  --exclude='hpc/batch_gpu/submit_interferometer' \
-  --exclude='hpc/batch_gpu/submit' \
-  --exclude='hpc/batch_cpu/submit_imaging' \
-  --exclude='hpc/batch_cpu/submit_interferometer' \
-  --exclude='hpc/batch_cpu/submit' \
-  --exclude='hpc/batch_cpu/template' \
-  --exclude='dataset/' \
-  --exclude='output/' \
-  --exclude='simulators/' \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
   <BASE_PROJECT>/ \
@@ -87,24 +397,11 @@ rsync -av \
 ### Multiple data types
 
 Omit the exclusions for any script types you need; keep all others.
-Always exclude `submit` and `template` (no suffix) — those are legacy files.
 
 ### What to always exclude
 
 - `dataset/` — add real datasets separately (see below)
 - `output/` — never pre-populate; written by PyAutoFit at runtime
-- `simulators/` — only needed when generating simulated data
-
-## Codex / sandboxed runs
-
-When running Python from Codex or any restricted environment, set writable cache directories so `numba` and `matplotlib` do not fail on unwritable home or source-tree paths:
-
-```bash
-NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python scripts/imaging.py
-```
-
-This workspace is often imported from `/mnt/c/...` and Codex may not be able to write to module `__pycache__` directories or `/home/jammy/.cache`, which can cause import-time `numba` caching failures without this override.
-
 ---
 
 ## Dataset Handling
@@ -174,29 +471,26 @@ hpc/
 ├── batch_gpu/                  # GPU submit scripts + SLURM log dirs
 │   ├── submit_imaging          # SLURM batch script for imaging pipeline
 │   ├── submit_interferometer   # SLURM batch script for interferometer pipeline
-│   ├── submit_group            # SLURM batch script for group pipeline
-│   ├── submit                  # LEGACY — do not use, do not modify
+│   ├── submit                  # Generic compatibility submit script kept as a reference
 │   ├── output/                 # SLURM stdout logs (*.out)
 │   └── error/                  # SLURM stderr logs (*.err)
 ├── batch_cpu/                  # CPU submit scripts + SLURM log dirs
 │   ├── submit_imaging
 │   ├── submit_interferometer
-│   ├── submit_group
-│   ├── submit                  # LEGACY — do not use, do not modify
-│   ├── template                # LEGACY — do not use, do not modify
+│   ├── submit                  # Generic compatibility submit script kept as a reference
+│   ├── template                # Single-dataset CPU template kept as a reference
 │   ├── output/
 │   └── error/
 ├── sync                        # Bidirectional sync script (local ↔ HPC)
 ├── sync.conf.example           # Template config for sync
-├── sync_jump                   # Two-hop relay sync (local → jump → build → cosma → local)
-├── sync_jump.conf.example      # Template config for sync_jump
+├── sync_jump.conf.example      # Example config for two-hop / relay topologies
 ├── .gitignore                  # Ignores sync.conf, sync_jump.conf, subhalo/
 └── __init__.py
 ```
 
 ### Submit Scripts — GPU vs CPU
 
-Each script type (`imaging`, `interferometer`, `group`) has a submit script in both
+Each script type (`imaging`, `interferometer`) has a submit script in both
 `batch_gpu/` and `batch_cpu/`. The key differences:
 
 | | GPU (`batch_gpu/`) | CPU (`batch_cpu/`) |
@@ -210,6 +504,11 @@ Each script type (`imaging`, `interferometer`, `group`) has a submit script in b
 | Thread pinning | none | Sets `OPENBLAS/MKL/OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK` |
 | Echo block | Includes `nvidia-smi` | No `nvidia-smi` |
 | Python args | `--sample --dataset` | `--sample --dataset --use_cpu --number_of_cores=$THREADS` |
+
+The generic `batch_gpu/submit`, `batch_cpu/submit`, and `batch_cpu/template`
+files are kept as compatibility/reference examples for sites that want a
+minimal or custom launcher. For normal use, prefer the typed
+`submit_imaging` / `submit_interferometer` scripts.
 
 **CPU scripts set these environment variables** to pin threads and force CPU-only JAX:
 
@@ -239,7 +538,7 @@ All submit scripts follow the same pattern:
 
 ### HPC Script Checklist (after copying)
 
-For each script type present in the project (`imaging`, `interferometer`, `group`),
+For each script type present in the project (`imaging`, `interferometer`),
 update these fields in both `hpc/batch_gpu/submit_<type>` and
 `hpc/batch_cpu/submit_<type>`:
 
@@ -252,13 +551,6 @@ The GPU submit scripts have `nvidia-smi` in the echo block — leave it in place
 
 To test a single lens, temporarily set `--array=0-0` and put just that lens in
 `datasets=(...)` — no separate template file is needed.
-
-### Legacy Files
-
-`batch_gpu/submit`, `batch_cpu/submit`, and `batch_cpu/template` (no suffix) are
-**legacy files**. Do not use, modify, or copy them to new projects. Always exclude
-them in rsync commands. They use an older format without `--sample` / `--dataset`
-separation and reference `scripts/base.py` instead of the typed scripts.
 
 ### `hpc/sync` — Bidirectional Project Sync
 
@@ -315,7 +607,7 @@ The remote path is `$HPC_HOST:$HPC_BASE/$PROJECT_NAME`.
 
 **What gets synced:**
 
-- **Push (code):** `config/`, `hpc/`, `scripts/`, `slam_pipeline/`, `simulators/` + root files (`activate.sh`, `util.py`, `__init__.py`, `README.rst`, `LICENSE`). Changed files are updated normally.
+- **Push (code):** `config/`, `hpc/`, `scripts/` + root files (`activate.sh`, `__init__.py`, `README.md`, `LICENSE`). Changed files are updated normally.
 - **Push (data):** `dataset/` — uses `--ignore-existing` so FITS files already on the HPC are never re-transferred.
 - **Pull (logs):** `hpc/batch_gpu/output/`, `hpc/batch_gpu/error/`, `hpc/batch_cpu/output/`, `hpc/batch_cpu/error/`
 - **Pull (results):** `output/` — excludes `search_internal/` (large sampler state not needed locally).
@@ -323,77 +615,24 @@ The remote path is `$HPC_HOST:$HPC_BASE/$PROJECT_NAME`.
 
 **rsync options:** archive mode, compression (skipping FITS/gz/bz2/xz/zst), partial resume, SSH ControlMaster connection reuse.
 
-### `hpc/sync_jump` — Two-Hop Relay Sync
-
-For topologies where results live on a build server only reachable via a jump host,
-and must be staged through an intermediate server before reaching your local machine:
-
-```
-local  ──ssh──►  JUMP_HOST  ──ssh──►  BUILD_HOST
-                                           │
-                                      rsync/tar
-                                           │
-                                           ▼
-local  ◄──rsync──  COSMA_HOST  ◄──rsync──  BUILD_HOST
-```
-
-**Setup:**
-```bash
-cp hpc/sync_jump.conf.example hpc/sync_jump.conf
-# Edit sync_jump.conf with your host names and paths.
-```
-
-**Config fields** (`sync_jump.conf`):
-- `JUMP_HOST` — first hop from local machine (e.g. `euclid_jump`)
-- `BUILD_HOST` — build server, only reachable via JUMP_HOST (e.g. `euclid-ral-build`)
-- `BUILD_OUTPUT_PATH` — path to `output/` on the build server
-- `COSMA_HOST` — intermediate staging server (e.g. `cosma8`)
-- `COSMA_STAGING_DIR` — staging directory on COSMA_HOST
-- `PROJECT_NAME` — used to namespace archives; defaults to local folder name
-
-**Commands:**
-
-| Command | Description |
-|---|---|
-| `hpc/sync_jump push` | Relay output from build server → cosma staging (rsync) |
-| `hpc/sync_jump push --zip` | Same, but via a single tar.gz archive |
-| `hpc/sync_jump pull` | Download cosma staging → local `output/` |
-| `hpc/sync_jump pull --zip` | Download archive then extract locally |
-| `hpc/sync_jump sync [--zip]` | Push then pull (default) |
-| `hpc/sync_jump status` | Dry run — show what would transfer |
-
-**Options:**
-- `--zip` — transfer a single tar.gz instead of many small files (faster when `output/` has thousands of files)
-- `--include-search-internal` — include `search_internal/` dirs (excluded by default)
-
-**Requires:** `ssh-agent` running with your key loaded (`ssh-add -L` should list a key).
-
 ### `.gitignore`
 
 The `hpc/.gitignore` ignores:
 - `subhalo/` — subhalo grid search output (generated at runtime)
 - `sync.conf` — local HPC connection config (contains host-specific paths)
-- `sync_jump.conf` — local jump-host connection config
+- `sync_jump.conf` — local relay / jump-host config
 
 ---
 
 ## Scripts and info.json
 
-`scripts/imaging.py` reads all dataset-specific values from `info.json` using
-`info.get(key, default)`. Hard-coded values for `mask_radius`,
-`subhalo_grid_dimensions_arcsec`, `pixel_scale`, and `n_batch` should never appear
-in the script body — always source them from info.json.
-
-`scripts/interferometer.py` similarly reads `pixel_scale`, `n_batch`,
-`real_space_shape`, and `mask_radius` from info.json.
-
----
-
-## slam_pipeline/ — Do Not Modify
-
-`slam_pipeline/` is dataset-type agnostic. Never modify these files when setting up
-a new project. Project-specific changes belong in `scripts/imaging.py` or
-`scripts/interferometer.py`.
+`scripts/imaging.py` and `scripts/interferometer.py` are **not shipped by the
+template** — they are populated by the [`init-slam`](./skills/init-slam.md)
+skill, which copies the right SLaM driver from `autolens_workspace` into
+`scripts/`. Once populated, each script reads all dataset-specific values from
+`info.json` using `info.get(key, default)` (e.g. `pixel_scale`, `n_batch`,
+`mask_radius`, `subhalo_grid_dimensions_arcsec`, `real_space_shape`). Never
+hard-code those values in the script body.
 
 ---
 
@@ -427,6 +666,10 @@ A "test run" means running a script with `PYAUTOFIT_TEST_MODE=1`, which makes al
 non-linear searches complete almost instantly with a trivial number of samples. Use
 this to verify the full pipeline executes without errors before submitting to the HPC.
 
+> **Prerequisite:** the typed scripts (`scripts/imaging.py`,
+> `scripts/interferometer.py`) are populated by the
+> [`init-slam`](./skills/init-slam.md) skill — run it first.
+
 ```bash
 # Imaging (GPU mode — default)
 PYAUTOFIT_TEST_MODE=1 python3 scripts/imaging.py --sample=<sample> --dataset=<dataset>
@@ -436,15 +679,15 @@ PYAUTOFIT_TEST_MODE=1 python3 scripts/imaging.py --sample=<sample> --dataset=<da
 
 # Interferometer
 PYAUTOFIT_TEST_MODE=1 python3 scripts/interferometer.py --sample=<sample> --dataset=<dataset>
-
-# Group
-PYAUTOFIT_TEST_MODE=1 python3 scripts/group.py --sample=<sample> --dataset=<dataset>
 ```
+
+`PYAUTOFIT_TEST_MODE=1` (project scripts) and `PYAUTO_TEST_MODE=1` (agent-generated
+scripts in `work/`) are equivalent short-circuit modes — use whichever the script you're
+running already supports.
 
 Example datasets for each script type live at:
 - Imaging: `dataset/sample_imaging/example_imaging/`
 - Interferometer: `dataset/sample_interferometer/example_interferometer/`
-- Group: `dataset/sample_group/102021990_NEG650312660474055399/`
 
 ---
 
@@ -465,69 +708,35 @@ Use the `PyAuto` venv unless the project requires a different one.
 
 ---
 
-## Context (`context/`)
+## Modeling Scripts (`scripts/`)
 
-The `context/` folder provides AI agents with the scientific and technical background
-needed to work on the project. It contains files copied from the software's workspace
-repository (e.g. `autolens_workspace`) — tutorials, feature examples, guide scripts,
-and reference material that explain how the APIs, modeling conventions, and science
-cases work.
+The `scripts/` folder holds the project's persistent modeling pipelines (one per
+data type: `imaging.py`, `interferometer.py`). A fresh template ships only
+`scripts/template.py` — the typed scripts are populated by the `init-slam` skill
+([`skills/init-slam.md`](./skills/init-slam.md)), which selects and copies the
+appropriate SLaM pipeline script(s) from `autolens_workspace` into `scripts/`.
+The skill presents categorized options, copies the chosen script(s), and
+creates `scripts/slam_claude.md` with full SLaM context for future AI sessions.
 
-**Purpose:** When an agent needs to understand how a feature works, interpret modeling
-results, or make decisions about pipeline configuration, `context/` is where it looks
-first. The files bridge the gap between the raw API and the science — they explain
-*why* certain choices are made, not just *how* to call the code.
-
-**When to read:** Always read relevant files in `context/` before modifying scripts,
-interpreting results, or advising on modeling choices. For example:
-- Before changing pixelization settings → read the pixelization tutorial/example
-- Before interpreting subhalo results → read the subhalo modeling guide
-- Before adjusting mass model configuration → read the relevant feature example
-
-**Typical contents** (varies per project):
-- Feature examples (e.g., pixelization, subhalo modeling, multi-Gaussian expansion)
-- Guide scripts explaining API usage or modeling conventions
-- Reference outputs or worked examples relevant to the science case
-- Tutorials from `autolens_workspace/notebooks/` converted or copied as `.py` scripts
-
-**Population:** The `context/` folder is empty in a fresh rsync of the base template.
-It is populated manually per-project by copying relevant files from the workspace
-repository (e.g. `autolens_workspace/scripts/`, `autolens_workspace/notebooks/`).
-There is no automated population step — the user selects which files are relevant
-to the specific science case and copies them in.
-
-**Source repositories** (common):
-- `autolens_workspace` — PyAutoLens tutorials, feature examples, guides
-- `autofit_workspace` — PyAutoFit non-linear search tutorials, analysis examples
-- `autogalaxy_workspace` — galaxy modeling tutorials (light profiles, mass profiles)
-
----
-
-## Modeling Scripts (`Scripts/`)
-
-The `Scripts/` folder is empty in the base template. After rsync-ing the template into a new
-project, use the `/init-slam` skill to select and copy the appropriate SLaM pipeline script(s)
-from `autolens_workspace`. The skill presents categorized options, copies the chosen script(s),
-and creates `Scripts/slam_claude.md` with full SLaM context for future AI sessions.
-
-The skill is defined at `autolens_base_project/skills/init-slam/SKILL.md`. Install it once from there.
-
-See `Scripts/CLAUDE.md` for the full list of available pipeline options.
+For quick exploration scripts that don't belong to the pipeline, write to `work/`
+instead (gitignored, agent scratch space).
 
 ---
 
 ## Typical New-Project Workflow
 
 1. `rsync` the template (with appropriate exclusions)
-2. **Run `/init-slam`** to select and copy SLaM pipeline script(s) into `Scripts/`
+2. **Run the `init-slam` skill** to select and copy SLaM pipeline script(s) into `scripts/`
 3. Copy or symlink the dataset into `dataset/<sample_name>/`
 4. Verify every lens has an `info.json` with at least `pixel_scale` and `n_batch`
-   (or confirm the defaults in `Scripts/imaging.py` are correct for the instrument)
+   (or confirm the defaults in the populated `scripts/imaging.py` are correct
+   for the instrument)
 5. Update `hpc/batch_gpu/submit_<type>` and `hpc/batch_cpu/submit_<type>` for each
    chosen script type: job name, `--array`, `sample=`, `datasets=(...)`
-7. **Run `dos2unix` on all shell scripts and Python files** to ensure Unix line endings
-8. **Add a `Project<Name>()` function to `~/.bashrc`** (see Bash Project Alias above)
-9. Test locally on one lens before submitting the full array:
+6. **Run `dos2unix` on all shell scripts and Python files** to ensure Unix line endings
+7. **Add a `Project<Name>()` function to `~/.bashrc`** (see Bash Project Alias above)
+8. Test locally on one lens before submitting the full array (requires step 2
+   to have populated the typed script):
    ```bash
-   python3 Scripts/imaging.py --sample=<sample> --dataset=<one_lens>
+   python3 scripts/imaging.py --sample=<sample> --dataset=<one_lens>
    ```
