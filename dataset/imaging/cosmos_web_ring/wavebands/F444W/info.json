@@ -1,3 +1,5 @@
 {
-    "pixel_scale": 0.06
+    "pixel_scale": 0.06,
+    "redshift_lens": 2.0,
+    "redshift_source": 5.1043
 }
