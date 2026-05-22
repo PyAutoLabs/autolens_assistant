@@ -13,8 +13,17 @@ loaded `Imaging` dataset" and "I'm running a non-linear search".
 The canonical example is `autolens_workspace:scripts/imaging/modeling.py`. This skill
 generates the equivalent for the user's lens.
 
+This skill assumes the imaging data is already preprocessing-ready. For real
+observational data, confirm first that the user has explicitly thought through mask
+extent, contaminating objects, and any regions that should be excluded via a manual or
+GUI-assisted masking step. If not, route them back to
+[`al_prepare_imaging_data`](./al_prepare_imaging_data.md) before building the model.
+
 ## Ask
 
+- *"If this is real observational data, have you already decided the mask extent and
+  any regions that should be excluded from modelling?"* — if not, stop and do that in
+  [`al_prepare_imaging_data`](./al_prepare_imaging_data.md) first.
 - *"How many galaxies in the model — single galaxy-scale, group (2–4), cluster?"* —
   this is the only structural choice. Skill below assumes galaxy-scale; bootstrap a
   variant for groups/clusters via `_bootstrap_skill` if needed.

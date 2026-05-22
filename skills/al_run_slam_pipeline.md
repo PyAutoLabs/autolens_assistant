@@ -32,6 +32,9 @@ Before running SLaM, the user should be comfortable with:
   [`wiki/core/concepts/non_linear_search.md`](../wiki/core/concepts/non_linear_search.md).
 - **Adapt images** — adaptive regularisation that uses the lens-light-subtracted image
   to scale source-plane reconstruction smoothness. Covered in the SLaM concept page.
+- **Real-data preprocessing** — for observational imaging, they should already have
+  made explicit decisions about mask radius, contaminating objects, and any manual
+  exclusion regions that should not enter the likelihood.
 
 If they're newer than that, route them through `al_build_imaging_model` +
 `al_run_search` first; SLaM is overkill for a first-fit.
@@ -43,6 +46,10 @@ For the full conceptual treatment of SLaM,
 
 - *"Imaging or interferometer?"* — both supported; the pipelines differ in the analysis
   classes and inversion settings.
+- *"If this is real imaging data, have you already settled the preprocessing choices:
+  mask extent, contaminant masking, and any regions that should be excluded from the
+  model?"* — if not, route back to [`al_prepare_imaging_data`](./al_prepare_imaging_data.md)
+  before starting SLaM.
 - *"Does the lens galaxy have noticeable lens light to model, or are you doing a
   mass-only fit?"* — controls whether LIGHT LP is included.
 - *"What's the final mass model you want?"* — Isothermal+Shear (default), PowerLaw,

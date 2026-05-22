@@ -11,6 +11,11 @@ circular mask around the lens, sets up adaptive over-sampling so light profiles 
 evaluated accurately where they matter, and (optionally) scales the noise to mask out
 contaminating galaxies. The output is a ready-to-fit `al.Imaging` object.
 
+For real observational data, treat preprocessing as part of model setup, not an
+optional cleanup step. Before writing modeling code, explicitly decide how large the
+modelled region should be, whether any nearby objects or artifacts must be excluded,
+and whether a manual or GUI-assisted masking step is needed to define those regions.
+
 Background: [`wiki/core/concepts/grids_and_masks.md`](../wiki/core/concepts/grids_and_masks.md)
 covers what a mask and an over-sample grid actually are; the canonical reference for
 the loader is `PyAutoArray:autoarray/dataset/imaging/dataset.py` and the workspace
@@ -20,16 +25,24 @@ example at `autolens_workspace:scripts/imaging/start_here.py`.
 
 Before generating code, ask:
 
+- *"Is this simulated data or real observational imaging?"* — simulated data often
+  ships already clean; real data usually needs explicit preprocessing decisions before
+  modelling starts.
 - *"What's the path to your data, noise map and PSF FITS files, and the pixel scale
   in arcseconds/pixel?"* (Without these you can't load anything.)
 - *"How large is the lens system on the sky?"* — drives the mask radius. A galaxy-
   scale lens fits in a 2–3" circular mask; a group lens may need 5–10".
+- *"What parts of the image should not be modelled?"* — e.g. nearby galaxies,
+  foreground stars, diffraction spikes, cosmic rays, sky residuals, detector edges.
+- *"Do you need a manual or GUI-assisted masking step to mark excluded regions before
+  fitting?"* — if yes, define that mask first and only then continue to model setup.
 - *"Are there contaminating galaxies near the lens that you want to noise-scale out?"*
   — if yes, you'll need an `extra_galaxies` mask (see the branch below).
 
 ## Branch — minimal load + mask
 
-For most galaxy-scale lenses this is enough:
+For simulated data, or for real data that has already been inspected and cleaned, this
+is often enough as a starting point:
 
 ```python
 # work/prepare_imaging.py
@@ -78,6 +91,10 @@ Read [`wiki/core/concepts/grids_and_masks.md`](../wiki/core/concepts/grids_and_m
 *why* over-sampling matters (steep light profiles in pixels near the centre alias
 without sub-grid integration).
 
+For real data, do not treat the circular mask radius above as automatic truth. It is an
+initial modelling choice that should be checked against the arc extent and against any
+features you intend to exclude from the likelihood.
+
 ## Branch — with noise scaling for contaminating galaxies
 
 If a nearby foreground star or unrelated galaxy is bleeding into your mask, mask it
@@ -96,6 +113,18 @@ dataset = dataset.apply_noise_scaling(mask=mask_extra_galaxies)
 Apply this **before** the model mask and over-sampling.
 
 Source: `PyAutoArray:autoarray/dataset/imaging/dataset.py` (`apply_noise_scaling`).
+
+## Branch — with a manual exclusion mask
+
+If the user has regions that should not contribute to the fit at all, create a manual
+mask for those pixels first. This is often needed for real data with bright nearby
+objects, image defects, subtraction residuals, or field features that lie inside an
+otherwise sensible circular lens mask.
+
+The end product should be a FITS mask that records the user-defined exclusion regions.
+Apply that exclusion step before the main model mask and over-sampling. If the user has
+not yet defined those regions, pause here and create the mask rather than continuing
+straight into modelling.
 
 ## Branch — if you don't have a noise map or PSF
 
