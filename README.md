@@ -4,34 +4,19 @@
   <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" alt="PyAutoLens demo" width="600">
 </p>
 
-A forkable template for **PyAutoLens** strong-lensing science projects, bundled
-with an AI-agent workspace so you can develop and run your own lensing or
-optimisation project largely through natural language. Describe your data,
-science goal, or modelling problem, and the agent turns that into runnable
-Python workflows for your repository.
+When two or more galaxies are aligned along our line of sight, the background
+galaxy can appear multiple times. This is strong gravitational lensing, and
+**PyAutoLens** makes it straightforward to model strong lenses.
 
-The workspace
-ships with procedural skills, scientific reference material, and project memory
-so the agent can:
+This repository is a forkable PyAutoLens project template bundled with an
+AI-agent workspace built to help people do gravitational-lensing science and
+learn it at the same time. Describe your data, science goal, or modelling
+problem, and the agent turns that into runnable Python workflows, explanations,
+and project notes that stay in your repo.
 
-- build end-to-end PyAutoLens workflows for real science use cases, from data
-  preparation and model design to fitting, debugging, visualisation, and HPC
-  execution;
-- work with domain context, because it already knows the background science,
-  the PyAutoLens / PyAutoFit APIs, and the conventions of this workspace;
-- teach as it goes, adjusting depth for newcomers and explaining the physics,
-  statistics, and implementation choices behind the code it writes.
-
-In practice, that means you can say things like:
-
-- *"I have HST imaging of <lens name>; help me fit this system."*
-- *"Build an optimisation workflow for a new lens model and explain each stage."*
-- *"I'm new to strong lensing; teach me what a caustic is, then show me where it enters the model."*
-
-The agent can accelerate real
-research work and lower the barrier to entry, but the outputs are still normal
-Python scripts and notes that stay in your repo, can be inspected, and can be
-iterated on with you.
+The focus is the science: building end-to-end lens-modelling workflows,
+understanding the physics and statistics behind them, and lowering the barrier
+to entry for newcomers without reducing everything to a black box.
 
 ---
 
