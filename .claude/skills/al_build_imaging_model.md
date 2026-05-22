@@ -1,0 +1,1 @@
+../../skills/al_build_imaging_model.md

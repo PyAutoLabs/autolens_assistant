@@ -1,11 +1,34 @@
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.egg-info/
+.venv/
+venv/
+env/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
 
 # HPC sync config — machine-specific, contains personal paths
 hpc/sync.conf
+hpc/sync_jump.conf
 
 # PyAutoFit output — generated, typically too large to commit
 output/
+failed/
+
+# Agent scratch directory
+work/
+
+# Sandbox caches
+.numba_cache/
+.matplotlib/
+
+# Cloned source repos (when set up via al_setup_environment in dev mode).
+# Users may keep these elsewhere; if cloned as siblings, they live outside
+# this repo. If cloned inside, ignore them.
+/sources/

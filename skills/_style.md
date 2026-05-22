@@ -1,0 +1,166 @@
+---
+name: _style
+description: Writing guide for every the workspace skill. Read first before adding or revising a skill. Defines tone (conversational, physics-first, encourages reading), structure (Orient → Ask → Branch → Combine), the four properties every skill must have, the python-first rule, and the source-citation form (project-name + repo-relative path).
+---
+
+# How to write a the workspace skill
+
+This file is a meta-skill: it does not help a user run a lensing task directly. It is
+the writing guide every other skill in this folder is authored against. Read it before
+adding a new skill and re-read it before revising one.
+
+## What a skill is
+
+A skill is a single Markdown file at `skills/<name>.md`. It guides an AI agent through
+one lensing task — composing an imaging model, running a search, inspecting a fit,
+simulating a dataset — and in doing so produces or evolves a **Python script** the user
+can run. The deliverable is *understanding + a runnable script*, not a chat answer.
+
+The agent reads the skill when activated (either by the user typing `/al_<name>` or by
+the agent matching the skill's frontmatter `description` to the user's request).
+
+## The four properties every skill must have
+
+1. **Scientific context first.** Before showing API calls, set the physics. *Why* are we
+   loading the result, fitting this model, or running this profile? The API is in service
+   of the science, not the other way around.
+
+2. **Encourage reading the wiki.** Every skill should point at relevant `wiki/`
+   pages for the *what* (what is a Sersic, what is Nautilus, what is a pixelisation).
+   Skills are procedure; the wiki is content. If a piece of content doesn't exist yet,
+   draft the wiki page in the same change as the skill.
+
+3. **Conversational tone, invites questions.** Talk to the user the way a postdoc
+   collaborator would. Ask what they want before doing it. After explaining a concept,
+   invite a follow-up. Don't narrate procedures (`Step 1. Step 2.`) when prose works.
+
+4. **Skills compose.** Each skill should leave breadcrumbs to other skills that build on
+   it. Mention adjacent skills by name when chaining would unlock something a single
+   skill can't.
+
+## Python-first
+
+This is the rule that distinguishes the workspace from a tutorial workspace.
+
+- Every skill's main deliverable is a Python script written *for this user's data*.
+- The skill body contains the API recipe inline, in fenced ```python``` blocks.
+- The skill should leave the user with a `.py` file in `./work/` they can re-run and
+  modify themselves.
+- Do **not** just point the user at a pre-existing script in another repo. If you
+  reference an example (e.g. inside `autolens_workspace`), say so as a citation but
+  produce the user-specific script in the working directory regardless.
+
+## Source citations
+
+Code references inside a skill must use the **project name + path relative to that
+project's repo root**, resolvable via [`../sources.yaml`](../sources.yaml).
+
+Good:
+
+> See `PyAutoFit:autofit/non_linear/search/nest/nautilus.py` for the search's default
+> settings, and `wiki/core/api/searches.md#nautilus` for when to pick it.
+
+Bad:
+
+> See `/Users/other/autolens/fit/autofit/non_linear/search/nest/nautilus.py`.
+
+The reason: this workspace is meant to be cloned to other machines. Absolute local paths
+break the moment anyone else opens it.
+
+## Adaptive depth
+
+Users arrive with different backgrounds. The same skill needs to serve all of them:
+
+- **The lensing newcomer.** Knows Python, maybe some astronomy, but hasn't worked with
+  strong lensing before. Doesn't yet know what a `Tracer`, a deflection angle, or a
+  caustic is. Frame the physics each time a new concept appears; lean heavily on the
+  wiki.
+- **The PyAuto\* newcomer.** Knows the science fluently — Bartelmann, Treu, the lens
+  equation, magnification — but new to the API. Map straight from science question to
+  object; skip the physics lecture.
+- **The returning user.** Has used PyAutoLens before. Just wants to load a fit and
+  inspect the residuals. Quick API recall, no lecture.
+
+Pick depth from cues in the user's question. *"I'm new to lensing"* → newcomer. *"How
+do I get the caustics?"* → already knows lensing. *"Load `output/.../abc/`"* → returning
+user. If ambiguous, ask one disambiguating question; never default to the longest
+explanation.
+
+## The conversation arc — Orient → Ask → Branch → Combine
+
+Structure every skill as a conversation, not a checklist.
+
+**Orient.** When the skill activates, give a short opening: what this task is
+scientifically, what the user is about to do, the most relevant wiki page, and one
+concrete data example tailored to what they mentioned (HST, JWST, Euclid, ALMA, JVLA…).
+Two short paragraphs at most.
+
+**Ask.** Before writing code, ask what the user wants out of the task. *"Want to fit the
+mass model first or the source first?"* The answer chooses the branch and lets the skill
+calibrate depth. Skip this step only when the user has already told you.
+
+**Branch.** Each sub-task lives in its own narrative branch. A branch has four parts:
+
+- Physics framing (one or two sentences, scaled to the user's depth).
+- The Python recipe — actual code, in a fenced block, that the agent should adapt and
+  save to `./work/`.
+- The wiki page that teaches this in depth, plus the source-code citation
+  (`<Project>:<path>`).
+- An invitation to dig deeper.
+
+**Combine.** End the skill (or the chosen branch) with a short note on what else the
+user could do, especially with other skills. *"Once you have the fit running, feed the
+output into `al_load_results` and `al_plot_fit_residuals`."*
+
+A slim agent-facing procedural checklist at the very bottom of the file is fine — but
+the user-facing content above should read like a conversation arc, not a recipe.
+
+## Voice rules
+
+**Do**
+
+- Speak in second person. The user is the protagonist.
+- Invite questions explicitly (*"ask if you want me to explain how this works"*).
+- Tie at least one concrete example to the user's data when their data type is known.
+- Point at the wiki by relative path every time you teach a concept.
+
+**Don't**
+
+- Don't open with a numbered procedure.
+- Don't dump a wall of links — one or two per concept, chosen for relevance.
+- Don't present code as the deliverable on its own — the deliverable is understanding +
+  a saved script.
+- Don't adopt a "just run this for me" tone. The user is here to learn lensing with
+  the agent's help; gently route requests for black-box automation back through the
+  wiki and existing skills.
+
+## Frontmatter
+
+Every skill file starts with YAML frontmatter:
+
+```markdown
+---
+name: <kebab-case-name>
+description: <one paragraph the agent reads when deciding whether to activate this skill>
+---
+```
+
+The `description` is what the agent uses to decide when the skill applies. Write it so
+a future agent that has only read the description (not the body) can decide from it
+alone. Mention the kind of task, the kind of input, and what the skill should NOT be
+used for.
+
+## When a skill needs new wiki content
+
+If you cannot point at a wiki page that explains a concept your new skill uses, draft
+the wiki page in the same change. The wiki page should follow the wiki frontmatter
+format (see `wiki/README.md`) and cite source code by `<Project>:<path>`.
+
+The reverse is also true: don't write a wiki page nobody references. The wiki exists to
+back up the skills.
+
+## Iteration
+
+This guide is the the workspace v1 writing guide. As patterns emerge, update this file in
+the same change as whatever motivated the update. Note the change at the top of that
+PR description.

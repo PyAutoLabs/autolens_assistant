@@ -1,54 +1,39 @@
 # wiki/literature/
 
-The literature sub-wiki holds external references for the science the project is doing:
-papers, technical reports, conference notes, derivations, methodological references.
+The literature sub-wiki holds compiled syntheses of the strong-lensing scientific
+literature: concepts, named entities (surveys, lenses, software, collaborations),
+and per-paper bibliography pages.
 
-It is **empty in a fresh fork** of `autolens_base_project`. Populate it per-project as
-the science develops.
+> **Authoritative schema:** [`CLAUDE.md`](./CLAUDE.md) describes the page types,
+> frontmatter, cross-reference convention (`[[page-slug]]`), and how an assistant
+> should use this wiki. Read it before adding or editing pages.
 
-## What belongs here
+## Layout
 
-- Papers introducing the dataset / survey / lens sample.
-- Methodological references (e.g. the original Sersic paper, NFW papers, the SLaM
-  pipeline paper, Nautilus paper).
-- Internal write-ups of derivations that don't fit neatly in a notebook comment.
-- Re-cap notes from group meetings that the user wants to remember.
+| Folder | Page type | Scope |
+|---|---|---|
+| `concepts/` | concept | one scientific concept per page (e.g. `mass-sheet-degeneracy.md`) |
+| `entities/` | entity | one named thing per page (survey, lens, code, collaboration) |
+| `sources/` | sources | bibliography of papers on one topic, one section per paper |
+| `index.md` | meta | top-level navigation |
+| `log.md` | meta | append-only compilation log |
 
-## What does *not* belong here
+## Where the PDFs live
 
-- API reference for PyAuto\* libraries — that's [`../core/`](../core/), curated by
-  `al_update_wiki`.
-- Notes on what *you* did in this fork — that's [`../project/`](../project/).
-- Raw PDF dumps — link to a DOI / arXiv ID instead, or store the PDF outside the repo
-  and reference it.
+The literature wiki compiles syntheses of papers whose PDFs are typically kept
+**outside this repo** (in a sibling `PyAutoPaper/` checkout or wherever the user
+stores them). The wiki pages reference each PDF by its relative path; collaborators
+who clone this repo can read every wiki page but must obtain PDFs separately
+(usually from arXiv or the journal site).
 
-## Suggested page format
+## When you, the agent, should write here
 
-```markdown
----
-title: <Paper title or short topic name>
-authors: [<first author>, et al.]
-year: <YYYY>
-doi: <doi or arxiv id>
-tags: [<topic>, <topic>]
----
+- A user asks about a specific lensing paper or result and you can find the topic
+  in the wiki — quote and cite from the existing page.
+- A new paper has been read and the user explicitly asks for the wiki to be
+  updated. Follow the schema in `CLAUDE.md`: add a section to the relevant
+  `sources/<topic>.md` page, update the relevant `concepts/` and `entities/`
+  pages with `[[link]]` references, and append a line to `log.md`.
 
-# <Page title>
-
-## Why it matters here
-
-<1-3 sentences on why this reference is in the project — what decision it informs,
-which dataset it covers, etc.>
-
-## Summary
-
-<Free-form notes — the bits a future you / agent will want without re-reading the paper>
-
-## Equations / numbers we use
-
-<If the paper provides a formula or a numerical value the project uses, restate it
-here in the form the project consumes — agents reading this should not need to open
-the PDF.>
-```
-
-There is no schema enforcement; treat the above as a strong default.
+Do **not** treat this folder as scratch space, and do **not** invent citations:
+the schema demands that any cited result trace back to an actual paper stub.

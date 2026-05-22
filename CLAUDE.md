@@ -1,4 +1,207 @@
-# PyAutoLens Base Project — Claude Instructions
+# CLAUDE.md — Agent instructions for autolens_base_project
+
+You are working inside **autolens_base_project**, the forkable template for PyAutoLens
+science projects. The repo is both:
+
+- a **science-project template** (HPC infra, simulators, scripts, configs, dataset
+  layout, sync tooling), and
+- an **agent workspace** with a three-layer instructions/skills/wiki stack so you can
+  help users do lensing without re-discovering the API from scratch each session.
+
+Read this file end-to-end before doing anything. The first half describes how you, the
+agent, operate; the second half describes the science-project conventions you must
+respect when modifying the project itself.
+
+---
+
+# Part 1 — How you (the agent) operate
+
+## The three-layer model
+
+The repo is organised into three layers. Map every user request onto one or more of them:
+
+1. **Instructions** (this file, `AGENTS.md`, `README.md`) — meta.
+2. **Skills** (`skills/*.md`, exposed to you via `.claude/skills/*.md` symlinks) — *procedural*.
+   How to do a lensing task. Lensing skills are named `al_<task>.md` and produce or evolve
+   a Python script. Project-workflow skills (`init-slam.md`, `start-new-project.md`) drive
+   repo-level operations and don't always produce code.
+3. **Wiki** (`wiki/**/*.md`) — *content*. Reference material the skills cite. The wiki tells
+   you *what* a Sersic profile is, *which* non-linear searches exist, *how* SLaM phases work.
+
+> **Rule of thumb.** When the user asks a *how do I do X* question, reach for a skill. When
+> the user asks a *what is X / which X / why X* question, reach for the wiki. When the user
+> asks to *build something*, compose multiple skills and cite wiki pages as you go.
+
+## Wiki layout — three sub-wikis
+
+The wiki is split into three independently maintained sub-wikis:
+
+- **`wiki/core/`** — curated reference for the PyAuto\* stack, derived from the source
+  repos listed in `sources.yaml`. Refreshed by the `al_update_wiki` skill against pinned
+  source commits. Do not edit ad-hoc; treat as read-only unless you're running the update
+  skill.
+- **`wiki/literature/`** — broad strong-lensing scientific reference (concepts, entities,
+  per-paper bibliographies). Has its own schema in
+  [`wiki/literature/CLAUDE.md`](./wiki/literature/CLAUDE.md), uses `[[wiki-link]]`
+  cross-references, and is compiled from PDFs typically kept outside this repo. Extend it
+  when a new paper is read; follow the schema in its CLAUDE.md.
+- **`wiki/project/`** — a running journal of what *this fork* has done: decisions,
+  experiments, results, blockers. Each entry follows `wiki/project/_template.md` and is
+  named `YYYY-MM-DD-<slug>.md`. When the user does something worth remembering, ask
+  whether to add a project-wiki entry.
+
+When a skill references "the wiki", it means `wiki/core/` unless it explicitly names
+`literature/` or `project/`.
+
+## Source-of-truth resolution
+
+The PyAuto\* libraries live in **separate repos** listed in [`sources.yaml`](./sources.yaml).
+Any time you cite source code, you must:
+
+- Use the **project name + path relative to that project's repo root**:
+  `PyAutoFit:autofit/non_linear/search/nest/nautilus.py`. Never embed an absolute local path
+  like `/Users/other/...`.
+- For URLs, derive the link from `sources.yaml` (e.g.
+  `https://github.com/rhayes777/PyAutoFit/blob/main/autofit/non_linear/search/nest/nautilus.py`).
+- If you need to actually *read* source code, the source repos may or may not be cloned
+  locally yet. To check:
+
+  ```bash
+  # Replace <project> with the import name (autoconf, autoarray, autofit, autogalaxy, autolens).
+  python -c "import <project>, pathlib, inspect; print(pathlib.Path(inspect.getfile(<project>)).parent)"
+  ```
+
+  If the import works, read from the installed-package location. If it doesn't, clone the
+  repo's git URL (from `sources.yaml`) into a temporary working directory under
+  `./sources/<project>/` (this path is gitignored) and read from there.
+
+This rule is the reason the workspace is portable. Anyone who forks this template onto a
+new machine can resolve every reference without having seen your home directory.
+
+## Skill introspection — how to answer "what can you do?"
+
+Two paths:
+
+- **Fast:** read `skills/README.md`. It lists every skill with a one-line summary. Quote
+  the relevant subset back to the user.
+- **Search:** for a topical question (*"can you fit interferometer data?"*), grep the
+  frontmatter `description:` field of `skills/*.md` and surface matching skills.
+
+Skills whose name begins with an underscore (`_style.md`, `_bootstrap_skill.md`) are
+**meta-skills** for authoring/maintaining the workspace itself. Don't surface them when
+answering science questions; do read them when extending the workspace.
+
+## Skill invocation — how to do a task
+
+When the user asks for something a skill already covers:
+
+1. Read the skill file end-to-end.
+2. Follow its Orient → Ask → Branch → Combine arc (defined in `skills/_style.md`).
+3. Produce Python where the skill calls for it. Agent-generated exploration scripts go to
+   `./work/` (gitignored). **Never write into `output/`, `sources/`, or `slam_pipeline/`**.
+   Persistent project pipelines belong in `scripts/` and are maintained by the user, not
+   replaced wholesale.
+4. If the skill points at a wiki page for context, read that page before writing code.
+
+## Skill bootstrap — when the user asks for something new
+
+If the user wants a capability and no existing skill fits, follow the protocol in
+[`skills/_bootstrap_skill.md`](./skills/_bootstrap_skill.md). Summary:
+
+1. Confirm the scope with the user before writing anything.
+2. Read `skills/_style.md` so the new skill matches the house style.
+3. Identify which source repos are needed via `sources.yaml`. Clone any that aren't already
+   accessible (locally or via `pip` install).
+4. **Read inside the cloned repos** to derive the API. Never guess.
+5. Draft the new skill at `skills/<name>.md`. Lensing-API skills get the `al_` prefix;
+   project-workflow skills (template manipulation, repo-level operations) get a plain
+   kebab-case name like `init-slam.md` or `start-new-project.md`. Cite source code as
+   `<Project>:<path>`.
+6. If the new skill needs wiki content that doesn't exist, draft a `wiki/core/` page in the
+   same pass so the skill has somewhere to link.
+7. Add an entry to `skills/README.md` and create a `.claude/skills/<name>.md` symlink
+   pointing to `../../skills/<name>.md`.
+8. Verify by writing and running the script the skill produces (with `PYAUTO_TEST_MODE=1`
+   for searches; see Sandbox).
+
+## Wiki updates
+
+The `al_update_wiki` skill walks all `wiki/core/` pages, checks the
+`sources.pinned_commit` frontmatter against the current HEAD of each source repo, and
+rewrites stale sections. Use it whenever the user reports an API has changed, or when they
+explicitly ask for a wiki refresh. **Do not** rewrite `wiki/core/` pages opportunistically
+as part of unrelated work.
+
+`wiki/project/` is the opposite: append-only and edited by you in the course of normal
+work, using `wiki/project/_template.md` as the entry shape.
+
+## Conventions
+
+- **Standard imports** for any Python you write here:
+  ```python
+  import autofit as af
+  import autolens as al
+  import autolens.plot as aplt
+  ```
+- **Agent working directory** for one-off exploration scripts: `./work/` (gitignored).
+- **Project working directory** for persistent modeling pipelines: `scripts/` — see Part 2.
+- **Output of `search.fit(...)`**: goes under `./output/<dataset>/modeling/<hash>/` by
+  default (per PyAutoFit's own conventions).
+
+## Sandbox / restricted environments
+
+`numba` and `matplotlib` write caches to the home directory or installed-package
+`__pycache__` paths by default. In restricted environments (Codex, sandboxed CI, read-only
+filesystems, `/mnt/c/...` imports under WSL) override them:
+
+```bash
+NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python ./work/script.py
+```
+
+PyAutoFit ships a short-circuit mode that skips non-linear search sampling, for fast
+end-to-end smoke testing:
+
+```bash
+PYAUTO_TEST_MODE=1 python ./work/script.py
+```
+
+Use `PYAUTO_TEST_MODE=1` whenever you're verifying a script you wrote runs end-to-end and
+the user does not need a real posterior. The project's own pipeline scripts in `scripts/`
+honour the older `PYAUTOFIT_TEST_MODE=1` variable — see Part 2's Test Runs section.
+
+## Bulk-edit safety
+
+When editing the same region across many skill or wiki files in one pass, **use `Edit`,
+not `Write`**, unless you have first read the entire current contents of the target file.
+A whole-file `Write` based on a header skim will silently delete every section below the
+header. This rule exists because of an actual incident in the sibling `autolens_workspace`
+repo where a header-only rewrite wiped ~80% of 17 scripts.
+
+## Never rewrite history
+
+NEVER perform these operations on any repo with a remote:
+
+- `git init` in a directory already tracked by git
+- `rm -rf .git && git init`
+- Commit with subject "Initial commit", "Fresh start", "Start fresh", "Reset for AI workflow",
+  or any equivalent message on a branch with a remote
+- `git push --force` to `main` (or any branch tracked as `origin/HEAD`)
+- `git filter-repo` / `git filter-branch` on shared branches
+- `git rebase -i` rewriting commits already pushed to a shared branch
+
+If the working tree needs a clean state, the **only** correct sequence is:
+
+    git fetch origin
+    git reset --hard origin/main
+    git clean -fd
+
+This applies to humans and every agent equally. `autolens_base_project` has an `origin`
+on GitHub (`PyAutoLabs/autolens_base_project`) — these rules apply to the `master` branch
+of this repo as much as to any of the PyAuto\* source repos.
+
+---
+
+# Part 2 — Science-project conventions (carried forward from the base template)
 
 This is the **base template** for PyAutoLens science projects. When asked to create a
 new project from this template, follow the conventions below.
@@ -94,16 +297,6 @@ Always exclude `submit` and `template` (no suffix) — those are legacy files.
 - `dataset/` — add real datasets separately (see below)
 - `output/` — never pre-populate; written by PyAutoFit at runtime
 - `simulators/` — only needed when generating simulated data
-
-## Codex / sandboxed runs
-
-When running Python from Codex or any restricted environment, set writable cache directories so `numba` and `matplotlib` do not fail on unwritable home or source-tree paths:
-
-```bash
-NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python scripts/imaging.py
-```
-
-This workspace is often imported from `/mnt/c/...` and Codex may not be able to write to module `__pycache__` directories or `/home/jammy/.cache`, which can cause import-time `numba` caching failures without this override.
 
 ---
 
@@ -441,6 +634,10 @@ PYAUTOFIT_TEST_MODE=1 python3 scripts/interferometer.py --sample=<sample> --data
 PYAUTOFIT_TEST_MODE=1 python3 scripts/group.py --sample=<sample> --dataset=<dataset>
 ```
 
+`PYAUTOFIT_TEST_MODE=1` (project scripts) and `PYAUTO_TEST_MODE=1` (agent-generated
+scripts in `work/`) are equivalent short-circuit modes — use whichever the script you're
+running already supports.
+
 Example datasets for each script type live at:
 - Imaging: `dataset/sample_imaging/example_imaging/`
 - Interferometer: `dataset/sample_interferometer/example_interferometer/`
@@ -478,6 +675,12 @@ results, or make decisions about pipeline configuration, `context/` is where it 
 first. The files bridge the gap between the raw API and the science — they explain
 *why* certain choices are made, not just *how* to call the code.
 
+**Relationship to `wiki/core/`:** `wiki/core/` is a curated, source-derived reference
+maintained by `al_update_wiki`. `context/` is a free-form, per-project dump of upstream
+tutorials and feature examples copied in as-is. Both are read-only background; the
+difference is provenance. If a piece of information is missing from `wiki/core/` and
+turns up in `context/`, that's a candidate for promotion via `al_update_wiki`.
+
 **When to read:** Always read relevant files in `context/` before modifying scripts,
 interpreting results, or advising on modeling choices. For example:
 - Before changing pixelization settings → read the pixelization tutorial/example
@@ -503,31 +706,33 @@ to the specific science case and copies them in.
 
 ---
 
-## Modeling Scripts (`Scripts/`)
+## Modeling Scripts (`scripts/`)
 
-The `Scripts/` folder is empty in the base template. After rsync-ing the template into a new
-project, use the `/init-slam` skill to select and copy the appropriate SLaM pipeline script(s)
-from `autolens_workspace`. The skill presents categorized options, copies the chosen script(s),
-and creates `Scripts/slam_claude.md` with full SLaM context for future AI sessions.
+The `scripts/` folder holds the project's persistent modeling pipelines (one per
+data type: `imaging.py`, `interferometer.py`, `group.py`). After rsync-ing the
+template into a new project, use the `init-slam` skill
+([`skills/init-slam.md`](./skills/init-slam.md)) to select and copy the appropriate SLaM
+pipeline script(s) from `autolens_workspace` into `scripts/`. The skill presents
+categorized options, copies the chosen script(s), and creates `scripts/slam_claude.md`
+with full SLaM context for future AI sessions.
 
-The skill is defined at `autolens_base_project/skills/init-slam/SKILL.md`. Install it once from there.
-
-See `Scripts/CLAUDE.md` for the full list of available pipeline options.
+For quick exploration scripts that don't belong to the pipeline, write to `work/`
+instead (gitignored, agent scratch space).
 
 ---
 
 ## Typical New-Project Workflow
 
 1. `rsync` the template (with appropriate exclusions)
-2. **Run `/init-slam`** to select and copy SLaM pipeline script(s) into `Scripts/`
+2. **Run the `init-slam` skill** to select and copy SLaM pipeline script(s) into `scripts/`
 3. Copy or symlink the dataset into `dataset/<sample_name>/`
 4. Verify every lens has an `info.json` with at least `pixel_scale` and `n_batch`
-   (or confirm the defaults in `Scripts/imaging.py` are correct for the instrument)
+   (or confirm the defaults in `scripts/imaging.py` are correct for the instrument)
 5. Update `hpc/batch_gpu/submit_<type>` and `hpc/batch_cpu/submit_<type>` for each
    chosen script type: job name, `--array`, `sample=`, `datasets=(...)`
-7. **Run `dos2unix` on all shell scripts and Python files** to ensure Unix line endings
-8. **Add a `Project<Name>()` function to `~/.bashrc`** (see Bash Project Alias above)
-9. Test locally on one lens before submitting the full array:
+6. **Run `dos2unix` on all shell scripts and Python files** to ensure Unix line endings
+7. **Add a `Project<Name>()` function to `~/.bashrc`** (see Bash Project Alias above)
+8. Test locally on one lens before submitting the full array:
    ```bash
-   python3 Scripts/imaging.py --sample=<sample> --dataset=<one_lens>
+   python3 scripts/imaging.py --sample=<sample> --dataset=<one_lens>
    ```
