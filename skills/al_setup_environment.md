@@ -42,8 +42,12 @@ pip install --upgrade pip
 pip install "autolens[jax]" numba
 ```
 
-Python ≥ 3.9 works in principle (all five repos declare `requires-python = ">=3.9"`),
-but 3.11 is the recommended baseline — it's what the workspace tooling targets.
+Python ≥ 3.9 works in principle (all five repos declare `requires-python = ">=3.9"`)
+and JAX runs on every supported version including 3.10. 3.11 is the recommended
+baseline — it's what the workspace tooling targets and what the JAX wheels are
+best-tested against, so 3.10 works but is suboptimal. If an env on 3.10 reports
+JAX as unavailable, treat it as a wheel mismatch in that env, not a stack-wide
+incompatibility.
 
 Verify:
 

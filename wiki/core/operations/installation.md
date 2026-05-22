@@ -38,8 +38,12 @@ source .venv/bin/activate
 pip install "autolens[jax]" numba
 ```
 
-Python ≥ 3.9 is the minimum across the stack; 3.11 is the recommended baseline (and
-what the `runtime.txt` of `autolens_workspace` targets).
+Python ≥ 3.9 is the minimum across the stack and JAX runs on every supported
+version including 3.10. 3.11 is the recommended baseline (it's what
+`autolens_workspace`'s `runtime.txt` targets and what the JAX wheels are
+best-tested against), so 3.10 works but is suboptimal — prefer 3.11 for new
+environments. Treat any "JAX unavailable on Python 3.10" message as a wheel
+mismatch in that specific env, not a stack-wide constraint.
 
 `autolens[jax]` includes JAX, which provides large speedups on CPU multithreading and
 order-of-magnitude speedups on GPU. `numba` is optional but accelerates the
