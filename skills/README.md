@@ -37,6 +37,8 @@ configured) via symlinks; the canonical files live here.
   (pip or editable-clone), configure sandbox cache directories, verify imports.
 - [`al_update_wiki.md`](./al_update_wiki.md) — refresh `wiki/core/` pages whose pinned
   source commits have moved; surface new public APIs for review.
+- [`al_ingest_paper.md`](./al_ingest_paper.md) — add a strong-lensing paper (local PDF
+  or arxiv URL) to `wiki/literature/`: per-paper stub, concept cross-links, log entry.
 
 ### Project workflow
 

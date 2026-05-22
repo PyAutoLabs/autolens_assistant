@@ -32,3 +32,7 @@ work/
 # Users may keep these elsewhere; if cloned as siblings, they live outside
 # this repo. If cloned inside, ignore them.
 /sources/
+
+# Literature wiki PDFs — keep locally, never commit. `papers/` is the in-repo
+# convention used by `al_ingest_paper`, but PDFs can live anywhere.
+papers/

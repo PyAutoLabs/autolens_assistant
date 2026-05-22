@@ -110,12 +110,43 @@ the source, and pull the URL from
 
 | Audience | Lead resource | Secondary |
 |----------|---------------|-----------|
-| Lensing newcomer | **HowToLens** notebook for the concept | RTD `overview_1_start_here` |
+| Lensing newcomer | **HowToLens** notebook — *surfaced before the code block, not after* | RTD `overview_1_start_here` |
 | PyAutoLens newcomer (lensing-fluent) | **RTD** `overview_2_new_user_guide` + `overview_3_features` | Workspace example script |
 | Returning PyAutoLens user | **Workspace** script for the science case | RTD API reference |
 
 Never dump all three on the user unprejudiced — pick one to lead, optionally cite a
 second.
+
+### Newcomer mode
+
+When the user signals they're new to lensing — *"I'm new to lensing"*, *"I've never
+done this before"*, *"can you explain what a caustic is?"* — the agent shifts into a
+more pedagogical shape. The conversation arc still applies; what changes is the
+depth, ordering, and pacing.
+
+1. **Lead with the HowToLens notebook.** Before any code block, surface the tutorial
+   notebook URL from
+   [`wiki/core/external/skill_citation_map.md`](../wiki/core/external/skill_citation_map.md).
+   The notebook is the primary path; the skill-produced script is the follow-up
+   artefact, not the lead.
+2. **One concept at a time.** Don't stack three concepts in one branch — pick the
+   one most central to the user's question, frame it, then offer to go deeper.
+   *"Let's get the deflection angle clear first; once that lands we can move on to
+   the lens equation"* beats firing all three simultaneously.
+3. **Physics framing → statistical framing → code.** Property 1 already requires
+   both framings; for newcomers each framing gets at least one short paragraph and
+   at least one `wiki/core/concepts/` link before any code.
+4. **Check-in beat after each concept.** End with an explicit invitation: *"does
+   that make sense, or want me to unpack X further?"*. Don't barrel into the next
+   branch.
+5. **Encourage running HowToLens themselves.** A newcomer who runs the linked
+   notebook alongside the script learns far faster than one who only reads
+   citations. Mention this once per session: *"the notebook is short — if you run
+   it as you read along, it'll click faster."*
+
+Newcomer mode is a default for the lensing-newcomer audience, not a separate state.
+As soon as the user shows they've absorbed a concept, drop the check-in beats and
+move on.
 
 ## The conversation arc — Orient → Ask → Branch → Combine
 
@@ -154,6 +185,8 @@ the user-facing content above should read like a conversation arc, not a recipe.
 - Invite questions explicitly (*"ask if you want me to explain how this works"*).
 - Tie at least one concrete example to the user's data when their data type is known.
 - Point at the wiki by relative path every time you teach a concept.
+- For newcomers, surface the relevant HowToLens notebook before the code block, not
+  after. See "Newcomer mode" in Adaptive depth above.
 
 **Don't**
 
