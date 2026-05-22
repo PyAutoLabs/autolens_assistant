@@ -281,10 +281,22 @@ wants commits landing directly there.
   import autolens as al
   import autolens.plot as aplt
   ```
-- **Agent working directory** for one-off exploration scripts: `./work/` (gitignored).
+- **Agent working directory**: `./work/`. Python scripts and Markdown notes
+  there are **committed** alongside the `wiki/project/` entry that describes
+  them — they're the most reusable artefact of a session. Plots go to
+  `./work/plots/<context>/` and data dumps (FITS / npy / pickle / hdf5) to
+  `./work/output/`; both subdirectories are gitignored, as are any top-level
+  `work/*.png|pdf|jpg|fits|npy|pkl|hdf5|h5` files.
 - **Project working directory** for persistent modeling pipelines: `scripts/` — see Part 2.
 - **Output of `search.fit(...)`**: goes under `./output/<dataset>/modeling/<hash>/` by
   default (per PyAutoFit's own conventions).
+- **Plot output and path announcement.** Skill-generated plots are saved
+  through `aplt.Output(path="work/plots/<context>/", filename=..., format="png")`
+  so they persist on disk. The Python recipe `print(...)`s each plot's
+  absolute path. After running the script, the agent **quotes the absolute
+  path** of every saved plot and offers *"want me to `open <path>`?"* (macOS
+  default). Don't just say "plot saved" — the user shouldn't have to guess
+  where. One offer per plot, not nagging.
 
 ## Sandbox / restricted environments
 

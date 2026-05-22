@@ -21,8 +21,20 @@ hpc/sync_jump.conf
 output/
 failed/
 
-# Agent scratch directory
-work/
+# Agent working directory — Python scripts and Markdown notes get committed;
+# plot outputs and data dumps do not. Convention: skill-generated plots land
+# in `work/plots/<context>/`; FITS / numpy / pickle dumps in `work/output/`.
+work/plots/
+work/output/
+work/*.png
+work/*.pdf
+work/*.jpg
+work/*.jpeg
+work/*.fits
+work/*.npy
+work/*.pkl
+work/*.hdf5
+work/*.h5
 
 # Sandbox caches
 .numba_cache/

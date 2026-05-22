@@ -129,8 +129,12 @@ import autolens as al
 import autolens.plot as aplt
 ```
 
-Generated scripts and run outputs live in `./work/` and `./output/` respectively, both
-gitignored.
+Generated Python scripts and Markdown notes live in `./work/` and are
+**committed**. Plots go to `./work/plots/<context>/` and data dumps to
+`./work/output/`; both subdirectories are gitignored. Search outputs land in
+`./output/` (also gitignored). After a script saves a plot, quote the
+absolute path and offer to `open <path>` (macOS). See `CLAUDE.md` Part 1
+"Conventions" for the full rule.
 
 ## Sandbox environments
 
