@@ -164,9 +164,24 @@ plot residuals, tell me if anything looks structured"*. The wiki has the API,
 the skills are the command-line ergonomics, and the agent stays out of your
 way.
 
-**Contribute back to the template.** If you want your fork to be able to open
-PRs into [`PyAutoLabs/autolens_base_project`](https://github.com/PyAutoLabs/autolens_base_project),
-set up a two-remote layout that matches this workspace's conventions:
+**Contribute back to the template.** If you're a collaborator on
+[`PyAutoLabs/autolens_base_project`](https://github.com/PyAutoLabs/autolens_base_project),
+keep that repository as `origin`, branch from `main`, and open PRs directly
+from that clone:
+
+```bash
+git remote -v
+git checkout main
+git pull --ff-only origin main
+git checkout -b docs/<topic>
+```
+
+From an agent session you can then say:
+
+- *"Prepare this as a PR on PyAutoLabs/autolens_base_project."*
+
+If you do **not** have push access to the upstream repo, keep a two-remote
+layout instead:
 
 ```bash
 git remote rename origin fork
@@ -174,13 +189,9 @@ git remote add origin https://github.com/PyAutoLabs/autolens_base_project.git
 git fetch origin
 ```
 
-`fork` is then your writable remote, and `origin` is the upstream template you
-want to target with PRs. From an agent session you can then say:
-
-- *"Use `contribute-upstream` to prepare a PR back to the base template."*
-
-That skill checks remotes and branch state, stages only the intended files,
-pushes to your fork, and opens a **draft PR** against upstream.
+In that mode, `fork` is your writable remote and `origin` is the upstream
+template you want to target with PRs. The `contribute-upstream` skill supports
+both layouts and chooses the correct push target from the detected remotes.
 
 ---
 

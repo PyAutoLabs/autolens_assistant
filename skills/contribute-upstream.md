@@ -1,13 +1,14 @@
 ---
 name: contribute-upstream
-description: Prepare a scoped update from a fork of autolens_base_project and propose it back to the source template. Use this skill when the user says "contribute this back", "open a PR upstream", "suggest this to the base project", or "send this to PyAutoLabs/autolens_base_project". It validates the git remote layout, confirms PR scope, creates or reuses a feature branch, stages only the intended files, commits with the repo's commit conventions, pushes to the user's fork, and opens a draft PR against PyAutoLabs/autolens_base_project.
+description: Prepare a scoped update to autolens_base_project and propose it back to the source template. Use this skill when the user says "contribute this back", "open a PR upstream", "suggest this to the base project", or "send this to PyAutoLabs/autolens_base_project". It validates the git remote layout, confirms PR scope, creates or reuses a feature branch, stages only the intended files, commits with the repo's commit conventions, pushes either to the upstream repo (for collaborators) or the user's fork, and opens a draft PR against PyAutoLabs/autolens_base_project.
 user-invocable: true
 ---
 
 # Contribute Upstream
 
-Use this skill when work done in a user's fork should be proposed back to the base template at
-`PyAutoLabs/autolens_base_project`.
+Use this skill when work should be proposed to the base template at
+`PyAutoLabs/autolens_base_project`, whether the user is working from a personal fork or from a
+collaborator clone with direct branch-push access.
 
 This is a **project-workflow** skill, not a lensing API skill. The output is a draft pull request
 against the upstream template repo, not a Python script.
@@ -34,12 +35,13 @@ git branch --show-current
 git rev-parse --abbrev-ref --symbolic-full-name @{u}
 ```
 
-You need two roles:
+You need to identify two possible roles:
 
 - **Upstream target** — the remote that points to `PyAutoLabs/autolens_base_project`.
-- **Writable fork** — the user's personal fork, where branches can be pushed.
+- **Writable push remote** — either the upstream repo itself (for collaborators) or the user's
+  personal fork.
 
-Prefer the repo convention used in this workspace:
+Prefer the repo convention used in this workspace when the user is working from a fork:
 
 - `origin` = `PyAutoLabs/autolens_base_project`
 - `fork` = the user's writable fork
@@ -47,7 +49,11 @@ Prefer the repo convention used in this workspace:
 But do **not** hard-code the remote names. Detect the roles from the remote URLs so the workflow
 still works if the user kept `origin` as their fork and named upstream `upstream`.
 
-If there is no writable fork remote, stop and tell the user to add one before continuing.
+If there is no writable fork remote but the user has push access to the upstream repo, branches may
+be pushed directly to the upstream remote.
+
+If there is neither a writable fork remote nor upstream push access, stop and tell the user what
+remote they need to add before continuing.
 
 ## Step 3 — Check GitHub CLI/auth
 
@@ -68,10 +74,11 @@ Inspect the current branch and its upstream tracking.
 - If the user is on `main`, `master`, or a branch tracking the upstream default branch, create a
   new feature branch.
 - Use a concise branch name like `codex/<description>` or `docs/<description>`.
-- If the user is already on a non-default feature branch that clearly belongs to their fork, stay
-  on it unless they ask to branch again.
+- If the user is already on a non-default feature branch that clearly belongs to their fork or the
+  upstream collaborator repo, stay on it unless they ask to branch again.
 
-Never push commits for this workflow directly to the upstream remote.
+Only push commits directly to the upstream remote when the user is a collaborator and the branch is
+clearly intended to live there.
 
 ## Step 5 — Stage and commit safely
 
@@ -97,12 +104,12 @@ Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
 
 If hooks fail, fix the underlying issue and create a new commit. Do not use `--no-verify`.
 
-## Step 6 — Push to the fork
+## Step 6 — Push to the correct remote
 
-Push the branch to the user's writable fork remote, not upstream:
+Push the branch to the writable push remote chosen in Step 2:
 
 ```bash
-git push -u <fork-remote> <branch-name>
+git push -u <push-remote> <branch-name>
 ```
 
 Confirm the resulting remote branch location before opening a PR.
@@ -113,10 +120,10 @@ Target `PyAutoLabs/autolens_base_project` and its default branch.
 
 Preferred order:
 
-1. Use the GitHub app / connector if available and it can represent the cross-repo PR cleanly.
+1. Use the GitHub app / connector if available.
 2. Otherwise use `gh pr create`.
 
-When using CLI, prefer explicit arguments so the target is unambiguous:
+When using CLI from a fork, prefer explicit arguments so the target is unambiguous:
 
 ```bash
 gh pr create \
@@ -127,6 +134,9 @@ gh pr create \
   --title "<pr-title>" \
   --body-file <tmpfile>
 ```
+
+When the branch already lives on `PyAutoLabs/autolens_base_project`, `--head <branch-name>` is
+sufficient.
 
 Build the PR body as real Markdown prose, covering:
 
@@ -143,7 +153,7 @@ Return a concise summary containing:
 
 - the files included in the PR
 - the branch name
-- which remote was used for the push
+- which remote was used for the push, and whether it was upstream or a fork
 - the upstream PR target
 - the validation performed
 - the PR URL

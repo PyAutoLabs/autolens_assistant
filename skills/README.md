@@ -48,9 +48,9 @@ configured) via symlinks; the canonical files live here.
 - [`start-new-project.md`](./start-new-project.md) — interactive setup wizard for forking
   `autolens_base_project` into a fresh science project (name, datasets, scripts,
   simulators, context).
-- [`contribute-upstream.md`](./contribute-upstream.md) — prepare a scoped change in your
-  fork, push it to your GitHub remote, and open a draft PR into
-  `PyAutoLabs/autolens_base_project`.
+- [`contribute-upstream.md`](./contribute-upstream.md) — prepare a scoped change,
+  push it either to your collaborator branch on `PyAutoLabs/autolens_base_project`
+  or to your fork, and open a draft PR into `PyAutoLabs/autolens_base_project`.
 - [`init-slam.md`](./init-slam.md) — populate an empty `scripts/` folder with SLaM
   pipeline script(s) copied from `autolens_workspace` and tailored to the chosen data
   type.
