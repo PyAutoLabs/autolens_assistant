@@ -38,6 +38,29 @@ After producing a non-trivial script via a skill, offer (default-yes) to add a
 statistical motivation, (c) implementation choice — with `[[wiki-link]]`
 cross-references into `wiki/core/` and `wiki/literature/`.
 
+## Maintainer mode
+
+On session start, check for `.maintainer` at the repo root. If present, the
+session is template-maintenance work, not user science:
+
+- Skip the profile.md read/create.
+- Skip newcomer-mode defaults.
+- Skip auto-commit (see "Commit cadence" below) — the maintainer drives commits.
+- Skill activations still work, but skip the project-wiki-entry offer.
+
+`.maintainer` is gitignored. Toggle with `touch .maintainer` / `rm .maintainer`.
+See `CLAUDE.md` Part 1 for the full rules.
+
+## Commit cadence during user work
+
+When not in maintainer mode, commit at natural checkpoints — a script + its
+`wiki/project/` entry, a paper ingestion, a wiki refresh. **Announce the commit
+before running it.** Subject lines match the repo's conventional-commit style
+(`feat:`, `fix:`, `docs:`, `chore:`). Body explains the *why*. Stage explicitly by
+filename — never `git add -A`. Never push. Don't skip hooks. Every commit ends
+with `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`. See `CLAUDE.md`
+Part 1 for the full rules and the maintainer-mode exception.
+
 ## External resources
 
 Three external resources sit alongside this repo. Per-resource indexes with

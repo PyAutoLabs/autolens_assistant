@@ -36,3 +36,8 @@ work/
 # Literature wiki PDFs — keep locally, never commit. `papers/` is the in-repo
 # convention used by `al_ingest_paper`, but PDFs can live anywhere.
 papers/
+
+# Maintainer-mode sentinel — when present at the repo root, the agent treats
+# the session as template maintenance work (no profile capture, no auto-commit,
+# no newcomer-mode defaults). See CLAUDE.md Part 1 "Maintainer mode".
+.maintainer

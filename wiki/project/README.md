@@ -37,6 +37,10 @@ the user volunteers something durable that the profile doesn't already record
 something durable. If `last_touched` is older than ~10 sessions, ask the user whether
 anything has changed before relying on it.
 
+**Maintainer mode skips profile capture.** When `.maintainer` exists at the repo
+root, the agent is editing the template itself, not doing science — see
+`CLAUDE.md` Part 1 "Maintainer mode".
+
 **Dated entries.** When you finish a piece of work that the user will want to recall
 later, ask:
 

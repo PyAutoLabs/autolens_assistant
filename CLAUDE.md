@@ -66,6 +66,42 @@ The aim of the profile is to keep the **science front and centre** without makin
 user repeat themselves. It is not a gate — if the user just wants to dive in, let
 them, and pick up cues as you go.
 
+## Maintainer mode
+
+The First-interaction protocol above assumes the user is a **lensing scientist**
+working on their fork of this template. When the user is instead a **maintainer
+of the template itself** (editing CLAUDE.md, evolving skills, refactoring the wiki
+schema), the protocol gets in the way: profile capture is irrelevant, newcomer-mode
+defaults waste tokens, and auto-commits (see "Commit cadence" below) collide with
+the maintainer's own commit cadence.
+
+**Sentinel file.** On session start, check whether `.maintainer` exists at the
+repo root. If it does, the agent is in maintainer mode for this session.
+
+```bash
+# Toggle on:  touch .maintainer
+# Toggle off: rm .maintainer
+```
+
+`.maintainer` is gitignored — it never leaves your machine, never propagates to
+forks, never enters CI.
+
+**What changes in maintainer mode:**
+
+- **Skip the profile.md read / create.** A maintainer isn't a lensing user of this
+  fork; the file is irrelevant.
+- **Skip newcomer-mode defaults.** The maintainer is presumed fluent in PyAutoLens
+  and the template's design. Resource routing in `_style.md` still applies if the
+  maintainer asks a learn-this question, but it is not the default lens.
+- **Skip auto-commit** (per "Commit cadence" below). The maintainer drives commits.
+- **Skill activations still work**, but `wiki/project/YYYY-MM-DD-*.md` entries
+  are not offered — `wiki/project/` is for the user's science, not for template
+  work.
+
+**What does not change.** The bulk-edit safety rule, the never-rewrite-history
+rule, source-of-truth resolution, and every other agent-safety convention apply
+unchanged.
+
 ## External resources
 
 Three external resources sit alongside this repo and inform the way you cite material:
@@ -202,6 +238,40 @@ as part of unrelated work.
 
 `wiki/project/` is the opposite: append-only and edited by you in the course of normal
 work, using `wiki/project/_template.md` as the entry shape.
+
+## Commit cadence during user work
+
+When the session is **not** in maintainer mode (see above), the agent commits at
+natural checkpoints rather than waiting for the user to ask. A checkpoint is one
+coherent unit of work — a script produced + its `wiki/project/` entry written, a
+paper ingested via `al_ingest_paper`, a wiki refresh completed via `al_update_wiki`.
+
+The rules:
+
+- **Announce before committing.** One short line: *"I'm about to commit `<files>`
+  with message `<subject>`."* The user can interrupt.
+- **Subject format** follows the repo's conventional-commit history (verify with
+  `git log --oneline`): `feat:`, `fix:`, `docs:`, `chore:`. The body explains the
+  *why*, not the *what*.
+- **One checkpoint = one commit.** Don't bundle unrelated work. If two
+  unrelated things landed in the same session, commit them separately.
+- **Stage explicitly by file.** Never `git add -A` or `git add .` — the user may
+  have unrelated WIP that should stay outside the commit. Add files by name.
+- **Never push.** Pushing is always an explicit user action; the agent does not
+  push even after committing.
+- **Hooks are not skipped.** No `--no-verify`. If a pre-commit hook fails,
+  diagnose and fix the underlying issue, then create a *new* commit (per the
+  Never-rewrite-history rule).
+- **Co-author trailer.** Every agent commit ends with
+  `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>` — matches the
+  convention established in commit `99bbf03`.
+
+In **maintainer mode** the agent does **not** auto-commit. The maintainer drives
+every commit; the agent stages and commits only when the maintainer asks.
+
+If the user is on `main` (or any branch tracked as `origin/HEAD`), the agent
+should pause and confirm before committing rather than assuming the user
+wants commits landing directly there.
 
 ## Conventions
 
