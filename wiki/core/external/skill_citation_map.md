@@ -46,6 +46,20 @@ Pick notebook vs script per audience (default `.ipynb` for student-leaning users
 | al_update_wiki | _ | _ | _ |
 | al_audit_skill_apis | _ | _ | _ |
 | al_ingest_paper | _ | _ | _ |
+| al_point_source | chapter_2_lens_modeling/tutorial_3_positions | overview/overview_3_features | point_source/start_here.py |
+| al_time_delay_cosmography | _ | overview/overview_3_features | point_source/features/time_delays.py |
+| al_subhalo_detect | chapter_4_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/advanced/subhalo/detect/start_here.py |
+| al_sensitivity_mapping | _ | overview/overview_3_features | imaging/features/advanced/subhalo/sensitivity/start_here.py |
+| al_group_lensing | _ | overview/overview_3_features | group/start_here.py |
+| al_cluster_csv_api | _ | overview/overview_3_features | cluster/csv_api.py |
+| al_multi_dataset | _ | overview/overview_3_features | multi/start_here.py |
+| al_weak_lensing | _ | overview/overview_3_features | weak/fit.py |
+| al_hierarchical_inference | _ | overview/overview_3_features | guides/modeling/advanced/hierarchical.py |
+| al_aggregator_bulk_analysis | _ | overview/overview_3_features | guides/results/start_here.py |
+| al_adaptive_pixelization | chapter_4_pixelizations/tutorial_5_adaptive_pixelization | overview/overview_3_features | imaging/features/pixelization/adaptive.py |
+| al_mge_decomposition | _ | overview/overview_3_features | imaging/features/multi_gaussian_expansion/modeling.py |
+| al_datacube_modeling | _ | overview/overview_3_features | interferometer/features/datacube/start_here.py |
+| al_custom_analysis | _ | overview/overview_3_features | guides/advanced/custom_analysis.py |
 
 Cells set to `_` mean the resource has no direct match for this skill (omit the
 bullet in the skill's `## Further reading` block, keep the others).

@@ -92,3 +92,51 @@ configured) via symlinks; the canonical files live here.
 - [`al_inspect_source_reconstruction.md`](./al_inspect_source_reconstruction.md) —
   inspect a pixelised inversion: regularisation, source-plane image, reconstruction
   diagnostics.
+
+### Pending — stubbed (need full recipes)
+
+Drafted as scaffolds during the 2026-05-22 coverage audit against
+`autolens_workspace/scripts/`. Each has frontmatter + Orient/Ask/Branch/Combine
+structure + `Further reading`; the `Branch` recipes are TODO markers. Fill in
+one at a time, paired with their companion wiki/core stub.
+
+**Data types and regimes**
+
+- [`al_point_source.md`](./al_point_source.md) (stub) — quasar / multi-image
+  position fits, flux ratios, point-source deblending.
+- [`al_time_delay_cosmography.md`](./al_time_delay_cosmography.md) (stub) — H0
+  from time-delay strong lenses.
+- [`al_group_lensing.md`](./al_group_lensing.md) (stub) — extra galaxies,
+  scaling-relation members.
+- [`al_cluster_csv_api.md`](./al_cluster_csv_api.md) (stub) — cluster-scale
+  CSV-driven model composition.
+- [`al_multi_dataset.md`](./al_multi_dataset.md) (stub) — joint imaging +
+  interferometer, multi-band, wavelength-dependent sources.
+- [`al_weak_lensing.md`](./al_weak_lensing.md) (stub) — shear catalogue fits
+  (`WeakDataset` / `AnalysisWeak`).
+- [`al_datacube_modeling.md`](./al_datacube_modeling.md) (stub) — interferometer
+  spectral cubes.
+
+**Dark-matter substructure**
+
+- [`al_subhalo_detect.md`](./al_subhalo_detect.md) (stub) — Bayesian-evidence
+  grid search for perturbing subhaloes.
+- [`al_sensitivity_mapping.md`](./al_sensitivity_mapping.md) (stub) — quantitative
+  detectability calibration.
+
+**Advanced techniques**
+
+- [`al_hierarchical_inference.md`](./al_hierarchical_inference.md) (stub) —
+  population-level / graphical models, expectation propagation.
+- [`al_aggregator_bulk_analysis.md`](./al_aggregator_bulk_analysis.md) (stub) —
+  bulk operations across many completed fits, optional result database.
+- [`al_adaptive_pixelization.md`](./al_adaptive_pixelization.md) (stub) — adaptive
+  mesh + adaptive regularisation source reconstructions.
+- [`al_mge_decomposition.md`](./al_mge_decomposition.md) (stub) — Multi-Gaussian
+  Expansion workflows for lens / source.
+- [`al_custom_analysis.md`](./al_custom_analysis.md) (stub) — subclassing
+  `Analysis` to add custom likelihood terms.
+
+**Queue (catalogued, not yet stubbed):** `al_multi_plane`, `al_los_halos`,
+`al_over_sampling`, `al_workflow_outputs`, `al_data_prep_interactive`,
+`al_bayesian_model_comparison`.

@@ -43,6 +43,24 @@ Physics + framework material the skills lean on.
 - [SLaM pipeline](./concepts/slam_pipeline.md) — Source-Light-Mass pipeline anatomy.
 - [Cosmology and units](./concepts/cosmology_and_units.md) — angular ↔ physical
   conversions.
+- [Point-source lensing](./concepts/point_source.md) *(stub)* — positions, flux
+  ratios, image-position solvers.
+- [Time-delay cosmography](./concepts/time_delay_cosmography.md) *(stub)* — H0
+  from time-delay lenses, Fermat potential, mass-sheet degeneracy.
+- [Substructure and subhaloes](./concepts/substructure_and_subhalos.md) *(stub)*
+  — Bayesian detection of dark-matter substructure.
+- [Sensitivity mapping](./concepts/sensitivity_mapping.md) *(stub)* — calibrating
+  non-detections via injection-recovery.
+- [Group- and cluster-scale lensing](./concepts/group_and_cluster_lensing.md) *(stub)*
+  — extra galaxies, scaling relations, cluster-scale composition.
+- [Multi-wavelength / multi-dataset](./concepts/multi_wavelength.md) *(stub)* —
+  joint fits across bands and instruments.
+- [Weak lensing](./concepts/weak_lensing.md) *(stub)* — `WeakDataset` shear
+  catalogue fits.
+- [Hierarchical / graphical models](./concepts/hierarchical_models.md) *(stub)*
+  — population-level inference, expectation propagation.
+- [Interferometer theory](./concepts/interferometer_theory.md) *(stub)* —
+  visibilities, uv-plane, FFT/NUFFT.
 
 ## API
 
@@ -58,6 +76,12 @@ Task-oriented catalogues — comprehensive lists of what's available, with one-l
 - [Configuration](./api/configuration.md) — `<pkg>/config/*.yaml` semantics.
 - [Analysis objects](./api/analysis_objects.md) — `AnalysisImaging`,
   `AnalysisInterferometer`, `AnalysisPoint`.
+- [Aggregator and result database](./api/aggregator.md) *(stub)* — bulk loading
+  of completed fits, derived quantities, optional SQLite backend.
+- [CSV API](./api/csv_api.md) *(stub)* — cluster-scale spreadsheet model
+  composition.
+- [Datacube modelling](./api/datacube.md) *(stub)* — spectral interferometric
+  strong lensing.
 
 ## Operations
 
