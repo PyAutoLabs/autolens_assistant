@@ -10,7 +10,7 @@ last_updated: 2026-05-22
 
 # CSV API — cluster-scale model composition
 
-**Status: stub — content to be filled out.** When a model has hundreds
+When a model has hundreds
 of galaxies (cluster-scale strong lensing), inline Python composition
 becomes unmanageable. The CSV API lets you describe each galaxy + its
 profile parameters as one row in a per-family spreadsheet, then load
@@ -18,33 +18,55 @@ the lot into the standard `af.Model` machinery in two lines.
 
 ## Why CSVs
 
-> TODO: diff-friendly, Excel/LibreOffice-editable, round-trippable.
-> Manageable at scale; ill-suited below ~20 galaxies (use inline
-> Python).
+The CSV route exists for bookkeeping, not elegance. At cluster scale the
+model catalog itself becomes difficult to maintain in inline Python.
+Tabular files are:
+
+- diff-friendly in git
+- editable in Excel or LibreOffice
+- easy to validate row by row
+- easy to export again for review or collaboration
+
+Below roughly group scale, inline Python is usually clearer. CSV becomes
+worth it when catalog size dominates the cognitive load.
 
 ## Schema — `mass.csv`, `light.csv`, `point.csv`
 
-> TODO: columns per file (id, x, y, redshift, profile_class, parameter
-> columns, prior columns). Document the canonical layout. Cite
-> `PyAutoLens:autolens/csv/...` for the exact column schema.
+The exact schema lives in `PyAutoLens:autolens/csv/`, but the conceptual
+layout is stable:
+
+- one row per galaxy or point-source component
+- identifying columns such as object id and redshift
+- profile-selection columns naming the mass or light family
+- parameter columns containing values or prior settings
+- optional flags marking fixed, free, or scaling-relation behavior
+
+The CSV therefore serializes the same model graph you would otherwise
+write inline.
 
 ## Loading into a model
 
-> TODO: pattern is `model = al.csv.model_from(mass_csv=..., light_csv=...,
-> point_csv=...)`. The result is a standard `af.Collection` that hands
-> straight to an analysis.
+Loading converts the tabular representation back into ordinary PyAutoFit
+and PyAutoLens model objects. The important architectural point is that
+only the *construction* step changes. Downstream analyses and searches
+still consume a standard collection of galaxies and sources.
 
 ## Scaling-relation members
 
-> TODO: a flag column (or separate `scaling_galaxies.csv`) marks
-> members whose mass is tied to a shared scaling relation rather than
-> free per-row. Document the convention.
+Scaling-relation members are where the CSV approach earns its keep. Many
+cluster galaxies follow the same functional form, with only their
+luminosity or other measured property changing row by row. The table can
+therefore mark those galaxies as belonging to a shared relation rather
+than giving each one its own fully free mass normalization.
 
 ## Round-tripping
 
-> TODO: `al.csv.model_to_csv(model, out_dir=...)` writes a model back
-> to CSVs. Useful for verifying the load is identity and for capturing
-> the best-fit model in CSV form.
+Round-tripping is part of the design. A CSV-defined model should be
+inspectable after load and exportable again after fit. That supports two
+important workflows:
+
+- verify that import is identity-preserving before a long run
+- capture a fitted cluster model in a human-reviewable tabular form
 
 ## Related pages
 

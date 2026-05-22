@@ -14,7 +14,7 @@ last_updated: 2026-05-22
 
 # Group- and cluster-scale lensing
 
-**Status: stub — content to be filled out.** Galaxy-scale lensing
+Galaxy-scale lensing
 assumes a single dominant deflector. Group-scale and cluster-scale
 lensing don't: multiple lens galaxies (a primary + companions, or many
 cluster members) all contribute to the deflection. The modelling
@@ -23,35 +23,72 @@ N deflectors without exploding the parameter space?"
 
 ## The mass scale
 
-> TODO: typical Einstein radii by scale (galaxy ~1″, group ~3–10″,
-> cluster 10–40″) and what that implies for the imaging FOV and the
-> number of member galaxies that matter.
+The jump from galaxy to group to cluster is mostly a jump in how much of
+the image-plane deflection field must be modeled at once.
+
+- galaxy-scale systems usually have Einstein radii of order 1 arcsec
+- group-scale systems are broader, often a few arcsec to around 10 arcsec
+- cluster-scale systems can extend to tens of arcsec
+
+That change drives nearly every workflow choice:
+
+- the field of view has to be larger
+- more foreground galaxies matter dynamically
+- multiple background sources are more common
+- light and mass bookkeeping becomes the main technical problem
 
 ## Three modelling strategies
 
-> TODO:
-> 1. **Free per-companion** (small N): each companion has its own
->    light + mass profile. Works for ~3–10.
-> 2. **Scaling-relation members** (medium N): companion mass is tied to
->    observed luminosity via a population-level M-L relation. Works for
->    ~10–100.
-> 3. **CSV-driven composition** (large N): cluster-scale, hundreds of
->    members, where inline Python composition is impractical. See
->    [`api/csv_api.md`](../api/csv_api.md).
+There are three stable regimes.
+
+1. **Free per-companion** for small `N`.
+   Each extra lens galaxy gets its own light and mass profile. This is
+   practical when only a few companions matter and you want each to have
+   independent parameters.
+
+2. **Scaling-relation members** for medium `N`.
+   Many companions are tied to a shared luminosity-to-mass relation so
+   that their observed photometry sets the relative scale while only a
+   small number of hyperparameters remain free.
+
+3. **CSV-driven composition** for large `N`.
+   Once the model contains tens to hundreds of member galaxies, inline
+   Python becomes error-prone. The CSV API moves the bookkeeping into
+   tabular files that still load into the standard `af.Model` machinery.
+   See [`../api/csv_api.md`](../api/csv_api.md).
 
 ## Source-side considerations
 
-> TODO: group lenses often have multiple sources at different
-> redshifts. Each source has its own analysis term; the mass model is
-> shared across them — multi-plane lensing if redshifts are distinct.
+Group and cluster lenses often include multiple sources at different
+redshifts. That changes both the information content and the model
+composition:
+
+- each source adds its own imaging or point-source constraint
+- the deflector model is shared across those constraints
+- if source redshifts differ materially, the full calculation is
+  multi-plane rather than a single source plane
+
+This is one reason cluster modeling tends to look like a multi-dataset
+problem even when all observations come from one instrument.
 
 ## Member-galaxy mass profiles
 
-> TODO: PIEMD (pseudo-isothermal elliptical mass distribution) is the
-> cluster-lensing field standard; PyAutoGalaxy's nearest equivalent is
-> `mp.Isothermal` (truncated) or a custom PIEMD. Document the choice
-> and any custom profile recipe (cross-reference
-> [`skills/al_custom_profile`](../../../skills/al_custom_profile.md)).
+Cluster-lensing papers often use PIEMD-like families for member galaxies
+because they are compact, interpretable, and easy to scale with
+luminosity. In PyAutoLens / PyAutoGalaxy, the nearest out-of-the-box
+analogs are the isothermal family plus dark-halo components, with custom
+profiles available when a literal PIEMD parameterization is required.
+
+The practical choice is usually driven by workflow compatibility rather
+than naming purity:
+
+- use built-in profiles when they capture the intended physics and keep
+  the rest of the pipeline standard
+- introduce a custom profile when the project must match a field-standard
+  parameterization or a legacy analysis
+
+For the custom-profile route, see
+[`../../../skills/al_custom_profile.md`](../../../skills/al_custom_profile.md).
 
 ## Related pages
 

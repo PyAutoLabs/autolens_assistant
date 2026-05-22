@@ -15,8 +15,7 @@ last_updated: 2026-05-22
 
 # Point-source lensing
 
-**Status: stub — content to be filled out.** This page introduces the
-point-source regime in PyAutoLens: when the lensed source is effectively
+This page introduces the point-source regime in PyAutoLens: when the lensed source is effectively
 a point (a quasar nucleus, an unresolved supernova, a faint compact
 source whose extended structure is below the imaging resolution), the
 observables are the **image positions** in the lens plane, optionally
@@ -31,28 +30,85 @@ trick — the positions *are* the data.
 
 ## The `PointDataset` and `AnalysisPoint` API
 
-> TODO: walk through `al.PointDataset` (positions + uncertainties +
-> optional fluxes + optional time delays) and the
-> `al.AnalysisPoint(dataset=...)` log-likelihood definition. Cite
-> `PyAutoLens:autolens/point/dataset.py` and
-> `PyAutoLens:autolens/point/model/analysis.py`.
+`al.PointDataset` is the data container. It stores the observed
+image-plane positions plus their uncertainties and can optionally carry
+fluxes, flux uncertainties, time delays, and time-delay uncertainties.
+The dataset `name` is load-bearing: PyAutoLens pairs that name to the
+corresponding point-source profile in the model, so a dataset named
+`source_1` is fitted to the `source_1` point profile and not to some
+other compact source by accident. Source:
+`PyAutoLens:autolens/point/dataset.py`.
+
+`al.AnalysisPoint(dataset=..., solver=...)` wraps the dataset in a
+PyAutoFit likelihood object. Internally, the fit is delegated to
+`FitPointDataset`, which can combine three pieces of evidence:
+
+- image-position consistency
+- flux consistency via the model magnifications
+- time-delay consistency via the model Fermat potential
+
+The resulting `figure_of_merit` is the summed log likelihood of the
+components present in the dataset and supported by the chosen point
+profile. Sources:
+`PyAutoLens:autolens/point/model/analysis.py` and
+`PyAutoLens:autolens/point/fit/dataset.py`.
 
 ## Solving the lens equation for image positions
 
-> TODO: image-position solvers (Newton vs. Frahm; PyAutoLens uses a
-> grid + refinement). Discuss multiplicity (doubles, quads) and how
-> magnification ratios are computed from the inverse-magnification
-> matrix at each image.
+Unlike extended-source fitting, point-source fitting must explicitly
+solve the lens equation to find every image produced by a trial source
+position. PyAutoLens does this with a `PointSolver`, which searches the
+image plane for coordinates that ray-trace back to the source-plane
+point. The current API documentation describes this as tracing triangles
+between the image and source planes, rather than relying on a single
+local Newton step that could miss extra images. Sources:
+`PyAutoLens:autolens/point/model/analysis.py` and
+`PyAutoLens:autolens/point/solver/`.
+
+This matters because multiplicity is part of the physics:
+
+- a simple galaxy-scale lens often produces a double or quad
+- cluster and group configurations can produce many images
+- demagnified central images may exist in principle but be too faint to detect
+
+Once image positions are identified, flux ratios come from the local
+magnification matrix evaluated at each image. That makes fluxes a much
+more model-sensitive observable than positions: small perturbations in
+the potential can change magnifications a lot while leaving image
+centroids nearly fixed.
 
 ## Flux ratios as a substructure probe
 
-> TODO: flux-ratio anomalies and the link to subhalo / line-of-sight
-> structure. Cross-reference [[substructure_and_subhalos]].
+Smooth lens models predict a set of image magnifications, and therefore
+flux ratios, once the source flux is fixed. Real systems often disagree
+with those smooth predictions. These "flux-ratio anomalies" are a classic
+probe of small-scale structure because low-mass perturbers can strongly
+change magnification near critical curves without moving the image
+positions very much.
+
+In practice, flux ratios are less clean than positions: microlensing by
+stars, extinction, variability plus time delays, and finite source size
+can all mimic or dilute the signal. PyAutoLens therefore treats fluxes as
+an optional extra likelihood term, best used when the observing setup and
+astrophysical systematics are understood. For the dark-matter use case,
+cross-reference [`substructure_and_subhalos`](./substructure_and_subhalos.md).
 
 ## Time delays
 
-> TODO: time-delay formula in terms of the Fermat potential; lead-in to
-> [[time_delay_cosmography]].
+For a variable point source, the arrival-time difference between two
+images is
+
+`Delta t_ij = (D_dt / c) [phi(theta_i, beta) - phi(theta_j, beta)]`
+
+where `phi` is the Fermat potential and `D_dt` is the time-delay
+distance. The mass model controls the Fermat-potential difference; the
+cosmology controls `D_dt`. That is why a point-source lens with measured
+delays becomes a cosmography experiment rather than only a mass-model fit.
+
+PyAutoLens includes time delays directly in `PointDataset`, so the same
+analysis object can fit positions-only data, positions plus fluxes, or
+positions plus delays. The cosmology side is described in
+[`time_delay_cosmography`](./time_delay_cosmography.md).
 
 ## Related pages
 

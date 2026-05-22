@@ -11,7 +11,7 @@ last_updated: 2026-05-22
 
 # Aggregator and result database
 
-**Status: stub — content to be filled out.** PyAutoFit's aggregator
+PyAutoFit's aggregator
 loads completed fits in bulk: every fit under a parent output directory,
 each accessible as a `samples`, `model`, `fit`, or derived-quantity
 object. The optional SQLite-backed database scales the same surface to
@@ -19,36 +19,72 @@ thousands of fits.
 
 ## When you need this
 
-> TODO: single fit → `al_load_results`. N>1 fits → aggregator. N >>
-> few-hundred → database backend.
+Use the aggregator when the unit of work is no longer one fit. For a
+single result, ordinary result loading is simpler. For a sample of fits,
+the aggregator gives you one query surface over all of them. Once the fit
+count gets large, the database-backed version is the stable default.
 
 ## Aggregator basics
 
-> TODO: `af.Aggregator.from_directory(...)`, `agg.values("samples")`,
-> per-key access pattern (`"model"`, `"samples"`, `"fit_imaging"`, …).
-> Cite `PyAutoFit:autofit/aggregator/...`.
+The current durable implementation is in
+`PyAutoFit:autofit/database/aggregator/aggregator.py`.
+
+Typical flow:
+
+```python
+agg = af.Aggregator.from_database("results.sqlite", completed_only=True)
+samples = agg.values("samples")
+models = agg.values("model")
+```
+
+An aggregator iterates over `Fit` objects. Each fit exposes stored
+artifacts by key, and `values(name)` collects one key from every matching
+fit.
 
 ## Filtering and querying
 
-> TODO: filter by search name, by completed-status, by metadata fields.
-> Document the query API.
+The query API is object-based. The docs expose:
+
+- `aggregator.search` for fit-level fields like `name`, `unique_tag`,
+  `path_prefix`, `is_complete`, and `is_grid_search`
+- `aggregator.model` for queries against the best-fit model structure
+
+Queries return a new aggregator, so filtering, ordering, and slicing stay
+composable instead of mutating the original object.
 
 ## Map/reduce over the aggregator
 
-> TODO: `agg.map(func)` applies a per-fit function and collects the
-> result. Common idiom for derived quantities (Einstein radius,
-> log-evidence comparison).
+`agg.map(func)` is the standard derived-quantity pattern. Apply a
+per-fit function, collect the output, and turn it into a table, plot, or
+export. This is how you build sample-level products such as Einstein
+radius tables, evidence comparisons, magnification summaries, or quality
+flags.
 
 ## Database backend
 
-> TODO: `af.SqliteAggregator(...)`; `db.add_from_directory(...)`;
-> SQL-like queries. Cite `PyAutoFit:autofit/database/...`.
+The database layer matters because it separates result scraping from
+result querying. The documented entry points are:
+
+- `af.Aggregator.from_database(...)` to open or create the SQLite view
+- `agg.add_directory(...)` to scrape an output tree into that database
+- `grid_searches()`, `children()`, and `cell_number(...)` for
+  grid-search-specific traversal
+
+This is the right tool for large survey runs, sensitivity maps, and any
+workflow where you will query the same result collection repeatedly.
 
 ## Workflow outputs (CSV / FITS / PNG)
 
-> TODO: the workspace `guides/results/workflow/` examples wrap
-> aggregator output into automated export. Document the pattern; this
-> page is the natural home until a dedicated workflow page exists.
+The workspace `guides/results/` and `guides/results/workflow/` examples
+use the aggregator as the extraction layer between completed fits and
+science-ready products. The stable pattern is:
+
+1. query the subset of fits you care about
+2. load or derive the quantity of interest per fit
+3. export it in a uniform table or image naming scheme
+
+That keeps the expensive fitting stage separate from cheap, repeatable
+post-processing.
 
 ## Related pages
 
