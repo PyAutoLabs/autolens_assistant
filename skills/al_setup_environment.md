@@ -113,13 +113,17 @@ vars (`PYAUTO_TEST_MODE`, `PYAUTO_SKIP_FIT_OUTPUT`, etc.) and when each one matt
 Save this to `./work/verify_environment.py` and run it:
 
 ```python
+import autoconf
+import autoarray
 import autofit as af
+import autogalaxy as ag
 import autolens as al
 import autolens.plot as aplt
 
-print("autoconf   :", al.aconf.__version__ if hasattr(al, 'aconf') else "ok")
-print("autoarray  :", al.__version__)
+print("autoconf   :", autoconf.__version__)
+print("autoarray  :", autoarray.__version__)
 print("autofit    :", af.__version__)
+print("autogalaxy :", ag.__version__)
 print("autolens   :", al.__version__)
 
 # A minimal Tracer build — proves the modelling stack is wired up.

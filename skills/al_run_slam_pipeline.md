@@ -78,8 +78,8 @@ mask = al.Mask2D.circular(
 dataset = dataset.apply_mask(mask=mask)
 
 # Optional: image positions to penalise unphysical mass models.
-positions = al.Grid2DIrregular.from_json(file_path=dataset_path / "positions.json")
-positions_likelihood = al.PositionsLHPenalty(positions=positions, threshold=0.5)
+positions = al.from_json(file_path=dataset_path / "positions.json")  # returns a Grid2DIrregular
+positions_likelihood = al.PositionsLH(positions=positions, threshold=0.5)
 
 # Driver — the actual SLaM pipeline functions live in autolens_workspace/slam/.
 # See slam_start_here.py for the canonical invocation: SOURCE LP → SOURCE PIX →
@@ -99,7 +99,7 @@ Source citations:
 - `autolens_workspace:scripts/guides/modeling/slam_start_here.py` — canonical invocation.
 - `autolens_workspace:slam/` — pipeline function definitions (the actual SLaM code is
   in the workspace, not in PyAutoLens itself).
-- `PyAutoLens:autolens/analysis/positions.py` — `PositionsLHPenalty`.
+- `PyAutoLens:autolens/analysis/positions.py` — `PositionsLH`.
 
 ## Branch — interferometer SLaM
 

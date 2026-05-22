@@ -89,7 +89,7 @@ Subclass `MassProfile` and implement at least `convergence_2d_from(grid)` and
 deflection has no closed form.
 
 ```python
-class CustomNFW(ag.MassProfile, Dictable):
+class CustomNFW(ag.mp.MassProfile, Dictable):
     """NFW with a custom inner-slope tweak."""
 
     def __init__(self, centre=(0.0, 0.0), kappa_s=1.0, scale_radius=1.0, inner_slope=1.0):
@@ -123,7 +123,7 @@ class that interpolates on the grid:
 ```python
 from scipy.interpolate import RegularGridInterpolator
 
-class TabulatedConvergence(ag.MassProfile, Dictable):
+class TabulatedConvergence(ag.mp.MassProfile, Dictable):
     def __init__(self, centre, table_path):
         super().__init__(centre=centre, ell_comps=(0.0, 0.0))
         self._interp = self._load_table(table_path)

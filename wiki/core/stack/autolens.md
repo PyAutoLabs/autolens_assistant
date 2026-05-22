@@ -74,9 +74,12 @@ objects:
 
 - `al.Pixelization(mesh=..., regularization=...)` — wraps a source-plane mesh + a
   regularisation scheme. Lives inside a `Galaxy`.
-- `al.mesh.Delaunay` / `al.mesh.Voronoi` / `al.mesh.Rectangular` — mesh choices.
-- `al.reg.Constant` / `al.reg.ConstantSplit` / `al.reg.AdaptiveBrightness` —
-  regularisation schemes.
+- `al.mesh.Delaunay` / `al.mesh.RectangularUniform` / `al.mesh.RectangularAdaptImage`
+  / `al.mesh.KNearestNeighbor` — mesh choices (see `al.mesh.__all__` for the
+  complete set; `Voronoi` and `Rectangular` have been replaced).
+- `al.reg.Constant` / `al.reg.ConstantSplit` / `al.reg.Adapt` / `al.reg.AdaptSplit` —
+  regularisation schemes (the older `AdaptiveBrightness` has been split into the
+  `Adapt*` family).
 
 See [`concepts/inversions_and_pixelizations`](../concepts/inversions_and_pixelizations.md).
 
@@ -85,7 +88,9 @@ See [`concepts/inversions_and_pixelizations`](../concepts/inversions_and_pixeliz
 `autolens/point/` adds:
 
 - `al.PointDataset` — image positions + time delays + magnifications, with errors.
-- `al.PointFlux` / `al.PointTimeDelay` profile-like objects to plug into a Galaxy.
+- `al.ps.Point` / `al.ps.PointFlux` profile-like objects to plug into a Galaxy.
+  (A separate `PointTimeDelay` class has been removed; time-delay information is
+  carried by `al.PointDataset` itself.)
 - `al.AnalysisPoint` — the corresponding analysis.
 
 Used for quasar lensing and time-delay cosmography.

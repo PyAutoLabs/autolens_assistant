@@ -5,9 +5,9 @@ description: Verify every PyAuto* API symbol cited in skills/ and wiki/core/api+
 
 # Auditing skill + wiki API references against the installed stack
 
-Skills cite a lot of PyAuto\* symbols — `al.Tracer`, `af.Nautilus`, `al.mp.Isothermal`,
-`aplt.MatPlot2D` — and the wiki cites more, in API tables and prose. Both can drift
-silently when the underlying libraries rename, move, or remove things. `al_update_wiki`
+Skills cite a lot of PyAuto\* symbols — class names, search algorithms, profiles, the
+plot API — and the wiki cites more, in API tables and prose. Both can drift silently
+when the underlying libraries rename, move, or remove things. `al_update_wiki`
 catches *prose* drift (it diffs pinned source files), but it doesn't actually try to
 import the symbols those pages name. And skills have no pinned commits at all.
 
@@ -17,10 +17,10 @@ This skill is the missing check: import the libraries, walk every cited symbol w
 
 Like `al_update_wiki`, the philosophy is **curate, don't auto-rewrite**. The script
 produces a report; the agent reads it, proposes fixes per file with the user, and edits
-deliberately. A blind sed-replace over the skill tree would lose nuance — for example,
-"al.Kernel2D.from_gaussian" might map to `al.Kernel2D.via_gaussian_from` (a renamed
-constructor), or to a different class entirely. The audit answers *what's broken*; the
-agent + user answer *what's right*.
+deliberately. A blind sed-replace over the skill tree would lose nuance — a renamed
+PSF constructor might map to a different class entirely (e.g. an old `Kernel2D` helper
+moving onto `Convolver`), and the script's suggestions are heuristic. The audit
+answers *what's broken*; the agent + user answer *what's right*.
 
 Before starting, confirm with the user:
 

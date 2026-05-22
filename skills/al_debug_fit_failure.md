@@ -51,7 +51,7 @@ Look at the residual map. Common signatures:
 
 - **Mass model off-axis.** Residuals form a "double-image" pattern where the model
   positions don't match the data positions. Fix: add image positions and a
-  `PositionsLHPenalty` (see `al_run_slam_pipeline` for the pattern).
+  `PositionsLH` (see `al_run_slam_pipeline` for the pattern).
 - **Source too constrained.** The source reconstruction looks like a single Sersic
   but the data shows a complex arc. Fix: switch to a pixelised source via
   [`al_inspect_source_reconstruction`](./al_inspect_source_reconstruction.md).
@@ -77,7 +77,7 @@ The inversion has over-fitted background noise into the source plane.
 - **Regularisation too low.** Bump the regularisation coefficient range — see
   `PyAutoLens:autolens/inversion/regularization/`. The `ConstantSplit` regularisation
   with sensible coefficients usually works.
-- **No positions penalty.** Add a `PositionsLHPenalty` to prevent the inversion from
+- **No positions penalty.** Add a `PositionsLH` to prevent the inversion from
   demagnifying the source into infinity.
 - **Pixelisation grid too fine.** Coarsen the `mesh_shape` (e.g. from (50, 50) to
   (30, 30)).
@@ -92,7 +92,7 @@ a different `unique_tag` so the search starts fresh, and compare evidences.
 
 ## Generic fixes that often help
 
-- **Add positions.** `al.PositionsLHPenalty` (with the user's measured image
+- **Add positions.** `al.PositionsLH` (with the user's measured image
   positions) eliminates a large class of mass-model failures.
 - **Tighten the prior on the lens centre.** It's often the parameter with the worst
   multi-modality.

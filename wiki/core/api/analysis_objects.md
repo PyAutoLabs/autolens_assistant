@@ -39,7 +39,7 @@ analysis = al.AnalysisImaging(
     positions_likelihood_list=[al.PositionsLH(positions=positions, threshold=0.5)],
     settings=al.Settings(use_positive_only_solver=False),
     adapt_images=earlier_result.adapt_images_from(),
-    cosmology=al.cosmo.Planck18(),
+    cosmology=al.cosmo.Planck15(),
 )
 ```
 

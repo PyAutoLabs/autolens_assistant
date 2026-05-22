@@ -59,8 +59,8 @@ tracer = al.Tracer(galaxies=[lens, source])
 
 # 3. PSF + simulator. Match your target instrument (HST/JWST/Euclid have different
 #    PSF FWHM and pixel scale).
-psf = al.Kernel2D.from_gaussian(shape_native=(11, 11), sigma=0.05,
-                                pixel_scales=grid.pixel_scales)
+psf = al.Convolver.from_gaussian(shape_native=(11, 11), sigma=0.05,
+                                 pixel_scales=grid.pixel_scales)
 
 simulator = al.SimulatorImaging(
     exposure_time=300.0,
