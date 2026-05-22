@@ -2,7 +2,7 @@
 title: Sources — galaxy formation context
 type: sources
 topics: [galaxy-formation]
-status: stub
+status: drafted
 ---
 
 # Sources: galaxy formation context
