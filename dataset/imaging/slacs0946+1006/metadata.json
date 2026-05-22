@@ -1,0 +1,19 @@
+{
+    "lens_name": "slacs0946+1006",
+    "z_lens": 0.222,
+    "z_source": 0.609,
+    "b_SIE": 1.38,
+    "log[Mein/Mo]": 11.46,
+    "gamma": 2.01,
+    "gamma_err": 0.18,
+    "M_Ein": 288403150312.6618,
+    "marker": "p",
+    "colour": "gold",
+    "shear": 0.08,
+    "q_SIE": 0.81,
+    "PA": 159.2,
+    "R_eff": 2.35,
+    "sigma": 263.0,
+    "sigma_err": 21.0,
+    "subhalo_grid_dimensions_arcsec":
+}
