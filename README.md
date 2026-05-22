@@ -34,22 +34,6 @@ you don't have PyAutoLens installed yet, the assistant will guide you
 through that. Then tell it about your science case or ask it a question to
 get the conversation going.
 
-## Datasets
-
-Two real-world strong-lens datasets ship with the repo so you can start
-modelling straight away:
-
-- `dataset/imaging/cosmos_web_ring/` — JWST NIRCam imaging of a strong
-  lens, with `data.fits`, `noise_map.fits`, `psf.fits`, and a mask for
-  nearby galaxies. Each band (`F115W`, `F150W`, `F277W`, `F444W`) is also
-  provided separately under `wavebands/` for multi-band fits.
-- `dataset/imaging/slacs0946+1006/` — HST imaging of the well-known SLACS
-  lens famous for its dark-matter-subhalo detection, with positions,
-  extra-galaxy centres, masks, and full metadata.
-
-Both are raw reference data — the assistant preprocesses them on demand
-when you start a session.
-
 ## New User Example Prompt: Model JWST Imaging of a Strong Lens
 
 A good starting point if you're new to PyAutoLens **and** less familiar with
@@ -74,8 +58,10 @@ detection that is argued to be unusually concentrated; this prompt asks
 the assistant to reproduce that detection and quantify the concentration
 via Bayesian model comparison.
 
-> **Draft.** Tweak the modelling brief to match your exact science case
-> before pasting.
+Depending on your available hardware, this analysis may take hours. The
+last sentence of the prompt asks the agent to estimate the run time and,
+if needed, walk you through setting the analysis up on a High Performance
+Computer (HPC) you have access to.
 
 ```
 The strong lens SLACS0946+1006 famously has a dark matter subhalo
@@ -85,16 +71,54 @@ dataset/imaging/slacs0946+1006/ and reproduce that detection.
 
 Specifically, I want this analysis to perform Bayesian model comparison
 to (a) confirm a subhalo is preferred over a smooth-mass baseline by
-fitting a free-position, free-mass NFW perturber across the image plane
+fitting a free-position, free-mass SIS perturber across the image plane
 and comparing the Bayesian evidence to the no-subhalo fit, and (b) test
-the "super-concentrated" claim by comparing the standard NFW subhalo
-against a more concentrated mass profile (e.g. truncated NFW or a compact
-pseudo-Jaffe sphere) at the recovered position.
+the "super-concentrated" claim by comparing the SIS subhalo
+against a more shallow NFW mass profile at the recovered position.
 
-Set the pipeline up so the smooth mass model, source reconstruction, and
-subhalo sensitivity grid are all reusable across the two comparisons, and
-report the Bayesian evidence for each.
+Set the pipeline up so the smooth lens light and mass model, the
+pixelized source reconstruction, and the subhalo results are all
+inspectable on my computer, and report the Bayesian evidence for each
+comparison.
+
+Assess whether the analysis will run fast on my laptop / PC GPU,
+and if not, set this up as a small project on the HPC I have access to.
 ```
+
+## Scientific Context
+
+The assistant doesn't just know the PyAutoLens API — it ships with a
+strong-lensing **literature wiki** at `wiki/literature/` covering the
+science the modelling is in service of. It has concept pages (mass-sheet
+degeneracy, dark-matter substructure, time-delay cosmography, multipoles,
+…), named-entity pages (SLACS, H0liCOW, TDCOSMO, Euclid Q1, Abell 1201,
+…), and per-topic bibliographies summarising the relevant published
+papers. When you ask a science question or start a modelling discussion,
+the assistant grounds itself in this material rather than guessing from
+general knowledge.
+
+If a paper matters to your science case and isn't in the wiki yet, you
+can ask the assistant to ingest it. Give it either a local PDF or an
+arXiv URL and it adds a summary to the right topic bibliography, cross-
+links the relevant concepts and entities, and from then on can cite the
+paper in answers:
+
+```
+Ingest the following paper into the literature wiki so you can use it
+when we talk about subhalo detection:
+
+  arXiv:2401.01234
+
+(Or, if you have the PDF locally:
+  /path/to/subhalo_paper.pdf)
+
+Once it's ingested, summarise what it adds beyond what the wiki already
+covers on dark-matter substructure.
+```
+
+The more papers relevant to your science case you load in, the better
+the assistant will be at framing decisions, citing prior work, and
+spotting when a result has caveats.
 
 ## License
 
