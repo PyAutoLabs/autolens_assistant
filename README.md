@@ -10,11 +10,9 @@ without needing to know the PyAutoLens codebase up front. Describe your data
 or modelling goal, and the agent turns that into a runnable Python workflow
 for your project.
 
-This repo is opinionated in a useful way: it already knows the PyAuto\* stack,
-the SLaM pipeline, the project conventions, and how to keep a per-project
-journal in [`wiki/project/`](./wiki/project/). Claude Code reads
-[`CLAUDE.md`](./CLAUDE.md); Codex, Copilot, and other agents read
-[`AGENTS.md`](./AGENTS.md).
+This repo comes bundled with skills so agents can run the full modelling workflow — data prep, model building, fitting, 
+debugging, and results visualisation — plus wikis so agents know how to write PyAutoLens code, understand the science
+and keep a track of what you've done. 
 
 ## Quickstart
 
