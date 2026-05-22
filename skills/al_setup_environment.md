@@ -11,6 +11,8 @@ The user picks one of two install modes: pip (read-only, fastest path to "import
 works") or editable-clone (source-level access, slower but lets you read and modify the
 libraries).
 
+## Ask
+
 Before touching anything, confirm with the user:
 
 - Are you running on macOS, Linux, or Windows / WSL?

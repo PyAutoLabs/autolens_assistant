@@ -74,10 +74,6 @@ the per-skill citation rows are in
 - **`autolens_workspace`** — production-style examples. Lead with this for returning
   PyAutoLens users.
 
-When citing a workspace script that has also been copied into this fork's `context/`
-folder, cite both — the URL for the canonical version and the `context/` path for the
-local copy.
-
 ## Source-of-truth resolution
 
 The PyAuto\* libraries live in separate repos listed in [`sources.yaml`](./sources.yaml).

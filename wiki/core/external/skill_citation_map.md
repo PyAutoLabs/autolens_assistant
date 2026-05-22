@@ -76,8 +76,7 @@ Every skill's `## Further reading` block follows this template:
 - **General reference** — [RTD: <page title>](<URL>): the canonical PyAutoLens
   documentation page covering this feature.
 - **Experienced PyAutoLens user** — [workspace/lens: <script name>](<URL>): a
-  production-style example to fork from. If a local copy exists in `context/`,
-  cite that path too.
+  production-style example to fork from.
 ```
 
 If a row's cell is `_`, omit that bullet but keep the others. If all three cells

@@ -1,6 +1,6 @@
 ---
 name: al_prepare_imaging_data
-description: Load CCD imaging of a strong lens (HST / JWST / Euclid / ground-based) from FITS files into an `al.Imaging` dataset, then apply a mask, over-sampling, and noise scaling so it's ready for model fitting. Produces a runnable Python script in ./work/ that the user can re-run on their own data. Use before invoking `al_build_imaging_model`. For interferometer data, see `al_prepare_interferometer_data` (bootstrap if not present).
+description: Load CCD imaging of a strong lens (HST / JWST / Euclid / ground-based) from FITS files into an `al.Imaging` dataset, then apply a mask, over-sampling, and noise scaling so it's ready for model fitting. Produces a runnable Python script in ./work/ that the user can re-run on their own data. Use before invoking `al_build_imaging_model`. For interferometer data, `al_build_interferometer_model` covers loading + masking inline.
 ---
 
 # Preparing CCD imaging for lens modelling

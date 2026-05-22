@@ -126,8 +126,9 @@ the inference machinery, which is what makes hard lens modelling tractable:
   source) into a sequence of tractable ones.
 - **SLaM pipelines** (Source-Light-Mass) — an automated, model-comparison-driven
   chain from initial parametric fit through pixelised source reconstruction
-  and optional subhalo detection. The `slam_pipeline/` here ships the modular
-  stages; the [`scripts/`](./scripts/) drivers run them end-to-end.
+  and optional subhalo detection. The [`/init-slam`](./skills/init-slam.md)
+  skill copies a SLaM driver into [`scripts/`](./scripts/) tailored to your
+  data type.
 - **Database aggregator** — once you've run a sample of fits, query results
   across the sample with PyAutoFit's `Aggregator` API; ideal for surveys.
 - **JAX acceleration** on GPU for the likelihood (`autolens[jax]` extra) —
@@ -195,6 +196,106 @@ both layouts and chooses the correct push target from the detected remotes.
 
 ---
 
+## What you get
+
+- **17 lensing skills** for data prep, model building, fitting, debugging,
+  results, and visualisation — see [`skills/README.md`](./skills/README.md) for
+  the index. Each skill is a procedural how-to with the Python recipe inline;
+  the output is a runnable `.py` you keep and modify.
+- **Knows how to code.** The agent reads PyAuto\* source through pinned
+  citations (`<Project>:<path>`, resolved via
+  [`sources.yaml`](./sources.yaml)) and produces idiomatic, working code —
+  not API-hallucinated text. The python-first rule is in
+  [`skills/_style.md`](./skills/_style.md).
+- **Grounded in science.** Every claim points at source code or a paper.
+  [`wiki/core/`](./wiki/core/) is the curated PyAuto\* reference (refreshed
+  against pinned source commits); [`wiki/literature/`](./wiki/literature/) is
+  the strong-lensing scientific reference (concepts, entities, papers, with
+  `[[wiki-link]]` cross-refs). Add a paper with
+  [`al_ingest_paper`](./skills/al_ingest_paper.md).
+- **Tracks what you've done.** A per-fork journal at
+  [`wiki/project/`](./wiki/project/) — dated entries cover domain motivation,
+  statistical motivation, and the script produced. The agent offers
+  (default-yes) to add an entry after every non-trivial piece of work. A
+  light-touch [`profile.md`](./wiki/project/_profile_template.md) records your
+  level, instrument, and science goal so future sessions don't make you repeat
+  yourself.
+- **Plots that don't disappear.** Plot-producing skills save through
+  `aplt.Output(...)` into `work/plots/<context>/`. The agent quotes the
+  absolute path and offers *"want me to `open <path>`?"* — see
+  [`CLAUDE.md`](./CLAUDE.md) Part 1 "Conventions".
+- **HPC-ready out of the box.** SLURM submit scripts for GPU and CPU,
+  bidirectional [`hpc/sync`](./hpc/) for code ↔ HPC, and the same Python
+  scripts run locally or on the cluster unchanged.
+
+---
+
+## Quick start with an agent
+
+You'll need an agent client. Claude Code is the smoothest fit (this repo's
+[`CLAUDE.md`](./CLAUDE.md) is the canonical instruction set); Codex, Copilot,
+and other agents read the mirror at [`AGENTS.md`](./AGENTS.md).
+
+**1. Install the agent.**
+
+```bash
+# Claude Code
+npm install -g @anthropic-ai/claude-code
+
+# or Codex
+npm install -g @openai/codex
+```
+
+**2. Clone the project.**
+
+If you're working from a personal fork:
+
+```bash
+git clone https://github.com/<you>/autolens_base_project.git
+cd autolens_base_project
+```
+
+If you're a collaborator working directly against `PyAutoLabs`:
+
+```bash
+git clone https://github.com/PyAutoLabs/autolens_base_project.git
+cd autolens_base_project
+```
+
+…or from an existing agent session, invoke the
+[`start-new-project`](./skills/start-new-project.md) skill to rsync into a
+fresh directory with a clean project journal.
+
+**3. Open a session.**
+
+```bash
+claude        # or `codex`
+```
+
+The agent reads [`CLAUDE.md`](./CLAUDE.md) (or [`AGENTS.md`](./AGENTS.md)) on
+session start and already knows the project conventions.
+
+**4. Ask.** Prompts that work cold, on a fresh clone:
+
+- *"What skills do you have?"* — lists the 17 lensing skills + the project
+  workflow skills.
+- *"Set up the Python environment."* — agent runs
+  [`al_setup_environment`](./skills/al_setup_environment.md) (pip mode for
+  read-only use, or editable-clone of all five source repos for
+  source-level access).
+- *"I have HST imaging of <lens name> — walk me through fitting it."* —
+  agent composes data prep → model build → search → results, narrating
+  physics and statistics as it goes.
+- *"I'm new to lensing — can you teach me what a caustic is?"* — agent
+  enters newcomer mode: leads with the HowToLens notebook, one concept at
+  a time.
+
+**5. Let the journal build.** After non-trivial work the agent offers
+(default-yes) to add a `wiki/project/YYYY-MM-DD-<slug>.md` entry. Say yes —
+that's how future sessions stay in context across days and weeks.
+
+---
+
 ## The three-layer architecture
 
 1. **Instructions.** [`CLAUDE.md`](./CLAUDE.md) (Claude Code) and
@@ -246,13 +347,10 @@ autolens_base_project/
 │   ├── batch_cpu/    # CPU job scripts + SLURM output/error logs
 │   └── batch_gpu/    # GPU job scripts + SLURM output/error logs
 ├── output/           # Analysis results (written automatically by PyAutoFit)
-├── scripts/          # Persistent modeling pipelines — run locally or on the HPC unchanged
-│   ├── imaging.py    # SLaM pipeline for imaging data
-│   ├── interferometer.py  # SLaM pipeline for interferometer data
-│   └── group/        # SLaM pipeline for group-scale lensing
-├── simulators/       # Scripts for generating simulated datasets
-├── slam_pipeline/    # SLaM pipeline stage definitions (dataset-type agnostic)
-│
+├── scripts/          # Persistent modeling pipelines — populated by `/init-slam`
+│   ├── template.py   # HPC interface template that the populated scripts copy from
+│   ├── imaging.py    # SLaM pipeline for imaging data (created by `/init-slam`)
+│   └── interferometer.py  # SLaM pipeline for interferometer data (created by `/init-slam`)
 ├── skills/           # Agent skills (procedural)
 ├── .claude/skills/   # Symlinks for Claude Code
 ├── work/             # Agent working directory — see note below
@@ -263,11 +361,11 @@ autolens_base_project/
 ```
 
 A fresh clone ships only the parts that don't depend on your data: `config/`,
-`hpc/`, `skills/`, `wiki/`, and a stub `scripts/`. `scripts/imaging.py` /
-`interferometer.py` / `group/` are populated by the
+`hpc/`, `skills/`, `wiki/`, and `scripts/template.py`. The typed
+`scripts/imaging.py` / `interferometer.py` are populated by the
 [`start-new-project`](./skills/start-new-project.md) and
-[`init-slam`](./skills/init-slam.md) skills; `slam_pipeline/`,
-`dataset/`, and `output/` arrive when you run them.
+[`init-slam`](./skills/init-slam.md) skills; `dataset/` and `output/` arrive
+when you run them.
 
 `work/` holds the Python scripts and Markdown notes the agent generates
 during sessions — these are **committed** alongside the matching
@@ -365,7 +463,8 @@ For interferometer datasets, two additional optional fields are supported:
 | `real_space_shape` | [int, int] | Height × width of the real-space reconstruction grid (default `[256, 256]`)    |
 | `mask_radius`      | float      | Circular mask radius in arcseconds (default `3.5`)                             |
 
-When generating a simulated dataset with `simulators/base.py`, `info.json` is written
+When generating a simulated dataset with
+[`al_simulate_dataset`](./skills/al_simulate_dataset.md), `info.json` is written
 automatically alongside the data.
 
 For real observational data, create `info.json` manually or with a preprocessing script.
@@ -377,6 +476,10 @@ regions that should not contribute to the fit.
 
 ## Running Scripts
 
+> **Prerequisite:** `scripts/imaging.py` and `scripts/interferometer.py` are
+> populated by the [`/init-slam`](./skills/init-slam.md) skill — run it once
+> per fork before any of the commands below.
+
 ### Locally
 
 Run from anywhere — paths are resolved relative to the script's location:
@@ -386,7 +489,8 @@ python3 scripts/imaging.py --sample=<sample> --dataset=<dataset>
 python3 scripts/interferometer.py --sample=<sample> --dataset=<dataset>
 ```
 
-The included examples:
+Against the bundled example datasets (once `/init-slam` has populated the
+scripts):
 
 ```bash
 python3 scripts/imaging.py --sample=sample_imaging --dataset=example_imaging
@@ -441,8 +545,9 @@ sbatch submit_interferometer   # interferometer
 |--------|---------|
 | `hpc/batch_cpu/submit_imaging` | CPU array job for imaging datasets |
 | `hpc/batch_cpu/submit_interferometer` | CPU array job for interferometer datasets |
-| `hpc/batch_cpu/template_imaging` | Single-dataset imaging job template |
-| `hpc/batch_cpu/template_interferometer` | Single-dataset interferometer job template |
+
+To run a single dataset, set `--array=0-0` in the submit script and put that
+one entry in the `datasets=()` array.
 
 ```bash
 cd hpc/batch_cpu
@@ -450,6 +555,11 @@ export PROJECT_PATH=/path/to/your/project
 sbatch submit_imaging          # imaging
 sbatch submit_interferometer   # interferometer
 ```
+
+The generic `hpc/batch_gpu/submit`, `hpc/batch_cpu/submit`, and
+`hpc/batch_cpu/template` files are kept as compatibility/reference examples
+for custom cluster setups. For normal use, prefer the typed
+`submit_imaging` / `submit_interferometer` scripts.
 
 SLURM logs are written to the `output/` and `error/` subdirectories inside each batch folder.
 
@@ -469,6 +579,8 @@ cp hpc/sync.conf.example hpc/sync.conf
 ```
 
 `sync.conf` is gitignored and stays on your local machine only.
+`hpc/sync_jump.conf.example` is also kept as a reference for relay / jump-host
+topologies that need a second local config.
 
 ### Commands
 
@@ -483,7 +595,7 @@ hpc/sync status   # Dry run — see what would transfer without moving anything
 
 | Direction | Folders | Strategy |
 |-----------|---------|----------|
-| push | `config/` `hpc/` `scripts/` `slam_pipeline/` `simulators/` | Normal sync — only changed files |
+| push | `config/` `hpc/` `scripts/` | Normal sync — only changed files |
 | push | `dataset/` | `--ignore-existing` — skips files already on HPC, avoiding re-checksumming large FITS archives |
 | pull | `output/` | `--update --exclude=search_internal` — only downloads files newer than local copies, omits large sampler internals |
 
@@ -516,45 +628,27 @@ Key config files:
 
 ## SLaM Pipeline
 
-`slam_pipeline/` contains the modular pipeline stages:
-
-| Module | Stage |
-|--------|-------|
-| `source_lp.py` | Parametric source (light profile) |
-| `source_pix.py` | Pixelised source (mesh + regularization) |
-| `light_lp.py` | Lens light |
-| `mass_total.py` | Total mass |
-| `subhalo/detection.py` | Dark matter subhalo detection |
-
-To set up a fresh `scripts/` folder against one of these pipelines, invoke the
-[`init-slam`](./skills/init-slam.md) skill — it copies the right SLaM driver
-from `autolens_workspace` and tailors it to your data type.
+To set up a fresh `scripts/` folder against a SLaM pipeline, invoke the
+[`init-slam`](./skills/init-slam.md) skill. It picks the right driver from
+`autolens_workspace` (parametric or pixelised source, MGE lens light, subhalo
+detection, group scale, …), copies it into `scripts/`, and writes a
+`scripts/slam_claude.md` reference so future sessions inherit the SLaM
+context without re-reading the workspace guides.
 
 ---
 
 ## Simulating Data
 
-Two ways to do this:
+Simulation remains a first-class workflow, but the base template no longer
+ships a local `simulators/` tree. Instead:
 
 - **From an agent session**, ask for it: the agent runs
   [`al_simulate_dataset`](./skills/al_simulate_dataset.md), which synthesises
   a `Tracer` to your spec (lens redshift, mass model, source) and writes the
-  FITS files. Useful for sensitivity studies and pipeline validation against
-  known truths.
-- **From the command line** with `simulators/base.py` — edit the dataset
-  properties at the top of the file (`pixel_scale`, `shape_native`,
-  `n_batch`) and run:
-
-  ```bash
-  # Single simulated dataset
-  python3 simulators/base.py
-
-  # Named subdirectory
-  python3 simulators/base.py my_dataset
-  ```
-
-Either path writes `info.json` automatically, so analysis scripts will pick up
-the correct `pixel_scale` and `n_batch` without any further configuration.
+  FITS files plus `info.json`.
+- **From workspace examples**, copy the relevant script from
+  `autolens_workspace` into your project if you want a persistent simulator
+  alongside your modeling pipeline.
 
 ---
 
