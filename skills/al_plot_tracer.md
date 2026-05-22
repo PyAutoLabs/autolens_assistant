@@ -29,15 +29,41 @@ For the physics behind each visual — what convergence is, why caustics matter,
 a critical curve traces — see
 [`wiki/core/concepts/lensing_basics.md`](../wiki/core/concepts/lensing_basics.md).
 
+## Saving plots
+
+Every recipe below saves to disk through `aplt.Output(...)` so plots persist
+for review. Define this once at the top of your script and reuse it across
+branches:
+
+```python
+from pathlib import Path
+import autolens.plot as aplt
+
+PLOT_DIR = Path("work/plots") / "<dataset_or_slug>"   # pick a meaningful slug
+PLOT_DIR.mkdir(parents=True, exist_ok=True)
+
+def _mat_plot(filename: str) -> aplt.MatPlot2D:
+    return aplt.MatPlot2D(
+        output=aplt.Output(path=str(PLOT_DIR), filename=filename, format="png")
+    )
+```
+
+After running, the agent quotes `PLOT_DIR.resolve()` and offers
+`open <path>` — see `_style.md` "Plot output and path announcement".
+
 ## Branch — quick subplots
 
 ```python
-import autolens.plot as aplt
-
 # Assume `tracer` and `grid` exist (e.g. from al_load_results + al_prepare_imaging_data).
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.subplot_tracer()         # 2x3: image, source, convergence, potential, deflection y, deflection x
-tracer_plotter.subplot_galaxies_images()  # per-galaxy image-plane images
+aplt.TracerPlotter(
+    tracer=tracer, grid=grid, mat_plot_2d=_mat_plot("tracer_subplot"),
+).subplot_tracer()          # 2x3: image, source, convergence, potential, deflection y, deflection x
+
+aplt.TracerPlotter(
+    tracer=tracer, grid=grid, mat_plot_2d=_mat_plot("galaxies_images"),
+).subplot_galaxies_images()  # per-galaxy image-plane images
+
+print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
 Source: `PyAutoLens:autolens/lens/plot/tracer_plotters.py`.
@@ -56,7 +82,10 @@ visuals = aplt.Visuals2D(
 aplt.TracerPlotter(
     tracer=tracer, grid=grid,
     visuals_2d=visuals,
+    mat_plot_2d=_mat_plot("critical_curves_caustics"),
 ).figures_2d(image=True)
+
+print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
 Source: `PyAutoLens:autolens/lens/tracer.py` (`critical_curves_from`, `caustics_from`).
@@ -69,15 +98,20 @@ Wiki: [`wiki/core/concepts/lensing_basics.md`](../wiki/core/concepts/lensing_bas
 For one specific quantity:
 
 ```python
-mp = aplt.MassProfilePlotter(mass_profile=tracer.galaxies[0].mass, grid=grid)
-mp.figures_2d(convergence=True, deflections_y=True, deflections_x=True, potential=True)
+aplt.MassProfilePlotter(
+    mass_profile=tracer.galaxies[0].mass, grid=grid,
+    mat_plot_2d=_mat_plot("lens_mass_quantities"),
+).figures_2d(convergence=True, deflections_y=True, deflections_x=True, potential=True)
 ```
 
 Or for the whole tracer:
 
 ```python
-tp = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tp.figures_2d(image=True, source_plane=True, convergence=True, magnification=True)
+aplt.TracerPlotter(
+    tracer=tracer, grid=grid, mat_plot_2d=_mat_plot("tracer_quantities"),
+).figures_2d(image=True, source_plane=True, convergence=True, magnification=True)
+
+print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
 ## Branch — multi-plane systems (>2 redshifts)

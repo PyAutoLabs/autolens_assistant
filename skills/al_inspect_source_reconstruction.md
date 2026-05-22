@@ -25,25 +25,49 @@ Canonical reference:
 - *"Was this a parametric or pixelised fit?"* — if parametric, this skill doesn't
   apply; use [`al_plot_tracer`](./al_plot_tracer.md) for the source-plane image.
 
+## Saving plots
+
+Every recipe below saves to disk through `aplt.Output(...)` so plots persist
+for review. Define this once at the top of your script and reuse across
+branches:
+
+```python
+from pathlib import Path
+import autolens as al
+import autolens.plot as aplt
+
+PLOT_DIR = Path("work/plots") / "<dataset_or_slug>"   # pick a meaningful slug
+PLOT_DIR.mkdir(parents=True, exist_ok=True)
+
+def _mat_plot(filename: str) -> aplt.MatPlot2D:
+    return aplt.MatPlot2D(
+        output=aplt.Output(path=str(PLOT_DIR), filename=filename, format="png")
+    )
+```
+
+After running, the agent quotes `PLOT_DIR.resolve()` and offers
+`open <path>` — see `_style.md` "Plot output and path announcement".
+
 ## Branch — source-plane reconstruction
 
 Rebuild the fit so the inversion is computed:
 
 ```python
-import autolens as al
-import autolens.plot as aplt
-
 # `dataset` from al_prepare_imaging_data, `tracer` from al_load_results.
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-inversion_plotter = aplt.InversionPlotter(inversion=fit.inversion)
-inversion_plotter.figures_2d_of_pixelization(
+aplt.InversionPlotter(
+    inversion=fit.inversion,
+    mat_plot_2d=_mat_plot("source_reconstruction"),
+).figures_2d_of_pixelization(
     pixelization_index=0,
     reconstructed_image=True,   # source-plane image on the pixelisation mesh
     reconstruction=True,        # source-plane signal map
     reconstruction_noise_map=True,
     regularization_weights=True,
 )
+
+print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
 Source: `PyAutoLens:autolens/inversion/plot/inversion_plotters.py`,
@@ -52,7 +76,12 @@ Source: `PyAutoLens:autolens/inversion/plot/inversion_plotters.py`,
 ## Branch — mesh + regularisation diagnostics
 
 ```python
-inversion_plotter.subplot_of_mapper(mapper_index=0)
+aplt.InversionPlotter(
+    inversion=fit.inversion,
+    mat_plot_2d=_mat_plot("mapper_subplot"),
+).subplot_of_mapper(mapper_index=0)
+
+print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
 Shows: the mesh (Delaunay triangles or Voronoi cells), the regularisation
