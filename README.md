@@ -1,63 +1,249 @@
 # autolens_base_project
 
-The forkable template for PyAutoLens gravitational-lens science projects, bundled with
-an AI-agent workspace (the **lenskills** instructions/skills/wiki stack) so a coding
-agent can help you build models, run searches, and interpret results without
-re-discovering the API every session.
+<p align="center">
+  <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" alt="PyAutoLens demo" width="600">
+</p>
 
-Fork this repo to start a new science project, or rsync into a fresh directory (see
-[`CLAUDE.md`](./CLAUDE.md) → "Creating a New Project"). The agent stack rides along
-with every fork — so a Claude Code or Codex session in your fork already understands
-the PyAuto\* libraries and the project conventions.
+A forkable template for **PyAutoLens** strong-lensing science projects, bundled
+with an AI-agent workspace so you can do real lens modelling by **conversation
+alone** — never opening a code file unless you want to. The agent already
+understands the PyAuto\* stack (PyAutoConf, PyAutoArray, PyAutoFit, PyAutoGalaxy,
+PyAutoLens), the **SLaM pipeline**, the configuration system,
+and the HPC submit flow. You describe what you want; it composes skills and
+produces a runnable Python script for *your* data, narrating the physics, the
+statistics, and the code.
 
 ---
 
-## Three layers (the agent workspace)
+## What is gravitational lensing?
 
-1. **Instructions** — [`CLAUDE.md`](./CLAUDE.md) (Claude Code) and
-   [`AGENTS.md`](./AGENTS.md) (Codex, Copilot, generic). Explain how an agent finds
-   skills, introspects them, and bootstraps new ones on demand. `CLAUDE.md` is split:
-   Part 1 is how the agent operates, Part 2 is the science-project conventions below.
-2. **Skills** — [`skills/`](./skills/) (also exposed at
-   [`.claude/skills/`](./.claude/skills/) for Claude Code). Each skill is a procedural
-   how-to for one task — `al_*.md` for lensing-API skills (`al_build_imaging_model`,
-   `al_run_search`, `al_plot_fit_residuals`, …) and plain-named skills for repo
-   workflows (`init-slam`, `start-new-project`).
-3. **Wiki** — [`wiki/`](./wiki/) split into three sub-wikis:
-   - [`wiki/core/`](./wiki/core/) — curated PyAuto\* reference (Sersic profiles,
-     non-linear searches, SLaM phases, etc.). Maintained by the `al_update_wiki` skill
-     against pinned source commits.
-   - [`wiki/literature/`](./wiki/literature/) — broad strong-lensing scientific
-     reference (concepts, entities, per-paper bibliographies). See
-     [`wiki/literature/CLAUDE.md`](./wiki/literature/CLAUDE.md) for the schema.
-   - [`wiki/project/`](./wiki/project/) — running journal of what *this fork* has
-     done. Dated entries follow [`wiki/project/_template.md`](./wiki/project/_template.md).
+**Gravitational lensing** is the bending of light by mass. When a distant
+galaxy (the *source*) sits behind a foreground galaxy or cluster (the *lens*),
+the lens's gravity warps the source's light into arcs, multiple images, or
+Einstein rings. The geometry of those distortions is a precise readout of the
+lens's total mass distribution — including the dark matter that dominates it —
+and of the cosmological distances between observer, lens, and source.
+Modelling that geometry is how we map dark matter on galaxy and cluster
+scales, hunt for dark subhaloes, study the high-redshift universe through
+magnified sources, and measure the Hubble constant from quasar time delays.
 
-### Quick start with an agent
+## What PyAutoLens can do
 
-1. Open this repo with your AI agent of choice (Claude Code, `codex`, etc.).
-2. Ask **"What skills do you have?"** — the agent will list them from
-   [`skills/README.md`](./skills/README.md).
-3. To set up the Python environment, ask the agent to **"run `al_setup_environment`"**.
-4. Walk through a lensing task by name (build a model, run a search, interpret a fit) or
-   describe what you want and let the agent compose skills together.
+PyAutoLens turns a strong-lens image (or a set of interferometric visibilities)
+into a probabilistic model of the lens and source. The agent uses every piece
+of this; the bullets below are what it has access to whenever you ask it to
+fit something.
+
+### Modelling
+
+- **Light profiles** for the lens and source: Sersic, exponential, de
+  Vaucouleurs, cored Sersic, Multi-Gaussian Expansion, shapelets, and
+  arbitrary custom profiles.
+- **Mass profiles** for the lens: singular isothermal ellipsoid, NFW (with
+  and without scale-radius freedom), broken / cored power laws, external
+  shear, and higher-order multipole perturbations.
+- **Multi-plane ray tracing** through any number of lens planes — single
+  galaxies, group-scale, and cluster-scale systems.
+- **Pixelised source reconstruction** via Delaunay, Voronoi, or rectangular
+  meshes with constant or adaptive regularisation — the right tool for
+  extended arcs.
+- **Imaging and interferometer likelihoods**, including direct visibility-plane
+  fits for ALMA / JVLA data.
+- **Subhalo detection** by sensitivity-mapped grid search across the image plane.
+- **Forward simulators** for synthesising imaging or visibility datasets from
+  ground-truth `Tracer`s (pipeline validation, training sets, sensitivity
+  studies).
+
+### Non-linear optimisation
+
+PyAutoLens leans on [PyAutoFit](https://github.com/rhayes777/PyAutoFit) for
+the inference machinery, which is what makes hard lens modelling tractable:
+
+- **Multiple sampler back-ends** — Nautilus (nested sampling, the default for
+  most lens problems), Dynesty, Emcee, Zeus, plus L-BFGS / scipy for fast
+  point estimates — all driven through the same `search.fit(...)` interface.
+- **Search chaining**: the posterior of an early search seeds the priors of
+  the next, so you can decompose a hard problem (lens light, then mass, then
+  source) into a sequence of tractable ones.
+- **SLaM pipelines** (Source-Light-Mass) — an automated, model-comparison-driven
+  chain from initial parametric fit through pixelised source reconstruction
+  and optional subhalo detection. The `slam_pipeline/` here ships the modular
+  stages; the [`scripts/`](./scripts/) drivers run them end-to-end.
+- **Database aggregator** — once you've run a sample of fits, query results
+  across the sample with PyAutoFit's `Aggregator` API; ideal for surveys.
+- **JAX acceleration** on GPU for the likelihood (`autolens[jax]` extra) —
+  100× speedups for pixelised inversion.
+- **Hierarchical (graphical) models** — share parameters across many lenses
+  to fit population-level distributions.
+
+For the agent: the skills in [`skills/`](./skills/) cover every step of this
+flow, from data preparation through model building, sampler configuration,
+search chaining, and result inspection.
+
+---
+
+## Who this is for
+
+Pick the row that fits — the agent calibrates depth from cues in your first
+message and from a light-touch profile that builds up over sessions. The full
+routing matrix is in [`skills/_style.md`](./skills/_style.md) "Adaptive depth".
+
+**If you're new to strong lensing.** The agent shifts into teacher mode. It
+leads with the relevant [HowToLens](https://github.com/PyAutoLabs/HowToLens)
+notebook *before* the code, frames physics → statistics → code one concept at
+a time, and checks in after each beat (*"does that land, or want me to unpack
+deflection angles further?"*). You leave the session understanding why, not
+just how. See [`skills/_style.md`](./skills/_style.md) "Newcomer mode".
+
+**If you know lensing but not PyAutoLens.** The agent skips the physics
+lecture and maps science questions straight to API. It leads with the
+[`autolens_workspace`](https://github.com/Jammy2211/autolens_workspace)
+production scripts and the
+[RTD overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_2_new_user_guide.html),
+then produces a script for your data.
+
+**If you've used PyAutoLens before.** Quick recall — *"load `output/.../abc/`,
+plot residuals, tell me if anything looks structured"*. The wiki has the API,
+the skills are the command-line ergonomics, and the agent stays out of your
+way.
+
+---
+
+## What you get
+
+- **18 lensing skills** for data prep, model building, fitting, debugging,
+  results, and visualisation — see [`skills/README.md`](./skills/README.md) for
+  the index. Each skill is a procedural how-to with the Python recipe inline;
+  the output is a runnable `.py` you keep and modify.
+- **Knows how to code.** The agent reads PyAuto\* source through pinned
+  citations (`<Project>:<path>`, resolved via
+  [`sources.yaml`](./sources.yaml)) and produces idiomatic, working code —
+  not API-hallucinated text. The python-first rule is in
+  [`skills/_style.md`](./skills/_style.md).
+- **Grounded in science.** Every claim points at source code or a paper.
+  [`wiki/core/`](./wiki/core/) is the curated PyAuto\* reference (refreshed
+  against pinned source commits); [`wiki/literature/`](./wiki/literature/) is
+  the strong-lensing scientific reference (concepts, entities, papers, with
+  `[[wiki-link]]` cross-refs). Add a paper with
+  [`al_ingest_paper`](./skills/al_ingest_paper.md).
+- **Tracks what you've done.** A per-fork journal at
+  [`wiki/project/`](./wiki/project/) — dated entries cover domain motivation,
+  statistical motivation, and the script produced. The agent offers
+  (default-yes) to add an entry after every non-trivial piece of work. A
+  light-touch [`profile.md`](./wiki/project/_profile_template.md) records your
+  level, instrument, and science goal so future sessions don't make you repeat
+  yourself.
+- **Plots that don't disappear.** Plot-producing skills save through
+  `aplt.Output(...)` into `work/plots/<context>/`. The agent quotes the
+  absolute path and offers *"want me to `open <path>`?"* — see
+  [`CLAUDE.md`](./CLAUDE.md) Part 1 "Conventions".
+- **HPC-ready out of the box.** SLURM submit scripts for GPU and CPU,
+  bidirectional [`hpc/sync`](./hpc/) for code ↔ HPC, and the same Python
+  scripts run locally or on the cluster unchanged.
+
+---
+
+## Quick start with an agent
+
+You'll need an agent client. Claude Code is the smoothest fit (this repo's
+[`CLAUDE.md`](./CLAUDE.md) is the canonical instruction set); Codex, Copilot,
+and other agents read the mirror at [`AGENTS.md`](./AGENTS.md).
+
+**1. Install the agent.**
+
+```bash
+# Claude Code
+npm install -g @anthropic-ai/claude-code
+
+# or Codex
+npm install -g @openai/codex
+```
+
+Quickstart docs: <https://docs.claude.com/claude-code/quickstart>.
+
+**2. Get the template.** Either fork this repo on GitHub and clone your fork:
+
+```bash
+git clone https://github.com/<you>/autolens_base_project.git
+cd autolens_base_project
+```
+
+…or from an existing agent session, invoke the
+[`start-new-project`](./skills/start-new-project.md) skill to rsync into a
+fresh directory with a clean project journal.
+
+**3. Open a session.**
+
+```bash
+claude        # or `codex`
+```
+
+The agent reads [`CLAUDE.md`](./CLAUDE.md) (or [`AGENTS.md`](./AGENTS.md)) on
+session start and already knows the project conventions.
+
+**4. Ask.** Prompts that work cold, on a fresh fork:
+
+- *"What skills do you have?"* — lists the 18 lensing skills + the project
+  workflow skills.
+- *"Set up the Python environment."* — agent runs
+  [`al_setup_environment`](./skills/al_setup_environment.md) (pip mode for
+  read-only use, or editable-clone of all five source repos for
+  source-level access).
+- *"I have HST imaging of <lens name> — walk me through fitting it."* —
+  agent composes data prep → model build → search → results, narrating
+  physics and statistics as it goes.
+- *"I'm new to lensing — can you teach me what a caustic is?"* — agent
+  enters newcomer mode: leads with the HowToLens notebook, one concept at
+  a time.
+
+**5. Let the journal build.** After non-trivial work the agent offers
+(default-yes) to add a `wiki/project/YYYY-MM-DD-<slug>.md` entry. Say yes —
+that's how future sessions stay in context across days and weeks.
+
+---
+
+## The three-layer architecture
+
+1. **Instructions.** [`CLAUDE.md`](./CLAUDE.md) (Claude Code) and
+   [`AGENTS.md`](./AGENTS.md) (Codex, Copilot, generic). `CLAUDE.md` splits
+   into Part 1 (how the agent operates) and Part 2 (the science-project
+   conventions repeated below).
+2. **Skills.** [`skills/`](./skills/), mirrored at
+   [`.claude/skills/`](./.claude/skills/) for Claude Code. Lensing-API
+   skills are named `al_*.md` (`al_build_imaging_model`, `al_run_search`,
+   `al_plot_fit_residuals`, …); project-workflow skills have plain
+   kebab-case names (`init-slam`, `start-new-project`). The writing guide
+   every skill is authored against is [`skills/_style.md`](./skills/_style.md).
+3. **Wiki**, split into three sub-wikis:
+   - [`wiki/core/`](./wiki/core/) — curated PyAuto\* reference. Refreshed
+     by [`al_update_wiki`](./skills/al_update_wiki.md) against pinned source
+     commits in [`sources.yaml`](./sources.yaml).
+   - [`wiki/literature/`](./wiki/literature/) — strong-lensing scientific
+     reference. Schema in
+     [`wiki/literature/CLAUDE.md`](./wiki/literature/CLAUDE.md); add papers
+     via [`al_ingest_paper`](./skills/al_ingest_paper.md).
+   - [`wiki/project/`](./wiki/project/) — per-fork journal of decisions,
+     experiments, and `profile.md` (the user record). Reset on fork by the
+     `start-new-project` rsync.
 
 ### Asking the agent for something new
 
-If a capability you want isn't in the skill list, just ask. The agent will follow the
-bootstrap protocol in [`skills/_bootstrap_skill.md`](./skills/_bootstrap_skill.md):
-confirm scope with you, clone any source repos it needs (resolved via
-[`sources.yaml`](./sources.yaml)), read the relevant API, draft a new skill in the
-workspace style, and link it into the wiki.
+If a capability you want isn't already a skill, just describe it. The agent
+follows the bootstrap protocol in
+[`skills/_bootstrap_skill.md`](./skills/_bootstrap_skill.md): confirm scope
+with you, clone any source repos it needs (URLs from
+[`sources.yaml`](./sources.yaml)), read the relevant API inside the cloned
+source, draft a new skill in the workspace style, and link it into the wiki.
 
-`sources.yaml` is the single source of truth for which source repos this workspace
-knows about, by **git URL** rather than local path so the fork is portable across
-machines. Everything else references those repos by *project name + path relative to
-the repo root* (`PyAutoFit:autofit/non_linear/search/nest/nautilus.py`).
+`sources.yaml` is the single source of truth for which source repos this
+workspace knows about, recorded by **git URL** rather than local path so the
+fork is portable across machines. Everything else cites those repos by
+*project name + path relative to the repo root*
+(`PyAutoFit:autofit/non_linear/search/nest/nautilus.py`).
 
 ---
 
-## Project Structure
+## Project structure
 
 ```
 autolens_base_project/
@@ -68,22 +254,34 @@ autolens_base_project/
 │   └── batch_gpu/    # GPU job scripts + SLURM output/error logs
 ├── output/           # Analysis results (written automatically by PyAutoFit)
 ├── scripts/          # Persistent modeling pipelines — run locally or on the HPC unchanged
-│   ├── imaging.py    # SLAM pipeline for imaging data
-│   ├── interferometer.py  # SLAM pipeline for interferometer data
-│   └── group/        # SLAM pipeline for group-scale lensing
+│   ├── imaging.py    # SLaM pipeline for imaging data
+│   ├── interferometer.py  # SLaM pipeline for interferometer data
+│   └── group/        # SLaM pipeline for group-scale lensing
 ├── simulators/       # Scripts for generating simulated datasets
-├── slam_pipeline/    # SLAM pipeline stage definitions (dataset-type agnostic)
+├── slam_pipeline/    # SLaM pipeline stage definitions (dataset-type agnostic)
 │
 ├── skills/           # Agent skills (procedural)
 ├── .claude/skills/   # Symlinks for Claude Code
+├── work/             # Agent working directory — see note below
 └── wiki/
     ├── core/         # Curated PyAuto* reference
-    ├── literature/   # Papers / derivations (project-specific)
+    ├── literature/   # Strong-lensing scientific reference (papers, concepts)
     └── project/      # Running journal for this fork
 ```
 
-(`work/` is the agent's gitignored scratch folder for one-off exploration scripts; it
-appears once an agent creates it.)
+A fresh clone ships only the parts that don't depend on your data: `config/`,
+`hpc/`, `skills/`, `wiki/`, and a stub `scripts/`. `scripts/imaging.py` /
+`interferometer.py` / `group/` are populated by the
+[`start-new-project`](./skills/start-new-project.md) and
+[`init-slam`](./skills/init-slam.md) skills; `slam_pipeline/`,
+`dataset/`, and `output/` arrive when you run them.
+
+`work/` holds the Python scripts and Markdown notes the agent generates
+during sessions — these are **committed** alongside the matching
+`wiki/project/` entry that describes them. Plot files saved by the skills
+land in `work/plots/<context>/` and data dumps (FITS / npy / pickle) in
+`work/output/` — both subdirectories are gitignored, since they're
+reproducible from the code that produced them.
 
 ---
 
@@ -147,7 +345,7 @@ Required fields:
 | `pixel_scale` | float | Arcseconds per pixel. Varies by instrument (e.g. HST ≈ 0.05, Euclid ≈ 0.1) |
 | `n_batch`     | int   | Pixelization batch size. Use lower values for higher-resolution data to reduce VRAM usage (e.g. 40 for HST, 8 for AO) |
 
-Optional fields (used by the SLAM pipeline if present):
+Optional fields (used by the SLaM pipeline if present):
 
 ```json
 {
@@ -320,7 +518,7 @@ Key config files:
 
 ---
 
-## SLAM Pipeline
+## SLaM Pipeline
 
 `slam_pipeline/` contains the modular pipeline stages:
 
@@ -332,23 +530,35 @@ Key config files:
 | `mass_total.py` | Total mass |
 | `subhalo/detection.py` | Dark matter subhalo detection |
 
+To set up a fresh `scripts/` folder against one of these pipelines, invoke the
+[`init-slam`](./skills/init-slam.md) skill — it copies the right SLaM driver
+from `autolens_workspace` and tailors it to your data type.
+
 ---
 
 ## Simulating Data
 
-`simulators/base.py` generates a synthetic imaging dataset. Edit the dataset properties
-at the top of the file (`pixel_scale`, `shape_native`, `n_batch`) then run:
+Two ways to do this:
 
-```bash
-# Single simulated dataset
-python3 simulators/base.py
+- **From an agent session**, ask for it: the agent runs
+  [`al_simulate_dataset`](./skills/al_simulate_dataset.md), which synthesises
+  a `Tracer` to your spec (lens redshift, mass model, source) and writes the
+  FITS files. Useful for sensitivity studies and pipeline validation against
+  known truths.
+- **From the command line** with `simulators/base.py` — edit the dataset
+  properties at the top of the file (`pixel_scale`, `shape_native`,
+  `n_batch`) and run:
 
-# Named subdirectory
-python3 simulators/base.py my_dataset
-```
+  ```bash
+  # Single simulated dataset
+  python3 simulators/base.py
 
-The simulator writes `info.json` automatically, so analysis scripts will pick up the
-correct `pixel_scale` and `n_batch` without any further configuration.
+  # Named subdirectory
+  python3 simulators/base.py my_dataset
+  ```
+
+Either path writes `info.json` automatically, so analysis scripts will pick up
+the correct `pixel_scale` and `n_batch` without any further configuration.
 
 ---
 
