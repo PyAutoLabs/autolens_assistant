@@ -10,7 +10,7 @@ optimisation project largely through natural language. Describe your data,
 science goal, or modelling problem, and the agent turns that into runnable
 Python workflows for your repository.
 
-This is not a generic coding assistant pointed at a lensing repo. The workspace
+The workspace
 ships with procedural skills, scientific reference material, and project memory
 so the agent can:
 
@@ -28,7 +28,7 @@ In practice, that means you can say things like:
 - *"Build an optimisation workflow for a new lens model and explain each stage."*
 - *"I'm new to strong lensing; teach me what a caustic is, then show me where it enters the model."*
 
-The tone is intentionally ambitious but grounded: the agent can accelerate real
+The agent can accelerate real
 research work and lower the barrier to entry, but the outputs are still normal
 Python scripts and notes that stay in your repo, can be inspected, and can be
 iterated on with you.
