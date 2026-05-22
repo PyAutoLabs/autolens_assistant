@@ -108,12 +108,14 @@ galaxy.
 **Summary:** Pixelated potential corrections and detection of
 spiral-like residual structure in a specific lens.
 
-## Verbados / Vernardos 2022 — potential corrections
+## Vernardos 2022 — The Very Knotty Lenser
 
 **File:** `Strong_Lens/Verbados2022PotentialCoorr.pdf`
 **Concepts:** [[gravitational-imaging]]
-**Summary:** Updated framework for pixelated potential
-corrections. Filename appears to be a misspelling of Vernardos. Verify.
+**Summary:** Explores regularization choices in simultaneous source and
+potential reconstruction using Gaussian process regression, showing how
+the balance between source and potential flexibility affects recovery of
+true perturbations in gravitational-imaging analyses.
 
 ## Minor 2024 — pixel supersampling
 

@@ -94,12 +94,14 @@ across mass, position, and noise levels.
 **Summary:** Continuation of the Despali sensitivity series with
 updated forward modelling.
 
-## Amorscio 2022 — sensitivity
+## Amorisco 2022 — halo concentration
 
 **File:** `Strong_Lens/Amorscio2022Sensiti.pdf`
 **Concepts:** [[dark-matter-substructure]]
-**Summary:** Sensitivity / forecast paper. Filename misspelled —
-verify author (likely Amorisco).
+**Summary:** Studies how halo concentration changes the detectability of
+low-mass perturbers in galaxy-galaxy strong lenses, showing that more
+concentrated haloes strengthen dark-matter constraints and clarifying the
+relative sensitivity to lens-plane and line-of-sight structure.
 
 ## He 2017 — substructure halos vs globular clusters
 

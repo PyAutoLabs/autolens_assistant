@@ -14,6 +14,15 @@ status: drafted
 **Summary:** Composite stellar + NFW lens modelling with
 PyAutoLens / SLaM on SLACS-style data.
 
+## Nightingale 2019 — galaxy structure with strong lensing
+
+**File:** https://arxiv.org/abs/1901.07801 (MNRAS 490, 5530)
+**Concepts:** [[bulge-halo-decomposition]], [[pyautolens]]
+**Summary:** Proof-of-concept decomposition of massive elliptical lenses
+into distinct stellar components plus an inner dark-matter halo, using
+strong lensing to measure stellar mass structure without stellar
+population priors and to infer dark-matter content simultaneously.
+
 ## Etherington 2023 — beyond bulge
 
 **File:** `Strong_Lens/Etherington2023aBeyondBulge.pdf`

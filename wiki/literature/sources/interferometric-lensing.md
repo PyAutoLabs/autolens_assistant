@@ -41,13 +41,15 @@ with MERLIN.
 **Concepts:** [[interferometric-lensing]]
 **Summary:** ALMA imaging of lensed DSFGs.
 
-## Wong 2007 — ALMA central image
+## Wong 2015 — SDP.81 central image
 
 **File:** `Strong_Lens/Wong2071ALMACentralImage.pdf`
 **Concepts:** [[interferometric-lensing]],
 [[smbh-from-lensing]]
-**Summary:** ALMA central-image detection / constraint. Filename
-year is mistyped (2071→2017?). Verify.
+**Summary:** Uses long-baseline ALMA plus HST imaging of SDP.81 to search
+for the demagnified central image and constrain the innermost lens-galaxy
+mass profile, core size, and supermassive black hole mass from its
+non-detection.
 
 ## See also
 
