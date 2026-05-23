@@ -7,7 +7,8 @@ status: drafted
 
 # Sources: dark matter substructure
 
-Per-paper stubs of substructure-detection literature. All marked stub.
+Per-paper entries for substructure-detection literature. Round 8 (2026-05-22)
+expanded the previously thin one-liners against arXiv for 17 entries.
 
 ## Vegetti & Koopmans 2009 — adaptive grids + nested sampling
 
@@ -45,54 +46,114 @@ evidence-based substructure detection.**
 
 ## Vegetti 2018 — sterile-neutrino constraints
 
-**File:** `Substructure/Vegetti2018StellarNeutrinos.pdf`
+**File:** `Substructure/Vegetti2018StellarNeutrinos.pdf` (arXiv:1801.01505,
+MNRAS 481, 3661)
+**Authors:** Vegetti, Despali, Lovell, Enzi
 **Concepts:** [[dark-matter-substructure]], [[dark-matter-physics]]
-**Summary:** Combined sample analysis using gravitational
-imaging; constrains the sterile-neutrino / thermal-relic warm-DM mass.
+**Summary:** Combines the detected subhalo + line-of-sight halo counts from
+gravitational imaging across 11 SLACS lenses to constrain the
+free-streaming scale of resonantly-produced sterile-neutrino dark matter.
+Folding in the [[line-of-sight-effects]] contribution (per Despali 2018)
+they derive a 2σ upper limit `log M_hm[M⊙] < 12.0`, equivalent to a
+thermal-relic mass `m_th > 0.3 keV`, which excludes sterile-neutrino
+models with `m_s < 0.8 keV` at any lepton-asymmetry parameter `L_6`.
+The companion lensing-properties paper is Despali et al. 2020
+(arXiv:1907.06649). Cite alongside Ritondale 2018 (BELLS) for the
+combined-sample CDM consistency story.
 
 ## Nightingale 2022 — PyAutoLens subhalo scan
 
-**File:** `Substructure/Nightingale2022Scanm.pdf`
-**Concepts:** [[gravitational-imaging]], [[pyautolens]]
-**Summary:** Subhalo scanning methodology in PyAutoLens applied
-to a sample of galaxy-galaxy lenses; statistical population constraints
-on subhalo abundance.
+**File:** `Substructure/Nightingale2022Scanm.pdf` (arXiv:2209.10566,
+MNRAS 527, 10480)
+**Authors:** Nightingale, He, Cao, Etherington, Li, Frenk, et al.
+**Concepts:** [[gravitational-imaging]], [[pyautolens]],
+[[slam-pipeline]]
+**Summary:** Defines and executes a near-automated subhalo scan over 54
+strong lenses from the [[slacs]] and [[bells-gallery]] samples using
+PyAutoLens — 28 of them analysed for substructure for the first time.
+The pipeline builds on the Etherington 2022 SLaM modelling pass, then
+runs an evidence-thresholded grid scan for an NFW perturber across the
+image plane of every lens, reporting both detection candidates and
+sensitivity maps. The paper is the operational backbone of every later
+PyAutoLens dark-matter analysis, and the canonical reference for the
+workspace's subhalo-scanning workflow.
 
-## Despali 2018 — baryons on substructure
+## Despali 2017 — baryons on substructure
 
-**File:** `Substructure/Despali2018BaryonsonSub.pdf`
+**File:** `Substructure/Despali2018BaryonsonSub.pdf` (arXiv:1608.06938,
+MNRAS 469, 1997 — note the paper is 2017, the filename "2018" is the
+journal-volume year)
+**Authors:** Despali & Vegetti
 **Concepts:** [[dark-matter-substructure]]
-**Summary:** Hydrodynamical simulations show baryons modify
-subhalo populations relative to DM-only predictions.
+**Summary:** Compares subhalo populations in the EAGLE and Illustris
+hydrodynamical simulations against their DM-only twins, in host haloes of
+`10^{12.5}`–`10^{14} M⊙ h^{-1}` at `z = 0.2`–`0.5` — i.e. the SLACS /
+BELLS host regime. Baryons systematically suppress the subhalo mass
+function near the host centre (tidal disruption is more efficient when
+the central baryonic potential is included), with the effect strongest
+inside the Einstein radius where strong-lens substructure searches
+operate. Cite this paper whenever DM-only predictions of subhalo
+abundance are being compared to strong-lens detections — there is a
+substantial baryonic correction.
 
 ## Despali 2018 — LOS
 
-**File:** `Substructure/Despali2018LOS.pdf`
+**File:** `Substructure/Despali2018LOS.pdf` (arXiv:1710.05029, MNRAS 475,
+5424)
+**Authors:** Despali, Vegetti, White, Giocoli, van den Bosch
 **Concepts:** [[line-of-sight-effects]],
 [[dark-matter-substructure]]
-**Summary:** Quantifies the fraction of detected perturbers in
-strong lenses that are LOS halos rather than in-lens subhaloes.
+**Summary:** Derives the analytic mass–redshift relation that lets a
+strong-lens substructure detection threshold (e.g. `10^{8} M⊙` at the
+lens redshift) be rescaled into the corresponding NFW-mass threshold for
+a halo at any other redshift along the line of sight. Folding the rescaled
+threshold into the cosmological halo mass function shows that the *total*
+number of detectable perturbers in a SLACS-like lens is dominated by
+foreground/background LOS haloes rather than in-lens subhaloes — typically
+by factors of 3–10 depending on geometry. This is the paper that
+operationalised the LOS contribution as a distinct, simulable component
+of every modern substructure search; required reading for any of the
+[[dark-matter-physics]] constraints downstream.
 
-## Despali 2021 — sensitivity
+## Despali 2022 — detecting low-mass haloes I (sensitivity)
 
-**File:** `Substructure/Despali2021Senstitoty.pdf`
-**Concepts:** [[dark-matter-substructure]]
-**Summary:** Forward-model sensitivity study for subhalo
-detection.
+**File:** `Substructure/Despali2021Senstitoty.pdf` and
+`Strong_Lens/Despali2022Sensitivity.pdf` *(same paper — both filenames
+are local copies of arXiv:2111.08718; the 2021/2022 split in the previous
+wiki was an artefact of submission-year vs publication-year naming)*.
+arXiv:2111.08718, MNRAS 510, 2480 (2022).
+**Authors:** Despali, Vegetti, White, Powell, Stacey, Fassnacht, Rizzo,
+Enzi
+**Concepts:** [[dark-matter-substructure]],
+[[gravitational-imaging]]
+**Summary:** Quantifies the lowest detectable NFW mass at every pixel
+of the lens plane as a function of data quality (SNR), instrument
+angular resolution and pixel scale, source brightness distribution, and
+lensing geometry — the "sensitivity map" formalism. The minimum
+detectable mass varies from `~1.5 × 10^{8} M⊙` (HST-quality data on a
+bright extended source) up to `~3 × 10^{9} M⊙` (typical ground-based or
+poorly-resolved lenses). Provides analytic scaling laws used to forecast
+substructure science for HST, JWST, and Euclid surveys; Paper I in the
+"Detecting low-mass haloes with strong gravitational lensing" series and
+the calibration reference behind every later sensitivity-map paper.
 
-## Despali 2022 — sensitivity
+## Despali 2024 — detecting low-mass haloes II
 
-**File:** `Strong_Lens/Despali2022Sensitivity.pdf`
-**Concepts:** [[dark-matter-substructure]]
-**Summary:** Updated detection-sensitivity grids for subhaloes
-across mass, position, and noise levels.
-
-## Despali 2024 — sensitivity II
-
-**File:** `Substructure/Despali2024SensitivityII.pdf`
-**Concepts:** [[dark-matter-substructure]]
-**Summary:** Continuation of the Despali sensitivity series with
-updated forward modelling.
+**File:** `Substructure/Despali2024SensitivityII.pdf` (arXiv:2407.12910,
+A&A 2025)
+**Authors:** Despali, Heinze, Fassnacht, Vegetti, Spingola, Klessen
+**Concepts:** [[dark-matter-substructure]], [[dark-matter-physics]]
+**Summary:** Paper II of the sensitivity series — turns from forecasting
+to *measuring* the density profiles of the two best-constrained
+detected subhaloes, SDSSJ0946+1006 (the [[Minor 2021]] perturber) and
+JVASB1938+666 (the Vegetti 2012 perturber). The recovered inner slopes
+are close to or steeper than isothermal, requiring concentrations well
+above the median CDM `c-M` relation. The paper compares to FIRE-2,
+TNG50, and EAGLE simulations and shows that ~1% of CDM subhaloes can
+produce such profiles via tidal stripping and adiabatic contraction, but
+the resulting baryonic content exceeds the photometric upper limits in
+at least one system — i.e. the tension with vanilla CDM is real and is
+the data-side motivation for re-examining SIDM and warm-DM alternatives.
 
 ## Amorisco 2022 — halo concentration
 
@@ -106,9 +167,20 @@ relative sensitivity to lens-plane and line-of-sight structure.
 ## He 2017 — substructure halos vs globular clusters
 
 **File:** `Strong_Lens/He2017_Substructure_Halos_vs_Globs.pdf`
+(arXiv:1707.01849, MNRAS 480, 5084; submitted 2017, published 2018)
+**Authors:** He, Li, Lim, Frenk, Cole, Peng, Wang
 **Concepts:** [[dark-matter-substructure]]
-**Summary:** Argues that lensing perturbers may include globular
-clusters as well as DM subhaloes.
+**Summary:** Asks whether the globular-cluster population of an early-type
+lens galaxy could masquerade as the dark-matter perturbers that
+substructure searches are trying to detect. They show that the number
+density of GCs at `M_GC ~ 10^{6} M⊙` near the Einstein ring is *comparable*
+to the predicted detectable subhalo abundance — so naive non-detections of
+DM are potentially confused by GCs. The saving grace is that GCs are much
+more compact than NFW subhaloes of the same mass, so their lensing
+signatures differ at the milli-arcsecond level; sufficiently high-
+resolution data (VLBI / JWST / ELT) can distinguish the two. Cite this as
+the "GC contamination" reference whenever the assistant explains why
+low-mass perturbers are not automatically dark.
 
 ## He 2022 — preprint
 
@@ -122,72 +194,153 @@ models recover the injected perturber more reliably.
 
 ## Loudas 2022 — millilensing
 
-**File:** `Substructure/Loudas2022MiliLensing.pdf`
-**Concepts:** [[dark-matter-substructure]]
-**Summary:** Mas-scale "millilensing" by DM subhaloes in radio
-lenses.
+**File:** `Substructure/Loudas2022MiliLensing.pdf` (arXiv:2209.13393)
+**Authors:** Loudas, Pavlidou, Casadio, Tassis
+**Concepts:** [[dark-matter-substructure]], [[dark-matter-physics]]
+**Summary:** Develops a semi-analytic forecast of the milli-lensing
+optical depth — the expected rate of milli-arcsecond multiple-imaging of
+compact radio sources by sub-galactic DM haloes — as a function of source
+redshift and DM model. Cold DM produces an order-unity detectable rate
+across a flux-limited radio sample; warm DM (`m_th ~ 3 keV`) suppresses
+the rate to near zero; self-interacting DM only produces efficient
+millilenses in the gravothermal-collapse regime where central
+concentrations spike. Sets the theoretical underpinning for SKA / VLBA
+millilensing-search programs, complementary to the strong-lens
+substructure searches that dominate this hub.
 
-## Ran Li 2016 — substructure
+## Ran Li 2016 — CDM vs WDM from strong lenses
 
-**File:** `Strong_Lens/RanLi2016Sub.pdf`
-**Concepts:** [[dark-matter-substructure]]
-**Summary:** Substructure inference paper.
+**File:** `Strong_Lens/RanLi2016Sub.pdf` (arXiv:1512.06507, MNRAS 460, 363)
+**Authors:** Li, Frenk, Cole, Gao, Bose, Hellwing
+**Concepts:** [[dark-matter-substructure]], [[dark-matter-physics]]
+**Summary:** Uses Aquarius / COCO N-body simulations to forecast how many
+strong-lens systems are needed to distinguish cold from warm dark matter
+via the substructure mass function. The headline result is that a sample
+of ~100 lenses with a detection limit `M_low = 10^{7} h^{-1} M⊙` cleanly
+separates CDM from a `~3.3 keV` thermal-relic WDM model and from the
+7-keV-sterile-neutrino scenario invoked for the unresolved 3.5 keV X-ray
+line. Foundational forecast paper that motivates the SLACS + BELLS
+substructure programs, and explicitly the target sample sizes pursued by
+Vegetti 2018 and Ritondale 2018.
 
-## Ran Li 2016 — substructure II
+## Ran Li 2016 — projection effects (LOS)
 
-**File:** `Strong_Lens/RanLi2016Sub2.pdf`
-**Concepts:** [[dark-matter-substructure]]
-**Summary:** Companion paper.
+**File:** `Strong_Lens/RanLi2016Sub2.pdf` (arXiv:1612.06227, MNRAS 468,
+1426)
+**Authors:** Li, Frenk, Cole, Wang, Gao
+**Concepts:** [[dark-matter-substructure]],
+[[line-of-sight-effects]]
+**Summary:** Companion paper that quantifies the line-of-sight
+contribution from independent N-body simulations, finding that LOS haloes
+contribute as many detectable image-plane perturbations as in-lens
+subhaloes — sometimes more — depending on lens/source redshifts. Independent
+confirmation of the [[Despali 2018]] LOS result via a different
+simulation suite, and a numerical complement to its analytic
+mass-redshift rescaling.
 
 ## Diaz-Rivero 2019 — subhalo without lens model
 
 **File:** `Strong_Lens/Rivero2019DirectSubhaLoCircumventLensmodel.pdf`
+(arXiv:1910.00015, Phys. Rev. D 101, 023515)
+**Authors:** Diaz Rivero & Dvorkin
 **Concepts:** [[dark-matter-substructure]],
 [[deep-learning-lensing]]
-**Summary:** Direct subhalo-population inference that bypasses
-the per-lens mass model — population-level statistics from arc residuals.
+**Summary:** Trains a convolutional neural network to detect dark-matter
+substructure directly from strong-lens images without first solving for
+the macromodel — a deliberate departure from the gravitational-imaging
+pipeline ([[Vegetti & Koopmans 2009]]) which always pivots through a
+fitted smooth lens. With a single perturber the network detects masses
+down to `~10^{9} M⊙` even under `~30%` noise, and the false-positive rate
+remains low when the perturber sits inside the main lens. Demonstrates
+the "bypass-the-macromodel" approach that motivates much of the later
+deep-learning substructure literature.
 
 ## Ritondale 2018 — BELLS subhaloes
 
-**File:** `Substructure/Ritondale2018BELLS.pdf`
+**File:** `Substructure/Ritondale2018BELLS.pdf` (arXiv:1811.03627, MNRAS
+485, 2179)
+**Authors:** Ritondale, Vegetti, Despali, Auger, Koopmans, McKean
 **Concepts:** [[bells-gallery]],
 [[dark-matter-substructure]]
-**Summary:** Subhalo search in BELLS-GALLERY sample.
+**Summary:** Runs the gravitational-imaging pipeline on the 17 BELLS-
+GALLERY lenses at `z_l ~ 0.5` (Lyα-emitter sources at `z_s ~ 2-3`),
+yielding the highest-redshift sample of objective substructure analyses
+to date. No statistically significant subhalo detections are found, but
+the number of *candidate* perturbations is consistent with the LOS-halo
+counts predicted by ΛCDM combined with [[Despali 2018]]. Combined with
+the earlier SLACS analyses (Vegetti 2014) the result tightens the
+sterile-neutrino bound feeding into [[Vegetti 2018]] and remains the
+canonical BELLS substructure non-detection paper.
 
-## Ritondale 2018 — Lyman-α
+## Ritondale 2018 — BELLS-GALLERY Lyman-α morphology
 
-**File:** `Substructure/Ritondale2018BELLLymaAlphs.pdf`
+**File:** `Substructure/Ritondale2018BELLLymaAlphs.pdf` (arXiv:1811.03628,
+MNRAS 482, 4744)
+**Authors:** Ritondale, Auger, Vegetti, McKean
 **Concepts:** [[bells-gallery]],
 [[lensed-source-science]]
-**Summary:** Lyman-α emission from BELLS-GALLERY sources.
+**Summary:** Source-plane reconstruction of the UV continuum of the 17
+BELLS-GALLERY Lyα emitters with the same lens models used in the
+substructure paper above. The achieved physical resolution is `~80 pc`
+at `z ~ 2-3`, revealing that LAEs in this magnification-selected sample
+are predominantly clumpy disc-like systems with multiple compact star-
+forming regions, and ~2 candidate mergers. Companion paper to the
+substructure analysis — its source-plane fidelity is what made the
+companion's evidence-based subhalo limits trustworthy.
 
 ## Sawala 2016 — the chosen few
 
-**File:** `Substructure/Sawala2016TheChosenFew.pdf`
+**File:** `Substructure/Sawala2016TheChosenFew.pdf` (arXiv:1406.6362,
+MNRAS 456, 85)
+**Authors:** Sawala et al. (the APOSTLE collaboration)
 **Concepts:** [[dark-matter-substructure]]
-**Summary:** N-body / hydro simulations exploring which subhaloes
-host galaxies — calibrates the lensing-DM-galaxy connection.
+**Summary:** Uses zoom-in hydrodynamical simulations of Local Group
+analogues to ask which low-mass dark-matter haloes successfully host a
+luminous dwarf galaxy. Reionisation suppresses star formation in most
+haloes below `~3 × 10^{9} M⊙`, so only a biased "chosen few" become
+visible; among the survivors, the galaxy-hosting subset is on average
+older, more concentrated, and more tidally stripped than a random pull
+from the halo population. The biased mapping between haloes and visible
+galaxies is the reason strong-lens substructure searches are interpreted
+as constraints on the full DM halo population rather than on the
+satellite-galaxy population alone — a fundamental ingredient in
+[[dark-matter-physics]] inference from lensing.
 
-## Benitez 2020 — detailed structure of halos
+## Benitez-Llambay 2020 — onset of galaxy formation
 
 **File:** `Substructure/Benitez2020DetailedstructureHalos.pdf`
+(arXiv:2004.06124, MNRAS 498, 4887)
+**Authors:** Benitez-Llambay & Frenk
 **Concepts:** [[dark-matter-substructure]]
-**Summary:** Detailed-structure simulations relevant to lensing
-subhalo predictions.
+**Summary:** Builds an analytic "Halo Occupation Fraction" model — the
+fraction of low-mass DM haloes that contain a luminous galaxy as a
+function of halo mass and cosmic time — calibrated against the EAGLE
+suite. Predicts a present-day suppression around `3 × 10^{8} M⊙` and full
+occupation above `~5 × 10^{9} M⊙`, with a mass-scale that drops at earlier
+cosmic times. Complementary to [[Sawala 2016]] and required for forward
+modelling the dark-fraction in any lensing-DM constraint that wants to
+distinguish a "dark" subhalo detection from an undetected satellite
+galaxy.
 
-## Minor 2020 — DM concentration of J0946
+## Minor 2021 — overconcentrated subhalo in SDSSJ0946+1006
 
-**File:** `Strong_Lens/Minor2020DMConcentration0946.pdf`
-**Concepts:** [[dark-matter-substructure]]
-**Summary:** Mass-concentration of the perturber in SDSSJ0946.
-
-## Minor 2021 — DM concentration
-
-**File:** `Strong_Lens/Minor2021DMConcentration.pdf`
+**File:** `Strong_Lens/Minor2020DMConcentration0946.pdf` and
+`Strong_Lens/Minor2021DMConcentration.pdf` *(same paper — both filenames
+are local copies of arXiv:2011.10627; the 2020/2021 wiki split was a
+submission-year vs publication-year artefact).*
+arXiv:2011.10627, MNRAS 507, 1662 (2021).
+**Authors:** Minor, Gad-Nasr, Kaplinghat, Vegetti
 **Concepts:** [[dark-matter-substructure]],
 [[dark-matter-physics]]
-**Summary:** Constrains the perturber's c-M relation; J0946
-appears overconcentrated for CDM.
+**Summary:** Re-models the Vegetti 2010 / 2012 substructure detection in
+SDSSJ0946+1006 with a more flexible perturber profile and measures its
+projected mass `M(<1 kpc) ≈ 2-3.7 × 10^{9} M⊙` (`>95%`) plus an inner
+slope at least as steep as isothermal. The implied concentration is
+*well above* the median ΛCDM `c-M` relation for the inferred mass; only
+`<1%` of CDM subhaloes simultaneously match the mass, concentration, and
+darkness constraint, placing the system in measured tension with vanilla
+CDM. The detection that motivates the Despali 2024 follow-up and the
+SIDM-gravothermal-collapse interpretations (e.g. Nadler 2024, Yang 2025).
 
 ## See also
 

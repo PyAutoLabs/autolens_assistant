@@ -149,3 +149,57 @@ ultramassive-black-hole paper (arXiv:2303.15514), and the Cao 2022
 subhalo-scan paper (arXiv:2209.10566) — all under Etherington's
 authorship and all worth a future ingestion pass into the relevant
 existing source files.
+
+---
+
+## 2026-05-22 — Round 8: dark-matter-substructure depth pass
+
+**By:** Claude (Opus 4.7), driven by user audit "look at the wiki — are
+there any stubs/drafted still?". File-level status across the wiki is
+uniformly `drafted`, but a sweep of `sources/*.md` surfaced ~120
+per-paper entries whose summaries were 1-2-line filename-inferred stubs.
+This round addresses the `dark-matter-substructure.md` hub.
+
+**Scope:** Sixteen distinct papers in
+`sources/dark-matter-substructure.md` upgraded from one-liner summaries
+to 3-5-sentence arXiv-sourced summaries with arXiv ID, journal
+reference, and author list. Done by fetching the arXiv abstract for each
+and synthesising the lensing-relevant takeaway.
+
+**Papers expanded (arXiv IDs):**
+
+- Vegetti, Despali, Lovell, Enzi 2018 — 1801.01505
+- Nightingale et al. 2024 (subm 2022) — 2209.10566
+- Despali & Vegetti 2017 (baryons) — 1608.06938
+- Despali et al. 2018 (LOS) — 1710.05029
+- Despali et al. 2022 (Sensitivity I) — 2111.08718
+- Despali et al. 2024 (Sensitivity II) — 2407.12910
+- He et al. 2018 (GCs, subm 2017) — 1707.01849
+- Loudas et al. 2022 (millilensing) — 2209.13393
+- Li et al. 2016 (CDM vs WDM) — 1512.06507
+- Li et al. 2017 (projection effects) — 1612.06227
+- Diaz Rivero & Dvorkin 2019 (CNN) — 1910.00015
+- Ritondale et al. 2019 (BELLS subhaloes, subm 2018) — 1811.03627
+- Ritondale et al. 2019 (BELLS Lyα morphology) — 1811.03628
+- Sawala et al. 2016 (the chosen few) — 1406.6362
+- Benitez-Llambay & Frenk 2020 — 2004.06124
+- Minor et al. 2021 (J0946 overconcentration) — 2011.10627
+
+**Duplicates resolved:**
+
+- "Despali 2021 — sensitivity" and "Despali 2022 — sensitivity" were
+  the same paper (arXiv:2111.08718, submission year vs publication
+  year). Merged into one entry.
+- "Minor 2020 — DM concentration of J0946" and "Minor 2021 — DM
+  concentration" were the same paper (arXiv:2011.10627). Merged into
+  one entry.
+
+**Out of scope this pass:** The other ~14 source hubs with thin entries
+(`dark-matter-physics.md`, `multipoles.md`, `lens-finding.md`,
+`flux-ratios.md`, `bulge-halo.md`, etc.) — to be addressed in
+follow-up rounds. The two flagged `Verify` notes in
+`degeneracies-systematics.md` and `multipoles.md`, and the
+`unclassified.md` MNRAS-proof files, are also untouched.
+
+**Source of content:** arXiv abstract pages plus the MNRAS / A&A
+landing pages cited there. No local PDFs were used.
