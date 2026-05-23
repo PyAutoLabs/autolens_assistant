@@ -105,15 +105,25 @@ proper uncertainty propagation from the posterior. See
 
 ## Plotting
 
-`autolens.plot` (aliased `aplt`) provides the lensing-specific plotters:
+`autolens.plot` (aliased `aplt`) in `2026.5.21+` is a flat module of free
+functions. The previously documented `aplt.TracerPlotter` /
+`aplt.FitImagingPlotter` / `aplt.InversionPlotter` classes are removed. The
+function-style equivalents:
 
-- `aplt.TracerPlotter` — ray-traced images, critical curves, caustics, convergence,
-  deflection field.
-- `aplt.FitImagingPlotter` / `aplt.FitInterferometerPlotter` — fit residuals,
-  per-galaxy decomposition.
-- `aplt.InversionPlotter` — pixelised source diagnostics.
+- `aplt.subplot_tracer` / `aplt.subplot_galaxies_images` —
+  ray-traced images, per-galaxy decomposition.
+- `aplt.subplot_fit_imaging` / `aplt.subplot_fit_interferometer` — fit
+  residuals; `aplt.subplot_fit_imaging_of_galaxy` for per-galaxy decomposition.
+- `aplt.subplot_basis_image` — pixelised-source mesh overlay (closest
+  remaining substitute for the old `InversionPlotter`).
+- `aplt.plot_array` / `aplt.plot_grid` — single-figure helpers, taking
+  `output_path` / `output_filename` / `output_format` directly.
 
-See [`api/plotting`](../api/plotting.md).
+`Tracer.magnification_2d_from`, `critical_curves_from`, and `caustics_from`
+are also removed; derive them from the deflection field. See
+[`api/plotting`](../api/plotting.md) and
+[`../api_deltas_2026_05.md`](../api_deltas_2026_05.md) for the full
+delta list.
 
 ## Configuration
 

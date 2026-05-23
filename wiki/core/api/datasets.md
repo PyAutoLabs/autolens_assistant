@@ -46,7 +46,9 @@ Attributes:
 
 - `dataset.data` — `Array2D` of image counts.
 - `dataset.noise_map` — `Array2D` of per-pixel RMS.
-- `dataset.psf` — `Kernel2D` of the point-spread function.
+- `dataset.psf` — `Convolver` of the point-spread function (built with
+  `al.Convolver.from_gaussian(...)` or `al.Convolver.from_fits(...)`; the
+  previous `al.Kernel2D` is removed).
 - `dataset.grid` — masked `Grid2D` of (y, x) coordinates.
 
 Source: `PyAutoArray:autoarray/dataset/imaging/dataset.py`.

@@ -31,9 +31,10 @@ a critical curve traces — see
 
 ## Saving plots
 
-Every recipe below saves to disk through `aplt.Output(...)` so plots persist
-for review. Define this once at the top of your script and reuse it across
-branches:
+In `2026.5.21+` `autolens.plot` is a flat module of free functions —
+the previous `aplt.MatPlot2D` / `aplt.Output` / `aplt.TracerPlotter` classes
+are gone. Each plotting function takes `output_path` / `output_filename` /
+`output_format` kwargs directly. Define your destination once and reuse it:
 
 ```python
 from pathlib import Path
@@ -41,78 +42,64 @@ import autolens.plot as aplt
 
 PLOT_DIR = Path("work/plots") / "<dataset_or_slug>"   # pick a meaningful slug
 PLOT_DIR.mkdir(parents=True, exist_ok=True)
-
-def _mat_plot(filename: str) -> aplt.MatPlot2D:
-    return aplt.MatPlot2D(
-        output=aplt.Output(path=str(PLOT_DIR), filename=filename, format="png")
-    )
 ```
 
 After running, the agent quotes `PLOT_DIR.resolve()` and offers
-`open <path>` — see `_style.md` "Plot output and path announcement".
+`open <path>` — see `_style.md` "Plot output and path announcement". For the
+full inventory of removed classes / new functions, see
+[`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md).
 
 ## Branch — quick subplots
 
 ```python
 # Assume `tracer` and `grid` exist (e.g. from al_load_results + al_prepare_imaging_data).
-aplt.TracerPlotter(
-    tracer=tracer, grid=grid, mat_plot_2d=_mat_plot("tracer_subplot"),
-).subplot_tracer()          # 2x3: image, source, convergence, potential, deflection y, deflection x
-
-aplt.TracerPlotter(
-    tracer=tracer, grid=grid, mat_plot_2d=_mat_plot("galaxies_images"),
-).subplot_galaxies_images()  # per-galaxy image-plane images
-
-print(f"Saved to: {PLOT_DIR.resolve()}")
-```
-
-Source: `PyAutoLens:autolens/lens/plot/tracer_plotters.py`.
-
-## Branch — critical curves + caustics overlay
-
-The critical curve is the image-plane locus where magnification → ∞. Its source-plane
-counterpart is the caustic. Both are routinely overlaid on the data for figures.
-
-```python
-visuals = aplt.Visuals2D(
-    critical_curves=tracer.critical_curves_from(grid=grid),
-    caustics=tracer.caustics_from(grid=grid),
-)
-
-aplt.TracerPlotter(
+aplt.subplot_tracer(
     tracer=tracer, grid=grid,
-    visuals_2d=visuals,
-    mat_plot_2d=_mat_plot("critical_curves_caustics"),
-).figures_2d(image=True)
+    output_path=str(PLOT_DIR), output_format="png",
+)               # 2x3: image, source, convergence, potential, deflection y, deflection x
+
+aplt.subplot_galaxies_images(
+    tracer=tracer, grid=grid,
+    output_path=str(PLOT_DIR), output_format="png",
+)               # per-galaxy image-plane images
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
-Source: `PyAutoLens:autolens/lens/tracer.py` (`critical_curves_from`, `caustics_from`).
-
-Wiki: [`wiki/core/concepts/lensing_basics.md`](../wiki/core/concepts/lensing_basics.md) and
-[`wiki/core/api/plotting.md`](../wiki/core/api/plotting.md).
+Source: `PyAutoLens:autolens/lens/plot/tracer_plots.py`.
 
 ## Branch — single quantity at high resolution
 
-For one specific quantity:
+`MassProfilePlotter`-style figures are now built by extracting the array from
+the profile (or the tracer) and passing it to `aplt.plot_array`:
 
 ```python
-aplt.MassProfilePlotter(
-    mass_profile=tracer.galaxies[0].mass, grid=grid,
-    mat_plot_2d=_mat_plot("lens_mass_quantities"),
-).figures_2d(convergence=True, deflections_y=True, deflections_x=True, potential=True)
-```
+# Per-quantity overlays on a single mass profile
+mass = tracer.galaxies[0].mass
+aplt.plot_array(array=mass.convergence_2d_from(grid=grid),
+                output_path=str(PLOT_DIR), output_filename="convergence",
+                output_format="png", use_log10=True)
+aplt.plot_array(array=mass.potential_2d_from(grid=grid),
+                output_path=str(PLOT_DIR), output_filename="potential",
+                output_format="png")
 
-Or for the whole tracer:
-
-```python
-aplt.TracerPlotter(
-    tracer=tracer, grid=grid, mat_plot_2d=_mat_plot("tracer_quantities"),
-).figures_2d(image=True, source_plane=True, convergence=True, magnification=True)
+# Or the whole tracer:
+aplt.plot_array(array=tracer.convergence_2d_from(grid=grid),
+                output_path=str(PLOT_DIR), output_filename="tracer_convergence",
+                output_format="png", use_log10=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid),
+                output_path=str(PLOT_DIR), output_filename="tracer_image",
+                output_format="png")
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
+
+`tracer.deflections_yx_2d_from(grid=grid)` returns a `VectorYX2D`; access the
+two components and plot separately, or use `aplt.subplot_tracer` to get the
+combined figure. The previous `Tracer.magnification_2d_from`,
+`critical_curves_from`, and `caustics_from` helpers are removed in this
+release — see [`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md)
+for the current state and workaround.
 
 ## Branch — multi-plane systems (>2 redshifts)
 

@@ -22,9 +22,9 @@ Canonical reference: `autolens_workspace:scripts/guides/plot/examples/plotters.p
 
 ## Saving plots
 
-Every recipe below saves to disk through `aplt.Output(...)` so plots persist
-for review. Define this once at the top of your script and reuse across
-branches:
+In `2026.5.21+` `autolens.plot` is a flat module of free functions —
+`FitImagingPlotter` / `MatPlot2D` / `Output` no longer exist. The function-call
+API takes `output_path` / `output_filename` / `output_format` kwargs directly:
 
 ```python
 from pathlib import Path
@@ -33,15 +33,12 @@ import autolens.plot as aplt
 
 PLOT_DIR = Path("work/plots") / "<dataset_or_slug>"   # pick a meaningful slug
 PLOT_DIR.mkdir(parents=True, exist_ok=True)
-
-def _mat_plot(filename: str) -> aplt.MatPlot2D:
-    return aplt.MatPlot2D(
-        output=aplt.Output(path=str(PLOT_DIR), filename=filename, format="png")
-    )
 ```
 
 After running, the agent quotes `PLOT_DIR.resolve()` and offers
-`open <path>` — see `_style.md` "Plot output and path announcement".
+`open <path>` — see `_style.md` "Plot output and path announcement". For
+the full inventory of API changes see
+[`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md).
 
 ## Branch — quick subplot
 
@@ -49,9 +46,10 @@ After running, the agent quotes `PLOT_DIR.resolve()` and offers
 # Assume `dataset` (al_prepare_imaging_data) and `tracer` (al_load_results) exist.
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-aplt.FitImagingPlotter(
-    fit=fit, mat_plot_2d=_mat_plot("fit_subplot"),
-).subplot_fit()
+aplt.subplot_fit_imaging(
+    fit=fit,
+    output_path=str(PLOT_DIR), output_format="png",
+)
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
@@ -59,17 +57,29 @@ print(f"Saved to: {PLOT_DIR.resolve()}")
 The default subplot shows: data, model image, residual map, normalised residual map,
 chi-squared map, and (if the fit uses an inversion) the source-plane reconstruction.
 
-Source: `PyAutoLens:autolens/imaging/plot/fit_imaging_plotters.py`.
+Source: `PyAutoLens:autolens/imaging/plot/fit_imaging_plots.py`.
 
 ## Branch — single quantity
 
+The previous `FitImagingPlotter.figures_2d(...)` is replaced by extracting the
+desired array from the `FitImaging` object and plotting it directly:
+
 ```python
-aplt.FitImagingPlotter(
-    fit=fit, mat_plot_2d=_mat_plot("fit_quantities"),
-).figures_2d(
-    data=True, model_image=True, residual_map=True,
-    normalized_residual_map=True, chi_squared_map=True,
-)
+aplt.plot_array(array=fit.data,
+                output_path=str(PLOT_DIR), output_filename="data",
+                output_format="png")
+aplt.plot_array(array=fit.model_data,
+                output_path=str(PLOT_DIR), output_filename="model_image",
+                output_format="png")
+aplt.plot_array(array=fit.residual_map,
+                output_path=str(PLOT_DIR), output_filename="residuals",
+                output_format="png", symmetric=True)
+aplt.plot_array(array=fit.normalized_residual_map,
+                output_path=str(PLOT_DIR), output_filename="normalized_residuals",
+                output_format="png", symmetric=True)
+aplt.plot_array(array=fit.chi_squared_map,
+                output_path=str(PLOT_DIR), output_filename="chi_squared",
+                output_format="png")
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
@@ -77,29 +87,29 @@ print(f"Saved to: {PLOT_DIR.resolve()}")
 ## Branch — per-galaxy decomposition
 
 ```python
-plotter = aplt.FitImagingPlotter(fit=fit, mat_plot_2d=_mat_plot("galaxy_lens"))
-plotter.subplot_of_galaxies(galaxy_index=0)   # lens
+# Per-plane fit subplots (replaces FitImagingPlotter.subplot_of_galaxies(...)):
+aplt.subplot_fit_imaging_of_planes(
+    fit=fit, output_path=str(PLOT_DIR), output_format="png",
+)
 
-plotter = aplt.FitImagingPlotter(fit=fit, mat_plot_2d=_mat_plot("galaxy_source"))
-plotter.subplot_of_galaxies(galaxy_index=1)   # source
+# Per-galaxy contribution images:
+aplt.subplot_fit_imaging_of_galaxy(
+    fit=fit, output_path=str(PLOT_DIR), output_format="png",
+)
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
-Each shows the data, that galaxy's model image, and the residual after subtracting
-*only* that galaxy's contribution.
-
 ## Branch — interferometer fits
 
-The interferometer fit plotter sits at
-`PyAutoLens:autolens/interferometer/plot/fit_interferometer_plotters.py` and exposes
-visibility-plane residuals plus a real-space dirty-image-vs-dirty-model panel.
+The interferometer fit subplots are at
+`PyAutoLens:autolens/interferometer/plot/fit_interferometer_plots.py`:
 
 ```python
 fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
-aplt.FitInterferometerPlotter(
-    fit=fit, mat_plot_2d=_mat_plot("interferometer_fit_subplot"),
-).subplot_fit()
+aplt.subplot_fit_interferometer(
+    fit=fit, output_path=str(PLOT_DIR), output_format="png",
+)
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```

@@ -119,7 +119,7 @@ read-only.
 
 ```python
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
-aplt.FitImagingPlotter(fit=fit).subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 ```
 
 Use the live path when you need linear intensities, inversion state, or to recompute

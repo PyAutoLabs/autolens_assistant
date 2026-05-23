@@ -41,11 +41,15 @@ two planes; with three or more you get a multi-plane system.
 | `deflections_yx_2d_from(grid)` | Total deflection field at every (y, x) in `grid` |
 | `convergence_2d_from(grid)` | Total convergence at every grid point |
 | `potential_2d_from(grid)` | Lensing potential |
-| `magnification_2d_from(grid)` | Magnification map |
-| `critical_curves_from(grid)` | Critical curves |
-| `caustics_from(grid)` | Caustics |
+| `time_delays_from(grid)` | Time delays at the given (image-plane) positions |
 | `einstein_radius_from(grid)` | Numerical Einstein radius |
 | `einstein_mass_angular_from(grid)` | Einstein mass in angular units |
+
+> In `2026.5.21+`, `Tracer.magnification_2d_from`, `Tracer.critical_curves_from`,
+> and `Tracer.caustics_from` are **removed**. Build magnification yourself from
+> the deflection field's Jacobian, or derive critical curves / caustics from
+> a magnification map. See
+> [`api_deltas_2026_05.md`](../api_deltas_2026_05.md).
 
 For physical-unit equivalents, see [`cosmology_and_units`](./cosmology_and_units.md).
 

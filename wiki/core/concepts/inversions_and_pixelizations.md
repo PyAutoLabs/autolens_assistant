@@ -53,17 +53,29 @@ Source: `PyAutoArray:autoarray/inversion/pixelization/` and
 
 | Mesh | When |
 |---|---|
-| `al.mesh.Rectangular` | Uniform, simplest, debug |
-| `al.mesh.Delaunay` | Default for most arcs; adaptive geometry |
-| `al.mesh.Voronoi` | Like Delaunay; small numerical differences |
-| `al.mesh.DelaunayBrightnessImage` | Adaptive — mesh denser where the unlensed source image is bright. Needs an *adapt image*. |
-| `al.mesh.VoronoiBrightnessImage` | Same idea, Voronoi cells. |
+| `al.mesh.RectangularUniform(shape=(N, N))` | Uniform, simplest, debug |
+| `al.mesh.Delaunay(pixels=N)` | Adaptive Delaunay triangulation in the source plane |
+| `al.mesh.KNNBarycentric(pixels=N)` | k-nearest-neighbour barycentric interpolant; replaces the previous `Voronoi` mesh |
+| `al.mesh.RectangularAdaptImage(shape=(N, N), weight_power=…, weight_floor=…)` | Adaptive — denser mesh where the unlensed source image is bright |
+| `al.mesh.RectangularAdaptDensity` / `RectangularRotatedAdaptImage` / `RectangularSplineAdapt*` | Other adaptive families |
+
+In `2026.5.21+` the API is one mesh class per (image-plane mesh + source-plane
+mesh) combination — the previous `image_mesh=` kwarg on `Pixelization` is gone.
+
+> ⚠️ **Known regression in `2026.5.21.1`.** `Delaunay` and `KNNBarycentric`
+> currently crash inside `FitImaging` with
+> `AttributeError: 'NoneType' object has no attribute 'array'`. Use
+> `RectangularUniform` (or one of the `RectangularAdapt*` variants) until the
+> upstream fix lands. Tracking issue:
+> <https://github.com/Jammy2211/PyAutoArray/issues/332>.
 
 Adaptive meshes are the right choice for production fits but need a parametric
 initial fit to seed the adapt image. The [`../../../skills/al_run_slam_pipeline.md`](../../../skills/al_run_slam_pipeline.md)
 SLaM pipeline handles this automatically.
 
-Sources: `PyAutoArray:autoarray/inversion/mesh/`.
+Sources: `PyAutoArray:autoarray/inversion/mesh/`. See
+[`../api_deltas_2026_05.md`](../api_deltas_2026_05.md) for the full mesh-name
+mapping.
 
 ## Regularisation
 
