@@ -56,9 +56,24 @@ Magnification `µ(θ)` is the ratio of image-plane to source-plane areas. Bright
 distorted arcs sit at high-magnification regions; the magnification diverges (`µ →
 ∞`) along the **critical curves**.
 
+In `2026.5.21+` `Tracer.magnification_2d_from` is removed. Build the
+magnification map from the deflection Jacobian:
+
 ```python
-mu = tracer.magnification_2d_from(grid=grid)
+# Numerical magnification via finite-differencing the deflection field.
+import numpy as np
+defl = np.asarray(tracer.deflections_yx_2d_from(grid=grid)).reshape(
+    *grid.shape_native, 2
+)
+dady_dx = np.gradient(defl[..., 0], grid.pixel_scales[0], axis=0)
+dady_dy = np.gradient(defl[..., 0], grid.pixel_scales[1], axis=1)
+dadx_dx = np.gradient(defl[..., 1], grid.pixel_scales[0], axis=0)
+dadx_dy = np.gradient(defl[..., 1], grid.pixel_scales[1], axis=1)
+det_A = (1 - dady_dx) * (1 - dadx_dy) - dady_dy * dadx_dx
+mu = 1.0 / det_A
 ```
+
+See [`../api_deltas_2026_05.md`](../api_deltas_2026_05.md) for context.
 
 ## Critical curves and caustics
 

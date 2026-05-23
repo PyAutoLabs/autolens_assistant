@@ -27,9 +27,9 @@ Canonical reference:
 
 ## Saving plots
 
-Every recipe below saves to disk through `aplt.Output(...)` so plots persist
-for review. Define this once at the top of your script and reuse across
-branches:
+`autolens.plot` in `2026.5.21+` is a flat module of free functions — the old
+`InversionPlotter` / `MatPlot2D` / `Output` classes are gone. Plot the
+inversion's component arrays directly via `aplt.plot_array`:
 
 ```python
 from pathlib import Path
@@ -38,55 +38,67 @@ import autolens.plot as aplt
 
 PLOT_DIR = Path("work/plots") / "<dataset_or_slug>"   # pick a meaningful slug
 PLOT_DIR.mkdir(parents=True, exist_ok=True)
-
-def _mat_plot(filename: str) -> aplt.MatPlot2D:
-    return aplt.MatPlot2D(
-        output=aplt.Output(path=str(PLOT_DIR), filename=filename, format="png")
-    )
 ```
 
 After running, the agent quotes `PLOT_DIR.resolve()` and offers
-`open <path>` — see `_style.md` "Plot output and path announcement".
+`open <path>` — see `_style.md` "Plot output and path announcement". For the
+full inventory of API changes see
+[`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md).
+
+> ⚠️ **Known regression in `2026.5.21.1`.** `Delaunay` and `KNNBarycentric`
+> currently crash inside `FitImaging` (`'NoneType' object has no attribute
+> 'array'`). Use `al.mesh.RectangularUniform` for now; tracking:
+> <https://github.com/Jammy2211/PyAutoArray/issues/332>.
 
 ## Branch — source-plane reconstruction
 
-Rebuild the fit so the inversion is computed:
+Rebuild the fit so the inversion is computed, then plot the components:
 
 ```python
 # `dataset` from al_prepare_imaging_data, `tracer` from al_load_results.
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
+inv = fit.inversion
 
-aplt.InversionPlotter(
+# Source-plane reconstruction on the pixelisation mesh:
+aplt.plot_array(array=inv.reconstruction_dict_of_mapper(mapper_index=0),
+                output_path=str(PLOT_DIR),
+                output_filename="reconstruction",
+                output_format="png")
+
+# Source-plane signal map (per-pixel inferred surface brightness):
+aplt.plot_array(array=inv.reconstructed_data_dict[next(iter(inv.reconstructed_data_dict))],
+                output_path=str(PLOT_DIR),
+                output_filename="reconstructed_data",
+                output_format="png")
+
+print(f"Saved to: {PLOT_DIR.resolve()}")
+```
+
+> The exact attribute names on `Inversion` (`reconstruction_dict_of_mapper`,
+> `reconstructed_data_dict`, etc.) evolved alongside the API rewrite —
+> `dir(inv)` is the canonical reference for which arrays the current release
+> exposes. The inversion plot helpers in `aplt.*` themselves are no longer
+> public.
+
+Source: `PyAutoArray:autoarray/inversion/inversion/`.
+
+## Branch — mesh + regularisation diagnostics
+
+The previous `aplt.InversionPlotter(...).subplot_of_mapper(...)` is removed.
+The closest current entry point is `aplt.subplot_basis_image`, which renders
+the mapper's pixelisation overlaid on the image:
+
+```python
+aplt.subplot_basis_image(
     inversion=fit.inversion,
-    mat_plot_2d=_mat_plot("source_reconstruction"),
-).figures_2d_of_pixelization(
-    pixelization_index=0,
-    reconstructed_image=True,   # source-plane image on the pixelisation mesh
-    reconstruction=True,        # source-plane signal map
-    reconstruction_noise_map=True,
-    regularization_weights=True,
+    output_path=str(PLOT_DIR), output_format="png",
 )
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
-Source: `PyAutoLens:autolens/inversion/plot/inversion_plotters.py`,
-`PyAutoArray:autoarray/inversion/inversion/`.
-
-## Branch — mesh + regularisation diagnostics
-
-```python
-aplt.InversionPlotter(
-    inversion=fit.inversion,
-    mat_plot_2d=_mat_plot("mapper_subplot"),
-).subplot_of_mapper(mapper_index=0)
-
-print(f"Saved to: {PLOT_DIR.resolve()}")
-```
-
-Shows: the mesh (Delaunay triangles or Voronoi cells), the regularisation
-neighbourhood graph, and the source-plane pixelisation overlaid on the image-plane
-data.
+The mesh-triangulation and regularisation-neighbour graphs no longer have
+direct plot helpers; build them with NumPy and `aplt.plot_grid` if needed.
 
 ## Branch — double Einstein ring / multi-plane pixelisations
 

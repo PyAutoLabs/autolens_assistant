@@ -44,7 +44,7 @@ result = list(agg.values("samples"))[-1]  # most recent run
 
 tracer = result.max_log_likelihood_tracer
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
-aplt.FitImagingPlotter(fit=fit).subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 ```
 
 Look at the residual map. Common signatures:

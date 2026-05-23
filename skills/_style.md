@@ -227,20 +227,24 @@ back up the skills.
 
 ## Plot output and path announcement
 
-Skills that produce visualisations save them through `aplt.Output(...)` so the
-plot persists on disk and the agent can quote the location back. Three rules:
+Skills that produce visualisations save them through the function-style
+`autolens.plot` API (in `2026.5.21+` the previous `aplt.MatPlot2D` /
+`aplt.Output` classes are gone — see
+[`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md)).
+Three rules:
 
-1. **Save through `aplt.Output(...)`**. Wrap every plotter call in a
-   `MatPlot2D` whose `output` is an
-   `aplt.Output(path="work/plots/<context>/", filename=..., format="png")`.
-   Never rely on interactive display — the user is often running the script
-   from a terminal where `plt.show()` flashes and vanishes. The `<context>`
-   slug is usually the dataset name; for general exploration any short slug
-   works.
+1. **Pass `output_path` / `output_filename` / `output_format` directly to
+   each plot function.** Every `aplt.plot_*` and `aplt.subplot_*` accepts
+   these kwargs, e.g. `aplt.subplot_imaging_dataset(dataset=…,
+   output_path="work/plots/<context>/", output_filename=…,
+   output_format="png")`. Never rely on interactive display — the user is
+   often running the script from a terminal where `plt.show()` flashes and
+   vanishes. The `<context>` slug is usually the dataset name; for general
+   exploration any short slug works.
 2. **`print(...)` each plot's path** at the end of the Python recipe so the
    absolute location lands in stdout. Use
    `print(f"Saved to: {PLOT_DIR.resolve()}")` once per branch (sufficient
-   because `aplt.Output` writes deterministically inside `PLOT_DIR`); for
+   because each `aplt.*` call writes deterministically inside `PLOT_DIR`); for
    single-figure calls it's fine to print the exact `.png` path instead.
 3. **The agent quotes the path back** to the user after running the script
    and offers *"want me to `open <path>`?"* — one offer per plot run, not

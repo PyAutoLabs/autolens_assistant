@@ -85,12 +85,12 @@ al.output_to_json(obj=tracer, file_path=dataset_path / "tracer.json")
 # 5. Preview plot — saved to work/plots/<dataset_name>/ for inspection.
 plot_dir = Path("work/plots") / dataset_path.name
 plot_dir.mkdir(parents=True, exist_ok=True)
-aplt.ImagingPlotter(
+aplt.subplot_imaging_dataset(
     dataset=dataset,
-    mat_plot_2d=aplt.MatPlot2D(
-        output=aplt.Output(path=str(plot_dir), filename="simulated_dataset", format="png"),
-    ),
-).subplot_dataset()
+    output_path=str(plot_dir),
+    output_filename="simulated_dataset",
+    output_format="png",
+)
 
 print(f"FITS written to: {dataset_path.resolve()}")
 print(f"Preview plot saved to: {plot_dir.resolve()}")
