@@ -725,6 +725,13 @@ creates `scripts/slam_claude.md` with full SLaM context for future AI sessions.
 For quick exploration scripts that don't belong to the pipeline, write to `work/`
 instead (gitignored, agent scratch space).
 
+**Live visualization.** When a user runs their first model-fit, offer to enable
+`live_visual_update=True` on the search (e.g. `af.Nautilus(..., live_visual_update=True)`).
+This opens a matplotlib window (scripts) or refreshes the Jupyter cell (notebooks)
+with a 6-panel quick-update subplot every `iterations_per_quick_update` iterations,
+so the user can watch the fit converge in real time. It's off by default — mention
+it once when they first set up a search, don't repeat on subsequent fits.
+
 ---
 
 ## Typical New-Workspace Workflow
