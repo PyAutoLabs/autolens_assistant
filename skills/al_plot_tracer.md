@@ -45,9 +45,9 @@ PLOT_DIR.mkdir(parents=True, exist_ok=True)
 ```
 
 After running, the agent quotes `PLOT_DIR.resolve()` and offers
-`open <path>` — see `_style.md` "Plot output and path announcement". For the
-full inventory of removed classes / new functions, see
-[`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md).
+`open <path>` — see `_style.md` "Plot output and path announcement". The
+function-style plot API is documented in
+[`wiki/core/api/plotting.md`](../wiki/core/api/plotting.md).
 
 ## Branch — quick subplots
 
@@ -96,10 +96,9 @@ print(f"Saved to: {PLOT_DIR.resolve()}")
 
 `tracer.deflections_yx_2d_from(grid=grid)` returns a `VectorYX2D`; access the
 two components and plot separately, or use `aplt.subplot_tracer` to get the
-combined figure. The previous `Tracer.magnification_2d_from`,
-`critical_curves_from`, and `caustics_from` helpers are removed in this
-release — see [`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md)
-for the current state and workaround.
+combined figure. `Tracer` does not surface magnification, critical curves, or
+caustics directly — build the magnification map from the deflection Jacobian
+(see [`wiki/core/concepts/lensing_basics.md`](../wiki/core/concepts/lensing_basics.md)).
 
 ## Branch — multi-plane systems (>2 redshifts)
 

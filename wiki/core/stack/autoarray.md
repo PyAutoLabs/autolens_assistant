@@ -32,7 +32,7 @@ visibility data along with their PSFs and noise maps.
 | `Mask2D` | Boolean 2D mask, with `.circular`, `.elliptical`, `.from_fits` constructors | `autoarray/mask/mask_2d.py` |
 | `Imaging` | Image + noise map + PSF dataset wrapper | `autoarray/dataset/imaging/dataset.py` |
 | `Interferometer` | Visibilities + noise map + uv-coverage wrapper | `autoarray/dataset/interferometer/dataset.py` |
-| `Convolver` | PSF + image-convolution operator (replaces the previous `Kernel2D`) | `autoarray/operators/convolver.py` |
+| `Convolver` | PSF + image-convolution operator | `autoarray/operators/convolver.py` |
 
 ## Slim vs. native
 

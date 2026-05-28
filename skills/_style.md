@@ -308,10 +308,9 @@ back up the skills.
 ## Plot output and path announcement
 
 Skills that produce visualisations save them through the function-style
-`autolens.plot` API (in `2026.5.21+` the previous `aplt.MatPlot2D` /
-`aplt.Output` classes are gone — see
-[`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md)).
-Three rules:
+`autolens.plot` API — every entry point takes `output_path` / `output_filename`
+/ `output_format` kwargs directly (see
+[`wiki/core/api/plotting.md`](../wiki/core/api/plotting.md)). Three rules:
 
 1. **Pass `output_path` / `output_filename` / `output_format` directly to
    each plot function.** Every `aplt.plot_*` and `aplt.subplot_*` accepts
