@@ -28,13 +28,38 @@ Canonical reference: `autolens_workspace:scripts/guides/modeling/chaining.py`.
 
 ```python
 # work/chain.py
+"""
+Chain Searches: Parametric -> Pixelised Source
+==============================================
+
+Chain two non-linear searches: a fast parametric fit that locks down the lens mass, then a
+pixelised-source fit that inherits the mass posterior as its prior. Chaining keeps the
+expensive flexible model from having to explore the full prior volume from scratch.
+
+__Contents__
+
+- **Setup:** Imports (assumes `dataset` is already loaded — see al_prepare_imaging_data).
+- **Phase 1:** SIE + Sersic source, fast initial fit.
+- **Phase 2:** Pixelised source, priors inherited from phase 1.
+"""
+
+"""
+__Setup__
+
+Assumes `dataset` is already loaded (see al_prepare_imaging_data). The `jax_wrapper` import
+must precede the other PyAuto* imports so the JAX environment is configured first.
+"""
 from autoconf import jax_wrapper
 import autofit as af
 import autolens as al
 
-# (Assume `dataset` is already loaded — see al_prepare_imaging_data.)
+"""
+__Phase 1__
 
-# ---------------- Phase 1: SIE + Sersic source, fast initial fit ----------------
+A fast initial fit with an SIE + external-shear mass and a parametric Sersic source
+(`al.mp.Isothermal`, `al.mp.ExternalShear`, `al.lp.SersicCore`). This pins down the lens
+mass cheaply before we pay for a pixelised source.
+"""
 lens_1 = af.Model(
     al.Galaxy,
     redshift=0.5,
@@ -49,9 +74,15 @@ search_1 = af.Nautilus(path_prefix="chain_demo", name="phase_1_parametric", n_li
 
 result_1 = search_1.fit(model=model_1, analysis=analysis)
 
-# ---------------- Phase 2: pixelised source, priors from phase 1 ----------------
-# Inherit the lens mass model from the previous fit (max log likelihood values, but
-# keep them free to vary).
+"""
+__Phase 2__
+
+Swap in a pixelised source (`al.mesh.Delaunay` + `al.reg.ConstantSplit`) for maximum source
+flexibility, inheriting the lens mass and shear from phase 1's posterior so the search
+starts from a good region of parameter space rather than the prior. `result_1.model`
+returns a new `af.Model` whose priors are the previous search's posterior, keeping the
+parameters free to vary.
+"""
 lens_2 = af.Model(
     al.Galaxy,
     redshift=0.5,
@@ -59,7 +90,6 @@ lens_2 = af.Model(
     shear=result_1.model.galaxies.lens.shear,
 )
 
-# New, more flexible source: pixelised.
 source_2 = af.Model(
     al.Galaxy,
     redshift=1.0,

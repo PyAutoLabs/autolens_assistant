@@ -62,6 +62,79 @@ This is the rule that distinguishes the workspace from a tutorial workspace.
   reference an example (e.g. inside `autolens_workspace`), say so as a citation but
   produce the user-specific script in the working directory regardless.
 
+## Generated script style
+
+Every Python script the agent saves — whether to `./work/` or `scripts/` — follows the
+PyAutoLens **workspace** style, not ad-hoc banner comments. It is the same style used by
+every script in `autolens_workspace/scripts/` (canonical example:
+`autolens_workspace:scripts/imaging/start_here.py`), and it exists for two reasons: it
+keeps the science and inference narrative inline with the code, and it makes the script
+mechanically convertible to a Jupyter notebook — each top-level `"""..."""` block becomes a
+markdown cell and the code between blocks becomes a code cell.
+
+Two rules.
+
+**1. Title block + `__Contents__` header.** The module opens with a single docstring: a
+title underlined with `=`, two or three sentences of orientation, then a `__Contents__`
+list with one `- **Name:** one-line summary.` bullet per section that follows.
+
+```python
+"""
+Lens Model: HST Imaging
+=======================
+
+Fit a galaxy-scale strong lens observed with HST imaging: load the data, compose an
+SIE + external-shear mass model with a Sersic source, and fit it with Nautilus.
+
+__Contents__
+
+- **Imports:** Import the required libraries.
+- **Dataset:** Load imaging, apply the mask and over-sampling.
+- **Model:** Compose the lens (light + mass) and source galaxies.
+- **Search:** Configure the Nautilus non-linear search.
+- **Fit:** Run the fit and inspect the result.
+- **Plot:** Save the best-fit subplot.
+"""
+```
+
+**2. Per-section narrative docstrings, not banner comments.** Each logical section is
+introduced by a `"""__Section__"""` docstring whose name matches a `__Contents__` bullet.
+The prose carries the physics and inference framing (property #1) and any source citations
+(see below) — *not* `# ---` banner comments and *not* `# source:` lines.
+
+Do this:
+
+```python
+"""
+__Dataset__
+
+We load three ingredients for lens modeling: the image (CCD counts), a per-pixel
+noise-map, and the PSF. `pixel_scales` converts pixels to arcseconds — set it correctly
+for your instrument (HST/ACS ~ 0.05"). Loading is handled by `al.Imaging.from_fits`
+(`PyAutoArray:autoarray/dataset/imaging/dataset.py`).
+"""
+dataset = al.Imaging.from_fits(
+    data_path=DATASET_PATH / "data.fits",
+    noise_map_path=DATASET_PATH / "noise_map.fits",
+    psf_path=DATASET_PATH / "psf.fits",
+    pixel_scales=PIXEL_SCALES,
+)
+```
+
+Not this:
+
+```python
+# ---------------------------------------------------------------------------
+# 1. Load imaging
+# ---------------------------------------------------------------------------
+# source: PyAutoArray:autoarray/dataset/imaging/dataset.py  (Imaging.from_fits)
+dataset = al.Imaging.from_fits(...)
+```
+
+Short clarifying `#` comments *inside* a code block are still fine (e.g. annotating a
+single prior). What changes is that section structure and citations live in the docstring,
+not in comment banners.
+
 ## Source citations
 
 Code references inside a skill must use the **project name + path relative to that
@@ -78,6 +151,11 @@ Bad:
 
 The reason: this workspace is meant to be cloned to other machines. Absolute local paths
 break the moment anyone else opens it.
+
+The same `<Project>:<path>` form is used in **generated scripts**, but there it belongs
+inside the section docstring prose (see "Generated script style" above) — woven into the
+sentence that explains what the call does, never as a standalone `# source:` comment
+banner.
 
 ## Adaptive depth
 
@@ -165,7 +243,9 @@ calibrate depth. Skip this step only when the user has already told you.
 
 - Physics framing (one or two sentences, scaled to the user's depth).
 - The Python recipe — actual code, in a fenced block, that the agent should adapt and
-  save to `./work/`.
+  save to `./work/`. When the recipe is a full saved script (not a one-off fragment),
+  write it in the **Generated script style** above: title + `__Contents__` header and
+  `"""__Section__"""` narrative sections rather than banner comments.
 - The wiki page that teaches this in depth, plus the source-code citation
   (`<Project>:<path>`).
 - An invitation to dig deeper.

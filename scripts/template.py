@@ -1,34 +1,53 @@
 """
 Template: HPC Pipeline Script
-==============================
+=============================
 
-This template provides the standard interface between HPC batch scripts and
-PyAutoLens modeling code. It handles command-line argument parsing, configuration
-setup, and dataset loading so that the same script runs identically on a local
-machine and on the HPC.
+This template provides the standard interface between HPC batch scripts and PyAutoLens
+modeling code. It handles command-line argument parsing, configuration setup, and dataset
+loading so that the same script runs identically on a local machine and on the HPC.
 
-**Usage:**
+Copy this file and rename it for your science case (e.g. `imaging.py`), then fill in the
+`Model, Analysis & Search` section of `fit()` using scripts from
+`autolens_workspace/scripts/` as a reference. The HPC interface (`parse_fit_args`,
+`__main__`, `--use_cpu`, `--number_of_cores`) must be preserved — the CPU and GPU batch
+scripts depend on it.
 
-    Copy this file and rename it for your science case (e.g. ``imaging.py``).
-    Fill in the ``fit()`` body with your model, analysis, and search steps
-    using scripts from ``autolens_workspace/scripts/`` as a reference.
+This file is written in the project's generated-script style (title + `__Contents__`
+header, with each section introduced by a triple-quoted `__Section__` docstring) — see the
+project root `CLAUDE.md` "Conventions" and `skills/_style.md` "Generated script style".
+Keep that style when you adapt it.
 
-**HPC interface:**
+__Contents__
 
-    GPU batch scripts call:
-        python3 scripts/imaging.py --sample=<sample> --dataset=<dataset>
+- **Imports:** Import the required libraries.
+- **Configuration:** Push the project `config/` and `output/` paths.
+- **Dataset:** Load data, noise-map, PSF and metadata from `info.json`.
+- **Settings:** Build `SettingsSearch` (output path prefix, unique tag).
+- **Model, Analysis & Search:** Science-specific model-fit — fill this in.
+- **HPC Interface:** `parse_fit_args()` and `__main__` — leave unchanged.
 
-    CPU batch scripts call:
-        python3 scripts/imaging.py --sample=<sample> --dataset=<dataset> --use_cpu --number_of_cores=$THREADS
+__HPC Interface (usage)__
 
-    The ``use_cpu`` flag controls:
-      - Whether JAX is disabled for analysis objects (``use_jax=not use_cpu``)
-      - Whether CPU-specific optimisations are applied (e.g. sparse operators)
+GPU batch scripts call:
 
-    The ``number_of_cores`` parameter controls Nautilus multicore parallelism
-    on CPU runs. On GPU, Nautilus uses a single core and JAX handles parallelism.
+    python3 scripts/imaging.py --sample=<sample> --dataset=<dataset>
+
+CPU batch scripts call:
+
+    python3 scripts/imaging.py --sample=<sample> --dataset=<dataset> --use_cpu --number_of_cores=$THREADS
+
+The `use_cpu` flag controls whether JAX is disabled for analysis objects
+(`use_jax=not use_cpu`) and whether CPU-specific optimisations are applied. The
+`number_of_cores` parameter controls Nautilus multicore parallelism on CPU runs; on GPU,
+Nautilus uses a single core and JAX handles parallelism.
 """
 
+"""
+__Imports__
+
+Standard library helpers plus the PyAuto* stack: `autofit` for the model and search,
+`autolens` for lensing objects, and `autoconf` for configuration.
+"""
 import json
 import argparse
 from pathlib import Path
@@ -50,7 +69,7 @@ def fit(
 
     This function is called once per dataset, either from ``__main__`` (local)
     or from a SLURM array task (HPC). Add your science-specific model,
-    analysis, and search code below.
+    analysis, and search code in the ``Model, Analysis & Search`` section below.
 
     Parameters
     ----------
@@ -67,9 +86,12 @@ def fit(
         optimisations. Set automatically by CPU batch scripts via ``--use_cpu``.
     """
 
-    # -------------------------------------------------------------------------
-    # Configuration — sets output path and loads config/ YAML files.
-    # -------------------------------------------------------------------------
+    """
+    __Configuration__
+
+    Point PyAutoConf at the project's `config/` YAML files and `output/` directory, so the
+    same paths resolve identically on a local machine and on the HPC.
+    """
     project_root = Path(__file__).parent.parent
 
     conf.instance.push(
@@ -77,12 +99,15 @@ def fit(
         output_path=project_root / "output",
     )
 
-    # -------------------------------------------------------------------------
-    # Dataset — load data, noise map, PSF, and metadata from info.json.
-    #
-    # All dataset-specific values (pixel_scale, mask_radius, redshifts, etc.)
-    # come from info.json so nothing is hard-coded here.
-    # -------------------------------------------------------------------------
+    """
+    __Dataset__
+
+    Load the imaging data, noise-map and PSF for this lens. All dataset-specific values
+    (`pixel_scale`, `mask_radius`, redshifts, ...) come from the dataset's `info.json` via
+    `info.get(key, default)`, so nothing is hard-coded here. Loading and masking are handled
+    by `al.Imaging.from_fits` and `al.Mask2D.circular`
+    (`PyAutoArray:autoarray/dataset/imaging/dataset.py`, `PyAutoArray:autoarray/mask/mask_2d.py`).
+    """
     dataset_path = project_root / "dataset"
 
     if sample_name is not None:
@@ -115,9 +140,13 @@ def fit(
 
     dataset = dataset.apply_mask(mask=mask)
 
-    # -------------------------------------------------------------------------
-    # Settings — controls output paths and search behaviour.
-    # -------------------------------------------------------------------------
+    """
+    __Settings__
+
+    `SettingsSearch` controls the output path prefix (so each dataset writes to its own
+    subdirectory) and the unique tag that identifies this model-fit
+    (`PyAutoFit:autofit/non_linear/settings.py`).
+    """
     settings_search = af.SettingsSearch(
         path_prefix=(
             Path(sample_name) / dataset_name
@@ -129,43 +158,36 @@ def fit(
         session=None,
     )
 
-    # -------------------------------------------------------------------------
-    # TODO: Add your model, analysis, and search steps below.
-    #
-    # Use scripts from autolens_workspace/scripts/ as a reference for building
-    # your lens model. The key components are:
-    #
-    # 1. Model — define lens light, mass, source light using af.Model / af.Collection
-    # 2. Analysis — create al.AnalysisImaging with use_jax controlled by use_cpu:
-    #
-    #        analysis = al.AnalysisImaging(
-    #            dataset=dataset,
-    #            use_jax=not use_cpu,
-    #        )
-    #
-    # 3. Search — create af.Nautilus with number_of_cores for CPU parallelism:
-    #
-    #        search_dict = {**settings_search.search_dict, "number_of_cores": number_of_cores}
-    #
-    #        search = af.Nautilus(
-    #            name="search_name",
-    #            **search_dict,
-    #            n_live=200,
-    #        )
-    #
-    #    For searches that always use JAX (e.g. an initial light-profile fit),
-    #    you can omit number_of_cores and use settings_search.search_dict directly.
-    #
-    # 4. Fit — run the search:
-    #
-    #        result = search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
-    #
-    # -------------------------------------------------------------------------
+    """
+    __Model, Analysis & Search__
 
+    Fill in the science-specific model-fit here, using scripts from
+    `autolens_workspace/scripts/` as a reference. The four steps are:
+
+    1. **Model** — define the lens light, mass and source light with `af.Model` /
+       `af.Collection`.
+    2. **Analysis** — create `al.AnalysisImaging(dataset=dataset, use_jax=not use_cpu)`
+       so JAX is enabled on GPU runs and disabled on CPU runs.
+    3. **Search** — create `af.Nautilus`. On CPU runs, thread `number_of_cores` into the
+       search via `{**settings_search.search_dict, "number_of_cores": number_of_cores}`;
+       on GPU, `settings_search.search_dict` is sufficient.
+    4. **Fit** — run `search.fit(model=model, analysis=analysis, **settings_search.fit_dict)`.
+
+    Outputs land under `output/<path_prefix>/<name>/<unique_id>/`.
+    """
     raise NotImplementedError(
         "Replace this with your science-specific model, analysis, and search steps. "
         "See autolens_workspace/scripts/ for examples."
     )
+
+
+"""
+__HPC Interface__
+
+`parse_fit_args()` reads the command-line arguments shared by every pipeline script and
+`__main__` wires them into `fit()`. The CPU and GPU batch scripts depend on this interface —
+leave it unchanged.
+"""
 
 
 def parse_fit_args():
