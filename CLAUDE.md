@@ -273,6 +273,38 @@ wants commits landing directly there.
   import autolens as al
   import autolens.plot as aplt
   ```
+- **Generated script style.** Every `.py` you save (to `work/` or `scripts/`) uses the
+  PyAutoLens **workspace** style, not banner comments. The module opens with a single
+  docstring — a title underlined with `=`, a short orientation, then a `__Contents__`
+  list — and each logical section is introduced by a `"""__Section__"""` narrative
+  docstring (carrying the physics/inference framing and any `<Project>:<path>` citations)
+  rather than `# ---` banners or `# source:` lines. This keeps the science inline and
+  makes scripts mechanically notebook-convertible. Canonical example:
+  `autolens_workspace:scripts/imaging/start_here.py`; full spec and a before/after example
+  in [`skills/_style.md`](./skills/_style.md) "Generated script style". Example shape:
+  ```python
+  """
+  Lens Model: HST Imaging
+  =======================
+
+  Fit a galaxy-scale strong lens: load the data, compose an SIE + shear model, fit it.
+
+  __Contents__
+
+  - **Dataset:** Load imaging, apply the mask.
+  - **Model:** Compose the lens and source galaxies.
+  - **Fit:** Run the search and inspect the result.
+  """
+
+  """
+  __Dataset__
+
+  We load the image, noise-map and PSF via `al.Imaging.from_fits`
+  (`PyAutoArray:autoarray/dataset/imaging/dataset.py`). `pixel_scales` converts pixels
+  to arcseconds — set it correctly for your instrument.
+  """
+  dataset = al.Imaging.from_fits(...)
+  ```
 - **Agent working directory**: `./work/`. Python scripts and Markdown notes
   there are **committed** alongside the `wiki/project/` entry that describes
   them — they're the most reusable artefact of a session. Plots go to

@@ -2,6 +2,11 @@
 
 This folder contains the lens modeling scripts for this project.
 
+All scripts here follow the **Generated script style** (title + `__Contents__` header,
+`"""__Section__"""` narrative sections, no banner comments) — see the project root
+`CLAUDE.md` "Conventions" and `skills/_style.md` "Generated script style". `template.py`
+below is written in that style; preserve it when copying.
+
 ## template.py — HPC Interface Template
 
 `template.py` provides the standard interface between HPC batch scripts and Python
