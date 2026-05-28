@@ -49,3 +49,7 @@ test:
   check_likelihood_function: true   # if True, when a search is resumed the likelihood of a previous sample is recalculated to ensure it is consistent with the previous run.
   lh_timeout_seconds:               # If a float is input, the log_likelihood_function call is timed out after this many seconds, to diagnose infinite loops. Default is None, meaning no timeout.
   disable_positions_lh_inversion_check: true
+version:
+  python_version_check: True        # If False, bypass the PyAutoConf Python 3.12+ recommendation (3.9/3.10/3.11 technically work but are not officially supported).
+  workspace_version: 2026.5.21.1    # autolens version this assistant targets. The PyAutoBuild release pipeline keeps this current and regenerates wiki/core/api_audit_baseline.json to match (see work/audit_skill_apis.py).
+  workspace_version_check: True     # If False, bypass the workspace/library version check. Set to False on `main`-branch clones — `main` updates faster than releases, so mismatches are expected and not actionable.
