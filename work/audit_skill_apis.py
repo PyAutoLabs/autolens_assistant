@@ -24,13 +24,44 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import difflib
+import hashlib
 import importlib
+import json
 import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
 from typing import Iterable
+
+# ---------------------------------------------------------------------------
+# API baseline. autolens_assistant is tied to an autolens version; this file
+# records the public API surface (per-module version + a hash of sorted public
+# `dir()` names) of the stack the skills/wiki were last validated against. The
+# session-start drift-check (CLAUDE.md First-interaction protocol) and
+# `--check-version` compare the installed stack against it, so the agent learns
+# the API has moved *before* a user hits an AttributeError on a removed symbol.
+# ---------------------------------------------------------------------------
+BASELINE_REL_PATH = Path("wiki") / "core" / "api_audit_baseline.json"
+
+# Modules whose public surface we hash. The five library roots carry
+# `__version__`; `autolens.plot` is hashed too (it is where the plot API lives)
+# but inherits the autolens version.
+BASELINE_MODULES: tuple[str, ...] = (
+    "autoconf",
+    "autoarray",
+    "autofit",
+    "autogalaxy",
+    "autolens",
+    "autolens.plot",
+)
+VERSIONED_MODULES: tuple[str, ...] = (
+    "autoconf",
+    "autoarray",
+    "autofit",
+    "autogalaxy",
+    "autolens",
+)
 
 # ---------------------------------------------------------------------------
 # Aliases. Standardised in CLAUDE.md Part 1 "Conventions". Order is
@@ -124,6 +155,21 @@ def extract_symbols(text: str) -> dict[Symbol, set[str]]:
     return out
 
 
+def extract_symbols_code(text: str) -> dict[Symbol, set[str]]:
+    """Return {symbol: {"code"}} for a raw Python source file.
+
+    Unlike `extract_symbols` (which splits Markdown into code/prose), a `.py`
+    file is code throughout, so we run the alias regex over the whole text. Used
+    for the `scripts` scope, which audits generated pipelines (`scripts/`,
+    `work/`) where stale symbols like `al.Kernel2D` actually execute.
+    """
+    out: dict[Symbol, set[str]] = {}
+    for m in ALIAS_RE.finditer(text):
+        sym = Symbol(m.group(1), tuple(m.group(2).lstrip(".").split(".")))
+        out.setdefault(sym, set()).add("code")
+    return out
+
+
 # ---------------------------------------------------------------------------
 # Resolution
 # ---------------------------------------------------------------------------
@@ -168,6 +214,11 @@ def resolve(sym: Symbol) -> Resolution:
                 parent_repr=_short_repr(current),
                 candidates=candidates,
             )
+        except Exception as e:  # noqa: BLE001
+            # A pathological attribute access (recursive __getattr__, RecursionError,
+            # a property that raises) must never crash the whole audit — treat it as
+            # an unresolved error row instead.
+            return Resolution(status="error", resolved_depth=i, error=f"{type(e).__name__}: {e}"[:160])
 
     return Resolution(status="ok", resolved_depth=len(sym.chain), parent_repr=_short_repr(current))
 
@@ -218,12 +269,23 @@ def select_files(root: Path, scope: str) -> list[Path]:
     skills = sorted((root / "skills").glob("*.md"))
     wiki_api = sorted((root / "wiki" / "core" / "api").glob("*.md"))
     wiki_stack = sorted((root / "wiki" / "core" / "stack").glob("*.md"))
+    # Generated pipelines + agent scratch — the .py files where stale symbols
+    # actually execute (e.g. a script written against the old `al.Kernel2D`).
+    # Exclude this repo's own committed tooling: it contains alias-pattern text
+    # (regexes, module-name strings, docstrings) that isn't real API usage.
+    tooling = {"audit_skill_apis.py", "refresh_api_docs.py"}
+    scripts = [
+        p for p in sorted((root / "scripts").glob("*.py")) + sorted((root / "work").glob("*.py"))
+        if p.name not in tooling
+    ]
     if scope == "skills":
         return skills
     if scope == "wiki":
         return wiki_api + wiki_stack
+    if scope == "scripts":
+        return scripts
     if scope == "all":
-        return skills + wiki_api + wiki_stack
+        return skills + wiki_api + wiki_stack + scripts
     raise SystemExit(f"unknown scope: {scope!r}")
 
 
@@ -298,6 +360,9 @@ def render_report(
                 tail = ".".join(sym.chain[res.resolved_depth:])
                 status = f"missing `.{tail}`"
                 parent = res.parent_repr
+            elif res.status == "error":
+                status = "error"
+                parent = f"`{res.error}`"
             else:
                 status = "import_failed"
                 parent = f"`{res.error}`"
@@ -324,16 +389,127 @@ def gather_versions() -> dict[str, str]:
     return out
 
 
+# ---------------------------------------------------------------------------
+# API baseline — version pin + public-surface hash
+# ---------------------------------------------------------------------------
+def _public_names(mod: ModuleType) -> list[str]:
+    return sorted(n for n in dir(mod) if not n.startswith("_"))
+
+
+def _api_hash(mod: ModuleType) -> str:
+    return hashlib.sha256("\n".join(_public_names(mod)).encode("utf-8")).hexdigest()
+
+
+def compute_baseline() -> dict:
+    """Snapshot the installed stack: per-module version + public-API-surface hash.
+
+    Raises SystemExit if any library is missing — a baseline must only ever be
+    written against a fully installed stack, or it would bake in `import_failed`
+    placeholders that the drift-check would then read as real drift.
+    """
+    versions: dict[str, str] = {}
+    for name in VERSIONED_MODULES:
+        try:
+            mod = importlib.import_module(name)
+        except Exception as e:  # noqa: BLE001
+            sys.exit(f"cannot write baseline: {name} not importable ({e!r}). "
+                     f"Activate the venv (source activate.sh) and retry.")
+        versions[name] = str(getattr(mod, "__version__", "(no __version__)"))
+
+    api_surface: dict[str, dict] = {}
+    for name in BASELINE_MODULES:
+        mod = importlib.import_module(name)  # already known importable (plot via autolens)
+        names = _public_names(mod)
+        api_surface[name] = {"hash": _api_hash(mod), "n_symbols": len(names)}
+
+    return {
+        "_comment": "API baseline for autolens_assistant - see work/audit_skill_apis.py "
+                    "and skills/al_audit_skill_apis.md. Regenerate with --write-baseline.",
+        "generated": dt.date.today().isoformat(),
+        "versions": versions,
+        "api_surface": api_surface,
+    }
+
+
+def write_baseline(root: Path) -> Path:
+    baseline = compute_baseline()
+    path = root / BASELINE_REL_PATH
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(baseline, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
+def check_version(root: Path) -> int:
+    """Compare the installed stack against the committed baseline.
+
+    Returns 0 when versions and API hashes match, 1 on any drift (or a missing
+    baseline). Prints a short human-readable summary. Intentionally cheap — no
+    Markdown scan — so it is safe to run at session start.
+    """
+    path = root / BASELINE_REL_PATH
+    if not path.exists():
+        print(f"[drift] no baseline at {path} — run `--write-baseline` first.", file=sys.stderr)
+        return 1
+
+    baseline = json.loads(path.read_text(encoding="utf-8"))
+    current = compute_baseline()
+
+    version_drift = [
+        (m, baseline["versions"].get(m, "(absent)"), current["versions"][m])
+        for m in VERSIONED_MODULES
+        if baseline["versions"].get(m) != current["versions"][m]
+    ]
+    hash_drift = [
+        m for m in BASELINE_MODULES
+        if baseline["api_surface"].get(m, {}).get("hash")
+        != current["api_surface"][m]["hash"]
+    ]
+
+    if not version_drift and not hash_drift:
+        print(f"[drift] clean — installed stack matches baseline "
+              f"(autolens {current['versions']['autolens']}, generated {baseline.get('generated')}).")
+        return 0
+
+    print("[drift] API DRIFT vs baseline "
+          f"(baseline generated {baseline.get('generated')}):", file=sys.stderr)
+    for m, old, new in version_drift:
+        print(f"  - {m}: {old} -> {new}", file=sys.stderr)
+    if hash_drift:
+        print(f"  - public API surface changed: {', '.join(hash_drift)}", file=sys.stderr)
+    print("  The skills/wiki were validated against the baseline. Upgrade/downgrade to the "
+          "pinned version (`pip install -U autolens`), or run `--scope all` to audit drift "
+          "and `--write-baseline` to re-pin once fixed.", file=sys.stderr)
+    return 1
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Audit PyAuto* API references in skills + wiki.")
-    parser.add_argument("--scope", choices=["skills", "wiki", "all"], default="all")
+    parser = argparse.ArgumentParser(description="Audit PyAuto* API references in skills + wiki + scripts.")
+    parser.add_argument("--scope", choices=["skills", "wiki", "scripts", "all"], default="all")
     parser.add_argument("--out", default=None)
     parser.add_argument("--root", default=None)
+    parser.add_argument(
+        "--write-baseline", action="store_true",
+        help="Snapshot the installed stack (versions + API-surface hash) to "
+             "wiki/core/api_audit_baseline.json and exit. Re-pin after a deliberate upgrade.",
+    )
+    parser.add_argument(
+        "--check-version", action="store_true",
+        help="Compare the installed stack against the committed baseline and exit "
+             "(non-zero on drift). Cheap — no Markdown scan; safe at session start.",
+    )
     args = parser.parse_args()
 
     root = Path(args.root) if args.root else Path(__file__).resolve().parent.parent
     if not (root / "sources.yaml").exists():
         sys.exit(f"sources.yaml not found under {root}; pass --root.")
+
+    # Baseline actions short-circuit the (expensive) Markdown/script scan.
+    if args.check_version:
+        return check_version(root)
+    if args.write_baseline:
+        path = write_baseline(root)
+        print(f"[baseline] wrote {path}", file=sys.stderr)
+        return 0
 
     versions = gather_versions()
 
@@ -342,7 +518,9 @@ def main() -> int:
     all_symbols: set[Symbol] = set()
     for f in files:
         text = f.read_text(encoding="utf-8")
-        per_file = extract_symbols(text)
+        # `.py` files (scripts scope) are code throughout; Markdown is split into
+        # code/prose segments by extract_symbols.
+        per_file = extract_symbols_code(text) if f.suffix == ".py" else extract_symbols(text)
         occurrences_by_file[f] = per_file
         all_symbols.update(per_file)
 
