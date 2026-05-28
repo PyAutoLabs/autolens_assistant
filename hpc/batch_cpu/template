@@ -9,7 +9,7 @@
 #SBATCH -t 18:00:00
 #SBATCH --mem=64gb
 #SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=james.w.nightingale@durham.ac.uk
+#SBATCH --mail-user=your.email@example.com
 
 # -------------------------------
 # Environment

@@ -7,17 +7,17 @@
 # inside the SLURM batch scripts, so activation and script paths stay consistent.
 #
 # You can also export these as environment variables instead:
-#   export HPC_HOST=euclid_jump
-#   export HPC_BASE=/mnt/ral/jnightin
+#   export HPC_HOST=my_hpc
+#   export HPC_BASE=/path/to/hpc/scratch
 #   hpc/sync push
 # ─────────────────────────────────────────────────────────────────────────────
 
 # SSH host alias (from ~/.ssh/config) or user@hostname
-HPC_HOST=euclid_jump
+HPC_HOST=my_hpc
 
 # Base directory on the HPC under which all your projects sit.
 # The full remote path will be $HPC_BASE/$PROJECT_NAME.
-HPC_BASE=/mnt/ral/jnightin
+HPC_BASE=/path/to/hpc/scratch
 
 # Name of this project on the HPC (defaults to the local folder name if unset).
 PROJECT_NAME=autolens_assistant

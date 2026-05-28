@@ -1,10 +1,24 @@
-BASE=/mnt/ral/jnightin/PyAuto
+# Activate the Python environment that has PyAutoLens installed.
+#
+# Most users just `pip install autolens` (see the al_setup_environment skill) into a
+# virtual environment. By default this looks for a `.venv` created inside the project
+# (what al_setup_environment makes); edit VENV to point elsewhere, e.g. ~/venv/PyAuto.
+#
+# Resolving relative to this file (not the current directory) means it works both for a
+# local `source activate.sh` and for the HPC scripts' `source $PROJECT_PATH/activate.sh`.
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VENV=$HERE/.venv
 
-source $BASE/PyAuto/bin/activate
+source $VENV/bin/activate
 
-export PYTHONPATH=$BASE:\
-$BASE/PyAutoConf:\
-$BASE/PyAutoFit:\
-$BASE/PyAutoArray:\
-$BASE/PyAutoGalaxy:\
-$BASE/PyAutoLens
+# Developer setup only: if you run against editable source checkouts of the PyAuto*
+# libraries instead of a pip install, drop the line above and add their parent directory
+# to PYTHONPATH, e.g.:
+#
+#   SRC=~/Code/PyAutoLabs
+#   export PYTHONPATH=$SRC:\
+#   $SRC/PyAutoConf:\
+#   $SRC/PyAutoFit:\
+#   $SRC/PyAutoArray:\
+#   $SRC/PyAutoGalaxy:\
+#   $SRC/PyAutoLens
