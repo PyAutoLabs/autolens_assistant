@@ -65,6 +65,42 @@ The aim of the profile is to keep the **science front and centre** without makin
 user repeat themselves. It is not a gate — if the user just wants to dive in, let
 them, and pick up cues as you go.
 
+## API version drift-check
+
+This workspace is **tied to an autolens version**. The skills and wiki document one
+specific API surface, recorded in `wiki/core/api_audit_baseline.json` (per-module
+`__version__` + a hash of each module's public `dir()`). When a user's installed stack is
+older or newer than that baseline, generated code can reference symbols that no longer
+exist (the classic symptom: `AttributeError: module 'autolens' has no attribute
+'Kernel2D'` from a script written against a pre-rename API).
+
+**At the start of every session that will generate or run code**, do the cheap drift-check
+(it only compares version strings + hashes — no Markdown scan):
+
+```bash
+python work/audit_skill_apis.py --check-version
+```
+
+- **Exit 0 (clean):** the installed stack matches the baseline; proceed normally.
+- **Non-zero (drift):** the installed autolens differs from the version this workspace
+  targets. Tell the user plainly — *"your installed autolens (X) doesn't match the version
+  this assistant targets (Y); run `pip install -U autolens` (or check out the matching
+  workspace tag)"* — **before** generating code. If the drift is intended (the user
+  deliberately upgraded), run `python work/audit_skill_apis.py --scope all` to surface any
+  stale references, fix them, then re-pin with `--write-baseline`. See
+  [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md).
+
+**Policy: the wiki documents only the *current* API.** Don't add `old → new` migration
+tables to `wiki/core/` — they grow without bound and are themselves a drift surface (they
+name removed symbols). The version pin + drift-check are how we handle "you're on the
+wrong version": upgrade, or regenerate the script against the live API. When the API
+genuinely changes, update the wiki to the new surface and re-pin the baseline; don't
+accrete migration notes.
+
+In **maintainer mode** (see below) the drift-check is skipped by default — a maintainer
+editing skills/wiki isn't generating science code — but run it manually before testing any
+generated script.
+
 ## Maintainer mode
 
 The First-interaction protocol above assumes the user is a **lensing scientist**

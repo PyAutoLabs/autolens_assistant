@@ -1,6 +1,6 @@
 ---
 name: al_audit_skill_apis
-description: Verify every PyAuto* API symbol cited in skills/ and wiki/core/api+stack/ resolves in the currently installed stack. Reports stale references (renamed, moved, or removed) with suggested replacements drawn from string-similarity and a cross-module search. Pairs with `al_update_wiki` (which detects prose drift via pinned source commits) — this skill closes the complementary gap that skills have no pinned commits and that wiki pages can name symbols that no longer exist. Run when a user reports an API error, after a PyAuto* upgrade, or on a manual cadence; the helper script `work/audit_skill_apis.py` does the mechanical pass and this skill drives interpretation and curates fixes.
+description: Verify every PyAuto* API symbol cited in skills/, wiki/core/api+stack/, and generated scripts (scripts/ + work/) resolves in the currently installed stack. Reports stale references (renamed, moved, or removed) with suggested replacements drawn from string-similarity and a cross-module search. Also owns the API version baseline (`wiki/core/api_audit_baseline.json`) that pins the workspace to an autolens version: `--write-baseline` records the installed versions + public-API-surface hash, and `--check-version` (the cheap session-start drift-check) flags when the installed stack has moved. Pairs with `al_update_wiki` (which detects prose drift via pinned source commits) — this skill closes the complementary gap that skills have no pinned commits and that wiki pages can name symbols that no longer exist. Run when a user reports an API error, after a PyAuto* upgrade, or on a manual cadence; the helper script `work/audit_skill_apis.py` does the mechanical pass and this skill drives interpretation and curates fixes.
 ---
 
 # Auditing skill + wiki API references against the installed stack
@@ -53,10 +53,39 @@ half-installed stack — it produces a flood of false-positive `import_failed` r
 python work/audit_skill_apis.py --scope all
 ```
 
-Use `--scope skills` or `--scope wiki` to narrow. The report lands at
+Use `--scope skills`, `--scope wiki`, or `--scope scripts` to narrow; `--scope all`
+(default) covers skills + wiki/core/api+stack + generated `scripts/`/`work/` `.py` files.
+The **scripts scope** is what catches stale symbols in generated pipelines and exploration
+scripts — the place an old `al.Kernel2D` call actually executes — and it skips this repo's
+own committed tooling (`audit_skill_apis.py`, `refresh_api_docs.py`). The report lands at
 `work/audit/skill_api_audit_<YYYY-MM-DD>.md` and is **gitignored** — only the script is
 committed. Exit code is non-zero when the report contains misses; you can chain
 `python work/audit_skill_apis.py && echo clean || echo drift` in shell loops.
+
+### 3. Version baseline + drift-check
+
+This workspace is pinned to an autolens version via `wiki/core/api_audit_baseline.json`
+(per-module `__version__` + a hash of each module's public `dir()`). Two commands manage
+it:
+
+```bash
+# Cheap drift-check — compares the installed stack to the committed baseline.
+# No Markdown scan; safe to run at session start (CLAUDE.md First-interaction protocol).
+python work/audit_skill_apis.py --check-version
+
+# Re-pin: snapshot the installed stack into the baseline after a deliberate, audited upgrade.
+python work/audit_skill_apis.py --write-baseline
+```
+
+The workflow is: `--check-version` flags that the installed autolens moved → run the full
+`--scope all` audit to find what broke → fix the references (per the Branch section below)
+→ `--write-baseline` to re-pin once the audit is clean. **Only re-pin after fixing**, never
+to silence a red drift-check on a stack you haven't audited. Because a wiki refresh
+(`al_update_wiki` / `al_refresh_api_docs`) pulls from upstream source, follow either with
+`--check-version` so any newly-introduced drift surfaces immediately.
+
+Per CLAUDE.md "API version drift-check", the wiki documents only the **current** API — fix
+stale references in place and re-pin; don't add `old → new` migration tables.
 
 ## Ask — narrow the scope before fixing
 
@@ -162,12 +191,17 @@ complete.
 
 ## Agent procedural checklist
 
-1. Confirm scope (skills / wiki / all) and whether to apply fixes now.
+1. Confirm scope (skills / wiki / scripts / all) and whether to apply fixes now.
 2. `source activate.sh`; verify all five PyAuto\* libraries import.
-3. `python work/audit_skill_apis.py --scope <scope>`.
-4. Read the report in `work/audit/`.
-5. For each miss: read the file, confirm the replacement against the installed source,
+3. `python work/audit_skill_apis.py --check-version` — is the installed stack still on the
+   pinned baseline? If it drifted, that's likely *why* you're here.
+4. `python work/audit_skill_apis.py --scope <scope>`.
+5. Read the report in `work/audit/`.
+6. For each miss: read the file, confirm the replacement against the installed source,
    edit, re-run the audit to verify.
-6. Hand off any whole-section wiki rewrites to `al_update_wiki`.
+7. Hand off any whole-section wiki rewrites to `al_update_wiki`.
+8. Once the audit is clean against a deliberately upgraded stack, re-pin:
+   `python work/audit_skill_apis.py --write-baseline` (commit the updated
+   `wiki/core/api_audit_baseline.json`).
 7. Smoke-test affected scripts with `PYAUTO_TEST_MODE=1`.
 8. Commit per the cadence the user picked (one file per commit, or batched).
