@@ -3,21 +3,21 @@
 # sync_jump.conf is gitignored and never committed.
 
 # First hop from your local machine
-JUMP_HOST=euclid_jump
+JUMP_HOST=my_jump_host
 
 # Build server — only reachable via JUMP_HOST
-BUILD_HOST=euclid-ral-build
+BUILD_HOST=my_build_host
 
 # Path to the output directory on BUILD_HOST (relative to home, or absolute)
-BUILD_OUTPUT_PATH=euclid/output
+BUILD_OUTPUT_PATH=myproject/output
 
 # Intermediate staging server reachable from both BUILD_HOST and your local machine
-COSMA_HOST=cosma8
+COSMA_HOST=my_staging_host
 
 # Directory on COSMA_HOST where results are staged (individual files, non-zip mode)
-COSMA_STAGING_DIR=/cosma8/data/dp195/dc-nigh1/output
+COSMA_STAGING_DIR=/path/to/staging/output
 
 # Project name — used to namespace the transfer archive so different projects
 # don't overwrite each other on the staging server (e.g. euclid_output.tar.gz).
 # Defaults to the base directory name of this project if not set.
-PROJECT_NAME=euclid
+PROJECT_NAME=myproject

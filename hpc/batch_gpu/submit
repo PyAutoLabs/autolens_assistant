@@ -11,7 +11,7 @@
 #SBATCH -o output/output.%A_%a.out
 #SBATCH -e error/error.%A_%a.err
 #SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=james.w.nightingale@durham.ac.uk
+#SBATCH --mail-user=your.email@example.com
 
 # -------------------------------
 # Environment

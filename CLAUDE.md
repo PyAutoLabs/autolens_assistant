@@ -570,7 +570,7 @@ cp hpc/sync.conf.example hpc/sync.conf
 
 **Config fields** (`sync.conf`):
 - `HPC_HOST` — SSH host alias or `user@hostname`
-- `HPC_BASE` — base directory on the HPC (e.g. `/mnt/ral/jnightin`)
+- `HPC_BASE` — base directory on the HPC (e.g. `/path/to/hpc/scratch`)
 - `PROJECT_NAME` — defaults to local folder name if unset
 
 The remote path is `$HPC_HOST:$HPC_BASE/$PROJECT_NAME`.
