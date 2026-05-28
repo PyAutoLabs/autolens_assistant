@@ -36,9 +36,9 @@ PLOT_DIR.mkdir(parents=True, exist_ok=True)
 ```
 
 After running, the agent quotes `PLOT_DIR.resolve()` and offers
-`open <path>` — see `_style.md` "Plot output and path announcement". For
-the full inventory of API changes see
-[`wiki/core/api_deltas_2026_05.md`](../wiki/core/api_deltas_2026_05.md).
+`open <path>` — see `_style.md` "Plot output and path announcement". The
+function-style plot API is documented in
+[`wiki/core/api/plotting.md`](../wiki/core/api/plotting.md).
 
 ## Branch — quick subplot
 

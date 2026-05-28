@@ -81,11 +81,9 @@ Most plotting functions now take explicit keyword arguments like `positions=`,
 - `colormap=` and `use_log10=` replace most of the old styling wrappers.
 - `output_path=` and `output_format=` control file output directly.
 
-In `2026.5.21+` the previous `aplt.Output` / `aplt.MatPlot2D` helpers are
-removed entirely; every entry point takes `output_path` / `output_filename`
-/ `output_format` kwargs directly. See
-[`../api_deltas_2026_05.md`](../api_deltas_2026_05.md) for the full mapping
-of removed classes → current functions.
+Every entry point takes `output_path` / `output_filename` / `output_format`
+kwargs directly; the module is a flat set of free functions with no plotter
+classes or `Output` objects.
 
 ## FITS and helper utilities
 

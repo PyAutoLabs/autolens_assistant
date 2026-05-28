@@ -105,10 +105,8 @@ proper uncertainty propagation from the posterior. See
 
 ## Plotting
 
-`autolens.plot` (aliased `aplt`) in `2026.5.21+` is a flat module of free
-functions. The previously documented `aplt.TracerPlotter` /
-`aplt.FitImagingPlotter` / `aplt.InversionPlotter` classes are removed. The
-function-style equivalents:
+`autolens.plot` (aliased `aplt`) is a flat module of free functions — there are
+no plotter classes. The main entry points:
 
 - `aplt.subplot_tracer` / `aplt.subplot_galaxies_images` —
   ray-traced images, per-galaxy decomposition.
@@ -119,11 +117,8 @@ function-style equivalents:
 - `aplt.plot_array` / `aplt.plot_grid` — single-figure helpers, taking
   `output_path` / `output_filename` / `output_format` directly.
 
-`Tracer.magnification_2d_from`, `critical_curves_from`, and `caustics_from`
-are also removed; derive them from the deflection field. See
-[`api/plotting`](../api/plotting.md) and
-[`../api_deltas_2026_05.md`](../api_deltas_2026_05.md) for the full
-delta list.
+`Tracer` does not surface magnification, critical curves, or caustics directly;
+derive them from the deflection field. See [`api/plotting`](../api/plotting.md).
 
 ## Configuration
 
