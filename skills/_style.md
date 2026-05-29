@@ -313,7 +313,7 @@ Skills that produce visualisations save them through the function-style
 [`wiki/core/api/plotting.md`](../wiki/core/api/plotting.md)). Three rules:
 
 1. **Pass `output_path` / `output_filename` / `output_format` directly to
-   each plot function.** Every `aplt.plot_*` and `aplt.subplot_*` accepts
+   each plot function.** Every `autolens.plot` `plot_*` and `subplot_*` helper accepts
    these kwargs, e.g. `aplt.subplot_imaging_dataset(dataset=…,
    output_path="work/plots/<context>/", output_filename=…,
    output_format="png")`. Never rely on interactive display — the user is

@@ -56,7 +56,7 @@ python work/audit_skill_apis.py --scope all
 Use `--scope skills`, `--scope wiki`, or `--scope scripts` to narrow; `--scope all`
 (default) covers skills + wiki/core/api+stack + generated `scripts/`/`work/` `.py` files.
 The **scripts scope** is what catches stale symbols in generated pipelines and exploration
-scripts — the place an old `al.Kernel2D` call actually executes — and it skips this repo's
+scripts — the place an old removed PyAutoLens symbol actually executes — and it skips this repo's
 own committed tooling (`audit_skill_apis.py`, `refresh_api_docs.py`). The report lands at
 `work/audit/skill_api_audit_<YYYY-MM-DD>.md` and is **gitignored** — only the script is
 committed. Exit code is non-zero when the report contains misses; you can chain

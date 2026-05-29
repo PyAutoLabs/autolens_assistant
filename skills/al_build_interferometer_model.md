@@ -68,7 +68,7 @@ model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 # converts the model image to visibilities via NUFFT.
 analysis = al.AnalysisInterferometer(
     dataset=dataset,
-    settings_inversion=al.SettingsInversion(use_w_tilde=False),
+    settings=al.Settings(),
 )
 ```
 

@@ -75,8 +75,8 @@ objects:
 - `al.Pixelization(mesh=..., regularization=...)` — wraps a source-plane mesh + a
   regularisation scheme. Lives inside a `Galaxy`.
 - `al.mesh.Delaunay` / `al.mesh.RectangularUniform` / `al.mesh.RectangularAdaptImage`
-  / `al.mesh.KNearestNeighbor` — mesh choices (see `al.mesh.__all__` for the
-  complete set; `Voronoi` and `Rectangular` have been replaced).
+  / `al.mesh.KNearestNeighbor` — mesh choices; inspect `dir(al.mesh)` for the
+  complete set. `Voronoi` and `Rectangular` have been replaced.
 - `al.reg.Constant` / `al.reg.ConstantSplit` / `al.reg.Adapt` / `al.reg.AdaptSplit` —
   regularisation schemes (the older `AdaptiveBrightness` has been split into the
   `Adapt*` family).

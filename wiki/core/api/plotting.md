@@ -37,13 +37,13 @@ current source tree.
 | `aplt.plot_array` | Single 2D array (model image, residual map, etc.) | `PyAutoArray:autoarray/plot/array.py` |
 | `aplt.plot_grid` | Grid coordinates or sparse spatial overlays | `PyAutoArray:autoarray/plot/grid.py` |
 | `aplt.subplot_imaging_dataset` | Imaging data, PSF, S/N, oversampling panels | `PyAutoArray:autoarray/dataset/plot/imaging_plots.py` |
-| `aplt.subplot_interferometer_dataset` | Visibility-plane dataset overview | `PyAutoArray:autoarray/dataset/plot/interferometer_plots.py` |
+| `ag.plot.subplot_interferometer_dataset` | Visibility-plane dataset overview | `PyAutoArray:autoarray/dataset/plot/interferometer_plots.py` |
 | `aplt.subplot_fit_imaging` | Imaging fit summary, residuals, tracer-derived panels | `PyAutoLens:autolens/imaging/plot/fit_imaging_plots.py` |
 | `aplt.subplot_fit_interferometer` | Interferometer fit summary | `PyAutoLens:autolens/interferometer/plot/fit_interferometer_plots.py` |
 | `aplt.subplot_tracer` | Tracer image, source plane, convergence, potential, magnification | `PyAutoLens:autolens/lens/plot/tracer_plots.py` |
 | `aplt.subplot_point_dataset` | Point-source dataset positions / fluxes | `PyAutoLens:autolens/point/plot/point_dataset_plots.py` |
 | `aplt.subplot_fit_point` | Point-source fit summary | `PyAutoLens:autolens/point/plot/fit_point_plots.py` |
-| `aplt.plot_mapper` / `aplt.subplot_image_and_mapper` | Pixelised-source mapper views | `PyAutoArray:autoarray/inversion/plot/mapper_plots.py` |
+| `aa.plot.plot_mapper` / `aa.plot.subplot_image_and_mapper` | Pixelised-source mapper views | `PyAutoArray:autoarray/inversion/plot/mapper_plots.py` |
 
 ## Pattern
 

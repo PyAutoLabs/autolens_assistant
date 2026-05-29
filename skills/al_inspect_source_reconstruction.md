@@ -84,7 +84,7 @@ Source: `PyAutoArray:autoarray/inversion/inversion/`.
 
 ## Branch — mesh + regularisation diagnostics
 
-The previous `aplt.InversionPlotter(...).subplot_of_mapper(...)` is removed.
+The previous object-oriented inversion plotter API is removed.
 The closest current entry point is `aplt.subplot_basis_image`, which renders
 the mapper's pixelisation overlaid on the image:
 

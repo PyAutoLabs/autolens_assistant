@@ -104,7 +104,7 @@ class Symbol:
 
 @dataclass
 class Resolution:
-    status: str                       # "ok" | "missing_attr" | "import_failed"
+    status: str  # "ok" | "missing_attr" | "import_failed"
     resolved_depth: int = 0
     parent_repr: str = ""
     candidates: list[str] = field(default_factory=list)
@@ -218,14 +218,20 @@ def resolve(sym: Symbol) -> Resolution:
             # A pathological attribute access (recursive __getattr__, RecursionError,
             # a property that raises) must never crash the whole audit — treat it as
             # an unresolved error row instead.
-            return Resolution(status="error", resolved_depth=i, error=f"{type(e).__name__}: {e}"[:160])
+            return Resolution(
+                status="error", resolved_depth=i, error=f"{type(e).__name__}: {e}"[:160]
+            )
 
-    return Resolution(status="ok", resolved_depth=len(sym.chain), parent_repr=_short_repr(current))
+    return Resolution(
+        status="ok", resolved_depth=len(sym.chain), parent_repr=_short_repr(current)
+    )
 
 
 def _short_repr(obj) -> str:
     mod = getattr(obj, "__module__", None)
-    name = getattr(obj, "__name__", None) or getattr(obj, "__class__", type(obj)).__name__
+    name = (
+        getattr(obj, "__name__", None) or getattr(obj, "__class__", type(obj)).__name__
+    )
     if mod and name:
         return f"{mod}.{name}"
     return repr(obj)[:80]
@@ -275,7 +281,9 @@ def select_files(root: Path, scope: str) -> list[Path]:
     # (regexes, module-name strings, docstrings) that isn't real API usage.
     tooling = {"audit_skill_apis.py", "refresh_api_docs.py"}
     scripts = [
-        p for p in sorted((root / "scripts").glob("*.py")) + sorted((root / "work").glob("*.py"))
+        p
+        for p in sorted((root / "scripts").glob("*.py"))
+        + sorted((root / "work").glob("*.py"))
         if p.name not in tooling
     ]
     if scope == "skills":
@@ -305,7 +313,8 @@ def render_report(
     unique_symbols = len(resolutions)
     missing = [s for s, r in resolutions.items() if r.status != "ok"]
     files_with_misses = {
-        f for f, d in occurrences_by_file.items()
+        f
+        for f, d in occurrences_by_file.items()
         if any(resolutions[s].status != "ok" for s in d)
     }
 
@@ -320,7 +329,9 @@ def render_report(
         for name, ver in sorted(versions.items()):
             lines.append(f"- `{name}` = `{ver}`")
     else:
-        lines.append("_No PyAuto\\* libraries importable. Activate the venv (`source activate.sh`) and re-run._")
+        lines.append(
+            "_No PyAuto\\* libraries importable. Activate the venv (`source activate.sh`) and re-run._"
+        )
     lines.append("")
     lines.append("## Summary")
     lines.append("")
@@ -357,7 +368,7 @@ def render_report(
         for sym, contexts, res in sorted(bad, key=lambda x: x[0].text):
             ctx = "/".join(sorted(contexts))
             if res.status == "missing_attr":
-                tail = ".".join(sym.chain[res.resolved_depth:])
+                tail = ".".join(sym.chain[res.resolved_depth :])
                 status = f"missing `.{tail}`"
                 parent = res.parent_repr
             elif res.status == "error":
@@ -366,8 +377,14 @@ def render_report(
             else:
                 status = "import_failed"
                 parent = f"`{res.error}`"
-            suggestions = ", ".join(f"`{c}`" for c in res.candidates) if res.candidates else "_(none found)_"
-            lines.append(f"| `{sym.text}` | {status} | `{parent}` | {suggestions} | {ctx} |")
+            suggestions = (
+                ", ".join(f"`{c}`" for c in res.candidates)
+                if res.candidates
+                else "_(none found)_"
+            )
+            lines.append(
+                f"| `{sym.text}` | {status} | `{parent}` | {suggestions} | {ctx} |"
+            )
         lines.append("")
 
     return "\n".join(lines)
@@ -412,19 +429,23 @@ def compute_baseline() -> dict:
         try:
             mod = importlib.import_module(name)
         except Exception as e:  # noqa: BLE001
-            sys.exit(f"cannot write baseline: {name} not importable ({e!r}). "
-                     f"Activate the venv (source activate.sh) and retry.")
+            sys.exit(
+                f"cannot write baseline: {name} not importable ({e!r}). "
+                f"Activate the venv (source activate.sh) and retry."
+            )
         versions[name] = str(getattr(mod, "__version__", "(no __version__)"))
 
     api_surface: dict[str, dict] = {}
     for name in BASELINE_MODULES:
-        mod = importlib.import_module(name)  # already known importable (plot via autolens)
+        mod = importlib.import_module(
+            name
+        )  # already known importable (plot via autolens)
         names = _public_names(mod)
         api_surface[name] = {"hash": _api_hash(mod), "n_symbols": len(names)}
 
     return {
         "_comment": "API baseline for autolens_assistant - see work/audit_skill_apis.py "
-                    "and skills/al_audit_skill_apis.md. Regenerate with --write-baseline.",
+        "and skills/al_audit_skill_apis.md. Regenerate with --write-baseline.",
         "generated": dt.date.today().isoformat(),
         "versions": versions,
         "api_surface": api_surface,
@@ -448,7 +469,10 @@ def check_version(root: Path) -> int:
     """
     path = root / BASELINE_REL_PATH
     if not path.exists():
-        print(f"[drift] no baseline at {path} — run `--write-baseline` first.", file=sys.stderr)
+        print(
+            f"[drift] no baseline at {path} — run `--write-baseline` first.",
+            file=sys.stderr,
+        )
         return 1
 
     baseline = json.loads(path.read_text(encoding="utf-8"))
@@ -460,42 +484,59 @@ def check_version(root: Path) -> int:
         if baseline["versions"].get(m) != current["versions"][m]
     ]
     hash_drift = [
-        m for m in BASELINE_MODULES
+        m
+        for m in BASELINE_MODULES
         if baseline["api_surface"].get(m, {}).get("hash")
         != current["api_surface"][m]["hash"]
     ]
 
     if not version_drift and not hash_drift:
-        print(f"[drift] clean — installed stack matches baseline "
-              f"(autolens {current['versions']['autolens']}, generated {baseline.get('generated')}).")
+        print(
+            f"[drift] clean — installed stack matches baseline "
+            f"(autolens {current['versions']['autolens']}, generated {baseline.get('generated')})."
+        )
         return 0
 
-    print("[drift] API DRIFT vs baseline "
-          f"(baseline generated {baseline.get('generated')}):", file=sys.stderr)
+    print(
+        "[drift] API DRIFT vs baseline "
+        f"(baseline generated {baseline.get('generated')}):",
+        file=sys.stderr,
+    )
     for m, old, new in version_drift:
         print(f"  - {m}: {old} -> {new}", file=sys.stderr)
     if hash_drift:
-        print(f"  - public API surface changed: {', '.join(hash_drift)}", file=sys.stderr)
-    print("  The skills/wiki were validated against the baseline. Upgrade/downgrade to the "
-          "pinned version (`pip install -U autolens`), or run `--scope all` to audit drift "
-          "and `--write-baseline` to re-pin once fixed.", file=sys.stderr)
+        print(
+            f"  - public API surface changed: {', '.join(hash_drift)}", file=sys.stderr
+        )
+    print(
+        "  The skills/wiki were validated against the baseline. Upgrade/downgrade to the "
+        "pinned version (`pip install -U autolens`), or run `--scope all` to audit drift "
+        "and `--write-baseline` to re-pin once fixed.",
+        file=sys.stderr,
+    )
     return 1
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Audit PyAuto* API references in skills + wiki + scripts.")
-    parser.add_argument("--scope", choices=["skills", "wiki", "scripts", "all"], default="all")
+    parser = argparse.ArgumentParser(
+        description="Audit PyAuto* API references in skills + wiki + scripts."
+    )
+    parser.add_argument(
+        "--scope", choices=["skills", "wiki", "scripts", "all"], default="all"
+    )
     parser.add_argument("--out", default=None)
     parser.add_argument("--root", default=None)
     parser.add_argument(
-        "--write-baseline", action="store_true",
+        "--write-baseline",
+        action="store_true",
         help="Snapshot the installed stack (versions + API-surface hash) to "
-             "wiki/core/api_audit_baseline.json and exit. Re-pin after a deliberate upgrade.",
+        "wiki/core/api_audit_baseline.json and exit. Re-pin after a deliberate upgrade.",
     )
     parser.add_argument(
-        "--check-version", action="store_true",
+        "--check-version",
+        action="store_true",
         help="Compare the installed stack against the committed baseline and exit "
-             "(non-zero on drift). Cheap — no Markdown scan; safe at session start.",
+        "(non-zero on drift). Cheap — no Markdown scan; safe at session start.",
     )
     args = parser.parse_args()
 
@@ -520,18 +561,30 @@ def main() -> int:
         text = f.read_text(encoding="utf-8")
         # `.py` files (scripts scope) are code throughout; Markdown is split into
         # code/prose segments by extract_symbols.
-        per_file = extract_symbols_code(text) if f.suffix == ".py" else extract_symbols(text)
+        per_file = (
+            extract_symbols_code(text) if f.suffix == ".py" else extract_symbols(text)
+        )
         occurrences_by_file[f] = per_file
         all_symbols.update(per_file)
 
-    print(f"[audit] scanned {len(files)} files; {len(all_symbols)} unique symbols", file=sys.stderr)
+    print(
+        f"[audit] scanned {len(files)} files; {len(all_symbols)} unique symbols",
+        file=sys.stderr,
+    )
 
     resolutions: dict[Symbol, Resolution] = {
         sym: resolve(sym) for sym in sorted(all_symbols, key=lambda s: s.text)
     }
 
-    out_path = Path(args.out) if args.out else (
-        root / "work" / "audit" / f"skill_api_audit_{dt.date.today().isoformat()}.md"
+    out_path = (
+        Path(args.out)
+        if args.out
+        else (
+            root
+            / "work"
+            / "audit"
+            / f"skill_api_audit_{dt.date.today().isoformat()}.md"
+        )
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     report = render_report(

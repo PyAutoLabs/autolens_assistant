@@ -32,7 +32,7 @@ a critical curve traces — see
 ## Saving plots
 
 In `2026.5.21+` `autolens.plot` is a flat module of free functions —
-the previous `aplt.MatPlot2D` / `aplt.Output` / `aplt.TracerPlotter` classes
+the previous object-oriented plotter/configuration classes
 are gone. Each plotting function takes `output_path` / `output_filename` /
 `output_format` kwargs directly. Define your destination once and reuse it:
 

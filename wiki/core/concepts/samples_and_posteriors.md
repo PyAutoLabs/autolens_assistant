@@ -119,9 +119,10 @@ For hundreds of fits, don't load each `samples.csv` into memory at once. Use the
 aggregator:
 
 ```python
-from autofit.aggregator.search.aggregator import Aggregator
+import autofit as af
 
-agg = Aggregator.from_directory("output/imaging/my_sample/")
+agg = af.Aggregator(af.db.open_database("sqlite://"))
+agg.add_directory("output/imaging/my_sample/")
 
 for samples in agg.values("samples"):
     print(samples.median_pdf().galaxies.lens.mass.einstein_radius)
