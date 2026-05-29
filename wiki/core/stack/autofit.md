@@ -57,8 +57,8 @@ Headline picks:
 - **`af.DynestyStatic` / `af.DynestyDynamic`** — alternative nested samplers.
 - **`af.Emcee`** — ensemble MCMC, for known-unimodal posterior characterisation.
 - **`af.Zeus`** — ensemble slice sampling.
-- **`af.UltraNest`** — reactive nested sampling, for high-dimensional posteriors.
-- **`af.PySwarms`** — particle swarm optimisation (MLE only).
+- UltraNest / PySwarms are not exposed as public search classes in the
+  2026.5.29.4 stack; prefer Nautilus/Dynesty for nested sampling and LBFGS for MLE.
 - **`af.BFGS`** / **`af.Drawer`** — gradient descent / random draws (debug).
 
 Sources: `PyAutoFit:autofit/non_linear/search/`.
@@ -79,7 +79,7 @@ For bulk querying of large numbers of fits, the SQLAlchemy-backed database in
 `autofit/config/` ships `general.yaml`, `logging.yaml`, `notation.yaml`,
 `output.yaml`, plus default prior YAMLs under `priors/` and plot settings under
 `visualize/`. The prior YAMLs are how PyAutoFit knows that
-`al.lp.Sersic.effective_radius` should default to `UniformPrior(lower_limit=0.0,
+`al.lp.Sersic.elliptical_effective_radius` should default to `UniformPrior(lower_limit=0.0,
 upper_limit=8.0)` (or whatever the workspace config says).
 
 See [`api/configuration`](../api/configuration.md).

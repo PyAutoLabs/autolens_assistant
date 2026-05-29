@@ -60,7 +60,10 @@ def main() -> int:
         versions = import_versions()
     except Exception as exc:  # noqa: BLE001
         print("PyAuto* import preflight failed:", repr(exc), file=sys.stderr)
-        print("Activate the project environment before running this helper.", file=sys.stderr)
+        print(
+            "Activate the project environment before running this helper.",
+            file=sys.stderr,
+        )
         return 2
 
     print("Resolved package versions:")

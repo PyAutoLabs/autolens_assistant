@@ -58,13 +58,14 @@ Source: `PyAutoFit:autofit/non_linear/search/nest/dynesty.py`. Pinned: `dynesty=
 Reference: Speagle (2020), arXiv:1904.02180 — see
 [`wiki/literature/sources/bayesian-inference-methods.md`](../../literature/sources/bayesian-inference-methods.md#speagle-2020--dynesty).
 
-### `af.UltraNest`
+### UltraNest
 
-Reactive nested sampling — scales to high-dim problems with strong constraints.
-Heavier; use when Nautilus struggles.
+UltraNest is not currently exposed as a public `autofit` search class in the
+2026.5.29.4 stack. Prefer `af.Nautilus`, `af.DynestyStatic`, or
+`af.DynestyDynamic` for nested-sampling runs.
 
 ```python
-af.UltraNest(path_prefix=..., name=..., num_live_points=200)
+af.Nautilus(path_prefix=..., name=..., n_live=200)
 ```
 
 Source: `PyAutoFit:autofit/non_linear/search/nest/ultranest.py`. Optional dep.
@@ -117,16 +118,16 @@ af.BFGS(path_prefix=..., name=...)
 
 Source: `PyAutoFit:autofit/non_linear/search/mle/bfgs.py`.
 
-### `af.PySwarms`
+### Particle Swarm / MLE Searches
 
-Particle swarm optimisation. Slower than BFGS but more robust to local minima.
+PySwarms is not currently exposed as a public `autofit` search class in the
+2026.5.29.4 stack. Use the public MLE/debug searches instead.
 
 ```python
-af.PySwarms(path_prefix=..., name=..., n_particles=50)
+af.LBFGS(path_prefix=..., name=...)
 ```
 
-Source: `PyAutoFit:autofit/non_linear/search/mle/pyswarms.py`. Pinned:
-`pyswarms==1.3.0`.
+Source: `PyAutoFit:autofit/non_linear/search/mle/`.
 
 ### `af.Drawer`
 

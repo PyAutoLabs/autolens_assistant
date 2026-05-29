@@ -30,8 +30,9 @@ Workspace path: `autolens_workspace:scripts/multi/start_here.py`,
 ## Branch — multi-band imaging, shared mass + per-band source
 
 > TODO: recipe. Pattern: one `AnalysisImaging` per dataset, summed via
-> `al.AnalysisImagingMulti` (verify exact class), one shared `mass` model,
-> per-band `source` models. See `PyAutoLens:autolens/imaging/model/...`.
+> `af.AnalysisFactor` objects inside an `af.FactorGraphModel`, one shared
+> `mass` model, per-band `source` models. See
+> `PyAutoLens:autolens/imaging/model/...`.
 
 ## Branch — imaging + interferometer joint
 

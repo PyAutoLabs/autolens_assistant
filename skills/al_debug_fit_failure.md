@@ -38,8 +38,10 @@ Read the search log: `output/<path>/.../search.log`. Common causes:
 Load the result and look at the fit:
 
 ```python
-from autofit.aggregator.search.aggregator import Aggregator
-agg = Aggregator.from_directory("output/imaging/<your_lens>/<name>")
+import autofit as af
+
+agg = af.Aggregator(af.db.open_database("sqlite://"))
+agg.add_directory("output/imaging/<your_lens>/<name>")
 result = list(agg.values("samples"))[-1]  # most recent run
 
 tracer = result.max_log_likelihood_tracer

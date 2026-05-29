@@ -31,8 +31,9 @@ Workspace path: `autolens_workspace:scripts/guides/results/start_here.py`,
 
 ## Branch — aggregator basics
 
-> TODO: recipe. Pattern: `agg = af.Aggregator.from_directory("output/sample/")`,
-> iterate with `for samples in agg.values("samples"): ...`. See
+> TODO: recipe. Pattern: `agg = af.Aggregator(af.db.open_database("sqlite://"))`,
+> then `agg.add_directory("output/sample/")` and iterate with
+> `for samples in agg.values("samples"): ...`. See
 > `PyAutoFit:autofit/aggregator/...`.
 
 ## Branch — derived quantities + CSV export
@@ -43,8 +44,8 @@ Workspace path: `autolens_workspace:scripts/guides/results/start_here.py`,
 
 ## Branch — database backend for large samples
 
-> TODO: recipe. Pattern: `db = af.SqliteAggregator(path=...)`,
-> `db.add_from_directory(...)`; queries are SQL-like. See workspace
+> TODO: recipe. Pattern: `agg = af.Aggregator.from_database("results.sqlite")`,
+> `agg.add_directory(...)`; queries are SQLAlchemy-backed. See workspace
 > database tutorial.
 
 ## Branch — FITS / PNG batch outputs

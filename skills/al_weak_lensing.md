@@ -24,10 +24,10 @@ Workspace path: `autolens_workspace:scripts/weak/fit.py`.
 
 ## Branch — single-halo NFW fit
 
-> TODO: recipe. Pattern: `dataset = al.WeakDataset.from_csv(...)`,
-> `analysis = al.AnalysisWeak(dataset=dataset)`, model is a `Galaxy` with
-> an NFW mass profile, run the standard search. See
-> `PyAutoLens:autolens/weak/...` for the dataset + analysis classes.
+> TODO: recipe. Pattern: load arrays from CSV, build an `al.WeakDataset`
+> directly, and evaluate with `al.FitWeak`. A first-class search `Analysis`
+> is not public yet; for modelling, follow the custom-analysis pattern. See
+> `PyAutoLens:autolens/weak/...` for the dataset + fit classes.
 
 ## Branch — joint strong + weak
 

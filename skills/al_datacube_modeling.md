@@ -32,8 +32,8 @@ Workspace path:
 
 > TODO: recipe. Pattern: build a list of `AnalysisInterferometer`
 > instances (one per channel), each with a Delaunay-pixelised source;
-> the same lens galaxy is shared across all analyses; combine via
-> `al.AnalysisInterferometer.combine(...)` or equivalent. See
+> the same lens galaxy is shared across all analyses; wrap each channel in
+> `af.AnalysisFactor` and combine with `af.FactorGraphModel`. See
 > `PyAutoLens:autolens/interferometer/...`.
 
 ## Branch — parametric source with frequency-dependent intensity
