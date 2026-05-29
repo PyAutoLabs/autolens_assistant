@@ -65,6 +65,39 @@ The aim of the profile is to keep the **science front and centre** without makin
 user repeat themselves. It is not a gate — if the user just wants to dive in, let
 them, and pick up cues as you go.
 
+## Real data: inspect `dataset.png` before modeling
+
+There is one checkpoint that *is* a gate. When the user is analysing **real
+observational data** of a real strong lens (their own data, or one of the provided
+datasets), do not compose or run a model-fit until the dataset has been visually
+inspected. The most common way the assistant goes wrong is speed-running to modeling
+without noticing **extra galaxies** — nearby companions, foreground stars, or
+data-reduction artefacts whose light is not part of the lens and which bias the fit if
+left in. See [`wiki/core/concepts/extra_galaxies_and_noise_scaling.md`](./wiki/core/concepts/extra_galaxies_and_noise_scaling.md).
+
+Before any model-fit on real data:
+
+1. **Plot it and ask the user to look.** Load the dataset and call
+   `aplt.subplot_imaging_dataset(...)`, save it through `aplt.Output(...)`, quote the
+   absolute `dataset.png` path, and ask the user **one** focused question:
+   *"Have you looked at `dataset.png`? Are there any extra galaxies, foreground stars or
+   artefacts near the lens that aren't part of the system?"* Name the extra-galaxy check
+   explicitly — it is the single most important thing to verify at this stage.
+2. **Provided datasets ship a mask — apply it, and say so.** The bundled
+   `dataset/imaging/cosmos_web_ring/...` and `dataset/imaging/slacs0946+1006/` datasets
+   each include a `mask_extra_galaxies.fits`. When using them, load it and call
+   `dataset.apply_noise_scaling(mask=...)`, and **tell the user plainly** that the mask is
+   being applied and which region it scales out — never apply it silently.
+3. **Real data with a contaminant but no mask** → route to
+   [`al_prepare_imaging_data`](./skills/al_prepare_imaging_data.md): either create a
+   `mask_extra_galaxies.fits` (the data-preparation GUI or manual scripts) and
+   noise-scale it, **or** shrink the circular mask so the extra galaxy falls outside it
+   and is dropped from the fit entirely.
+
+This is a gate, not a lecture: one plot and one question, in keeping with the
+"ask one disambiguating question" tone above. **Simulated data is exempt** — it ships
+clean, so proceed straight to modeling unless the user says otherwise.
+
 ## API version drift-check
 
 This workspace is **tied to an autolens version**. The skills and wiki document one

@@ -121,4 +121,6 @@ When *not* to:
   hold.
 - [`../../../skills/al_prepare_imaging_data.md`](../../../skills/al_prepare_imaging_data.md) —
   the standard load + mask + over-sample recipe.
+- [`extra_galaxies_and_noise_scaling`](./extra_galaxies_and_noise_scaling.md) — masking
+  out contaminating galaxies by inflating their noise (`apply_noise_scaling`).
 - [`tracer`](./tracer.md) — the tracer evaluates on whatever grid you hand it.
