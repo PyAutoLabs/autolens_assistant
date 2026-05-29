@@ -81,7 +81,11 @@ exist (the classic symptom: `AttributeError: module 'autolens' has no attribute
 python work/audit_skill_apis.py --check-version
 ```
 
-- **Exit 0 (clean):** the installed stack matches the baseline; proceed normally.
+- **Exit 0 (clean):** the installed stack matches the baseline. This means the *skills and
+  wiki* describe the right API surface — it does **not** mean any code you write is correct.
+  A clean version-check never inspects your code; it is the code gate below (always on,
+  version-independent) that catches symbols you wrote from memory. Proceed, but rely on the
+  gate, not on "version matched".
 - **Non-zero (drift):** the installed autolens differs from the version this workspace
   targets. Tell the user plainly — *"your installed autolens (X) doesn't match the version
   this assistant targets (Y); run `pip install -U autolens` (or check out the matching
@@ -100,6 +104,36 @@ accrete migration notes.
 In **maintainer mode** (see below) the drift-check is skipped by default — a maintainer
 editing skills/wiki isn't generating science code — but run it manually before testing any
 generated script.
+
+### Code gate (always on, version-independent)
+
+The version-check only compares the installed stack to the baseline; it never looks at the
+code you generate. That left a real gap: with the installed stack *matching* the baseline,
+sessions still crashed on `al.FitImagingPlotter(...)` and
+`from autoarray.structures.arrays.kernel_2d import Kernel2D` — symbols written from training
+memory that were renamed/removed long ago. A clean version-check reported nothing.
+
+So a `PreToolUse` hook (`.claude/hooks/validate_pyauto_code.py`, wired in
+`.claude/settings.json`) now validates **every Bash command that runs Python** before it
+executes: it extracts the `-c` snippet and any `.py` file arguments, resolves each
+alias-rooted symbol (`al.`, `aa.`, `aplt.`, `autoarray.` …) against the *installed* library,
+and **blocks** the call if any symbol does not exist — returning the stale symbol so you
+re-ground against the live API. Commands with no PyAuto* symbol pay zero cost (fast allow).
+
+You can run the same check by hand on a snippet or file:
+
+```bash
+python work/audit_skill_apis.py --code "import autolens as al; al.FitImagingPlotter"   # exit 2
+python work/audit_skill_apis.py --file work/my_script.py                                # exit 0/2
+```
+
+When the gate blocks you, **do not guess a replacement** — grep `skills/` for the task
+(e.g. `al_load_results.md` uses `aplt.subplot_fit_imaging(fit=fit)`) or introspect `dir()`
+of the live module, then re-run. The fuzzy "closest live names" hint is a guess, not a
+verified rename. Escape hatch for intentional pre-refactor/debugging work:
+`PYAUTO_SKIP_API_GATE=1`. The same gate is mirrored at the `PyAutoLabs` monorepo level (its
+`.claude/settings.json` invokes this very script), so it protects dev sessions too — not
+just clones of this assistant.
 
 ## Maintainer mode
 
