@@ -22,10 +22,16 @@ cd autolens_assistant
 ```
 
 Open a CLI AI agent session inside the repo. The assistant has been tested
-with Claude Code and Codex so far:
+with four CLI agents:
+
+- **Claude Code** and **Codex** — tested most thoroughly and give the best
+  results. Recommended if you have access to them.
+- **Gemini CLI** and **OpenCode** — also work, and both offer free models, so
+  you can use the assistant without a paid subscription. Of the two, Gemini CLI
+  is preferred over OpenCode.
 
 ```bash
-claude        # or `codex`
+claude        # or `codex`, `gemini`, `opencode`
 ```
 
 The agent reads `CLAUDE.md` (or `AGENTS.md`) on session start and already
