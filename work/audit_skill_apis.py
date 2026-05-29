@@ -279,7 +279,7 @@ def select_files(root: Path, scope: str) -> list[Path]:
     # actually execute (e.g. a script written against the old `al.Kernel2D`).
     # Exclude this repo's own committed tooling: it contains alias-pattern text
     # (regexes, module-name strings, docstrings) that isn't real API usage.
-    tooling = {"audit_skill_apis.py", "refresh_api_docs.py"}
+    tooling = {"audit_skill_apis.py", "refresh_api_docs.py", "test_api_gate.py"}
     scripts = [
         p
         for p in sorted((root / "scripts").glob("*.py"))
@@ -517,6 +517,73 @@ def check_version(root: Path) -> int:
     return 1
 
 
+# ---------------------------------------------------------------------------
+# Code gate (--code / --file)
+# ---------------------------------------------------------------------------
+def validate_source(text: str) -> tuple[int, list[str]]:
+    """Resolve every alias-rooted symbol in raw Python `text` against the installed
+    stack.
+
+    Unlike the Markdown/scripts report (which writes a file and is keyed to a
+    version baseline), this is a cheap, version-independent gate over a snippet or
+    a single file the agent is *about to run* — the place a stale symbol like
+    `al.Kernel2D` or `aplt.FitImagingPlotter` actually crashes. Returns
+    `(n_stale, report_lines)`; `report_lines` is empty when everything resolves.
+    """
+    symbols = extract_symbols_code(text)
+    lines: list[str] = []
+    n_stale = 0
+    for sym in sorted(symbols, key=lambda s: s.text):
+        res = resolve(sym)
+        if res.status == "ok":
+            continue
+        n_stale += 1
+        if res.status == "missing_attr":
+            tail = ".".join(sym.chain[res.resolved_depth :])
+            status = f"not in installed stack (missing `.{tail}`)"
+        elif res.status == "import_failed":
+            status = f"import failed ({res.error})"
+        else:
+            status = f"error ({res.error})"
+        # `candidates` are fuzzy/cross-module name matches, NOT a verified rename map
+        # (e.g. FitImagingPlotter -> subplot_fit_imaging is a paradigm change difflib
+        # can't know). Present them as hints and point at the authoritative source.
+        if res.candidates:
+            hint = "closest live names: " + ", ".join(res.candidates) + " (verify)"
+        else:
+            hint = "no close match — ground against skills/ or `dir()` of the live module"
+        lines.append(f"STALE  {sym.text}  —  {status}; {hint}")
+    return n_stale, lines
+
+
+def run_code_gate(*, code: str | None, file: str | None) -> int:
+    """Validate a snippet (`--code`) or a single `.py` file (`--file`) and return an
+    exit code: 0 = all symbols resolve, 2 = at least one stale symbol (distinct from
+    the report mode's 1). Self-contained — needs neither `sources.yaml` nor the
+    baseline, only the installed library."""
+    if code is not None:
+        text, label = code, "<--code>"
+    else:
+        p = Path(file)  # type: ignore[arg-type]
+        if not p.exists():
+            print(f"[gate] file not found: {p}", file=sys.stderr)
+            return 2
+        text, label = p.read_text(encoding="utf-8"), str(p)
+
+    n_stale, report = validate_source(text)
+    if n_stale:
+        print(
+            f"[gate] {n_stale} stale PyAuto* symbol(s) in {label} — "
+            f"fix against the live API before running:",
+            file=sys.stderr,
+        )
+        for line in report:
+            print("  " + line, file=sys.stderr)
+        return 2
+    print(f"[gate] {label}: all PyAuto* symbols resolve.", file=sys.stderr)
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Audit PyAuto* API references in skills + wiki + scripts."
@@ -538,7 +605,23 @@ def main() -> int:
         help="Compare the installed stack against the committed baseline and exit "
         "(non-zero on drift). Cheap — no Markdown scan; safe at session start.",
     )
+    parser.add_argument(
+        "--code",
+        default=None,
+        help="Validate a Python snippet's PyAuto* symbols against the installed stack "
+        "and exit (0 ok, 2 stale). Version-independent gate for code about to run.",
+    )
+    parser.add_argument(
+        "--file",
+        default=None,
+        help="Like --code, but validate a single .py file at any path (0 ok, 2 stale).",
+    )
     args = parser.parse_args()
+
+    # Code-gate modes are self-contained: they resolve symbols straight against the
+    # installed library, so they need neither `sources.yaml` nor the version baseline.
+    if args.code is not None or args.file is not None:
+        return run_code_gate(code=args.code, file=args.file)
 
     root = Path(args.root) if args.root else Path(__file__).resolve().parent.parent
     if not (root / "sources.yaml").exists():
