@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#SBATCH -J base_imaging
+#SBATCH -J slacs0946_subhalo
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --ntasks=1
@@ -26,7 +26,7 @@ source $PROJECT_PATH/activate.sh
 #
 # The sample is the subdirectory inside dataset/ that contains the datasets.
 # -------------------------------
-sample=sample_imaging
+sample=imaging
 
 # -------------------------------
 # Dataset list
@@ -35,7 +35,7 @@ sample=sample_imaging
 # Update --array above to match the number of datasets (0 to N-1).
 # -------------------------------
 datasets=(
-example_imaging
+slacs0946+1006
 )
 
 # -------------------------------

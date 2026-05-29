@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#SBATCH -J base_imaging_cpu
+#SBATCH -J slacs0946_subhalo_cpu
 #SBATCH -n 1
 #SBATCH --cpus-per-task=4
 #SBATCH -o output/output.%A_%a.out
@@ -38,7 +38,7 @@ export NPROC=$THREADS
 #
 # The sample is the subdirectory inside dataset/ that contains the datasets.
 # -------------------------------
-sample=sample
+sample=imaging
 
 # -------------------------------
 # Dataset list
@@ -47,7 +47,7 @@ sample=sample
 # Update --array above to match the number of datasets (0 to N-1).
 # -------------------------------
 datasets=(
-example
+slacs0946+1006
 )
 
 # -------------------------------
