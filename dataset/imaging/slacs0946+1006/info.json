@@ -36,6 +36,7 @@
     "RA": "\"094656.68\"",
     "DEC": "\"+100652.8\"",
     "subhalo_grid_dimensions_arcsec": 2.4,
+    "subhalo_number_of_steps": 2,
     "mask_inner_radius": 0.75,
     "mask_outer_radius": 2.15,
     "scaled_annular": 1,
