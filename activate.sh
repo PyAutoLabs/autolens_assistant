@@ -9,7 +9,20 @@
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VENV=$HERE/.venv
 
-source $VENV/bin/activate
+if [ -f "$VENV/bin/activate" ]; then
+    source "$VENV/bin/activate"
+elif [ -f /mnt/ral/jnightin/PyAuto/PyAuto/bin/activate ]; then
+    BASE=/mnt/ral/jnightin/PyAuto
+    source "$BASE/PyAuto/bin/activate"
+    export PYTHONPATH=$BASE:\
+$BASE/PyAutoConf:\
+$BASE/PyAutoFit:\
+$BASE/PyAutoArray:\
+$BASE/PyAutoGalaxy:\
+$BASE/PyAutoLens
+else
+    echo "No local .venv or known HPC PyAuto environment found." >&2
+fi
 
 # Developer setup only: if you run against editable source checkouts of the PyAuto*
 # libraries instead of a pip install, drop the line above and add their parent directory

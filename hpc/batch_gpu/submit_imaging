@@ -19,6 +19,10 @@
 # Set PROJECT_PATH before submitting:
 #   export PROJECT_PATH=/path/to/your/project
 # -------------------------------
+if [ -z "${PROJECT_PATH:-}" ]; then
+    PROJECT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+fi
+
 source $PROJECT_PATH/activate.sh
 
 # -------------------------------
