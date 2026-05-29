@@ -202,23 +202,36 @@ def parse_fit_args():
     parser = argparse.ArgumentParser(description="PyAutoLens HPC Pipeline")
 
     parser.add_argument(
-        "--sample", metavar="name", required=False, default=None,
+        "--sample",
+        metavar="name",
+        required=False,
+        default=None,
         help="Sample subdirectory inside dataset/ containing the dataset.",
     )
     parser.add_argument(
-        "--dataset", metavar="name", required=True,
+        "--dataset",
+        metavar="name",
+        required=True,
         help="Name of the dataset subdirectory inside dataset/<sample>/.",
     )
     parser.add_argument(
-        "--iterations_per_quick_update", metavar="int", required=False, default=5000,
+        "--iterations_per_quick_update",
+        metavar="int",
+        required=False,
+        default=5000,
         help="Number of sampler iterations between on-the-fly visualisation updates.",
     )
     parser.add_argument(
-        "--number_of_cores", metavar="int", required=False, default=1,
+        "--number_of_cores",
+        metavar="int",
+        required=False,
+        default=1,
         help="Number of CPU cores for non-JAX Nautilus searches.",
     )
     parser.add_argument(
-        "--use_cpu", action="store_true", default=False,
+        "--use_cpu",
+        action="store_true",
+        default=False,
         help="CPU mode: disables JAX and enables CPU-specific optimisations.",
     )
 
