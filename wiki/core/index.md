@@ -34,6 +34,8 @@ Physics + framework material the skills lean on.
   the tracer compose.
 - [Grids and masks](./concepts/grids_and_masks.md) — slim/native, over-sampling,
   sub-grids.
+- [Extra galaxies and noise scaling](./concepts/extra_galaxies_and_noise_scaling.md) —
+  masking out contaminating galaxies via `apply_noise_scaling`, vs modelling or shrinking the mask.
 - [Inversions and pixelisations](./concepts/inversions_and_pixelizations.md) —
   pixelised source reconstruction, regularisation, mesh choices.
 - [Non-linear search](./concepts/non_linear_search.md) — what each sampler does and

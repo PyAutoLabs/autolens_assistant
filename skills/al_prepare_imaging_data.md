@@ -12,9 +12,14 @@ evaluated accurately where they matter, and (optionally) scales the noise to mas
 contaminating galaxies. The output is a ready-to-fit `al.Imaging` object.
 
 For real observational data, treat preprocessing as part of model setup, not an
-optional cleanup step. Before writing modeling code, explicitly decide how large the
-modelled region should be, whether any nearby objects or artifacts must be excluded,
-and whether a manual or GUI-assisted masking step is needed to define those regions.
+optional cleanup step. **The first action is always to plot the dataset and look at it**:
+call `aplt.subplot_imaging_dataset(dataset=dataset)`, save it via `aplt.Output(...)`,
+quote the `dataset.png` path, and ask the user to confirm they've inspected it — flagging
+**extra galaxies** (nearby companions, foreground stars, data-reduction artefacts) as the
+single most important thing to check. Only once that's done, decide how large the modelled
+region should be, whether any nearby objects or artifacts must be excluded (and how —
+noise-scale a mask, or shrink the circular mask), and whether a manual or GUI-assisted
+masking step is needed to define those regions. Don't speed-run past this into modeling.
 
 Background: [`wiki/core/concepts/grids_and_masks.md`](../wiki/core/concepts/grids_and_masks.md)
 covers what a mask and an over-sample grid actually are; the canonical reference for
@@ -97,20 +102,42 @@ features you intend to exclude from the likelihood.
 
 ## Branch — with noise scaling for contaminating galaxies
 
-If a nearby foreground star or unrelated galaxy is bleeding into your mask, mask it
-out by inflating its noise. You'll need a separate FITS mask of the contaminating
-pixels (Python boolean array saved via `Mask2D.output_to_fits`).
+If a nearby foreground star or unrelated galaxy is bleeding into your mask, do not leave
+it in the fit. The preferred fix is to keep those pixels in the dataset but inflate their
+noise so they contribute negligibly to the likelihood (rather than removing them entirely,
+which can create discontinuities for a pixelised source). This needs a FITS mask flagging
+the contaminating pixels. The conceptual background — noise-scale vs model-the-galaxy vs
+shrink-the-mask — is in
+[`wiki/core/concepts/extra_galaxies_and_noise_scaling.md`](../wiki/core/concepts/extra_galaxies_and_noise_scaling.md).
+
+**Provided datasets already ship a mask.** The bundled `dataset/imaging/cosmos_web_ring/...`
+and `dataset/imaging/slacs0946+1006/` datasets each include a `mask_extra_galaxies.fits`.
+Load it and apply it — and **tell the user plainly** that you are doing so and which region
+it scales out; never apply it silently:
 
 ```python
 mask_extra_galaxies = al.Mask2D.from_fits(
     file_path=dataset_path / "mask_extra_galaxies.fits",
     pixel_scales=dataset.pixel_scales,
-    invert=True,
+    invert=True,  # `True` means a pixel is scaled.
 )
 dataset = dataset.apply_noise_scaling(mask=mask_extra_galaxies)
 ```
 
 Apply this **before** the model mask and over-sampling.
+
+**The user's own data, with a visible extra galaxy but no mask.** Two options — surface both:
+
+- **Create a `mask_extra_galaxies.fits` and noise-scale it** (preferred when the contaminant
+  is close to the lens/source). Use the GUI
+  `autolens_workspace:scripts/imaging/data_preparation/gui/mask_extra_galaxies.py` to scribble
+  the mask interactively, or the manual
+  `autolens_workspace:scripts/imaging/data_preparation/examples/optional/mask_extra_galaxies.py`.
+  Then load + `apply_noise_scaling` as above.
+- **Shrink the circular mask** so the extra galaxy falls outside it (simpler, and fine when the
+  contaminant is well separated from the arcs). This *removes* those pixels from the fit rather
+  than down-weighting them — cheaper, but avoid it near a pixelised source where dropped pixels
+  can introduce reconstruction discontinuities.
 
 Source: `PyAutoArray:autoarray/dataset/imaging/dataset.py` (`apply_noise_scaling`).
 

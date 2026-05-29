@@ -36,7 +36,8 @@ Methods of interest:
 
 - `apply_mask(mask: Mask2D)` — restricts the fit to masked-in pixels.
 - `apply_noise_scaling(mask: Mask2D)` — inflates noise inside `mask` (for
-  contaminating-galaxy removal).
+  contaminating-galaxy removal); see
+  [`../concepts/extra_galaxies_and_noise_scaling.md`](../concepts/extra_galaxies_and_noise_scaling.md).
 - `apply_over_sampling(over_sample_size_lp=..., over_sample_size_pixelization=...)` —
   sub-grid integration for steep profiles.
 - `output_to_fits(data_path, noise_map_path, psf_path, overwrite)` — write back to

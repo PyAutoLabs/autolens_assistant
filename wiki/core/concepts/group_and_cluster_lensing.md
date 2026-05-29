@@ -97,3 +97,6 @@ For the custom-profile route, see
   / Isothermal rows used at cluster scale.
 - [`concepts/multi_wavelength.md`](./multi_wavelength.md) — cluster
   lensing is frequently multi-band.
+- [`concepts/extra_galaxies_and_noise_scaling.md`](./extra_galaxies_and_noise_scaling.md)
+  — the galaxy-scale counterpart, where extra galaxies are contaminants to
+  noise-scale rather than deflectors to model.

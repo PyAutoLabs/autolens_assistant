@@ -14,15 +14,18 @@ The canonical example is `autolens_workspace:scripts/imaging/modeling.py`. This 
 generates the equivalent for the user's lens.
 
 This skill assumes the imaging data is already preprocessing-ready. For real
-observational data, confirm first that the user has explicitly thought through mask
-extent, contaminating objects, and any regions that should be excluded via a manual or
-GUI-assisted masking step. If not, route them back to
-[`al_prepare_imaging_data`](./al_prepare_imaging_data.md) before building the model.
+observational data, confirm first that the user has **inspected `dataset.png`** and
+thought through mask extent, contaminating objects, and any regions to exclude — in
+particular that any **extra galaxies** have been handled (noise-scaled via a
+`mask_extra_galaxies.fits`, or excluded by shrinking the circular mask). If not, route
+them back to [`al_prepare_imaging_data`](./al_prepare_imaging_data.md) before building the
+model — don't compose a model over data with an unaddressed contaminant.
 
 ## Ask
 
-- *"If this is real observational data, have you already decided the mask extent and
-  any regions that should be excluded from modelling?"* — if not, stop and do that in
+- *"If this is real observational data, have you inspected `dataset.png`, decided the
+  mask extent, and handled any extra galaxies (noise-scaled a `mask_extra_galaxies.fits`,
+  or shrunk the mask to exclude them)?"* — if not, stop and do that in
   [`al_prepare_imaging_data`](./al_prepare_imaging_data.md) first.
 - *"How many galaxies in the model — single galaxy-scale, group (2–4), cluster?"* —
   this is the only structural choice. Skill below assumes galaxy-scale; bootstrap a
