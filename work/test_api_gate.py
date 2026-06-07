@@ -28,6 +28,8 @@ VALIDATOR = ROOT / "work" / "audit_skill_apis.py"
 HOOK = ROOT / ".claude" / "hooks" / "validate_pyauto_code.py"
 
 GOOD = "import autolens.plot as aplt; aplt.subplot_fit_imaging(fit=fit)"
+GOOD_SUBMODULE = "import autofit.jax.pytrees as pytrees"
+GOOD_AUTOCONF_SUBMODULE = "import autoconf.dictable"
 STALE_PLOTTER = "import autolens as al; al.FitImagingPlotter(fit=fit).subplot_fit()"
 STALE_KERNEL = "from autoarray.structures.arrays.kernel_2d import Kernel2D"
 
@@ -72,6 +74,14 @@ def test_validator_passes_current_api():
     assert _run_validator("--code", GOOD).returncode == 0
 
 
+def test_validator_passes_current_submodule_import():
+    assert _run_validator("--code", GOOD_SUBMODULE).returncode == 0
+
+
+def test_validator_passes_autoconf_submodule_import():
+    assert _run_validator("--code", GOOD_AUTOCONF_SUBMODULE).returncode == 0
+
+
 def test_validator_flags_stale_plotter():
     proc = _run_validator("--code", STALE_PLOTTER)
     assert proc.returncode == 2
@@ -114,6 +124,28 @@ def test_hook_allows_non_pyauto_python():
 def test_hook_allows_non_python_command_without_import():
     # Pre-screen must short-circuit (no autolens import) — assert both allow and speed.
     proc = _run_hook("ls -la /tmp")
+    assert _decision(proc) is None
+
+
+def test_hook_allows_non_python_command_that_mentions_py_file(tmp_path):
+    script = tmp_path / "mentions_stale_api.py"
+    script.write_text(f"import autolens as al\n{STALE_PLOTTER}\n", encoding="utf-8")
+
+    proc = _run_hook(f"echo {script}")
+
+    assert _decision(proc) is None
+
+
+def test_hook_allows_grep_of_pyauto_file(tmp_path):
+    script = tmp_path / "grep_target.py"
+    script.write_text(
+        "import autofit.jax.pytrees as pytrees\n"
+        f"import autolens as al\n{STALE_PLOTTER}\n",
+        encoding="utf-8",
+    )
+
+    proc = _run_hook(f"grep -n autofit.jax {script}")
+
     assert _decision(proc) is None
 
 

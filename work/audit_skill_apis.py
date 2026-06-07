@@ -204,6 +204,14 @@ def resolve(sym: Symbol) -> Resolution:
         try:
             current = getattr(current, attr)
         except AttributeError:
+            if isinstance(current, ModuleType):
+                module_name = f"{current.__name__}.{attr}"
+                try:
+                    current = importlib.import_module(module_name)
+                    _module_cache[module_name] = current
+                    continue
+                except Exception:  # noqa: BLE001
+                    pass
             candidates = difflib.get_close_matches(attr, dir(current), n=3, cutoff=0.6)
             for c in _cross_module_candidates(attr):
                 if c not in candidates:

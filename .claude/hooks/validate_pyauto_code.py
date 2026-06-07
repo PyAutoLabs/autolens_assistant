@@ -100,18 +100,20 @@ def _collect_sources(tokens: list[str], cwd: Path) -> tuple[str, list[tuple[str,
     'code' (a -c snippet string) or 'file' (a .py path). Only sources that actually
     contain a PyAuto* symbol are kept — that is the no-import pre-screen."""
     interpreter = "python3"
+    saw_python = False
     sources: list[tuple[str, str]] = []
     i = 0
     while i < len(tokens):
         tok = tokens[i]
         if PYTHON_RE.search(tok):
             interpreter = tok
+            saw_python = True
         elif tok == "-c" and i + 1 < len(tokens):
             snippet = tokens[i + 1]
             if _has_symbol(snippet):
                 sources.append(("code", snippet))
             i += 1
-        elif tok.endswith(".py") and not tok.startswith("-"):
+        elif saw_python and tok.endswith(".py") and not tok.startswith("-"):
             p = Path(tok)
             if not p.is_absolute():
                 p = cwd / p
