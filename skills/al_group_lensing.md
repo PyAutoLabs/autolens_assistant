@@ -1,6 +1,6 @@
 ---
 name: al_group_lensing
-description: Model a group-scale strong lens — one or two main lens galaxies plus a population of companion ("extra") galaxies whose light + mass must also be modelled. Two strategies: (a) free per-companion profiles for small N, (b) "scaling-relation" galaxies tied to a luminosity-to-mass relation for larger N. Pairs with `al_cluster_csv_api` (when N is large enough that inline Python composition becomes unwieldy). Writes a runnable Python script in ./work/. **Status: stub.**
+description: Model a group-scale strong lens — one or two main lens galaxies plus a population of companion ("extra") galaxies whose light + mass must also be modelled. Two strategies: (a) free per-companion profiles for small N, (b) "scaling-relation" galaxies tied to a luminosity-to-mass relation for larger N. Pairs with `al_cluster_csv_api` (when N is large enough that inline Python composition becomes unwieldy). Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Group-scale lensing — companion galaxies and scaling relations

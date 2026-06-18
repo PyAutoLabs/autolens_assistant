@@ -1,6 +1,6 @@
 ---
 name: al_mge_decomposition
-description: Build and fit a Multi-Gaussian Expansion (MGE) model for the lens light and/or the source — a basis of N Gaussians with tied or free centres / ellipticities, whose intensities are solved linearly inside the fit. MGE is the workhorse for complex lens galaxy morphologies (where a single Sersic is too rigid) and increasingly for source modelling. More structured than `al_build_imaging_model`'s "MGE option", less open-ended than `al_custom_profile`. Writes a runnable Python script in ./work/. **Status: stub.**
+description: Build and fit a Multi-Gaussian Expansion (MGE) model for the lens light and/or the source — a basis of N Gaussians with tied or free centres / ellipticities, whose intensities are solved linearly inside the fit. MGE is the workhorse for complex lens galaxy morphologies (where a single Sersic is too rigid) and increasingly for source modelling. More structured than `al_build_imaging_model`'s "MGE option", less open-ended than `al_custom_profile`. Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Multi-Gaussian Expansion (MGE) workflows

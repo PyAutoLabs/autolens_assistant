@@ -27,7 +27,7 @@ Canonical reference: `autolens_workspace:scripts/guides/modeling/chaining.py`.
 ## Branch — two-phase chain (parametric → pixelised source)
 
 ```python
-# work/chain.py
+# scripts/chain.py
 """
 Chain Searches: Parametric -> Pixelised Source
 ==============================================

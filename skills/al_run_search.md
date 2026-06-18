@@ -24,10 +24,10 @@ in `PYAUTO_TEST_MODE=1` for a smoke test or in production mode for the real fit.
 
 ## Branch — production run
 
-Assemble everything into one script (`work/run_fit.py`):
+Assemble everything into one script (`scripts/run_fit.py`):
 
 ```python
-# work/run_fit.py
+# scripts/run_fit.py
 from autoconf import jax_wrapper
 from pathlib import Path
 import autofit as af
@@ -76,7 +76,7 @@ print(result.max_log_likelihood_instance)
 Run with sandbox cache overrides if needed:
 
 ```bash
-NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python work/run_fit.py
+NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python scripts/run_fit.py
 ```
 
 Source: `PyAutoFit:autofit/non_linear/search/abstract_search.py` (the `fit` method).
@@ -89,7 +89,7 @@ waiting for real sampling, set `PYAUTO_TEST_MODE=1`:
 
 ```bash
 PYAUTO_TEST_MODE=1 NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib \
-  python work/run_fit.py
+  python scripts/run_fit.py
 ```
 
 The search will short-circuit after a small number of likelihood evaluations and
@@ -101,7 +101,7 @@ flags:
 
 ```bash
 PYAUTO_TEST_MODE=2 PYAUTO_SKIP_FIT_OUTPUT=1 PYAUTO_SKIP_VISUALIZATION=1 \
-  PYAUTO_SMALL_DATASETS=1 PYAUTO_FAST_PLOTS=1 python work/run_fit.py
+  PYAUTO_SMALL_DATASETS=1 PYAUTO_FAST_PLOTS=1 python scripts/run_fit.py
 ```
 
 See [`wiki/core/operations/sandbox.md`](../wiki/core/operations/sandbox.md) for the full flag list.

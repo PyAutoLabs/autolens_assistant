@@ -116,7 +116,7 @@ vars (`PYAUTO_TEST_MODE`, `PYAUTO_SKIP_FIT_OUTPUT`, etc.) and when each one matt
 
 ## Verification — write a one-off script
 
-Save this to `./work/verify_environment.py` and run it:
+Save this to `scripts/verify_environment.py` and run it:
 
 ```python
 import autoconf
@@ -146,7 +146,7 @@ Run with sandbox env vars set if you need them:
 
 ```bash
 NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib \
-  python work/verify_environment.py
+  python scripts/verify_environment.py
 ```
 
 If that prints versions and a list of galaxy redshifts (no traceback), the environment

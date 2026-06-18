@@ -1,6 +1,6 @@
 ---
 name: al_build_interferometer_model
-description: Compose a strong-lens model for visibility-plane (ALMA / JVLA / interferometer) data. Same galaxy + profile composition as the imaging variant, but wraps the dataset in `al.AnalysisInterferometer`. Writes a runnable Python script in ./work/. Pairs with `al_run_search` (executes the fit) and uses the same light + mass profile catalogue as imaging.
+description: Compose a strong-lens model for visibility-plane (ALMA / JVLA / interferometer) data. Same galaxy + profile composition as the imaging variant, but wraps the dataset in `al.AnalysisInterferometer`. Writes a runnable Python script in scripts/. Pairs with `al_run_search` (executes the fit) and uses the same light + mass profile catalogue as imaging.
 ---
 
 # Composing an interferometer lens model
@@ -26,10 +26,10 @@ skill produces the equivalent for the user's dataset.
 
 ## Branch — minimal SIE lens + Sersic source
 
-Save to `work/build_interferometer_model.py`:
+Save to `scripts/build_interferometer_model.py`:
 
 ```python
-# work/build_interferometer_model.py
+# scripts/build_interferometer_model.py
 from autoconf import jax_wrapper
 from pathlib import Path
 import autofit as af

@@ -33,7 +33,7 @@ For most lens models — parametric, pixelised, simple, complex — Nautilus is 
 first pick. It handles multi-modal posteriors and is fast enough on modern CPUs.
 
 ```python
-# work/configure_search.py
+# scripts/configure_search.py
 import autofit as af
 
 search = af.Nautilus(

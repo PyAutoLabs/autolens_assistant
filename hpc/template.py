@@ -2,15 +2,18 @@
 Template: HPC Pipeline Script
 =============================
 
-This template provides the standard interface between HPC batch scripts and PyAutoLens
-modeling code. It handles command-line argument parsing, configuration setup, and dataset
-loading so that the same script runs identically on a local machine and on the HPC.
+This template lives in `hpc/`, paired with the CPU and GPU batch submit templates
+(`hpc/batch_cpu/template`, `hpc/batch_gpu/template`). It provides the standard interface
+between those batch scripts and PyAutoLens modeling code: command-line argument parsing,
+configuration setup, and dataset loading, so that the same script runs identically on a
+local machine and on the HPC.
 
-Copy this file and rename it for your science case (e.g. `imaging.py`), then fill in the
-`Model, Analysis & Search` section of `fit()` using scripts from
-`autolens_workspace/scripts/` as a reference. The HPC interface (`parse_fit_args`,
-`__main__`, `--use_cpu`, `--number_of_cores`) must be preserved — the CPU and GPU batch
-scripts depend on it.
+Copy this file into `scripts/` and rename it for your science case (e.g. `scripts/imaging.py`),
+then fill in the `Model, Analysis & Search` section of `fit()` using scripts from
+`autolens_workspace/scripts/` as a reference (the `init-slam` skill automates this). The batch
+templates run `scripts/$SCRIPT`, so the copy belongs in `scripts/`. The HPC interface
+(`parse_fit_args`, `__main__`, `--use_cpu`, `--number_of_cores`) must be preserved — the CPU
+and GPU batch templates depend on it.
 
 This file is written in the project's generated-script style (title + `__Contents__`
 header, with each section introduced by a triple-quoted `__Section__` docstring) — see the

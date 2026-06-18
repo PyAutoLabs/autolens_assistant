@@ -23,8 +23,8 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parent.parent
-VALIDATOR = ROOT / "work" / "audit_skill_apis.py"
+ROOT = Path(__file__).resolve().parents[2]
+VALIDATOR = ROOT / "autoassistant" / "audit_skill_apis.py"
 HOOK = ROOT / ".claude" / "hooks" / "validate_pyauto_code.py"
 
 GOOD = "import autolens.plot as aplt; aplt.subplot_fit_imaging(fit=fit)"
@@ -145,6 +145,15 @@ def test_hook_allows_grep_of_pyauto_file(tmp_path):
     )
 
     proc = _run_hook(f"grep -n autofit.jax {script}")
+
+    assert _decision(proc) is None
+
+
+def test_hook_allows_non_python_count_option_with_pyauto_pattern(tmp_path):
+    script = tmp_path / "grep_count_target.py"
+    script.write_text("aa.AbstractPreloads\n", encoding="utf-8")
+
+    proc = _run_hook(f"grep -c aa.AbstractPreloads {script}")
 
     assert _decision(proc) is None
 

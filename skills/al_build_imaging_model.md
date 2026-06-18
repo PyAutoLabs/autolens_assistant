@@ -1,6 +1,6 @@
 ---
 name: al_build_imaging_model
-description: Compose a strong-lens model for imaging data — galaxies with light + mass profiles, prior customisation, and an `al.AnalysisImaging` ready to hand to a non-linear search. Writes a runnable Python script in ./work/. Pairs with `al_prepare_imaging_data` (which loads + masks the dataset) and `al_run_search` (which executes the fit). For visibility-plane data see `al_build_interferometer_model`.
+description: Compose a strong-lens model for imaging data — galaxies with light + mass profiles, prior customisation, and an `al.AnalysisImaging` ready to hand to a non-linear search. Writes a runnable Python script in scripts/. Pairs with `al_prepare_imaging_data` (which loads + masks the dataset) and `al_run_search` (which executes the fit). For visibility-plane data see `al_build_interferometer_model`.
 ---
 
 # Composing an imaging lens model
@@ -41,10 +41,10 @@ model — don't compose a model over data with an unaddressed contaminant.
 
 ## Branch — galaxy-scale, Sersic light + SIE mass + Sersic source
 
-The minimum viable model. Save to `work/build_model.py`:
+The minimum viable model. Save to `scripts/build_model.py`:
 
 ```python
-# work/build_model.py
+# scripts/build_model.py
 from autoconf import jax_wrapper
 import autofit as af
 import autolens as al

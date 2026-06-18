@@ -28,7 +28,7 @@ Subclass `LightProfile` (or `LightProfileLinear` for a profile whose intensity i
 solved during the fit). Implement `image_2d_from(grid)`:
 
 ```python
-# work/my_profile.py
+# scripts/my_profile.py
 import numpy as np
 import autogalaxy as ag
 from autoconf.dictable import Dictable

@@ -1,6 +1,6 @@
 ---
 name: al_time_delay_cosmography
-description: Measure H0 (or a Hubble-like time-delay distance) from a time-delay strong lens — quasar with measured delays between multiple images, or a lensed supernova. Builds on `al_point_source` (positions + delays) and `al_hierarchical_inference` (when joining several lenses into one H0 posterior). The headline observable is the **time-delay distance** D_dt, which scales inversely with H0 at fixed mass model. Writes a runnable Python script in ./work/. **Status: stub.**
+description: Measure H0 (or a Hubble-like time-delay distance) from a time-delay strong lens — quasar with measured delays between multiple images, or a lensed supernova. Builds on `al_point_source` (positions + delays) and `al_hierarchical_inference` (when joining several lenses into one H0 posterior). The headline observable is the **time-delay distance** D_dt, which scales inversely with H0 at fixed mass model. Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # H0 from time-delay strong lensing

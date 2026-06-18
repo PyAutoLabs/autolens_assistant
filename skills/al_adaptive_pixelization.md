@@ -1,6 +1,6 @@
 ---
 name: al_adaptive_pixelization
-description: Build a model whose source reconstruction uses an adaptive pixelisation (mesh density tracks source brightness or surface density) and adaptive regularisation (smoothing strength inferred from data, not fixed). Use when a uniform mesh wastes resolution on dim regions and under-resolves bright ones — common for complex arcs and ALMA data. More expressive than `al_build_imaging_model`'s "pixelised source" branch, at the cost of more knobs. Pairs with `al_inspect_source_reconstruction` (post-fit inspection). Writes a runnable Python script in ./work/. **Status: stub.**
+description: Build a model whose source reconstruction uses an adaptive pixelisation (mesh density tracks source brightness or surface density) and adaptive regularisation (smoothing strength inferred from data, not fixed). Use when a uniform mesh wastes resolution on dim regions and under-resolves bright ones — common for complex arcs and ALMA data. More expressive than `al_build_imaging_model`'s "pixelised source" branch, at the cost of more knobs. Pairs with `al_inspect_source_reconstruction` (post-fit inspection). Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Adaptive pixelisation + adaptive regularisation

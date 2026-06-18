@@ -26,7 +26,7 @@ skill produces the equivalent for your specific model.
 ## Branch — galaxy-scale imaging
 
 ```python
-# work/simulate_imaging.py
+# scripts/simulate_imaging.py
 from autoconf import jax_wrapper
 from pathlib import Path
 import autolens as al
@@ -82,8 +82,8 @@ dataset.output_to_fits(
 # Save the ground truth so we can verify recovery later.
 al.output_to_json(obj=tracer, file_path=dataset_path / "tracer.json")
 
-# 5. Preview plot — saved to work/plots/<dataset_name>/ for inspection.
-plot_dir = Path("work/plots") / dataset_path.name
+# 5. Preview plot — saved to scripts/scratch/<dataset_name>/ for inspection.
+plot_dir = Path("scripts/scratch") / dataset_path.name
 plot_dir.mkdir(parents=True, exist_ok=True)
 aplt.subplot_imaging_dataset(
     dataset=dataset,

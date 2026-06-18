@@ -40,7 +40,7 @@ are gone. Each plotting function takes `output_path` / `output_filename` /
 from pathlib import Path
 import autolens.plot as aplt
 
-PLOT_DIR = Path("work/plots") / "<dataset_or_slug>"   # pick a meaningful slug
+PLOT_DIR = Path("scripts/scratch") / "<dataset_or_slug>"   # pick a meaningful slug
 PLOT_DIR.mkdir(parents=True, exist_ok=True)
 ```
 

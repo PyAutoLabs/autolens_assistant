@@ -1,6 +1,6 @@
 ---
 name: al_cluster_csv_api
-description: Compose a cluster-scale strong lens model from CSV spreadsheets (`mass.csv`, `light.csv`, `point.csv`) instead of inline Python. Used when a model has tens of main lenses, hundreds of member galaxies, or dozens of background sources — at that scale Python composition becomes unmanageable and a spreadsheet is diff-friendly, Excel/LibreOffice-editable, and round-trippable to the standard `af.Model` objects. Writes a runnable Python script in ./work/ that reads the CSVs and instantiates the model. **Status: stub.**
+description: Compose a cluster-scale strong lens model from CSV spreadsheets (`mass.csv`, `light.csv`, `point.csv`) instead of inline Python. Used when a model has tens of main lenses, hundreds of member galaxies, or dozens of background sources — at that scale Python composition becomes unmanageable and a spreadsheet is diff-friendly, Excel/LibreOffice-editable, and round-trippable to the standard `af.Model` objects. Writes a runnable Python script in scripts/ that reads the CSVs and instantiates the model. **Status: stub.**
 ---
 
 # Cluster lensing via the CSV API

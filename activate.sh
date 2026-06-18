@@ -11,8 +11,11 @@ VENV=$HERE/.venv
 
 if [ -f "$VENV/bin/activate" ]; then
     source "$VENV/bin/activate"
-elif [ -f /mnt/ral/jnightin/PyAuto/PyAuto/bin/activate ]; then
-    BASE=/mnt/ral/jnightin/PyAuto
+elif [ -n "${PYAUTO_HPC_BASE:-}" ] && [ -f "$PYAUTO_HPC_BASE/PyAuto/bin/activate" ]; then
+    # Shared / HPC checkout: point PYAUTO_HPC_BASE at the directory that holds a
+    # `PyAuto/` virtualenv alongside editable PyAuto* source checkouts, e.g.
+    #   export PYAUTO_HPC_BASE=/path/to/your/PyAuto
+    BASE="$PYAUTO_HPC_BASE"
     source "$BASE/PyAuto/bin/activate"
     export PYTHONPATH=$BASE:\
 $BASE/PyAutoConf:\
@@ -21,7 +24,7 @@ $BASE/PyAutoArray:\
 $BASE/PyAutoGalaxy:\
 $BASE/PyAutoLens
 else
-    echo "No local .venv or known HPC PyAuto environment found." >&2
+    echo "No local .venv found (set PYAUTO_HPC_BASE for a shared/HPC PyAuto checkout)." >&2
 fi
 
 # Developer setup only: if you run against editable source checkouts of the PyAuto*

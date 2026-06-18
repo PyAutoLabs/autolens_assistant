@@ -1,6 +1,6 @@
 ---
 name: al_aggregator_bulk_analysis
-description: Operate on many completed lens fits at once via PyAutoFit's `Aggregator` — load samples, models, fits, derived quantities across an entire output directory; filter, sort, query; export to CSV/FITS/plots. Use when you've fitted N>1 lenses (SLACS sample, cluster members, sensitivity-map cells) and need to extract a comparable result table or run derived calculations across the lot. Pairs with `al_hierarchical_inference` (which builds population models on top). Writes a runnable Python script in ./work/. **Status: stub.**
+description: Operate on many completed lens fits at once via PyAutoFit's `Aggregator` — load samples, models, fits, derived quantities across an entire output directory; filter, sort, query; export to CSV/FITS/plots. Use when you've fitted N>1 lenses (SLACS sample, cluster members, sensitivity-map cells) and need to extract a comparable result table or run derived calculations across the lot. Pairs with `al_hierarchical_inference` (which builds population models on top). Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Bulk analysis across many completed fits

@@ -111,7 +111,7 @@ exist (the classic symptom: `AttributeError: module 'autolens' has no attribute
 (it only compares version strings + hashes — no Markdown scan):
 
 ```bash
-python work/audit_skill_apis.py --check-version
+python autoassistant/audit_skill_apis.py --check-version
 ```
 
 - **Exit 0 (clean):** the installed stack matches the baseline. This means the *skills and
@@ -123,7 +123,7 @@ python work/audit_skill_apis.py --check-version
   targets. Tell the user plainly — *"your installed autolens (X) doesn't match the version
   this assistant targets (Y); run `pip install -U autolens` (or check out the matching
   workspace tag)"* — **before** generating code. If the drift is intended (the user
-  deliberately upgraded), run `python work/audit_skill_apis.py --scope all` to surface any
+  deliberately upgraded), run `python autoassistant/audit_skill_apis.py --scope all` to surface any
   stale references, fix them, then re-pin with `--write-baseline`. See
   [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md).
 
@@ -156,8 +156,8 @@ re-ground against the live API. Commands with no PyAuto* symbol pay zero cost (f
 You can run the same check by hand on a snippet or file:
 
 ```bash
-python work/audit_skill_apis.py --code "import autolens as al; al.FitImagingPlotter"   # exit 2
-python work/audit_skill_apis.py --file work/my_script.py                                # exit 0/2
+python autoassistant/audit_skill_apis.py --code "import autolens as al; al.FitImagingPlotter"   # exit 2
+python autoassistant/audit_skill_apis.py --file scripts/my_script.py                                # exit 0/2
 ```
 
 When the gate blocks you, **do not guess a replacement** — grep `skills/` for the task
@@ -297,7 +297,7 @@ When the user asks for something a skill already covers:
 1. Read the skill file end-to-end.
 2. Follow its Orient → Ask → Branch → Combine arc (defined in `skills/_style.md`).
 3. Produce Python where the skill calls for it. Agent-generated exploration scripts go to
-   `./work/` (gitignored). **Never write into `output/` or `sources/`**.
+   `scripts/` (committed) or `scripts/scratch/` (gitignored). **Never write into `output/` or `sources/`**.
    Persistent project pipelines belong in `scripts/` and are maintained by the user, not
    replaced wholesale.
 4. If the skill points at a wiki page for context, read that page before writing code.
@@ -376,7 +376,7 @@ wants commits landing directly there.
   import autolens as al
   import autolens.plot as aplt
   ```
-- **Generated script style.** Every `.py` you save (to `work/` or `scripts/`) uses the
+- **Generated script style.** Every `.py` you save (to `scripts/` or `scripts/scratch/`) uses the
   PyAutoLens **workspace** style, not banner comments. The module opens with a single
   docstring — a title underlined with `=`, a short orientation, then a `__Contents__`
   list — and each logical section is introduced by a `"""__Section__"""` narrative
@@ -408,17 +408,15 @@ wants commits landing directly there.
   """
   dataset = al.Imaging.from_fits(...)
   ```
-- **Agent working directory**: `./work/`. Python scripts and Markdown notes
-  there are **committed** alongside the `wiki/project/` entry that describes
-  them — they're the most reusable artefact of a session. Plots go to
-  `./work/plots/<context>/` and data dumps (FITS / npy / pickle / hdf5) to
-  `./work/output/`; both subdirectories are gitignored, as are any top-level
-  `work/*.png|pdf|jpg|fits|npy|pkl|hdf5|h5` files.
+- **Agent working directory**: `scripts/`. Committed Python scripts live in `scripts/`
+  alongside the `wiki/project/` entry that describes them — they're the most reusable
+  artefact of a session. Throwaway plots and data dumps (FITS / npy / pickle / hdf5) go
+  to the gitignored `scripts/scratch/`.
 - **Project working directory** for persistent modeling pipelines: `scripts/` — see Part 2.
 - **Output of `search.fit(...)`**: goes under `./output/<dataset>/modeling/<hash>/` by
   default (per PyAutoFit's own conventions).
 - **Plot output and path announcement.** Skill-generated plots are saved
-  through `aplt.Output(path="work/plots/<context>/", filename=..., format="png")`
+  through `aplt.Output(path="scripts/scratch/<context>/", filename=..., format="png")`
   so they persist on disk. The Python recipe `print(...)`s each plot's
   absolute path. After running the script, the agent **quotes the absolute
   path** of every saved plot and offers *"want me to `open <path>`?"* (macOS
@@ -432,14 +430,14 @@ wants commits landing directly there.
 filesystems, `/mnt/c/...` imports under WSL) override them:
 
 ```bash
-NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python ./work/script.py
+NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python scripts/script.py
 ```
 
 PyAutoFit ships a short-circuit mode that skips non-linear search sampling, for fast
 end-to-end smoke testing:
 
 ```bash
-PYAUTO_TEST_MODE=1 python ./work/script.py
+PYAUTO_TEST_MODE=1 python scripts/script.py
 ```
 
 Use `PYAUTO_TEST_MODE=1` whenever you're verifying a script you wrote runs end-to-end and
@@ -495,21 +493,18 @@ survey, a paper, a sample) rather than running everything inside the assistant
 repo itself. The new workspace lives outside this repo (e.g. `<NEW_PROJECT>/`).
 Use `rsync` to copy the assistant's structure, excluding what isn't needed.
 
-The HPC folder contains one submit script per script type (`submit_imaging`,
-`submit_interferometer`) in both `batch_gpu/` and `batch_cpu/`. Use the rsync
-exclusions below to copy **only** the submit scripts that match the chosen
-SLaM pipeline(s) — exclude everything else.
+The HPC folder ships a single generic submit template (`template`) in both
+`batch_gpu/` and `batch_cpu/`, plus the Python pipeline template `hpc/template.py`.
+Copy the whole assistant structure across and adapt those templates for the new
+project — there is nothing per-data-type to exclude.
 
 To run a single dataset as a test, just put one entry in the `datasets=()` array
-in the submit script; no separate template file is needed.
+in the submit template and set `--array=0-0`.
 
-### Imaging-only project (most common)
+### Copy the structure
 
 ```bash
 rsync -av \
-  --exclude='scripts/interferometer.py' \
-  --exclude='hpc/batch_gpu/submit_interferometer' \
-  --exclude='hpc/batch_cpu/submit_interferometer' \
   --exclude='dataset/' \
   --exclude='output/' \
   --exclude='__pycache__/' \
@@ -517,25 +512,6 @@ rsync -av \
   <ASSISTANT>/ \
   <NEW_PROJECT>/
 ```
-
-### Interferometer-only project
-
-```bash
-rsync -av \
-  --exclude='scripts/imaging.py' \
-  --exclude='hpc/batch_gpu/submit_imaging' \
-  --exclude='hpc/batch_cpu/submit_imaging' \
-  --exclude='dataset/' \
-  --exclude='output/' \
-  --exclude='__pycache__/' \
-  --exclude='*.pyc' \
-  <ASSISTANT>/ \
-  <NEW_PROJECT>/
-```
-
-### Multiple data types
-
-Omit the exclusions for any script types you need; keep all others.
 
 ### What to always exclude
 
@@ -607,17 +583,13 @@ jobs on the HPC cluster.
 
 ```
 hpc/
-├── batch_gpu/                  # GPU submit scripts + SLURM log dirs
-│   ├── submit_imaging          # SLURM batch script for imaging pipeline
-│   ├── submit_interferometer   # SLURM batch script for interferometer pipeline
-│   ├── submit                  # Generic compatibility submit script kept as a reference
+├── template.py                 # Python pipeline template (HPC arg-parsing interface)
+├── batch_gpu/                  # GPU submit template + SLURM log dirs
+│   ├── template                # generic GPU SLURM batch template (array-capable)
 │   ├── output/                 # SLURM stdout logs (*.out)
 │   └── error/                  # SLURM stderr logs (*.err)
-├── batch_cpu/                  # CPU submit scripts + SLURM log dirs
-│   ├── submit_imaging
-│   ├── submit_interferometer
-│   ├── submit                  # Generic compatibility submit script kept as a reference
-│   ├── template                # Single-dataset CPU template kept as a reference
+├── batch_cpu/                  # CPU submit template + SLURM log dirs
+│   ├── template                # generic CPU SLURM batch template (array-capable)
 │   ├── output/
 │   └── error/
 ├── sync                        # Bidirectional sync script (local ↔ HPC)
@@ -627,12 +599,14 @@ hpc/
 └── __init__.py
 ```
 
-### Submit Scripts — GPU vs CPU
+### Submit Templates — GPU vs CPU
 
-Each script type (`imaging`, `interferometer`) has a submit script in both
-`batch_gpu/` and `batch_cpu/`. The key differences:
+Each batch folder ships a single generic `template` submit script. Both run one
+dataset per SLURM array task and call `python3 $PROJECT_PATH/scripts/$SCRIPT`
+(set `SCRIPT` to your pipeline filename, default `imaging.py`). The key
+differences between the GPU and CPU templates:
 
-| | GPU (`batch_gpu/`) | CPU (`batch_cpu/`) |
+| | GPU (`batch_gpu/template`) | CPU (`batch_cpu/template`) |
 |---|---|---|
 | Partition | `--partition=gpu` | `--partition=cpu` |
 | GPU | `--gres=gpu:1` | none |
@@ -644,12 +618,7 @@ Each script type (`imaging`, `interferometer`) has a submit script in both
 | Echo block | Includes `nvidia-smi` | No `nvidia-smi` |
 | Python args | `--sample --dataset` | `--sample --dataset --use_cpu --number_of_cores=$THREADS` |
 
-The generic `batch_gpu/submit`, `batch_cpu/submit`, and `batch_cpu/template`
-files are kept as compatibility/reference examples for sites that want a
-minimal or custom launcher. For normal use, prefer the typed
-`submit_imaging` / `submit_interferometer` scripts.
-
-**CPU scripts set these environment variables** to pin threads and force CPU-only JAX:
+**The CPU template sets these environment variables** to pin threads and force CPU-only JAX:
 
 ```bash
 export JAX_PLATFORM_NAME=cpu
@@ -663,33 +632,33 @@ export NUMEXPR_NUM_THREADS=$THREADS
 export NPROC=$THREADS
 ```
 
-### Submit Script Structure
+### Submit Template Structure
 
-All submit scripts follow the same pattern:
+Both `template` submit scripts follow the same pattern:
 
 1. **SBATCH headers** — job name, partition, resources, array range, log paths, email
 2. **Environment** — `source $PROJECT_PATH/activate.sh` (must set `PROJECT_PATH` before submitting)
-3. **Sample** — `sample=<sample_name>` matches subdirectory under `dataset/`
-4. **Dataset list** — `datasets=(...)` array, one dataset name per line
-5. **Array task selection** — `dataset="${datasets[$SLURM_ARRAY_TASK_ID]}"`
-6. **Run** — GPU: `python3 $PROJECT_PATH/scripts/<type>.py --sample=$sample --dataset=$dataset`
-   CPU: `python3 $PROJECT_PATH/scripts/<type>.py --sample=$sample --dataset=$dataset --use_cpu --number_of_cores=$THREADS`
+3. **Modeling script** — `SCRIPT=<filename>.py` names the pipeline inside `scripts/` to run
+4. **Sample** — `sample=<sample_name>` matches subdirectory under `dataset/`
+5. **Dataset list** — `datasets=(...)` array, one dataset name per line
+6. **Array task selection** — `dataset="${datasets[$SLURM_ARRAY_TASK_ID]}"`
+7. **Run** — GPU: `python3 $PROJECT_PATH/scripts/$SCRIPT --sample=$sample --dataset=$dataset`
+   CPU: `python3 $PROJECT_PATH/scripts/$SCRIPT --sample=$sample --dataset=$dataset --use_cpu --number_of_cores=$THREADS`
 
-### HPC Script Checklist (after copying)
+### HPC Template Checklist (after copying)
 
-For each script type present in the project (`imaging`, `interferometer`),
-update these fields in both `hpc/batch_gpu/submit_<type>` and
-`hpc/batch_cpu/submit_<type>`:
+Update these fields in both `hpc/batch_gpu/template` and `hpc/batch_cpu/template`:
 
 1. `#SBATCH -J <job_name>` — descriptive name for the SLURM queue
 2. `#SBATCH --array=0-N` — set N = number of datasets minus 1
-3. `sample=<sample_name>` — matches the subdirectory under `dataset/`
-4. `datasets=(...)` — one dataset name per line, in the same order as the array indices
+3. `SCRIPT=<filename>.py` — the pipeline in `scripts/` to run (default `imaging.py`)
+4. `sample=<sample_name>` — matches the subdirectory under `dataset/`
+5. `datasets=(...)` — one dataset name per line, in the same order as the array indices
 
-The GPU submit scripts have `nvidia-smi` in the echo block — leave it in place.
+The GPU template has `nvidia-smi` in the echo block — leave it in place.
 
 To test a single lens, temporarily set `--array=0-0` and put just that lens in
-`datasets=(...)` — no separate template file is needed.
+`datasets=(...)`.
 
 ### `hpc/sync` — Bidirectional Project Sync
 
@@ -728,7 +697,7 @@ The remote path is `$HPC_HOST:$HPC_BASE/$PROJECT_NAME`.
 
 | Command | Description |
 |---|---|
-| `hpc/sync submit [gpu\|cpu] <script>` | Submit a SLURM job (e.g. `submit gpu submit_imaging`) |
+| `hpc/sync submit [gpu\|cpu] <script>` | Submit a SLURM job (e.g. `submit gpu template`) |
 | `hpc/sync push-submit [gpu\|cpu] <script>` | Push code then submit in one step |
 | `hpc/sync jobs` | Show queued/running jobs (`squeue`) |
 | `hpc/sync sacct` | Show job history and exit codes |
@@ -765,13 +734,15 @@ The `hpc/.gitignore` ignores:
 
 ## Scripts and info.json
 
-`scripts/imaging.py` and `scripts/interferometer.py` are **not shipped by
-default** — they are populated by the [`init-slam`](./skills/init-slam.md)
-skill, which copies the right SLaM driver from `autolens_workspace` into
-`scripts/`. Once populated, each script reads all dataset-specific values from
-`info.json` using `info.get(key, default)` (e.g. `pixel_scale`, `n_batch`,
-`mask_radius`, `subhalo_grid_dimensions_arcsec`, `real_space_shape`). Never
-hard-code those values in the script body.
+Pipeline scripts (e.g. `scripts/imaging.py`, `scripts/interferometer.py`) are
+**not shipped by default** — `scripts/` ships empty of pipelines. They are
+populated by the [`init-slam`](./skills/init-slam.md) skill, which copies the
+right SLaM driver from `autolens_workspace` into `scripts/`, or adapted by hand
+from the HPC interface template [`hpc/template.py`](./hpc/template.py). Each
+populated script reads all dataset-specific values from `info.json` using
+`info.get(key, default)` (e.g. `pixel_scale`, `n_batch`, `mask_radius`,
+`subhalo_grid_dimensions_arcsec`, `real_space_shape`). Never hard-code those
+values in the script body.
 
 ---
 
@@ -787,13 +758,13 @@ After creating or copying files, verify and convert if needed:
 
 ```bash
 # Check for DOS line endings
-file hpc/batch_gpu/submit_imaging   # should say "ASCII text", not "CRLF"
+file hpc/batch_gpu/template   # should say "ASCII text", not "CRLF"
 
 # Convert a single file
-dos2unix hpc/batch_gpu/submit_imaging
+dos2unix hpc/batch_gpu/template
 
 # Convert all shell scripts and Python files in the project
-find . -type f \( -name "*.py" -o -name "*.sh" -o -name "submit*" -o -name "template*" \) \
+find . -type f \( -name "*.py" -o -name "*.sh" -o -name "template*" \) \
   | xargs dos2unix
 ```
 
@@ -805,9 +776,9 @@ A "test run" means running a script with `PYAUTOFIT_TEST_MODE=1`, which makes al
 non-linear searches complete almost instantly with a trivial number of samples. Use
 this to verify the full pipeline executes without errors before submitting to the HPC.
 
-> **Prerequisite:** the typed scripts (`scripts/imaging.py`,
-> `scripts/interferometer.py`) are populated by the
-> [`init-slam`](./skills/init-slam.md) skill — run it first.
+> **Prerequisite:** a pipeline script (e.g. `scripts/imaging.py`) must exist —
+> populate it with the [`init-slam`](./skills/init-slam.md) skill, or adapt
+> `hpc/template.py` by hand — run that first.
 
 ```bash
 # Imaging (GPU mode — default)
@@ -821,7 +792,7 @@ PYAUTOFIT_TEST_MODE=1 python3 scripts/interferometer.py --sample=<sample> --data
 ```
 
 `PYAUTOFIT_TEST_MODE=1` (project scripts) and `PYAUTO_TEST_MODE=1` (agent-generated
-scripts in `work/`) are equivalent short-circuit modes — use whichever the script you're
+scripts in `scripts/`) are equivalent short-circuit modes — use whichever the script you're
 running already supports.
 
 Example datasets for each script type live at:
@@ -849,15 +820,18 @@ Use the `PyAuto` venv unless the project requires a different one.
 
 ## Modeling Scripts (`scripts/`)
 
-The `scripts/` folder holds the project's persistent modeling pipelines (one per
-data type: `imaging.py`, `interferometer.py`). A fresh clone ships only
-`scripts/template.py` — the typed scripts are populated by the `init-slam` skill
+The `scripts/` folder holds the project's persistent modeling pipelines (e.g.
+`imaging.py`, `interferometer.py`). A fresh clone ships **no** pipeline scripts —
+a user can do a broad variety of things, so there is no default script to ship.
+Pipelines are populated by the `init-slam` skill
 ([`skills/init-slam.md`](./skills/init-slam.md)), which selects and copies the
-appropriate SLaM pipeline script(s) from `autolens_workspace` into `scripts/`.
-The skill presents categorized options, copies the chosen script(s), and
-creates `scripts/slam_claude.md` with full SLaM context for future AI sessions.
+appropriate SLaM pipeline script(s) from `autolens_workspace` into `scripts/`,
+or adapted by hand from the HPC interface template
+[`hpc/template.py`](./hpc/template.py). The skill presents categorized options,
+copies the chosen script(s), and creates `scripts/slam_claude.md` with full SLaM
+context for future AI sessions.
 
-For quick exploration scripts that don't belong to the pipeline, write to `work/`
+For quick exploration scripts that don't belong to the pipeline, write to `scripts/scratch/`
 instead (gitignored, agent scratch space).
 
 **Live visualization.** When a user runs their first model-fit, offer to enable
@@ -871,18 +845,18 @@ it once when they first set up a search, don't repeat on subsequent fits.
 
 ## Typical New-Workspace Workflow
 
-1. `rsync` from the assistant (with appropriate exclusions)
+1. `rsync` from the assistant (see "Copy the structure" above)
 2. **Run the `init-slam` skill** to select and copy SLaM pipeline script(s) into `scripts/`
 3. Copy or symlink the dataset into `dataset/<sample_name>/`
 4. Verify every lens has an `info.json` with at least `pixel_scale` and `n_batch`
    (or confirm the defaults in the populated `scripts/imaging.py` are correct
    for the instrument)
-5. Update `hpc/batch_gpu/submit_<type>` and `hpc/batch_cpu/submit_<type>` for each
-   chosen script type: job name, `--array`, `sample=`, `datasets=(...)`
+5. Update `hpc/batch_gpu/template` and `hpc/batch_cpu/template`: job name,
+   `--array`, `SCRIPT=`, `sample=`, `datasets=(...)`
 6. **Run `dos2unix` on all shell scripts and Python files** to ensure Unix line endings
 7. **Add a `Project<Name>()` function to `~/.bashrc`** (see Bash Project Alias above)
 8. Test locally on one lens before submitting the full array (requires step 2
-   to have populated the typed script):
+   to have populated the pipeline script):
    ```bash
    python3 scripts/imaging.py --sample=<sample> --dataset=<one_lens>
    ```

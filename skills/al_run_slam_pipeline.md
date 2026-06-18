@@ -65,7 +65,7 @@ below mirrors `slam_start_here.py` and depends on the workspace pipelines being
 available.
 
 ```python
-# work/slam_pipeline.py
+# scripts/slam_pipeline.py
 from autoconf import jax_wrapper
 from pathlib import Path
 import autofit as af

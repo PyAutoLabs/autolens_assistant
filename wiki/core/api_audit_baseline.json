@@ -1,5 +1,5 @@
 {
-  "_comment": "API baseline for autolens_assistant - see work/audit_skill_apis.py and skills/al_audit_skill_apis.md. Regenerate with --write-baseline.",
+  "_comment": "API baseline for autolens_assistant - see autoassistant/audit_skill_apis.py and skills/al_audit_skill_apis.md. Regenerate with --write-baseline.",
   "generated": "2026-05-29",
   "versions": {
     "autoconf": "2026.5.29.4",

@@ -1,6 +1,6 @@
 ---
 name: al_point_source
-description: Fit a strong-lens model to point-source data — multiple-image positions of a lensed quasar / QSO, optionally with flux ratios and time delays. Use when the user has positions (sky coordinates of multiple images) rather than extended-arc imaging, or when imaging is so poor the lensed source is effectively a point. Pairs with `al_time_delay_cosmography` (H0 from delays) and `al_build_imaging_model` (when the same system also has resolved imaging). Writes a runnable Python script in ./work/. **Status: stub — recipe sections need filling in.**
+description: Fit a strong-lens model to point-source data — multiple-image positions of a lensed quasar / QSO, optionally with flux ratios and time delays. Use when the user has positions (sky coordinates of multiple images) rather than extended-arc imaging, or when imaging is so poor the lensed source is effectively a point. Pairs with `al_time_delay_cosmography` (H0 from delays) and `al_build_imaging_model` (when the same system also has resolved imaging). Writes a runnable Python script in scripts/. **Status: stub — recipe sections need filling in.**
 ---
 
 # Fitting point-source lens data
@@ -28,7 +28,7 @@ the equivalent for the user's lens.
 
 ## Branch — quad lens, positions only
 
-The minimum viable point-source fit. Save to `work/point_source.py`.
+The minimum viable point-source fit. Save to `scripts/point_source.py`.
 
 > TODO: recipe. Pattern is `al.PointDataset` + `al.AnalysisPoint` +
 > `model = af.Collection(galaxies=...)` where `source = af.Model(al.Galaxy,

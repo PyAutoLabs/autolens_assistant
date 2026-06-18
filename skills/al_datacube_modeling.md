@@ -1,6 +1,6 @@
 ---
 name: al_datacube_modeling
-description: Fit a strong-lens model to a 3D spectral datacube — typically ALMA / JVLA / NOEMA, where each frequency channel is a 2D visibility plane and the source's spatial morphology can change across channels (rotating disk, outflow, line-emission region). Reuses `al_build_interferometer_model` per channel but ties parameters across the cube. Pairs with `al_adaptive_pixelization` (Delaunay mesh is the standard datacube pixelisation). Writes a runnable Python script in ./work/. **Status: stub.**
+description: Fit a strong-lens model to a 3D spectral datacube — typically ALMA / JVLA / NOEMA, where each frequency channel is a 2D visibility plane and the source's spatial morphology can change across channels (rotating disk, outflow, line-emission region). Reuses `al_build_interferometer_model` per channel but ties parameters across the cube. Pairs with `al_adaptive_pixelization` (Delaunay mesh is the standard datacube pixelisation). Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Datacube modeling — spectral interferometric strong lensing
