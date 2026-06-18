@@ -1,28 +1,32 @@
 # Scripts
 
-This folder contains the lens modeling scripts for this project.
+This folder holds the lens modeling pipelines for this project. A fresh clone ships
+**no** pipeline scripts here — they are generated per project (see below), because a
+user can do a broad variety of things and there is no single "default" script. For
+quick, throwaway exploration scripts, use `work/` (gitignored) instead.
 
 All scripts here follow the **Generated script style** (title + `__Contents__` header,
 `"""__Section__"""` narrative sections, no banner comments) — see the project root
-`CLAUDE.md` "Conventions" and `skills/_style.md` "Generated script style". `template.py`
-below is written in that style; preserve it when copying.
+`CLAUDE.md` "Conventions" and `skills/_style.md` "Generated script style".
 
-## template.py — HPC Interface Template
+## HPC interface template — `hpc/template.py`
 
-`template.py` provides the standard interface between HPC batch scripts and Python
-modeling code. It includes:
+The standard interface between the HPC batch templates and Python modeling code lives at
+[`../hpc/template.py`](../hpc/template.py), paired with `hpc/batch_cpu/template` and
+`hpc/batch_gpu/template`. It includes:
 
 - **`parse_fit_args()`** — parses `--sample`, `--dataset`, `--iterations_per_quick_update`,
   `--number_of_cores`, and `--use_cpu` from the command line
 - **`fit()`** — receives these parameters and sets up config, dataset loading, and
-  `SettingsSearch`. The body contains placeholder comments for the science-specific
-  model, analysis, and search steps
+  `SettingsSearch`. The body raises `NotImplementedError` where the science-specific
+  model, analysis, and search steps go
 - **`__main__`** — wires `parse_fit_args()` into `fit()`
 
-When creating a new script (e.g. `imaging.py`), copy `template.py` and fill in the
-`fit()` body with your science-specific code from `autolens_workspace/scripts/`.
-The HPC interface (`parse_fit_args`, `__main__`, `use_cpu`, `number_of_cores`) must
-be preserved — the CPU and GPU batch scripts depend on it.
+To create a pipeline for HPC array runs, copy `hpc/template.py` into this folder (e.g.
+`scripts/imaging.py`) and fill in the `fit()` body with science code from
+`autolens_workspace/scripts/`. The HPC interface (`parse_fit_args`, `__main__`, `use_cpu`,
+`number_of_cores`) must be preserved — the batch templates run `scripts/$SCRIPT` and depend
+on it.
 
 ## Adding Scripts via /init-slam
 
@@ -30,8 +34,8 @@ Use the `/init-slam` skill to select one or more SLaM pipelines from `autolens_w
 copy them here. The skill will:
 
 1. Show you the available SLaM pipeline options, categorized by data type and model variant
-2. Copy your chosen script(s) to this folder, using `template.py` as the base and placing
-   the science code inside the `fit()` body
+2. Copy your chosen script(s) into this folder (preserving the `hpc/template.py` HPC interface
+   when the script is destined for batch runs), placing the science code inside the `fit()` body
 3. Create `slam_claude.md` — a SLaM reference file that gives future AI sessions full context on
    the SLaM pipeline structure, stage ordering, and design philosophy
 4. Add a banner comment at the top of each script pointing to `slam_claude.md`

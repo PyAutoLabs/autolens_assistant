@@ -280,7 +280,7 @@ submit() {
 
     if [[ -z "$batch_type" || -z "$script_name" ]]; then
         echo "Usage: $(basename "$0") submit [gpu|cpu] <script_name>"
-        echo "  e.g. hpc/sync submit gpu submit_imaging"
+        echo "  e.g. hpc/sync submit gpu template"
         exit 1
     fi
     if [[ "$batch_type" != "gpu" && "$batch_type" != "cpu" ]]; then
@@ -300,7 +300,7 @@ push_submit() {
 
     if [[ -z "$batch_type" || -z "$script_name" ]]; then
         echo "Usage: $(basename "$0") push-submit [gpu|cpu] <script_name>"
-        echo "  e.g. hpc/sync push-submit gpu submit_imaging"
+        echo "  e.g. hpc/sync push-submit gpu template"
         exit 1
     fi
 

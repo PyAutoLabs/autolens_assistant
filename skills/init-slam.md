@@ -60,6 +60,11 @@ Show the user these options grouped by category. Ask them to pick one or more (e
 For each chosen option, copy the source file from `autolens_workspace/scripts/` to `scripts/`
 using the destination filename from the table above.
 
+If the script is destined for HPC array runs, preserve the command-line interface from
+`hpc/template.py` (`parse_fit_args`, `__main__`, `--sample`, `--dataset`, `--use_cpu`,
+`--number_of_cores`) — the `hpc/batch_cpu/template` and `hpc/batch_gpu/template` submit
+scripts run `scripts/$SCRIPT` and depend on it.
+
 Source paths (relative to `autolens_workspace/scripts/`):
 
 ```

@@ -279,8 +279,8 @@ Report a summary:
 - GitHub repo (if created): URL and visibility
 - Remind the user of next steps:
   - Verify `info.json` in each dataset if datasets were copied
-  - Update HPC submit scripts (`hpc/batch_gpu/submit_*`, `hpc/batch_cpu/submit_*`) with job
-    name, `--array` range, `sample=`, and `datasets=(...)`
+  - Update HPC submit templates (`hpc/batch_gpu/template`, `hpc/batch_cpu/template`) with job
+    name, `--array` range, `SCRIPT=`, `sample=`, and `datasets=(...)`
   - Run a test: `PYAUTOFIT_TEST_MODE=1 python3 scripts/<type>.py --sample=<sample> --dataset=<dataset>`
   - Use `/init-slam` if they skipped modeling scripts and want to set up SLaM pipelines later
   - If GitHub repo was created: push changes with `git add -A && git commit -m "..." && git push`
