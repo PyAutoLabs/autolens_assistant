@@ -108,7 +108,7 @@ def _collect_sources(tokens: list[str], cwd: Path) -> tuple[str, list[tuple[str,
         if PYTHON_RE.search(tok):
             interpreter = tok
             saw_python = True
-        elif tok == "-c" and i + 1 < len(tokens):
+        elif saw_python and tok == "-c" and i + 1 < len(tokens):
             snippet = tokens[i + 1]
             if _has_symbol(snippet):
                 sources.append(("code", snippet))

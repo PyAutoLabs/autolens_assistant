@@ -149,6 +149,15 @@ def test_hook_allows_grep_of_pyauto_file(tmp_path):
     assert _decision(proc) is None
 
 
+def test_hook_allows_non_python_count_option_with_pyauto_pattern(tmp_path):
+    script = tmp_path / "grep_count_target.py"
+    script.write_text("aa.AbstractPreloads\n", encoding="utf-8")
+
+    proc = _run_hook(f"grep -c aa.AbstractPreloads {script}")
+
+    assert _decision(proc) is None
+
+
 def test_hook_escape_hatch():
     proc = _run_hook(f"{sys.executable} -c '{STALE_PLOTTER}'", env_extra={"PYAUTO_SKIP_API_GATE": "1"})
     assert _decision(proc) is None
