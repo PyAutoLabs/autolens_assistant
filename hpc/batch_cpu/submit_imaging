@@ -19,7 +19,7 @@
 #   export PROJECT_PATH=/path/to/your/project
 # -------------------------------
 if [ -z "${PROJECT_PATH:-}" ]; then
-    PROJECT_PATH=/mnt/ral/jnightin/autolens_assistant_codex
+    PROJECT_PATH=/path/to/your/project
 fi
 
 source $PROJECT_PATH/activate.sh

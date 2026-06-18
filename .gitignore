@@ -57,3 +57,20 @@ papers/
 
 # Claude Code agent worktrees — ephemeral, machine-local.
 .claude/worktrees/
+
+# Per-clone science journal (wiki/project/). This is each user's own running
+# record — created on demand from the templates, never shipped with the
+# template repo. The templates and README themselves are tracked; the live
+# profile and dated entries are not. See CLAUDE.md Part 1 "First-interaction
+# protocol" and wiki/project/README.md.
+wiki/project/profile.md
+wiki/project/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md
+
+# Per-clone modeling pipelines (scripts/). The template ships only
+# scripts/template.py; the typed pipelines (imaging.py, interferometer.py) and
+# their SLaM context file are generated per clone by the init-slam skill from
+# autolens_workspace, so they are never committed to the template repo. See
+# CLAUDE.md Part 2 "Modeling Scripts" and scripts/CLAUDE.md.
+scripts/imaging.py
+scripts/interferometer.py
+scripts/slam_claude.md
