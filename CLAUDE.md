@@ -111,7 +111,7 @@ exist (the classic symptom: `AttributeError: module 'autolens' has no attribute
 (it only compares version strings + hashes — no Markdown scan):
 
 ```bash
-python work/audit_skill_apis.py --check-version
+python autoassistant/audit_skill_apis.py --check-version
 ```
 
 - **Exit 0 (clean):** the installed stack matches the baseline. This means the *skills and
@@ -123,7 +123,7 @@ python work/audit_skill_apis.py --check-version
   targets. Tell the user plainly — *"your installed autolens (X) doesn't match the version
   this assistant targets (Y); run `pip install -U autolens` (or check out the matching
   workspace tag)"* — **before** generating code. If the drift is intended (the user
-  deliberately upgraded), run `python work/audit_skill_apis.py --scope all` to surface any
+  deliberately upgraded), run `python autoassistant/audit_skill_apis.py --scope all` to surface any
   stale references, fix them, then re-pin with `--write-baseline`. See
   [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md).
 
@@ -156,8 +156,8 @@ re-ground against the live API. Commands with no PyAuto* symbol pay zero cost (f
 You can run the same check by hand on a snippet or file:
 
 ```bash
-python work/audit_skill_apis.py --code "import autolens as al; al.FitImagingPlotter"   # exit 2
-python work/audit_skill_apis.py --file work/my_script.py                                # exit 0/2
+python autoassistant/audit_skill_apis.py --code "import autolens as al; al.FitImagingPlotter"   # exit 2
+python autoassistant/audit_skill_apis.py --file scripts/my_script.py                                # exit 0/2
 ```
 
 When the gate blocks you, **do not guess a replacement** — grep `skills/` for the task
@@ -297,7 +297,7 @@ When the user asks for something a skill already covers:
 1. Read the skill file end-to-end.
 2. Follow its Orient → Ask → Branch → Combine arc (defined in `skills/_style.md`).
 3. Produce Python where the skill calls for it. Agent-generated exploration scripts go to
-   `./work/` (gitignored). **Never write into `output/` or `sources/`**.
+   `scripts/` (committed) or `scripts/scratch/` (gitignored). **Never write into `output/` or `sources/`**.
    Persistent project pipelines belong in `scripts/` and are maintained by the user, not
    replaced wholesale.
 4. If the skill points at a wiki page for context, read that page before writing code.
@@ -376,7 +376,7 @@ wants commits landing directly there.
   import autolens as al
   import autolens.plot as aplt
   ```
-- **Generated script style.** Every `.py` you save (to `work/` or `scripts/`) uses the
+- **Generated script style.** Every `.py` you save (to `scripts/` or `scripts/scratch/`) uses the
   PyAutoLens **workspace** style, not banner comments. The module opens with a single
   docstring — a title underlined with `=`, a short orientation, then a `__Contents__`
   list — and each logical section is introduced by a `"""__Section__"""` narrative
@@ -408,17 +408,15 @@ wants commits landing directly there.
   """
   dataset = al.Imaging.from_fits(...)
   ```
-- **Agent working directory**: `./work/`. Python scripts and Markdown notes
-  there are **committed** alongside the `wiki/project/` entry that describes
-  them — they're the most reusable artefact of a session. Plots go to
-  `./work/plots/<context>/` and data dumps (FITS / npy / pickle / hdf5) to
-  `./work/output/`; both subdirectories are gitignored, as are any top-level
-  `work/*.png|pdf|jpg|fits|npy|pkl|hdf5|h5` files.
+- **Agent working directory**: `scripts/`. Committed Python scripts live in `scripts/`
+  alongside the `wiki/project/` entry that describes them — they're the most reusable
+  artefact of a session. Throwaway plots and data dumps (FITS / npy / pickle / hdf5) go
+  to the gitignored `scripts/scratch/`.
 - **Project working directory** for persistent modeling pipelines: `scripts/` — see Part 2.
 - **Output of `search.fit(...)`**: goes under `./output/<dataset>/modeling/<hash>/` by
   default (per PyAutoFit's own conventions).
 - **Plot output and path announcement.** Skill-generated plots are saved
-  through `aplt.Output(path="work/plots/<context>/", filename=..., format="png")`
+  through `aplt.Output(path="scripts/scratch/<context>/", filename=..., format="png")`
   so they persist on disk. The Python recipe `print(...)`s each plot's
   absolute path. After running the script, the agent **quotes the absolute
   path** of every saved plot and offers *"want me to `open <path>`?"* (macOS
@@ -432,14 +430,14 @@ wants commits landing directly there.
 filesystems, `/mnt/c/...` imports under WSL) override them:
 
 ```bash
-NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python ./work/script.py
+NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python scripts/script.py
 ```
 
 PyAutoFit ships a short-circuit mode that skips non-linear search sampling, for fast
 end-to-end smoke testing:
 
 ```bash
-PYAUTO_TEST_MODE=1 python ./work/script.py
+PYAUTO_TEST_MODE=1 python scripts/script.py
 ```
 
 Use `PYAUTO_TEST_MODE=1` whenever you're verifying a script you wrote runs end-to-end and
@@ -794,7 +792,7 @@ PYAUTOFIT_TEST_MODE=1 python3 scripts/interferometer.py --sample=<sample> --data
 ```
 
 `PYAUTOFIT_TEST_MODE=1` (project scripts) and `PYAUTO_TEST_MODE=1` (agent-generated
-scripts in `work/`) are equivalent short-circuit modes — use whichever the script you're
+scripts in `scripts/`) are equivalent short-circuit modes — use whichever the script you're
 running already supports.
 
 Example datasets for each script type live at:
@@ -833,7 +831,7 @@ or adapted by hand from the HPC interface template
 copies the chosen script(s), and creates `scripts/slam_claude.md` with full SLaM
 context for future AI sessions.
 
-For quick exploration scripts that don't belong to the pipeline, write to `work/`
+For quick exploration scripts that don't belong to the pipeline, write to `scripts/scratch/`
 instead (gitignored, agent scratch space).
 
 **Live visualization.** When a user runs their first model-fit, offer to enable

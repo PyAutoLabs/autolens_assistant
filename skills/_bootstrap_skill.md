@@ -15,7 +15,7 @@ The output of running this skill is:
 - A symlink at `.claude/skills/al_<name>.md` pointing to `../../skills/al_<name>.md`.
 - An updated `skills/README.md` entry.
 - Optionally, one or more new wiki pages the new skill links into.
-- A working `.py` script in `./work/` that demonstrates the new skill on the user's data.
+- A working `.py` script in `scripts/` that demonstrates the new skill on the user's data.
 
 ## Step 1 — confirm scope with the user
 
@@ -111,11 +111,11 @@ Add a one-line entry under the appropriate category in `skills/README.md`.
 ## Step 8 — verify
 
 Write the Python script the new skill recommends — for the user's actual data, in
-`./work/`. Run it with:
+`scripts/`. Run it with:
 
 ```bash
 PYAUTO_TEST_MODE=1 NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib \
-  python work/<script>.py
+  python scripts/<script>.py
 ```
 
 If it doesn't run, fix the skill. Don't ship a skill whose recipe doesn't execute.
@@ -146,5 +146,5 @@ When it runs, tell the user:
 5. Read or draft the matching wiki page(s).
 6. Write `skills/al_<task>.md`.
 7. Add symlink under `.claude/skills/`; add entry to `skills/README.md`.
-8. Generate the user-specific script in `./work/`. Run it with `PYAUTO_TEST_MODE=1`.
+8. Generate the user-specific script in `scripts/`. Run it with `PYAUTO_TEST_MODE=1`.
 9. Report to the user: skill name, script path, new wiki pages, suggested chain.

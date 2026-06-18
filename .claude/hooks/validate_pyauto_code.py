@@ -13,7 +13,7 @@ This hook closes that gap, independent of any version match:
   2. Cheap pre-screen (no import): only proceed if the command runs Python AND a source
      it would execute (a `-c` snippet, or a `.py` file argument on disk) contains a
      PyAuto* alias-rooted symbol. Everything else is a silent allow — zero latency.
-  3. For each flagged source, run `work/audit_skill_apis.py --code/--file` using the SAME
+  3. For each flagged source, run `autoassistant/audit_skill_apis.py --code/--file` using the SAME
      interpreter the command would use, so symbols resolve against the exact stack.
   4. If any symbol does not resolve, DENY the call with the gate's report so the agent
      re-grounds against the live API / skills. Otherwise allow.
@@ -37,7 +37,7 @@ import sys
 from pathlib import Path
 
 # Alias-rooted symbol (`al.`, `aa.`, `aplt.`, `autoarray.` …) or the literal dead
-# kernel_2d module path. Mirrors ALIAS_TO_MODULE in work/audit_skill_apis.py.
+# kernel_2d module path. Mirrors ALIAS_TO_MODULE in autoassistant/audit_skill_apis.py.
 _ALIASES = (
     "aplt",
     "autoconf",
@@ -67,8 +67,8 @@ _SELF_FILES = {
 }
 _SKIP_MARKER = "pyauto-api-gate: skip"
 
-# work/audit_skill_apis.py, resolved relative to this hook (…/.claude/hooks/x.py).
-VALIDATOR = Path(__file__).resolve().parent.parent.parent / "work" / "audit_skill_apis.py"
+# autoassistant/audit_skill_apis.py, resolved relative to this hook (…/.claude/hooks/x.py).
+VALIDATOR = Path(__file__).resolve().parent.parent.parent / "autoassistant" / "audit_skill_apis.py"
 
 
 def _allow() -> None:

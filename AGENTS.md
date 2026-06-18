@@ -98,7 +98,7 @@ surface them when the user asks a science question.
 
 1. Read the skill file end-to-end.
 2. Follow its Orient → Ask → Branch → Combine arc (see `skills/_style.md`).
-3. Produce Python. Save scripts to `./work/` by default — never inside `output/` or
+3. Produce Python. Save scripts to `scripts/` by default — never inside `output/` or
    `sources/`.
 4. Read any wiki pages the skill points at before writing code.
 
@@ -125,23 +125,22 @@ import autolens as al
 import autolens.plot as aplt
 ```
 
-Generated Python scripts and Markdown notes live in `./work/` and are
-**committed**. Plots go to `./work/plots/<context>/` and data dumps to
-`./work/output/`; both subdirectories are gitignored. Search outputs land in
-`./output/` (also gitignored). After a script saves a plot, quote the
-absolute path and offer to `open <path>` (macOS). See `CLAUDE.md` Part 1
-"Conventions" for the full rule.
+Generated Python scripts live in `scripts/` and are **committed**. Throwaway plots
+go to `scripts/scratch/<context>/` and data dumps to `scripts/scratch/`; both are
+gitignored. Search outputs land in `./output/` (also gitignored). After a script
+saves a plot, quote the absolute path and offer to `open <path>` (macOS). See
+`CLAUDE.md` Part 1 "Conventions" for the full rule.
 
 ## Sandbox environments
 
 ```bash
-NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python ./work/script.py
+NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python scripts/script.py
 ```
 
 For fast smoke testing without real sampling:
 
 ```bash
-PYAUTO_TEST_MODE=1 python ./work/script.py
+PYAUTO_TEST_MODE=1 python scripts/script.py
 ```
 
 ## Bulk-edit safety

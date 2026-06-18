@@ -56,7 +56,7 @@ This is the rule that distinguishes the workspace from a tutorial workspace.
 
 - Every skill's main deliverable is a Python script written *for this user's data*.
 - The skill body contains the API recipe inline, in fenced ```python``` blocks.
-- The skill should leave the user with a `.py` file in `./work/` they can re-run and
+- The skill should leave the user with a `.py` file in `scripts/` they can re-run and
   modify themselves.
 - Do **not** just point the user at a pre-existing script in another repo. If you
   reference an example (e.g. inside `autolens_workspace`), say so as a citation but
@@ -64,7 +64,7 @@ This is the rule that distinguishes the workspace from a tutorial workspace.
 
 ## Generated script style
 
-Every Python script the agent saves — whether to `./work/` or `scripts/` — follows the
+Every Python script the agent saves — whether to `scripts/` or `scripts/scratch/` — follows the
 PyAutoLens **workspace** style, not ad-hoc banner comments. It is the same style used by
 every script in `autolens_workspace/scripts/` (canonical example:
 `autolens_workspace:scripts/imaging/start_here.py`), and it exists for two reasons: it
@@ -243,7 +243,7 @@ calibrate depth. Skip this step only when the user has already told you.
 
 - Physics framing (one or two sentences, scaled to the user's depth).
 - The Python recipe — actual code, in a fenced block, that the agent should adapt and
-  save to `./work/`. When the recipe is a full saved script (not a one-off fragment),
+  save to `scripts/`. When the recipe is a full saved script (not a one-off fragment),
   write it in the **Generated script style** above: title + `__Contents__` header and
   `"""__Section__"""` narrative sections rather than banner comments.
 - The wiki page that teaches this in depth, plus the source-code citation
@@ -315,7 +315,7 @@ Skills that produce visualisations save them through the function-style
 1. **Pass `output_path` / `output_filename` / `output_format` directly to
    each plot function.** Every `autolens.plot` `plot_*` and `subplot_*` helper accepts
    these kwargs, e.g. `aplt.subplot_imaging_dataset(dataset=…,
-   output_path="work/plots/<context>/", output_filename=…,
+   output_path="scripts/scratch/<context>/", output_filename=…,
    output_format="png")`. Never rely on interactive display — the user is
    often running the script from a terminal where `plt.show()` flashes and
    vanishes. The `<context>` slug is usually the dataset name; for general
@@ -330,8 +330,8 @@ Skills that produce visualisations save them through the function-style
    nagging. `open` on macOS opens a directory in Finder or a PNG in
    Preview.
 
-The full convention — including `work/plots/` and `work/output/` being
-gitignored while Python in `work/` is committed — is in `CLAUDE.md` Part 1
+The full convention — committed Python lives in `scripts/`; throwaway plots and data
+dumps go to the gitignored `scripts/scratch/` — is in `CLAUDE.md` Part 1
 "Conventions". Skills here are the application of that rule.
 
 ## External resource citation

@@ -4,7 +4,7 @@ This script does the mechanical part of a workspace API-refresh pass:
 
 1. Verifies the PyAuto* stack imports cleanly.
 2. Prints resolved versions for the five core packages.
-3. Runs `work/audit_skill_apis.py` for the requested scope.
+3. Runs `autoassistant/audit_skill_apis.py` for the requested scope.
 
 It does not rewrite any docs. The surrounding skill handles curation.
 """
@@ -40,7 +40,7 @@ def import_versions() -> dict[str, str]:
 
 
 def run_audit(scope: str) -> int:
-    cmd = [sys.executable, str(ROOT / "work" / "audit_skill_apis.py"), "--scope", scope]
+    cmd = [sys.executable, str(ROOT / "autoassistant" / "audit_skill_apis.py"), "--scope", scope]
     print("Running:", " ".join(cmd))
     completed = subprocess.run(cmd, cwd=ROOT, check=False)
     return completed.returncode
@@ -75,7 +75,7 @@ def main() -> int:
     if audit_rc == 0:
         print("Audit clean. No stale symbols found for scope:", args.scope)
     else:
-        print("Audit reported drift. Read the Markdown report under work/audit/.")
+        print("Audit reported drift. Read the Markdown report under autoassistant/audit/.")
 
     return audit_rc
 

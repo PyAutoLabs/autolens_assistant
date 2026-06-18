@@ -12,11 +12,11 @@ interpretation and curates fixes; this script just produces the raw report.
 Usage:
 
     source activate.sh
-    python work/audit_skill_apis.py --scope all   # skills + wiki/core/api + wiki/core/stack
-    python work/audit_skill_apis.py --scope skills
-    python work/audit_skill_apis.py --scope wiki
+    python autoassistant/audit_skill_apis.py --scope all   # skills + wiki/core/api + wiki/core/stack
+    python autoassistant/audit_skill_apis.py --scope skills
+    python autoassistant/audit_skill_apis.py --scope wiki
 
-Report lands at `work/audit/skill_api_audit_<YYYY-MM-DD>.md` by default.
+Report lands at `autoassistant/audit/skill_api_audit_<YYYY-MM-DD>.md` by default.
 """
 
 from __future__ import annotations
@@ -160,8 +160,8 @@ def extract_symbols_code(text: str) -> dict[Symbol, set[str]]:
 
     Unlike `extract_symbols` (which splits Markdown into code/prose), a `.py`
     file is code throughout, so we run the alias regex over the whole text. Used
-    for the `scripts` scope, which audits generated pipelines (`scripts/`,
-    `work/`) where stale symbols like `al.Kernel2D` actually execute.
+    for the `scripts` scope, which audits generated pipelines under `scripts/`
+    where stale symbols like `al.Kernel2D` actually execute.
     """
     out: dict[Symbol, set[str]] = {}
     for m in ALIAS_RE.finditer(text):
@@ -283,15 +283,16 @@ def select_files(root: Path, scope: str) -> list[Path]:
     skills = sorted((root / "skills").glob("*.md"))
     wiki_api = sorted((root / "wiki" / "core" / "api").glob("*.md"))
     wiki_stack = sorted((root / "wiki" / "core" / "stack").glob("*.md"))
-    # Generated pipelines + agent scratch — the .py files where stale symbols
-    # actually execute (e.g. a script written against the old `al.Kernel2D`).
-    # Exclude this repo's own committed tooling: it contains alias-pattern text
-    # (regexes, module-name strings, docstrings) that isn't real API usage.
+    # User pipelines + agent scripts — the .py files where stale symbols actually
+    # execute (e.g. a script written against the old `al.Kernel2D`). Scanned
+    # recursively because scripts/ mirrors autolens_workspace's nested layout.
+    # The assistant's own tooling lives in autoassistant/ (not scanned): it
+    # contains alias-pattern text (regexes, module-name strings, docstrings) that
+    # isn't real API usage.
     tooling = {"audit_skill_apis.py", "refresh_api_docs.py", "test_api_gate.py"}
     scripts = [
         p
-        for p in sorted((root / "scripts").glob("*.py"))
-        + sorted((root / "work").glob("*.py"))
+        for p in sorted((root / "scripts").rglob("*.py"))
         if p.name not in tooling
     ]
     if scope == "skills":
@@ -452,7 +453,7 @@ def compute_baseline() -> dict:
         api_surface[name] = {"hash": _api_hash(mod), "n_symbols": len(names)}
 
     return {
-        "_comment": "API baseline for autolens_assistant - see work/audit_skill_apis.py "
+        "_comment": "API baseline for autolens_assistant - see autoassistant/audit_skill_apis.py "
         "and skills/al_audit_skill_apis.md. Regenerate with --write-baseline.",
         "generated": dt.date.today().isoformat(),
         "versions": versions,
@@ -672,7 +673,7 @@ def main() -> int:
         if args.out
         else (
             root
-            / "work"
+            / "autoassistant"
             / "audit"
             / f"skill_api_audit_{dt.date.today().isoformat()}.md"
         )

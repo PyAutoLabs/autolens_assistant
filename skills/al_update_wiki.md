@@ -125,7 +125,7 @@ Once all in-scope pages are updated:
 
 1. `git diff wiki/` — show the user the rewritten pages.
 2. Run the verification scripts in any skill whose wiki page changed (e.g. if you
-   rewrote `wiki/core/api/searches.md`, run `work/verify_environment.py` plus a smoke test of
+   rewrote `wiki/core/api/searches.md`, run `scripts/verify_environment.py` plus a smoke test of
    `al_run_search`).
 3. Commit either incrementally (one page per commit, per the user's earlier choice) or
    in a single batch (`git commit -m "wiki: refresh against <project>@<short-sha>"`).

@@ -1,6 +1,6 @@
 ---
 name: al_custom_analysis
-description: Subclass `al.AnalysisImaging` / `al.AnalysisInterferometer` / `al.AnalysisPoint` to add a custom likelihood term — kinematic constraints, external priors, joint probes (stellar dynamics + lensing), or any data that isn't natively a pixel grid or visibility set. The subclass overrides `log_likelihood_function(...)` (or a helper called from it). Lighter than `al_custom_profile` (which extends the *model*); this extends the *fit*. Writes a runnable Python script in ./work/. **Status: stub.**
+description: Subclass `al.AnalysisImaging` / `al.AnalysisInterferometer` / `al.AnalysisPoint` to add a custom likelihood term — kinematic constraints, external priors, joint probes (stellar dynamics + lensing), or any data that isn't natively a pixel grid or visibility set. The subclass overrides `log_likelihood_function(...)` (or a helper called from it). Lighter than `al_custom_profile` (which extends the *model*); this extends the *fit*. Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Custom analysis — extending the likelihood

@@ -62,7 +62,7 @@ source /path/to/venv/bin/activate
 export NUMBA_CACHE_DIR=$TMPDIR/numba_cache
 export MPLCONFIGDIR=$TMPDIR/matplotlib
 
-python work/run_fit.py
+python scripts/run_fit.py
 ```
 
 Cache dirs go to `$TMPDIR` so each job gets its own scratch space.
@@ -71,7 +71,7 @@ For per-lens batches:
 
 ```bash
 #SBATCH --array=0-99
-python work/run_fit.py --lens-index=$SLURM_ARRAY_TASK_ID
+python scripts/run_fit.py --lens-index=$SLURM_ARRAY_TASK_ID
 ```
 
 The workspace `scripts/guides/hpc/batch/` folder has fuller templates.

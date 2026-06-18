@@ -23,8 +23,8 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parent.parent
-VALIDATOR = ROOT / "work" / "audit_skill_apis.py"
+ROOT = Path(__file__).resolve().parents[2]
+VALIDATOR = ROOT / "autoassistant" / "audit_skill_apis.py"
 HOOK = ROOT / ".claude" / "hooks" / "validate_pyauto_code.py"
 
 GOOD = "import autolens.plot as aplt; aplt.subplot_fit_imaging(fit=fit)"

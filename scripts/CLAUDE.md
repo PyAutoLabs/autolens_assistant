@@ -3,7 +3,7 @@
 This folder holds the lens modeling pipelines for this project. A fresh clone ships
 **no** pipeline scripts here — they are generated per project (see below), because a
 user can do a broad variety of things and there is no single "default" script. For
-quick, throwaway exploration scripts, use `work/` (gitignored) instead.
+quick, throwaway exploration scripts, use `scripts/scratch/` (gitignored) instead.
 
 All scripts here follow the **Generated script style** (title + `__Contents__` header,
 `"""__Section__"""` narrative sections, no banner comments) — see the project root

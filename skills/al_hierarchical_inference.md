@@ -1,6 +1,6 @@
 ---
 name: al_hierarchical_inference
-description: Fit a population-level (hierarchical) model across many strong lenses — shared cosmology, shared mass-model slope distribution, or any parameter linked across systems. Implemented via PyAutoFit's graphical-model framework, including expectation propagation for samples that don't fit in one joint fit. Use when the question is "what does the *population* tell me?" rather than "what does this *one* lens look like?" Pairs with `al_aggregator_bulk_analysis` (operating on the per-lens fits this skill consumes). Writes a runnable Python script in ./work/. **Status: stub.**
+description: Fit a population-level (hierarchical) model across many strong lenses — shared cosmology, shared mass-model slope distribution, or any parameter linked across systems. Implemented via PyAutoFit's graphical-model framework, including expectation propagation for samples that don't fit in one joint fit. Use when the question is "what does the *population* tell me?" rather than "what does this *one* lens look like?" Pairs with `al_aggregator_bulk_analysis` (operating on the per-lens fits this skill consumes). Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Hierarchical / graphical inference across a lens sample

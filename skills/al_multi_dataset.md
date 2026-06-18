@@ -1,6 +1,6 @@
 ---
 name: al_multi_dataset
-description: Fit a strong lens to multiple datasets jointly — multi-band imaging (same target, different filters), joint imaging + interferometer, time-series, or any combination where one lens is observed by multiple instruments. Supports wavelength-dependent source morphologies, dataset-level astrometric offsets, and shared/independent parameters between datasets. Pairs with `al_hierarchical_inference` (when datasets are independent lenses, not independent observations of the same lens). Writes a runnable Python script in ./work/. **Status: stub.**
+description: Fit a strong lens to multiple datasets jointly — multi-band imaging (same target, different filters), joint imaging + interferometer, time-series, or any combination where one lens is observed by multiple instruments. Supports wavelength-dependent source morphologies, dataset-level astrometric offsets, and shared/independent parameters between datasets. Pairs with `al_hierarchical_inference` (when datasets are independent lenses, not independent observations of the same lens). Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Multi-dataset joint fitting

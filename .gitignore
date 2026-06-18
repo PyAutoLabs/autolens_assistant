@@ -21,21 +21,13 @@ hpc/sync_jump.conf
 output/
 failed/
 
-# Agent working directory — Python scripts and Markdown notes get committed;
-# plot outputs and data dumps do not. Convention: skill-generated plots land
-# in `work/plots/<context>/`; FITS / numpy / pickle dumps in `work/output/`.
-work/plots/
-work/output/
-work/audit/
-work/*.png
-work/*.pdf
-work/*.jpg
-work/*.jpeg
-work/*.fits
-work/*.npy
-work/*.pkl
-work/*.hdf5
-work/*.h5
+# Agent scratch — throwaway plots and data dumps from exploration. Committed
+# user/agent Python lives in scripts/ (notebook-convertible); only this scratch
+# area is ignored. Persistent fit results go to output/ (above).
+scripts/scratch/
+
+# Assistant internals (autoassistant/) — generated API-audit reports.
+autoassistant/audit/
 
 # Sandbox caches
 .numba_cache/

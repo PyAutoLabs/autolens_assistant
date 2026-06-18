@@ -51,7 +51,7 @@ env creates noise, not signal.
 The helper script below runs the same preflight and then launches the API audit:
 
 ```bash
-python work/refresh_api_docs.py --scope all
+python autoassistant/refresh_api_docs.py --scope all
 ```
 
 That script is not the whole job. It gives you a repeatable starting point and a report
@@ -63,10 +63,10 @@ Run the symbol-resolution pass first. This tells you where references inside ski
 the API-focused wiki no longer resolve against the installed stack.
 
 ```bash
-python work/audit_skill_apis.py --scope all
+python autoassistant/audit_skill_apis.py --scope all
 ```
 
-Read the report under `work/audit/`. For each miss:
+Read the report under `autoassistant/audit/`. For each miss:
 
 - Open the cited skill or wiki file in context.
 - Confirm the suggested replacement against installed code or the relevant source repo.
@@ -112,11 +112,11 @@ skills directly:
 - update cross-links if the underlying wiki page moved or split
 
 When a recipe change is more than a symbol rename, write or update a concrete script in
-`./work/` and run it. For this skill, the default helper is:
+`scripts/` and run it. For this skill, the default helper is:
 
 ```bash
 PYAUTO_TEST_MODE=1 NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib \
-  python work/refresh_api_docs.py --scope all
+  python autoassistant/refresh_api_docs.py --scope all
 ```
 
 That verifies imports, reruns the audit, and exits non-zero if symbol drift remains.
@@ -128,7 +128,7 @@ script that skill would generate.
 A full refresh pass is complete when all four are true:
 
 - the PyAuto* stack imports in the target environment
-- `work/audit_skill_apis.py --scope <scope>` reports zero misses
+- `autoassistant/audit_skill_apis.py --scope <scope>` reports zero misses
 - every touched wiki page has either an updated `pinned_commit` or an explicit decision
   that the source diff was cosmetic
 - any materially changed skill recipe has been smoke-tested with `PYAUTO_TEST_MODE=1`
@@ -154,10 +154,10 @@ Then commit on the cadence they chose.
 
 1. Confirm scope, reference point, and whether this is report-only or fix-and-commit.
 2. `source activate.sh`; verify all five PyAuto* libraries import.
-3. Run `python work/refresh_api_docs.py --scope <scope>` to do preflight and launch the audit.
+3. Run `python autoassistant/refresh_api_docs.py --scope <scope>` to do preflight and launch the audit.
 4. Read the audit report and fix symbol drift first.
 5. For wiki pages in scope, diff each page's pinned sources against the target repo HEAD and rewrite only changed sections.
 6. Sweep affected `skills/*.md` recipes and source citations.
-7. Re-run `python work/audit_skill_apis.py --scope <scope>` until it reports zero misses.
+7. Re-run `python autoassistant/audit_skill_apis.py --scope <scope>` until it reports zero misses.
 8. Smoke-test any materially changed recipes with `PYAUTO_TEST_MODE=1`.
 9. Show the grouped diff, then commit on the user's chosen cadence.

@@ -1,6 +1,6 @@
 ---
 name: al_audit_skill_apis
-description: Verify every PyAuto* API symbol cited in skills/, wiki/core/api+stack/, and generated scripts (scripts/ + work/) resolves in the currently installed stack. Reports stale references (renamed, moved, or removed) with suggested replacements drawn from string-similarity and a cross-module search. Also owns the API version baseline (`wiki/core/api_audit_baseline.json`) that pins the workspace to an autolens version: `--write-baseline` records the installed versions + public-API-surface hash, and `--check-version` (the cheap session-start drift-check) flags when the installed stack has moved. Pairs with `al_update_wiki` (which detects prose drift via pinned source commits) — this skill closes the complementary gap that skills have no pinned commits and that wiki pages can name symbols that no longer exist. Run when a user reports an API error, after a PyAuto* upgrade, or on a manual cadence; the helper script `work/audit_skill_apis.py` does the mechanical pass and this skill drives interpretation and curates fixes.
+description: Verify every PyAuto* API symbol cited in skills/, wiki/core/api+stack/, and generated scripts (scripts/) resolves in the currently installed stack. Reports stale references (renamed, moved, or removed) with suggested replacements drawn from string-similarity and a cross-module search. Also owns the API version baseline (`wiki/core/api_audit_baseline.json`) that pins the workspace to an autolens version: `--write-baseline` records the installed versions + public-API-surface hash, and `--check-version` (the cheap session-start drift-check) flags when the installed stack has moved. Pairs with `al_update_wiki` (which detects prose drift via pinned source commits) — this skill closes the complementary gap that skills have no pinned commits and that wiki pages can name symbols that no longer exist. Run when a user reports an API error, after a PyAuto* upgrade, or on a manual cadence; the helper script `autoassistant/audit_skill_apis.py` does the mechanical pass and this skill drives interpretation and curates fixes.
 ---
 
 # Auditing skill + wiki API references against the installed stack
@@ -13,7 +13,7 @@ import the symbols those pages name. And skills have no pinned commits at all.
 
 This skill is the missing check: import the libraries, walk every cited symbol with
 `getattr`, and surface the ones that don't resolve. The mechanical pass is in
-`work/audit_skill_apis.py`; the skill is the curated agent task on top of it.
+`autoassistant/audit_skill_apis.py`; the skill is the curated agent task on top of it.
 
 Like `al_update_wiki`, the philosophy is **curate, don't auto-rewrite**. The script
 produces a report; the agent reads it, proposes fixes per file with the user, and edits
@@ -50,17 +50,17 @@ half-installed stack — it produces a flood of false-positive `import_failed` r
 ### 2. Run the audit script
 
 ```bash
-python work/audit_skill_apis.py --scope all
+python autoassistant/audit_skill_apis.py --scope all
 ```
 
 Use `--scope skills`, `--scope wiki`, or `--scope scripts` to narrow; `--scope all`
-(default) covers skills + wiki/core/api+stack + generated `scripts/`/`work/` `.py` files.
+(default) covers skills + wiki/core/api+stack + generated `scripts/` `.py` files.
 The **scripts scope** is what catches stale symbols in generated pipelines and exploration
 scripts — the place an old removed PyAutoLens symbol actually executes — and it skips this repo's
 own committed tooling (`audit_skill_apis.py`, `refresh_api_docs.py`). The report lands at
-`work/audit/skill_api_audit_<YYYY-MM-DD>.md` and is **gitignored** — only the script is
+`autoassistant/audit/skill_api_audit_<YYYY-MM-DD>.md` and is **gitignored** — only the script is
 committed. Exit code is non-zero when the report contains misses; you can chain
-`python work/audit_skill_apis.py && echo clean || echo drift` in shell loops.
+`python autoassistant/audit_skill_apis.py && echo clean || echo drift` in shell loops.
 
 ### 3. Version baseline + drift-check
 
@@ -71,10 +71,10 @@ it:
 ```bash
 # Cheap drift-check — compares the installed stack to the committed baseline.
 # No Markdown scan; safe to run at session start (CLAUDE.md First-interaction protocol).
-python work/audit_skill_apis.py --check-version
+python autoassistant/audit_skill_apis.py --check-version
 
 # Re-pin: snapshot the installed stack into the baseline after a deliberate, audited upgrade.
-python work/audit_skill_apis.py --write-baseline
+python autoassistant/audit_skill_apis.py --write-baseline
 ```
 
 The workflow is: `--check-version` flags that the installed autolens moved → run the full
@@ -153,7 +153,7 @@ rewrites here.
 ### 4. Re-run the audit; expect the row to disappear
 
 ```bash
-python work/audit_skill_apis.py --scope all
+python autoassistant/audit_skill_apis.py --scope all
 ```
 
 If the row is still there, the edit didn't land where you thought. If new rows
@@ -174,7 +174,7 @@ was rewritten:
 
 ```bash
 PYAUTO_TEST_MODE=1 NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib \
-  python work/<the_script_the_skill_produces>.py
+  python scripts/<the_script_the_skill_produces>.py
 ```
 
 A re-run with zero misses + a successful smoke test is the signal the audit is
@@ -193,15 +193,15 @@ complete.
 
 1. Confirm scope (skills / wiki / scripts / all) and whether to apply fixes now.
 2. `source activate.sh`; verify all five PyAuto\* libraries import.
-3. `python work/audit_skill_apis.py --check-version` — is the installed stack still on the
+3. `python autoassistant/audit_skill_apis.py --check-version` — is the installed stack still on the
    pinned baseline? If it drifted, that's likely *why* you're here.
-4. `python work/audit_skill_apis.py --scope <scope>`.
-5. Read the report in `work/audit/`.
+4. `python autoassistant/audit_skill_apis.py --scope <scope>`.
+5. Read the report in `autoassistant/audit/`.
 6. For each miss: read the file, confirm the replacement against the installed source,
    edit, re-run the audit to verify.
 7. Hand off any whole-section wiki rewrites to `al_update_wiki`.
 8. Once the audit is clean against a deliberately upgraded stack, re-pin:
-   `python work/audit_skill_apis.py --write-baseline` (commit the updated
+   `python autoassistant/audit_skill_apis.py --write-baseline` (commit the updated
    `wiki/core/api_audit_baseline.json`).
 7. Smoke-test affected scripts with `PYAUTO_TEST_MODE=1`.
 8. Commit per the cadence the user picked (one file per commit, or batched).

@@ -1,6 +1,6 @@
 ---
 name: al_sensitivity_mapping
-description: Map the substructure-detection sensitivity of a strong lens by injecting synthetic subhaloes into simulated datasets matched to the user's data, fitting each with and without a subhalo, and measuring the Bayesian-evidence gain. Produces a (y, x, mass) map of "what could you have detected?" Calibrates non-detections from `al_subhalo_detect` and constrains the subhalo mass function. Writes a runnable Python script in ./work/. **Status: stub.**
+description: Map the substructure-detection sensitivity of a strong lens by injecting synthetic subhaloes into simulated datasets matched to the user's data, fitting each with and without a subhalo, and measuring the Bayesian-evidence gain. Produces a (y, x, mass) map of "what could you have detected?" Calibrates non-detections from `al_subhalo_detect` and constrains the subhalo mass function. Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Sensitivity mapping for substructure

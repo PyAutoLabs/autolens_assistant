@@ -1,6 +1,6 @@
 ---
 name: al_weak_lensing
-description: Fit a shear catalogue with PyAutoLens's weak-lensing module — `al.WeakDataset` + `al.FitWeak`. Use when the observable is a per-source shear estimate (γ1, γ2) at a known sky position, not an extended-arc image. Lighter than strong lensing: no PSF, no inversion, no positions likelihood — just a residual model in shear space. Complements strong-lensing fits when the same cluster has both regimes. Writes a runnable Python script in ./work/. **Status: stub.**
+description: Fit a shear catalogue with PyAutoLens's weak-lensing module — `al.WeakDataset` + `al.FitWeak`. Use when the observable is a per-source shear estimate (γ1, γ2) at a known sky position, not an extended-arc image. Lighter than strong lensing: no PSF, no inversion, no positions likelihood — just a residual model in shear space. Complements strong-lensing fits when the same cluster has both regimes. Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Weak lensing — shear catalogue fits

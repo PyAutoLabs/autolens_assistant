@@ -1,6 +1,6 @@
 ---
 name: al_subhalo_detect
-description: Detect (or rule out) dark-matter subhaloes in a strong lens via Bayesian model comparison. Compares a base fit (smooth lens mass) against fits with an added perturbing subhalo at a grid of (y, x, mass) positions; the Bayesian evidence ratio is the detection statistic. Requires a converged base fit, typically with a pixelised source (subhalo signatures appear as small residuals only a flexible source can reveal). Pairs with `al_sensitivity_mapping` (what mass could you have detected?). Writes a runnable Python script in ./work/. **Status: stub.**
+description: Detect (or rule out) dark-matter subhaloes in a strong lens via Bayesian model comparison. Compares a base fit (smooth lens mass) against fits with an added perturbing subhalo at a grid of (y, x, mass) positions; the Bayesian evidence ratio is the detection statistic. Requires a converged base fit, typically with a pixelised source (subhalo signatures appear as small residuals only a flexible source can reveal). Pairs with `al_sensitivity_mapping` (what mass could you have detected?). Writes a runnable Python script in scripts/. **Status: stub.**
 ---
 
 # Subhalo detection in strong lenses

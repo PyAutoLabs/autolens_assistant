@@ -41,7 +41,7 @@ PyAutoLens (and the workspace) honour `PYAUTO_TEST_MODE` to short-circuit
 non-linear sampling for fast end-to-end script verification:
 
 ```bash
-PYAUTO_TEST_MODE=1 python work/your_script.py
+PYAUTO_TEST_MODE=1 python scripts/your_script.py
 ```
 
 In test mode 1, the search returns after a small number of likelihood evaluations,
@@ -57,7 +57,7 @@ PYAUTO_TEST_MODE=2 \
   PYAUTO_SKIP_CHECKS=1 \
   PYAUTO_SMALL_DATASETS=1 \
   PYAUTO_FAST_PLOTS=1 \
-  python work/your_script.py
+  python scripts/your_script.py
 ```
 
 Flags:
