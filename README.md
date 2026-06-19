@@ -53,31 +53,48 @@ in the repo containing `teacher`, `assistant`, or `agent`.
 - **Assistant** — *do the workflow.* `Assistant mode: set up a project for this dataset and write the first script.`
 - **Agent** — *run the project.* `Agent mode: model this lens end-to-end and track progress across sessions.`
 
-## New User Example Prompt: Model JWST Imaging of a Strong Lens
+## Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
 
-A good starting point if you're new to PyAutoLens **and** less familiar with
-strong lensing. It points the assistant at the bundled JWST data and asks
-for a guided source-reconstruction walkthrough:
+A good first session if you're new to PyAutoLens and want to learn the modelling
+workflow end-to-end on data you generate yourself. Working from a simulation keeps
+things simple, the data is clean, you know the true answer, and there's nothing to
+inspect, so the focus stays on understanding each step.
 
 ```
 Teacher mode.
 
-The folder dataset/imaging/cosmos_web_ring contains JWST imaging of a real
-strong lens.
+I'm new to PyAutoLens and want to learn the basic workflow end-to-end. Can you
+walk me through it on a simple simulated example: simulate Euclid-like imaging of
+a simple strong lens (an isothermal mass with a Sersic source), then fit that
+simulated data and recover the lens model.
 
-I want to work out what the source galaxy looked like before it was lensed
-— how do I do this? Can you help me get started? I'm not too familiar with
-how strong lens modelling works, so explain to me what you're doing as we
-go.
+Explain what each step is doing and why as we go: composing the lens and source
+model, running the simulation, choosing the mask, the non-linear search, and how
+to read the result. So I come away understanding the workflow, not just the
+commands.
 ```
 
-## Experienced Lenser Example Prompt: Detect a Dark Matter Subhalo in SLACS0946+1006
+## Example Prompt 2 using Assistant Mode: Model JWST Imaging of a Strong Lens
+
+For users comfortable with strong lensing who just want the modelling done. It points
+the assistant at the bundled JWST data and asks for a pixelized source reconstruction,
+with concise output rather than a step-by-step tutorial.
+
+```
+Assistant mode.
+
+Model the JWST imaging in dataset/imaging/cosmos_web_ring: perform data preparaton steps, 
+set up a sensible lens light and mass model with a pixelized source reconstruction, run 
+the fit, and show me the reconstructed source and the fit residuals.
+```
+
+## Example Prompt 3 using Agent Mode: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
 
 For users already comfortable with strong lens modelling who want to see
-how far the assistant can be pushed. SLACS0946+1006 has a famous subhalo
-detection that is argued to be unusually concentrated; this prompt asks
-the assistant to reproduce that detection and quantify the concentration
-via Bayesian model comparison.
+how far the assistant can be pushed in **agent mode**. SLACS0946+1006 
+has a famous subhalo  detection that is argued to be unusually concentrated; 
+this prompt asks the assistant to reproduce that detection and quantify the 
+concentration via Bayesian model comparison.
 
 Depending on your available hardware, this analysis may take hours. The
 last sentence of the prompt asks the agent to estimate the run time and,
