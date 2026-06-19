@@ -33,8 +33,8 @@ configured) via symlinks; the canonical files live here.
 
 ### Setup & maintenance
 
-- [`al_setup_environment.md`](./al_setup_environment.md) — install the PyAuto\* stack
-  (pip or editable-clone), configure sandbox cache directories, verify imports.
+- [`al_setup_environment.md`](./al_setup_environment.md) — detect absent or broken PyAuto\*
+  environments, install via pip or editable clones when needed, configure caches, verify imports.
 - [`al_update_wiki.md`](./al_update_wiki.md) — refresh `wiki/core/` pages whose pinned
   source commits have moved; surface new public APIs for review.
 - [`al_audit_skill_apis.md`](./al_audit_skill_apis.md) — verify every PyAuto\* symbol

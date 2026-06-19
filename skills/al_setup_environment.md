@@ -1,19 +1,41 @@
 ---
 name: al_setup_environment
-description: Install and configure a Python environment for the PyAuto* lensing stack. Two modes — pip install (fast, for users who just want to run code) or editable clone of all five source repos (for users who want to read, modify, or contribute to the libraries). Sets sandbox cache env vars on restricted filesystems and verifies the install by importing autolens. Use this skill once per machine before invoking any other lensing skill.
+description: Detect, install, and configure a Python environment for the PyAuto* lensing stack. First checks the active interpreter and distinguishes an absent, broken, or ready stack; then offers pip in a venv (the normal user path) or editable clones (contributors). Sets sandbox cache env vars and verifies imports. Use when PyAutoLens is unavailable, imports fail, or a new machine needs setup.
 ---
 
 # Setting up an environment for the PyAuto\* stack
 
 This skill installs the libraries the workspace targets — PyAutoConf, PyAutoArray, PyAutoFit,
 PyAutoGalaxy, PyAutoLens — and prepares the sandbox so the rest of the skills will run.
-The user picks one of two install modes: pip (read-only, fastest path to "import autolens
-works") or editable-clone (source-level access, slower but lets you read and modify the
-libraries).
+The user picks one of two install modes only if the active environment is not already usable:
+pip (fastest path to "import autolens works") or editable-clone (source-level access, slower
+but lets you read and modify the libraries). Never install automatically without confirmation.
+
+## Orient — inspect before installing
+
+If the project has an `activate.sh`, source it first. Then run the cheap structured preflight:
+
+```bash
+python autoassistant/audit_skill_apis.py --check-install
+```
+
+It reports the active Python executable and environment prefix, installed versions, the loaded
+`autolens` path, and a best-effort install type. Its exit codes are:
+
+- `0` — all five PyAuto\* roots import; do not reinstall.
+- `2` — packages are absent from this interpreter. The user may only need to activate the right
+  environment, so check that before creating another one.
+- `3` — packages were found but imports failed. Fix the reported dependency, cache, or partial
+  installation error rather than treating it as ordinary version drift.
+
+The probe supplies writable temporary defaults for numba and matplotlib caches when the user has
+not configured them, preventing a read-only cache from being misreported as a missing install.
+If the install is ready, continue to the user's actual lensing task. Only continue below when
+setup or repair is genuinely required.
 
 ## Ask
 
-Before touching anything, confirm with the user:
+Before changing the environment, confirm with the user:
 
 - Are you running on macOS, Linux, or Windows / WSL?
 - Do you already have a Python environment manager (venv, conda, mamba)? If yes, will
@@ -21,7 +43,10 @@ Before touching anything, confirm with the user:
 - Do you need to *read or modify* the PyAuto\* source while you work (editable clone
   mode), or just *use* the libraries (pip mode)?
 
-If they pick pip, branch into "Pip install". If they want editable clones, branch into
+Recommend a venv plus pip for most users. If they already use conda or mamba, it is fine to
+create/activate the environment with that tool and then install PyAutoLens with pip inside it;
+do not introduce conda solely for this package. Use editable clones only when they need source
+access. If they pick pip, branch into "Pip install". If they want editable clones, branch into
 "Editable clone of all five repos".
 
 For background on what each library does, point at

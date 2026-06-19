@@ -12,6 +12,7 @@ interpretation and curates fixes; this script just produces the raw report.
 Usage:
 
     source activate.sh
+    python autoassistant/audit_skill_apis.py --check-install
     python autoassistant/audit_skill_apis.py --scope all   # skills + wiki/core/api + wiki/core/stack
     python autoassistant/audit_skill_apis.py --scope skills
     python autoassistant/audit_skill_apis.py --scope wiki
@@ -26,9 +27,13 @@ import datetime as dt
 import difflib
 import hashlib
 import importlib
+import importlib.metadata
+import importlib.util
 import json
+import os
 import re
 import sys
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
@@ -62,6 +67,10 @@ VERSIONED_MODULES: tuple[str, ...] = (
     "autogalaxy",
     "autolens",
 )
+
+INSTALL_READY = 0
+INSTALL_NOT_FOUND = 2
+INSTALL_IMPORT_FAILED = 3
 
 # ---------------------------------------------------------------------------
 # Aliases. Standardised in AGENTS.md "Conventions". Order is
@@ -109,6 +118,19 @@ class Resolution:
     parent_repr: str = ""
     candidates: list[str] = field(default_factory=list)
     error: str = ""
+
+
+@dataclass
+class InstallationCheck:
+    status: str  # "ready" | "not_installed" | "import_failed"
+    python: str
+    prefix: str
+    versions: dict[str, str] = field(default_factory=dict)
+    locations: dict[str, str] = field(default_factory=dict)
+    missing: list[str] = field(default_factory=list)
+    errors: dict[str, str] = field(default_factory=dict)
+    install_kind: str = "unknown"
+    cache_defaults: dict[str, str] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -291,9 +313,7 @@ def select_files(root: Path, scope: str) -> list[Path]:
     # isn't real API usage.
     tooling = {"audit_skill_apis.py", "refresh_api_docs.py", "test_api_gate.py"}
     scripts = [
-        p
-        for p in sorted((root / "scripts").rglob("*.py"))
-        if p.name not in tooling
+        p for p in sorted((root / "scripts").rglob("*.py")) if p.name not in tooling
     ]
     if scope == "skills":
         return skills
@@ -413,6 +433,139 @@ def gather_versions() -> dict[str, str]:
         ver = getattr(mod, "__version__", "(no __version__)")
         out[name] = str(ver)
     return out
+
+
+# ---------------------------------------------------------------------------
+# Installation preflight
+# ---------------------------------------------------------------------------
+def _prepare_import_caches() -> dict[str, str]:
+    """Give import-time caches writable defaults without overriding user choices."""
+    defaults = {
+        "NUMBA_CACHE_DIR": str(Path(tempfile.gettempdir()) / "numba_cache"),
+        "MPLCONFIGDIR": str(Path(tempfile.gettempdir()) / "matplotlib"),
+    }
+    applied: dict[str, str] = {}
+    for name, value in defaults.items():
+        if name not in os.environ:
+            Path(value).mkdir(parents=True, exist_ok=True)
+            os.environ[name] = value
+            applied[name] = value
+    return applied
+
+
+def _installation_kind(module_locations: dict[str, str]) -> str:
+    """Best-effort provenance; credentials and environment managers stay external."""
+    try:
+        distribution = importlib.metadata.distribution("autolens")
+        direct_url_text = distribution.read_text("direct_url.json")
+        if direct_url_text:
+            direct_url = json.loads(direct_url_text)
+            if direct_url.get("dir_info", {}).get("editable"):
+                return "editable install"
+            if str(direct_url.get("url", "")).startswith("file:"):
+                return "local source install"
+    except (importlib.metadata.PackageNotFoundError, json.JSONDecodeError):
+        pass
+
+    location = module_locations.get("autolens", "")
+    if "site-packages" in location or "dist-packages" in location:
+        return "packaged install (pip/conda provenance not distinguishable)"
+    if location:
+        return "source checkout or PYTHONPATH install"
+    return "unknown"
+
+
+def inspect_installation() -> InstallationCheck:
+    """Inspect the active interpreter without assuming the PyAuto* stack works."""
+    cache_defaults = _prepare_import_caches()
+    versions: dict[str, str] = {}
+    locations: dict[str, str] = {}
+    missing: list[str] = []
+    errors: dict[str, str] = {}
+
+    for name in VERSIONED_MODULES:
+        try:
+            spec = importlib.util.find_spec(name)
+        except (ImportError, AttributeError, ValueError):
+            spec = None
+        if spec is None:
+            missing.append(name)
+            continue
+        try:
+            module = importlib.import_module(name)
+        except Exception as error:  # noqa: BLE001
+            errors[name] = f"{type(error).__name__}: {error}"
+            continue
+        versions[name] = str(getattr(module, "__version__", "(no __version__)"))
+        module_file = getattr(module, "__file__", None)
+        if module_file:
+            locations[name] = str(Path(module_file).resolve())
+
+    if errors:
+        status = "import_failed"
+    elif missing:
+        status = "not_installed"
+    else:
+        status = "ready"
+
+    return InstallationCheck(
+        status=status,
+        python=sys.executable,
+        prefix=sys.prefix,
+        versions=versions,
+        locations=locations,
+        missing=missing,
+        errors=errors,
+        install_kind=_installation_kind(locations),
+        cache_defaults=cache_defaults,
+    )
+
+
+def render_installation_check(check: InstallationCheck) -> str:
+    lines = [
+        f"[install] {check.status.replace('_', ' ').upper()}",
+        f"  python: {check.python}",
+        f"  environment: {check.prefix}",
+    ]
+    if check.versions:
+        versions = ", ".join(
+            f"{name}={version}" for name, version in check.versions.items()
+        )
+        lines.append(f"  versions: {versions}")
+    if check.locations.get("autolens"):
+        lines.append(f"  autolens: {check.locations['autolens']}")
+        lines.append(f"  install type: {check.install_kind}")
+    if check.missing:
+        lines.append(f"  missing from this interpreter: {', '.join(check.missing)}")
+    for name, error in check.errors.items():
+        lines.append(f"  {name} import failed: {error}")
+    if check.cache_defaults:
+        defaults = ", ".join(
+            f"{name}={value}" for name, value in check.cache_defaults.items()
+        )
+        lines.append(f"  temporary cache defaults: {defaults}")
+
+    if check.status != "ready":
+        lines.extend(
+            [
+                "  Activate the project's environment (`source activate.sh`) if it exists.",
+                "  Otherwise use `skills/al_setup_environment.md`; do not install into an",
+                "  unrelated system Python environment.",
+            ]
+        )
+    return "\n".join(lines)
+
+
+def check_installation(*, verbose_ready: bool = True) -> int:
+    check = inspect_installation()
+    if check.status != "ready" or verbose_ready:
+        stream = sys.stdout if check.status == "ready" else sys.stderr
+        print(render_installation_check(check), file=stream)
+    return {
+        "ready": INSTALL_READY,
+        "not_installed": INSTALL_NOT_FOUND,
+        "import_failed": INSTALL_IMPORT_FAILED,
+    }[check.status]
 
 
 # ---------------------------------------------------------------------------
@@ -560,7 +713,9 @@ def validate_source(text: str) -> tuple[int, list[str]]:
         if res.candidates:
             hint = "closest live names: " + ", ".join(res.candidates) + " (verify)"
         else:
-            hint = "no close match — ground against skills/ or `dir()` of the live module"
+            hint = (
+                "no close match — ground against skills/ or `dir()` of the live module"
+            )
         lines.append(f"STALE  {sym.text}  —  {status}; {hint}")
     return n_stale, lines
 
@@ -603,6 +758,12 @@ def main() -> int:
     parser.add_argument("--out", default=None)
     parser.add_argument("--root", default=None)
     parser.add_argument(
+        "--check-install",
+        action="store_true",
+        help="Check whether the PyAuto* stack imports in the active interpreter and "
+        "report its environment, versions, location, and likely install type.",
+    )
+    parser.add_argument(
         "--write-baseline",
         action="store_true",
         help="Snapshot the installed stack (versions + API-surface hash) to "
@@ -627,6 +788,9 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    if args.check_install:
+        return check_installation()
+
     # Code-gate modes are self-contained: they resolve symbols straight against the
     # installed library, so they need neither `sources.yaml` nor the version baseline.
     if args.code is not None or args.file is not None:
@@ -638,6 +802,9 @@ def main() -> int:
 
     # Baseline actions short-circuit the (expensive) Markdown/script scan.
     if args.check_version:
+        install_status = check_installation(verbose_ready=False)
+        if install_status != INSTALL_READY:
+            return install_status
         return check_version(root)
     if args.write_baseline:
         path = write_baseline(root)

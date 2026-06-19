@@ -47,6 +47,17 @@ If any of those imports fail, stop and route the user to
 [`al_setup_environment.md`](./al_setup_environment.md). Don't audit against a
 half-installed stack — it produces a flood of false-positive `import_failed` rows.
 
+For a structured diagnosis instead of a raw import traceback, run:
+
+```bash
+python autoassistant/audit_skill_apis.py --check-install
+```
+
+Exit `0` means ready, `2` means absent from the active interpreter, and `3` means packages
+were found but an import failed. The output includes the active Python, environment prefix,
+versions, loaded `autolens` path, and likely install type. Route exits 2/3 to
+`al_setup_environment`; only a subsequent `--check-version` exit 1 is API drift.
+
 ### 2. Run the audit script
 
 ```bash
