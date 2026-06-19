@@ -9,7 +9,7 @@ status: drafted
 
 ## Mediavilla 2019 — quasar IMF
 
-**File:** `Strong_Lens/Medevilla2019QuasarIMF.pdf`
+**Reference:** Mediavilla 2019 — quasar IMF
 **Concepts:** [[microlensing-imf]]
 **Summary:** Uses microlensing magnifications from 24 lensed quasars to
 infer the stellar mass spectrum of the lens galaxies without assuming a

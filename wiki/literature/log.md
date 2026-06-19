@@ -8,8 +8,8 @@ Append-only record of what was done to this wiki, by whom, and when.
 
 **By:** Claude (Opus 4.7, PyAutoLens AI-assistant wiki bootstrap session).
 
-**Scope of build:** Strong_Lens (~170 PDFs), Substructure (11), StrongLensCluster (3),
-Dark_Matter_Detection (2), DarkMatterModels (5).
+**Scope of build:** strong lensing (~170 papers), substructure (11), cluster lensing (3),
+dark-matter detection (2), dark-matter models (5).
 
 **What was created**
 
@@ -30,15 +30,14 @@ Dark_Matter_Detection (2), DarkMatterModels (5).
 - At the initial-build stage, every source stub was unread. Historical
   summary lines from that pass should still be treated as priors until the
   corresponding paper has been checked against the PDF or primary source.
-- A handful of filenames are ambiguous (typos, generic dates, working
-  drafts like `1901.07801.pdf`, `detections_stochastic_no_zeros.pdf`,
-  `MN-24-0938-MJ_Proof_hi.pdf`); these are listed under
+- A handful of source references were ambiguous (typos, generic dates, working
+  drafts like `1901.07801`, `detections_stochastic_no_zeros`,
+  `MN-24-0938-MJ_Proof_hi`); these are listed under
   `sources/unclassified.md` for manual triage.
-- Adjacent folders (`WeakLensing/`, `Ellipticals/`, `Bulge_Disk_Decomp/`,
-  `Deep Learning/`, `Stats/`, `IFUs/`, `SMBHs/`, root-level `AutoLens.pdf` &
-  `autolens_paper1_resubmit_*.pdf`) contain material a PyAutoLens
-  assistant would benefit from. User chose to defer ingesting these in
-  this build. To extend later, follow the procedure in `AGENTS.md`.
+- Adjacent topics (weak lensing, ellipticals, bulge/disk decomposition,
+  deep learning, statistics, IFUs, SMBHs, and the AutoLens method papers)
+  contain material a PyAutoLens assistant would benefit from. These were
+  deferred in this build. To extend later, follow the procedure in `AGENTS.md`.
 
 **Provenance note**
 
@@ -203,3 +202,19 @@ follow-up rounds. The two flagged `Verify` notes in
 
 **Source of content:** arXiv abstract pages plus the MNRAS / A&A
 landing pages cited there. No local PDFs were used.
+
+---
+
+## 2026-06-19 — Decoupled from PyAutoPaper
+
+**By:** Claude (maintainer session).
+
+The literature wiki is now **self-contained** and no longer depends on any external paper
+repository. Every per-paper `**File:**` line that pointed at a PyAutoPaper PDF path (e.g.
+`Strong_Lens/Xxx.pdf`) was replaced with a public `**Reference:**` — an arXiv/DOI identifier
+where the entry already recorded one, otherwise an author-year-title citation derived from the
+entry heading or the source filename. Frontmatter `sources:` PDF paths across `concepts/` and
+`entities/` were converted the same way. **No identifiers were invented:** papers without a
+known arXiv/DOI are cited by author/year/title only. The schema (`AGENTS.md`) now documents
+this reference convention, and the README frames the wiki as a base literature set users
+extend with their own papers via `al_ingest_paper`.

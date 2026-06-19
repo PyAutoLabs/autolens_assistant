@@ -3,10 +3,10 @@ title: Supermassive black holes from strong lensing
 type: concept
 topics: [smbh, dark-matter]
 sources:
-  - Strong_Lens/Nightingale2023SMBH.pdf
-  - Strong_Lens/Spingola2019SMBHVLBI.pdf
-  - Strong_Lens/Banik2019SMBHRazorArc.pdf
-  - Strong_Lens/Chen2018SMBH.pdf
+  - Nightingale et al. 2023 — SMBH
+  - Spingola et al. 2019 — SMBHVLBI
+  - Banik et al. 2019 — SMBH Razor Arc
+  - Chen et al. 2018 — SMBH
 status: drafted
 ---
 

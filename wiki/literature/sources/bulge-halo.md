@@ -9,14 +9,14 @@ status: drafted
 
 ## Etherington 2022 — bulge–halo
 
-**File:** `Strong_Lens/Etherington2022BulgeHalo.pdf`
+**Reference:** Etherington 2022 — bulge–halo
 **Concepts:** [[bulge-halo-decomposition]], [[pyautolens]]
 **Summary:** Composite stellar + NFW lens modelling with
 PyAutoLens / SLaM on SLACS-style data.
 
 ## Nightingale 2019 — galaxy structure with strong lensing
 
-**File:** https://arxiv.org/abs/1901.07801 (MNRAS 490, 5530)
+**Reference:** https://arxiv.org/abs/1901.07801 (MNRAS 490, 5530)
 **Concepts:** [[bulge-halo-decomposition]], [[pyautolens]]
 **Summary:** Proof-of-concept decomposition of massive elliptical lenses
 into distinct stellar components plus an inner dark-matter halo, using
@@ -25,38 +25,38 @@ population priors and to infer dark-matter content simultaneously.
 
 ## Etherington 2023 — beyond bulge
 
-**File:** `Strong_Lens/Etherington2023aBeyondBulge.pdf`
+**Reference:** Etherington 2023 — beyond bulge
 **Concepts:** [[bulge-halo-decomposition]]
 **Summary:** Continuation that relaxes the single-bulge assumption.
 
 ## Etherington 2023 — shear
 
-**File:** `Strong_Lens/Etherington2023Shear.pdf`
+**Reference:** Etherington 2023 — shear
 **Concepts:** [[bulge-halo-decomposition]],
 [[external-convergence-shear]]
 **Summary:** External-shear impact on stellar+DM decompositions.
 
 ## Oldham 2016 — red nuggets
 
-**File:** `Strong_Lens/Oldham2016_RedNuggets.pdf`
+**Reference:** Oldham 2016 — red nuggets
 **Concepts:** [[bulge-halo-decomposition]]
 **Summary:** Lensing analysis of compact red-nugget galaxies.
 
 ## Oldham 2018 — stellar and dark
 
-**File:** `Strong_Lens/Oldham2018StellarAndDark.pdf`
+**Reference:** Oldham 2018 — stellar and dark
 **Concepts:** [[bulge-halo-decomposition]]
 **Summary:** Joint stellar + DM decomposition of a lens sample.
 
 ## Sonnenfeld 2018 — radial gradients
 
-**File:** `Strong_Lens/Sonnenfed2018RadialGrads.pdf`
+**Reference:** Sonnenfeld 2018 — radial gradients
 **Concepts:** [[bulge-halo-decomposition]]
 **Summary:** Stellar M/L radial gradients in lens galaxies.
 
 ## Xu 2016 — inner structure MST in ETGs
 
-**File:** `Strong_Lens/Xu2016_InnerStrMST_ETG.pdf`
+**Reference:** Xu 2016 — inner structure MST in ETGs
 **Concepts:** [[bulge-halo-decomposition]],
 [[mass-sheet-degeneracy]]
 **Summary:** Inner mass structure of ETGs through lensing, with
@@ -64,7 +64,7 @@ MSD-aware treatment.
 
 ## Wang — IllustrisTNG ellipticals
 
-**File:** `Strong_Lens/WangMassiveEllDensitPrfilesIlliutrisTNG.pdf`
+**Reference:** Wang — IllustrisTNG ellipticals
 **Concepts:** [[bulge-halo-decomposition]]
 **Summary:** Massive elliptical density profiles in IllustrisTNG
 compared to lensing inferences.

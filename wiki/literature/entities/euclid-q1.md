@@ -3,11 +3,11 @@ title: Euclid Q1 lens sample
 type: entity
 topics: [survey, sample, space]
 sources:
-  - Strong_Lens/EuclidQ12025paperI.pdf
-  - Strong_Lens/EuclidQ12025paperII.pdf
-  - Strong_Lens/EuclidQ12025paperIII.pdf
-  - Strong_Lens/ORiodan2023Euclid.pdf
-  - Strong_Lens/Wang2025SLEuclid.pdf
+  - EuclidQ et al. 1202 — 5paper I
+  - EuclidQ et al. 1202 — 5paper II
+  - EuclidQ et al. 1202 — 5paper III
+  - ORiodan et al. 2023 — Euclid
+  - Wang et al. 2025 — SL Euclid
 status: drafted
 ---
 

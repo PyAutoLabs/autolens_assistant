@@ -3,9 +3,9 @@ title: Joint lensing + kinematics
 type: concept
 topics: [methods, galaxy-structure]
 sources:
-  - Strong_Lens/Gebhardt2011M87GeminiIFIS.pdf
-  - Strong_Lens/Smith2017_StellarDyn_IMF.pdf
-  - Strong_Lens/Cao2021MangaLenses.pdf
+  - Gebhardt et al. 2011 — M87 Gemini IFIS
+  - Smith et al. 2017 — stellar dynamics IMF
+  - Cao et al. 2021 — MaNGA lenses
 status: drafted
 ---
 

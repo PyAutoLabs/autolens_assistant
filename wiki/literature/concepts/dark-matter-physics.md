@@ -3,12 +3,12 @@ title: Dark matter physics from strong lensing
 type: concept
 topics: [dark-matter, cosmology]
 sources:
-  - DarkMatterModels/Bose2016WDMSims.pdf
-  - DarkMatterModels/Newton2021ConstraintsSatellites.pdf
-  - DarkMatterModels/Robertson2018SIDMsimulation.pdf
-  - DarkMatterModels/Navarro1996StructureCDMHalos.pdf
-  - Strong_Lens/Enzi2020JointConstraintsthermalRelic.pdf
-  - Strong_Lens/Gomez2016_FermionicDM.pdf
+  - Bose et al. 2016 — WDM simulations
+  - Newton et al. 2021 — constraints on satellites
+  - Robertson et al. 2018 — SIDM simulation
+  - Navarro et al. 1996 — structure of CDM halos
+  - Enzi et al. 2020 — joint constraints thermal relic
+  - Gomez et al. 2016 — fermionic DM
 status: drafted
 ---
 

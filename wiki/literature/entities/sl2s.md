@@ -3,8 +3,8 @@ title: SL2S (Strong Lensing Legacy Survey)
 type: entity
 topics: [survey, sample]
 sources:
-  - Strong_Lens/Gavazzi2012SL2SI.pdf
-  - Strong_Lens/Gavazzi2014Ringfinder.pdf
+  - Gavazzi et al. 2012 — SL2 SI
+  - Gavazzi et al. 2014 — Ringfinder
 status: drafted
 ---
 

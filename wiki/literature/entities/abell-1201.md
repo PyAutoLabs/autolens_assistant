@@ -3,9 +3,9 @@ title: Abell 1201
 type: entity
 topics: [specific-lens, smbh, cluster-lensing]
 sources:
-  - Strong_Lens/Edge2003Abell1201.pdf
-  - Strong_Lens/Smith2017CounterImageAbell1201.pdf
-  - Strong_Lens/Nightingale2023SMBH.pdf
+  - Edge et al. 2003 — Abell1201
+  - Smith et al. 2017 — Counter Image Abell1201
+  - Nightingale et al. 2023 — SMBH
 status: drafted
 ---
 

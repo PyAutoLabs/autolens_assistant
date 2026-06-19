@@ -9,7 +9,7 @@ status: drafted
 
 ## Richard 2017 — HFF mass models
 
-**File:** `StrongLensCluster/Richard2017HFFModels.pdf`
+**Reference:** Richard 2017 — HFF mass models
 **Concepts:** [[hubble-frontier-fields]]
 **Summary:** Public Hubble Frontier Fields mass and magnification models
 from the CATS / LENSTOOL collaboration. These models became a reference
@@ -19,7 +19,7 @@ high-redshift source papers could actually use.
 
 ## Atek 2015 — HFF UV LF
 
-**File:** `StrongLensCluster/Atek2015HFFUV.pdf`
+**Reference:** Atek 2015 — HFF UV LF
 **Concepts:** [[hubble-frontier-fields]],
 [[lensed-source-science]]
 **Summary:** Early HFF science result using lensing magnification to push
@@ -30,7 +30,7 @@ inference, not only for cluster physics.
 
 ## Jullo 2008 — cosmological constraints
 
-**File:** `StrongLensCluster/Jullo2008CosmologicalConstraints.pdf`
+**Reference:** Jullo 2008 — cosmological constraints
 **Concepts:** [[cluster-lensing]]
 **Summary:** Demonstrates that a cluster with many multiply-imaged sources
 at different redshifts can be used as a cosmographic probe. The core idea
@@ -40,7 +40,7 @@ model can in principle inform cosmology as well as mass structure.
 
 ## Harrington 2016 — Planck SL sources
 
-**File:** `Strong_Lens/Harrington2016PlanckSLSources.pdf`
+**Reference:** Harrington 2016 — Planck SL sources
 **Concepts:** [[cluster-lensing]],
 [[lensed-source-science]]
 **Summary:** Builds a sample of extremely bright high-redshift dusty

@@ -12,7 +12,7 @@ expanded the previously thin one-liners against arXiv for 17 entries.
 
 ## Vegetti & Koopmans 2009 — adaptive grids + nested sampling
 
-**File:** https://arxiv.org/abs/0805.0201 (MNRAS 392, 945)
+**Reference:** https://arxiv.org/abs/0805.0201 (MNRAS 392, 945)
 **Concepts:** [[dark-matter-substructure]], [[gravitational-imaging]],
 [[source-reconstruction]], [[bayesian-inference-lensing]]
 **Status:** drafted
@@ -46,7 +46,7 @@ evidence-based substructure detection.**
 
 ## Vegetti 2018 — sterile-neutrino constraints
 
-**File:** `Substructure/Vegetti2018StellarNeutrinos.pdf` (arXiv:1801.01505,
+**Reference:** arXiv:1801.01505
 MNRAS 481, 3661)
 **Authors:** Vegetti, Despali, Lovell, Enzi
 **Concepts:** [[dark-matter-substructure]], [[dark-matter-physics]]
@@ -63,7 +63,7 @@ combined-sample CDM consistency story.
 
 ## Nightingale 2022 — PyAutoLens subhalo scan
 
-**File:** `Substructure/Nightingale2022Scanm.pdf` (arXiv:2209.10566,
+**Reference:** arXiv:2209.10566
 MNRAS 527, 10480)
 **Authors:** Nightingale, He, Cao, Etherington, Li, Frenk, et al.
 **Concepts:** [[gravitational-imaging]], [[pyautolens]],
@@ -80,7 +80,7 @@ workspace's subhalo-scanning workflow.
 
 ## Despali 2017 — baryons on substructure
 
-**File:** `Substructure/Despali2018BaryonsonSub.pdf` (arXiv:1608.06938,
+**Reference:** arXiv:1608.06938
 MNRAS 469, 1997 — note the paper is 2017, the filename "2018" is the
 journal-volume year)
 **Authors:** Despali & Vegetti
@@ -98,7 +98,7 @@ substantial baryonic correction.
 
 ## Despali 2018 — LOS
 
-**File:** `Substructure/Despali2018LOS.pdf` (arXiv:1710.05029, MNRAS 475,
+**Reference:** arXiv:1710.05029
 5424)
 **Authors:** Despali, Vegetti, White, Giocoli, van den Bosch
 **Concepts:** [[line-of-sight-effects]],
@@ -117,8 +117,8 @@ of every modern substructure search; required reading for any of the
 
 ## Despali 2022 — detecting low-mass haloes I (sensitivity)
 
-**File:** `Substructure/Despali2021Senstitoty.pdf` and
-`Strong_Lens/Despali2022Sensitivity.pdf` *(same paper — both filenames
+**Reference:** arXiv:2111.08718
+Despali et al. 2022 — Sensitivity *(same paper — both filenames
 are local copies of arXiv:2111.08718; the 2021/2022 split in the previous
 wiki was an artefact of submission-year vs publication-year naming)*.
 arXiv:2111.08718, MNRAS 510, 2480 (2022).
@@ -139,7 +139,7 @@ the calibration reference behind every later sensitivity-map paper.
 
 ## Despali 2024 — detecting low-mass haloes II
 
-**File:** `Substructure/Despali2024SensitivityII.pdf` (arXiv:2407.12910,
+**Reference:** arXiv:2407.12910
 A&A 2025)
 **Authors:** Despali, Heinze, Fassnacht, Vegetti, Spingola, Klessen
 **Concepts:** [[dark-matter-substructure]], [[dark-matter-physics]]
@@ -157,7 +157,7 @@ the data-side motivation for re-examining SIDM and warm-DM alternatives.
 
 ## Amorisco 2022 — halo concentration
 
-**File:** `Strong_Lens/Amorscio2022Sensiti.pdf`
+**Reference:** Amorisco 2022 — halo concentration
 **Concepts:** [[dark-matter-substructure]]
 **Summary:** Studies how halo concentration changes the detectability of
 low-mass perturbers in galaxy-galaxy strong lenses, showing that more
@@ -166,7 +166,7 @@ relative sensitivity to lens-plane and line-of-sight structure.
 
 ## He 2017 — substructure halos vs globular clusters
 
-**File:** `Strong_Lens/He2017_Substructure_Halos_vs_Globs.pdf`
+**Reference:** arXiv:1707.01849
 (arXiv:1707.01849, MNRAS 480, 5084; submitted 2017, published 2018)
 **Authors:** He, Li, Lim, Frenk, Cole, Peng, Wang
 **Concepts:** [[dark-matter-substructure]]
@@ -184,7 +184,7 @@ low-mass perturbers are not automatically dark.
 
 ## He 2022 — preprint
 
-**File:** `Strong_Lens/He2022Preprint.pdf`
+**Reference:** He 2022 — preprint
 **Concepts:** [[dark-matter-substructure]]
 **Summary:** Tests subhalo-detection pipelines on mock strong lenses
 generated from a cosmological hydrodynamical simulation, showing that
@@ -194,7 +194,7 @@ models recover the injected perturber more reliably.
 
 ## Loudas 2022 — millilensing
 
-**File:** `Substructure/Loudas2022MiliLensing.pdf` (arXiv:2209.13393)
+**Reference:** arXiv:2209.13393
 **Authors:** Loudas, Pavlidou, Casadio, Tassis
 **Concepts:** [[dark-matter-substructure]], [[dark-matter-physics]]
 **Summary:** Develops a semi-analytic forecast of the milli-lensing
@@ -210,7 +210,7 @@ substructure searches that dominate this hub.
 
 ## Ran Li 2016 — CDM vs WDM from strong lenses
 
-**File:** `Strong_Lens/RanLi2016Sub.pdf` (arXiv:1512.06507, MNRAS 460, 363)
+**Reference:** arXiv:1512.06507
 **Authors:** Li, Frenk, Cole, Gao, Bose, Hellwing
 **Concepts:** [[dark-matter-substructure]], [[dark-matter-physics]]
 **Summary:** Uses Aquarius / COCO N-body simulations to forecast how many
@@ -225,7 +225,7 @@ Vegetti 2018 and Ritondale 2018.
 
 ## Ran Li 2016 — projection effects (LOS)
 
-**File:** `Strong_Lens/RanLi2016Sub2.pdf` (arXiv:1612.06227, MNRAS 468,
+**Reference:** arXiv:1612.06227
 1426)
 **Authors:** Li, Frenk, Cole, Wang, Gao
 **Concepts:** [[dark-matter-substructure]],
@@ -240,7 +240,7 @@ mass-redshift rescaling.
 
 ## Diaz-Rivero 2019 — subhalo without lens model
 
-**File:** `Strong_Lens/Rivero2019DirectSubhaLoCircumventLensmodel.pdf`
+**Reference:** arXiv:1910.00015
 (arXiv:1910.00015, Phys. Rev. D 101, 023515)
 **Authors:** Diaz Rivero & Dvorkin
 **Concepts:** [[dark-matter-substructure]],
@@ -257,7 +257,7 @@ deep-learning substructure literature.
 
 ## Ritondale 2018 — BELLS subhaloes
 
-**File:** `Substructure/Ritondale2018BELLS.pdf` (arXiv:1811.03627, MNRAS
+**Reference:** arXiv:1811.03627
 485, 2179)
 **Authors:** Ritondale, Vegetti, Despali, Auger, Koopmans, McKean
 **Concepts:** [[bells-gallery]],
@@ -274,7 +274,7 @@ canonical BELLS substructure non-detection paper.
 
 ## Ritondale 2018 — BELLS-GALLERY Lyman-α morphology
 
-**File:** `Substructure/Ritondale2018BELLLymaAlphs.pdf` (arXiv:1811.03628,
+**Reference:** arXiv:1811.03628
 MNRAS 482, 4744)
 **Authors:** Ritondale, Auger, Vegetti, McKean
 **Concepts:** [[bells-gallery]],
@@ -290,7 +290,7 @@ companion's evidence-based subhalo limits trustworthy.
 
 ## Sawala 2016 — the chosen few
 
-**File:** `Substructure/Sawala2016TheChosenFew.pdf` (arXiv:1406.6362,
+**Reference:** arXiv:1406.6362
 MNRAS 456, 85)
 **Authors:** Sawala et al. (the APOSTLE collaboration)
 **Concepts:** [[dark-matter-substructure]]
@@ -308,7 +308,7 @@ satellite-galaxy population alone — a fundamental ingredient in
 
 ## Benitez-Llambay 2020 — onset of galaxy formation
 
-**File:** `Substructure/Benitez2020DetailedstructureHalos.pdf`
+**Reference:** arXiv:2004.06124
 (arXiv:2004.06124, MNRAS 498, 4887)
 **Authors:** Benitez-Llambay & Frenk
 **Concepts:** [[dark-matter-substructure]]
@@ -324,8 +324,8 @@ galaxy.
 
 ## Minor 2021 — overconcentrated subhalo in SDSSJ0946+1006
 
-**File:** `Strong_Lens/Minor2020DMConcentration0946.pdf` and
-`Strong_Lens/Minor2021DMConcentration.pdf` *(same paper — both filenames
+**Reference:** arXiv:2011.10627
+Minor et al. 2021 — DM Concentration *(same paper — both filenames
 are local copies of arXiv:2011.10627; the 2020/2021 wiki split was a
 submission-year vs publication-year artefact).*
 arXiv:2011.10627, MNRAS 507, 1662 (2021).

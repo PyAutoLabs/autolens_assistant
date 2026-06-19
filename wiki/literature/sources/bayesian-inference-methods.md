@@ -19,7 +19,7 @@ is in [`wiki/core/concepts/non_linear_search.md`](../../core/concepts/non_linear
 
 ## Skilling 2006 — Nested sampling
 
-**File:** https://doi.org/10.1214/06-BA127 (Bayesian Analysis 1(4):833–860)
+**Reference:** https://doi.org/10.1214/06-BA127 (Bayesian Analysis 1(4):833–860)
 **Concepts:** [[nested-sampling]], [[bayesian-inference-lensing]]
 **Status:** drafted
 
@@ -52,7 +52,7 @@ algorithmic refinements of Skilling's construction.
 
 ## Speagle 2020 — Dynesty
 
-**File:** https://arxiv.org/abs/1904.02180 (MNRAS 493, 3132)
+**Reference:** https://arxiv.org/abs/1904.02180 (MNRAS 493, 3132)
 **Concepts:** [[nested-sampling]], [[bayesian-inference-lensing]]
 **Status:** drafted
 
@@ -83,7 +83,7 @@ in `wiki/core/api/searches.md` comes directly from this paper.
 
 ## Lange 2023 — Nautilus
 
-**File:** https://arxiv.org/abs/2306.16923 (MNRAS 525, 3181)
+**Reference:** https://arxiv.org/abs/2306.16923 (MNRAS 525, 3181)
 **Concepts:** [[nested-sampling]], [[bayesian-inference-lensing]]
 **Status:** drafted
 
@@ -115,7 +115,7 @@ into minutes.
 
 ## Foreman-Mackey 2013 — emcee
 
-**File:** https://arxiv.org/abs/1202.3665 (PASP 125, 306)
+**Reference:** https://arxiv.org/abs/1202.3665 (PASP 125, 306)
 **Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
 **Status:** drafted
 
@@ -132,7 +132,7 @@ place.
 
 ## Karamanis 2021 — zeus
 
-**File:** https://arxiv.org/abs/2105.03468 (MNRAS 508, 3589)
+**Reference:** https://arxiv.org/abs/2105.03468 (MNRAS 508, 3589)
 **Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
 **Status:** drafted
 
@@ -150,7 +150,7 @@ affine-invariant updates.
 
 ## Hoffman 2014 — NUTS
 
-**File:** https://arxiv.org/abs/1111.4246 (JMLR 15, 1593)
+**Reference:** https://arxiv.org/abs/1111.4246 (JMLR 15, 1593)
 **Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
 **Status:** drafted
 
@@ -168,7 +168,7 @@ sampling for the JAX-backed PyAutoLens likelihoods.
 
 ## Cabezas 2024 — BlackJAX
 
-**File:** https://arxiv.org/abs/2402.10797
+**Reference:** https://arxiv.org/abs/2402.10797
 **Concepts:** [[mcmc-sampling]], [[bayesian-inference-lensing]]
 **Status:** drafted
 

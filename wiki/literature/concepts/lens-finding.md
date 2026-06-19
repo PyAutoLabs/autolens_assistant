@@ -3,14 +3,14 @@ title: Lens finding in wide-field surveys
 type: concept
 topics: [surveys, methods]
 sources:
-  - Strong_Lens/Metcalf2018LensFindingChallenge.pdf
-  - Strong_Lens/Jacbos2019SLDES.pdf
-  - Strong_Lens/Jaelani2023SLFindHSC.pdf
-  - Strong_Lens/Rojas2022DESLensMOdelFinding.pdf
-  - Strong_Lens/Holloway2024BayesLensFind.pdf
-  - Strong_Lens/Gavazzi2014Ringfinder.pdf
-  - Strong_Lens/Sonnenfeld2018Yattalens.pdf
-  - Strong_Lens/Sonnenfeld2020HSCLENSMODELINGFIND.pdf
+  - Metcalf et al. 2018 — lens finding challenge
+  - Jacobs et al. 2019 — strong lensing DES
+  - Jaelani et al. 2023 — strong lensing find HSC
+  - Rojas et al. 2022 — DES lens model finding
+  - Holloway et al. 2024 — Bayesian lens finding
+  - Gavazzi et al. 2014 — Ringfinder
+  - Sonnenfeld et al. 2018 — Yattalens
+  - Sonnenfeld et al. 2020 — HSC lens modelling find
 status: drafted
 ---
 

@@ -3,7 +3,7 @@ title: Space Warps
 type: entity
 topics: [citizen-science, lens-finding]
 sources:
-  - Strong_Lens/Spacewarms2017Spaghetti.pdf
+  - Spacewarms et al. 2017 — Spaghetti
 status: drafted
 ---
 

@@ -3,7 +3,7 @@ title: The Razor Arc
 type: entity
 topics: [specific-lens, dark-matter, smbh]
 sources:
-  - Strong_Lens/Banik2019SMBHRazorArc.pdf
+  - Banik et al. 2019 — SMBH Razor Arc
 status: drafted
 ---
 

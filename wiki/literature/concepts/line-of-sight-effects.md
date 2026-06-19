@@ -3,9 +3,9 @@ title: Line-of-sight effects
 type: concept
 topics: [systematics, environment]
 sources:
-  - Strong_Lens/He2021LoS.pdf
-  - Strong_Lens/Despali2018LOS.pdf
-  - Strong_Lens/Fleury2022LosShear.pdf
+  - He et al. 2021 — Lo S
+  - Despali et al. 2018 — LOS
+  - Fleury et al. 2022 — Los Shear
 status: drafted
 ---
 

@@ -3,9 +3,9 @@ title: H0liCOW
 type: entity
 topics: [cosmography, collaboration]
 sources:
-  - Strong_Lens/Suyu2016Holicow.pdf
-  - Strong_Lens/Birrer2018HolicowIX.pdf
-  - Strong_Lens/Wong2019H0licow6lenses.pdf
+  - Suyu et al. 2016 — Holicow
+  - Birrer et al. 2018 — Holicow IX
+  - Wong et al. 2019 — H0licow6lenses
 status: drafted
 ---
 

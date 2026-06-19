@@ -3,9 +3,9 @@ title: The Cosmic Horseshoe
 type: entity
 topics: [specific-lens]
 sources:
-  - Strong_Lens/Dye2009Horseshoe.pdf
-  - Strong_Lens/James2018horseshoeUV.pdf
-  - Strong_Lens/Lipnicky2018HydrogenInLensedSpiral.pdf
+  - Dye et al. 2009 — Horseshoe
+  - James et al. 2018 — horseshoe UV
+  - Lipnicky et al. 2018 — Hydrogen In Lensed Spiral
 status: drafted
 ---
 

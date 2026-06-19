@@ -3,11 +3,11 @@ title: Lens population statistics
 type: concept
 topics: [populations]
 sources:
-  - Strong_Lens/Sonnenfeld2021StatsI.pdf
-  - Strong_Lens/Sonnenfeld2021StatsII.pdf
-  - Strong_Lens/Sonnenfeld2022Stats.pdf
-  - Strong_Lens/Li2023StrongLensPopulations.pdf
-  - Strong_Lens/Geng2025SLRelations.pdf
+  - Sonnenfeld et al. 2021 — statistics I
+  - Sonnenfeld et al. 2021 — statistics II
+  - Sonnenfeld et al. 2022 — statistics
+  - Li et al. 2023 — strong lens populations
+  - Geng et al. 2025 — strong lensing relations
 status: drafted
 ---
 

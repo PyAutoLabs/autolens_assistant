@@ -3,12 +3,12 @@ title: Source-plane science with strongly-lensed sources
 type: concept
 topics: [high-redshift, dsfg, agn]
 sources:
-  - Strong_Lens/Rizzo2018KinematicsStrongLenssources.pdf
-  - Strong_Lens/Rizzo2020DSFGNature.pdf
-  - Strong_Lens/Rizzo2021DSFTSample.pdf
-  - Strong_Lens/Berg2018WindowOnSF.pdf
-  - Strong_Lens/Dye2017ModelingAlma.pdf
-  - Strong_Lens/Bayliss2017_Hyodrgen_Lensed_Quasar.pdf
+  - Rizzo et al. 2018 — kinematics of strong lens sources
+  - Rizzo et al. 2020 — DSFG nature
+  - Rizzo et al. 2021 — DSFG sample
+  - Berg et al. 2018 — window on star formation
+  - Dye et al. 2017 — modelling ALMA
+  - Bayliss et al. 2017 — hydrogen lensed quasar
 status: drafted
 ---
 

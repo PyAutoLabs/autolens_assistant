@@ -9,14 +9,14 @@ status: drafted
 
 ## Tuntsov 2016 — dynamic plasma lenses
 
-**File:** `Strong_Lens/Tuntsov2016DynamicPlasmaLenses.pdf`
+**Reference:** Tuntsov 2016 — dynamic plasma lenses
 **Concepts:** unusual lensing
 **Summary:** Plasma-lensing effects in radio sources rather than strong
 gravitational lensing in the canonical sense — adjacent.
 
 ## Young 2022 — colour regularisation
 
-**File:** `Strong_Lens/Young2022ColorReg.pdf`
+**Reference:** Young 2022 — colour regularisation
 **Concepts:** [[source-reconstruction]],
 [[regularization]]
 **Summary:** Joint multi-band source reconstruction with a
@@ -24,7 +24,7 @@ colour-regularisation prior.
 
 ## Shajib 2022 — strong lens compilation
 
-**File:** `Strong_Lens/Shajib2022SLComp.pdf`
+**Reference:** Shajib 2022 — strong lens compilation
 **Concepts:** [[lens-statistics]]
 **Summary:** Compilation and review of strong-lens science.
 

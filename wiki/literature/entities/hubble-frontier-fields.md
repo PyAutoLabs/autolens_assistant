@@ -3,8 +3,8 @@ title: Hubble Frontier Fields
 type: entity
 topics: [cluster-lensing, sample]
 sources:
-  - StrongLensCluster/Richard2017HFFModels.pdf
-  - StrongLensCluster/Atek2015HFFUV.pdf
+  - Richard et al. 2017 — HFF Models
+  - Atek et al. 2015 — HFFUV
 status: drafted
 ---
 

@@ -3,10 +3,10 @@ title: Shear–ellipticity degeneracy
 type: concept
 topics: [degeneracies]
 sources:
-  - Strong_Lens/Witt1997Shear.pdf
-  - Strong_Lens/Keeton1997ShearEllipticity.pdf
-  - Strong_Lens/Gomer2021ShearEllipseDegen.pdf
-  - Strong_Lens/Hogg2022SLShear.pdf
+  - Witt et al. 1997 — Shear
+  - Keeton et al. 1997 — Shear Ellipticity
+  - Gomer et al. 2021 — Shear Ellipse Degen
+  - Hogg et al. 2022 — SL Shear
 status: drafted
 ---
 

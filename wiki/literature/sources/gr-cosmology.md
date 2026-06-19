@@ -9,7 +9,7 @@ status: drafted
 
 ## Collett 2018 — γ_PPN with ESO325-G004
 
-**File:** `Strong_Lens/Collett2018GR.pdf`
+**Reference:** Collett 2018 — γ_PPN with ESO325-G004
 **Concepts:** [[gr-tests]]
 **Summary:** Precision extragalactic test of the post-Newtonian parameter
 `gamma` using the nearby lens ESO325-G004. By combining the lensing mass
@@ -19,7 +19,7 @@ Relativity and finds agreement at roughly the 10 per cent level.
 
 ## Melo 2023 — probing GR
 
-**File:** `Strong_Lens/Melo2023ProbeGR.pdf`
+**Reference:** Melo 2023 — probing GR
 **Concepts:** [[gr-tests]]
 **Summary:** Extends galaxy-scale GR tests beyond the local ESO325-G004
 case by combining ALMA, HST, and VLT/MUSE data for the SDP.81 lens galaxy

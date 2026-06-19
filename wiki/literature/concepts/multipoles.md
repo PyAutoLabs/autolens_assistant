@@ -3,13 +3,13 @@ title: Angular multipoles in lens mass models
 type: concept
 topics: [lens-modelling, systematics]
 sources:
-  - Strong_Lens/Chu2013Multipoles.pdf
-  - Strong_Lens/Cohen2024Multipoles.pdf
-  - Strong_Lens/Stacey2024MultipolesALMA.pdf
-  - Strong_Lens/Amvrosiadis2025M1Multipole.pdf
-  - Strong_Lens/ORiodan2024Angularcomplexity.pdf
-  - Strong_Lens/vandevyree2022Azimuthal.pdf
-  - Strong_Lens/vandevyree2022BoxynessDiscyness.pdf
+  - Chu et al. 2013 — Multipoles
+  - Cohen et al. 2024 — Multipoles
+  - Stacey et al. 2024 — Multipoles ALMA
+  - Amvrosiadis et al. 2025 — M1 Multipole
+  - ORiodan et al. 2024 — Angularcomplexity
+  - vandevyree et al. 2022 — Azimuthal
+  - vandevyree et al. 2022 — Boxyness Discyness
 status: drafted
 ---
 

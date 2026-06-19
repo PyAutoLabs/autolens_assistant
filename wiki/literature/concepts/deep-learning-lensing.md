@@ -3,11 +3,11 @@ title: Deep learning for strong lensing
 type: concept
 topics: [methods]
 sources:
-  - Strong_Lens/Pearson2020MLAndParametric.pdf
-  - Strong_Lens/Pearson2024StrongLensJWST.pdf
-  - Strong_Lens/Morningstar2019DeepLearnGalaxyRecon.pdf
-  - Strong_Lens/WagnerCarena2021BNNHierachical.pdf
-  - Strong_Lens/Brehmer2019MiningDMSub.pdf
+  - Pearson et al. 2020 — ML and parametric
+  - Pearson et al. 2024 — strong lens JWST
+  - Morningstar et al. 2019 — deep learning galaxy reconstruction
+  - Wagner-Carena et al. 2021 — BNN hierarchical
+  - Brehmer et al. 2019 — mining DM substructure
 status: drafted
 ---
 
