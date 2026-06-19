@@ -151,6 +151,12 @@ __pycache__/
   *"Set up the HPC folder for this project: copy the batch templates, sync script and pipeline
   template from the assistant and configure them for my cluster."*
 
+If HPC is in play, also capture the user's HPC access **constraints** in
+`wiki/project/profile.md` ("HPC access" — cluster/alias, MFA, VPN, jump host, whether
+agent-driven remote execution is permitted, and the preferred automation level). Ask once,
+lightly; these set the assistant's HPC posture. Connection details go in `hpc/sync.conf`,
+secrets in `~/.ssh/config` — never in the profile.
+
 **Finish Create:** `dos2unix` all `*.py`/`*.sh`/`template*`; `git init`; stage by name;
 `git commit -m "Scaffold science project <slug>"`; optionally append a `Project<Name>()` alias
 to `~/.bashrc` (source the venv, `cd` in).
