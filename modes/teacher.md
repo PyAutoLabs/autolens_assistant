@@ -14,6 +14,9 @@ to lensing. The goal is that the user understands the workflow, not just gets a 
 
 - All `AGENTS.md` safety invariants apply (real-data gate, code gate, never rewrite history).
 - The workflows available are unchanged — teacher mode is posture, not extra capability.
+- Saved Python uses `skills/_style.md` "Generated script style" at its full, mode-invariant
+  publication quality. Teaching may add explanation around the script, but must not replace or
+  dilute its scientific, inference, reproducibility, and source-citation detail.
 
 ## Composition
 

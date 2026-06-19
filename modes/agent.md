@@ -20,6 +20,9 @@ just answered turn-by-turn.
 - The workflows available are unchanged; this is one conversational assistant, not a swarm of
   subagents.
 - Pedagogical depth still follows `skills/_style.md` "Adaptive depth".
+- Saved Python uses `skills/_style.md` "Generated script style" at the same publication-quality
+  level as every other mode, retaining scientific and inference framing, consequential
+  assumptions, reproducibility context, and source citations across every phase.
 
 ## What triggers inference
 
