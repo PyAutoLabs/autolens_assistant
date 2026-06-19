@@ -201,11 +201,12 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
 Science-project conventions and external resources are documented on demand — load the
 relevant page when the task needs it, not every session:
 
-- **New science workspace** (spin-up, new-project workflow, `~/.bashrc` `Project<Name>()`
-  alias) → [`start-new-project`](./skills/start-new-project.md) skill.
-- **Shareable / paper-companion science project** (GitHub lifecycle, per-run reproducibility
-  manifests, open-science release) → [`science-project`](./skills/science-project.md) skill
-  (distinct from `start-new-project`, which builds the heavy HPC modelling workspace).
+- **Science projects.** *`autolens_assistant` is the copilot; a science project is a separate
+  repo* — a standalone repo for one analysis/paper, created by
+  [`start-new-project`](./skills/start-new-project.md) (the single bridge): it copies the
+  reproducible science (config, scripts, data, results) and **refers back to this assistant**
+  for skills/wiki. That skill owns the full lifecycle (Create → Work → Collaborate → Publish),
+  incl. optional HPC, per-run reproducibility manifests, and open-science release.
 - **Dataset layout + `info.json`** → [`wiki/core/operations/dataset.md`](./wiki/core/operations/dataset.md).
 - **HPC science** (cores, JAX/GPU, SLURM concepts) → [`wiki/core/operations/hpc.md`](./wiki/core/operations/hpc.md);
   **HPC infrastructure shipped here** (`hpc/template.py`, batch templates, the `sync` CLI) →

@@ -127,11 +127,17 @@ and if not, set this up as a small project on the HPC I have access to.
 
 ## Science Project
 
-For work headed toward a paper, the assistant scaffolds a **shareable science project** — a
-self-contained, reproducible repo that runs the lifecycle local → private GitHub → public
-paper-companion repo, with per-run reproducibility manifests, collaborator-facing summaries,
-and a clean open-science release (CITATION, license, Zenodo DOI). It is distinct from
-`start-new-project`, which builds the heavy HPC modelling workspace. Example prompts:
+**`autolens_assistant` is the copilot; a science project is a separate repo.** This repo is
+the assistant you clone once — its skills, wiki, and tooling. Your actual science lives in a
+**science project**: a separate, self-contained git repo for one analysis or paper, created by
+`start-new-project`. The project holds your data, config, scripts, results, and a
+`wiki/project/` journal; for the assistant's *skills and reference wiki* it **refers back to
+this `autolens_assistant` clone** (cloning it on demand if absent), so there's one source of
+truth and no drift. Quick exploration can happen inside this clone (e.g. the bundled-dataset
+README examples); a real analysis headed for a paper gets its own project.
+
+Starting one — and its whole lifecycle (create → work → collaborate → publish) — is handled by
+the single `start-new-project` skill. Example prompts:
 
 ```
 Start a science project for my SLACS0946 analysis.
