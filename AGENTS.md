@@ -104,6 +104,24 @@ sessions, ask whether anything changed.
 
 ---
 
+## Modes
+
+Interaction presets for one assistant (not a multi-agent system) — how much it teaches,
+plans, and acts, not which workflows exist:
+
+- **Teacher** — *learn*: explain, step through, point to examples.
+- **Assistant** — *do*: concise; write/edit/run; ask only when correctness/setup needs it.
+- **Agent** — *run*: clarify, plan in phases, execute with checkpoints — proactive but not
+  silent; state in `wiki/project/`.
+
+Select (first match): explicit instruction → `.mode` file → `profile.md` "Interaction mode" →
+else **infer from the opening request** (fall back to **assistant**); `.maintainer` outranks
+`.mode`. State an inferred mode in one line and invite correction; acknowledge an explicit
+one only if it changes behavior. Read `modes/<mode>.md`; depth still follows
+`skills/_style.md` "Adaptive depth".
+
+---
+
 ## Working with skills
 
 When a skill covers the task:

@@ -44,8 +44,12 @@ papers/
 
 # Maintainer-mode sentinel — when present at the repo root, the agent treats
 # the session as template maintenance work (no profile capture, no auto-commit,
-# no newcomer-mode defaults). See CLAUDE.md Part 1 "Maintainer mode".
+# no newcomer-mode defaults). See AGENTS.md and modes/maintainer.md.
 .maintainer
+
+# Interaction-mode override — optional per-clone file containing one of
+# `teacher` | `assistant` | `agent`. See AGENTS.md "Modes". `.maintainer` outranks it.
+.mode
 
 # Claude Code agent worktrees — ephemeral, machine-local.
 .claude/worktrees/

@@ -36,6 +36,17 @@ How familiar the user is with the PyAuto\* stack. Examples:
 
 _unrecorded_
 
+## Interaction mode
+
+Durable preference for how the assistant should interact: `teacher` (learn the workflow),
+`assistant` (do the workflow), or `agent` (run the project). Leave unrecorded to let the
+assistant infer the mode from each opening request. See `AGENTS.md` "Modes". Examples:
+
+- "teacher — workshop attendee, wants the science explained."
+- "agent — running a multi-session subhalo project."
+
+_unrecorded_
+
 ## Current science goal
 
 Free-text — whatever the user has volunteered. No prescribed taxonomy. Examples:

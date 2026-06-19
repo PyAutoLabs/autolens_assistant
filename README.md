@@ -41,6 +41,18 @@ you don't have PyAutoLens installed yet, the assistant will guide you
 through that. Then tell it about your science case or ask it a question to
 get the conversation going.
 
+## Modes
+
+The assistant works in three modes, and you never have to choose one — it **infers the mode
+from your first message and tells you which it picked** (e.g. *"Mode: teacher — I'll explain
+as we go."*). If it guesses wrong, just say so. To set the mode yourself, start your message
+with it (the examples below do exactly that); to make a choice permanent, drop a `.mode` file
+in the repo containing `teacher`, `assistant`, or `agent`.
+
+- **Teacher** — *learn the workflow.* `Teacher mode: I'm new to PyAutoLens — how do I model this image?`
+- **Assistant** — *do the workflow.* `Assistant mode: set up a project for this dataset and write the first script.`
+- **Agent** — *run the project.* `Agent mode: model this lens end-to-end and track progress across sessions.`
+
 ## New User Example Prompt: Model JWST Imaging of a Strong Lens
 
 A good starting point if you're new to PyAutoLens **and** less familiar with
@@ -48,6 +60,8 @@ strong lensing. It points the assistant at the bundled JWST data and asks
 for a guided source-reconstruction walkthrough:
 
 ```
+Teacher mode.
+
 The folder dataset/imaging/cosmos_web_ring contains JWST imaging of a real
 strong lens.
 
@@ -71,6 +85,8 @@ if needed, walk you through setting the analysis up on a High Performance
 Computer (HPC) you have access to.
 
 ```
+Agent mode.
+
 The strong lens SLACS0946+1006 famously has a dark matter subhalo
 detection that many argue is unusually concentrated. I'd like to analyse
 the HST imaging of this lens provided at
