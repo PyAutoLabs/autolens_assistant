@@ -50,7 +50,11 @@ configured) via symlinks; the canonical files live here.
 
 - [`start-new-project.md`](./start-new-project.md) — interactive setup wizard for
   spinning up a fresh PyAutoLens science workspace from `autolens_assistant`
-  (name, datasets, scripts, GitHub repo).
+  (name, datasets, scripts, GitHub repo). Heavy HPC modelling workspace.
+- [`science-project.md`](./science-project.md) — scaffold a lean, reproducible,
+  shareable project headed toward a paper: local → private GitHub → public
+  paper-companion repo, with per-run reproducibility manifests, a project journal,
+  collaborator summaries, and an open-science release (CITATION/license/Zenodo DOI).
 - [`contribute-upstream.md`](./contribute-upstream.md) — prepare a scoped change,
   push it either to your collaborator branch on `PyAutoLabs/autolens_assistant`
   or to your fork, and open a draft PR into `PyAutoLabs/autolens_assistant`.

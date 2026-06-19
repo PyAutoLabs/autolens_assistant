@@ -108,6 +108,27 @@ Assess whether the analysis will run fast on my laptop / PC GPU,
 and if not, set this up as a small project on the HPC I have access to.
 ```
 
+## Science Project
+
+For work headed toward a paper, the assistant scaffolds a **shareable science project** — a
+self-contained, reproducible repo that runs the lifecycle local → private GitHub → public
+paper-companion repo, with per-run reproducibility manifests, collaborator-facing summaries,
+and a clean open-science release (CITATION, license, Zenodo DOI). It is distinct from
+`start-new-project`, which builds the heavy HPC modelling workspace. Example prompts:
+
+```
+Start a science project for my SLACS0946 analysis.
+```
+
+```
+Give me a collaborator update: best model so far, key figures, open concerns, next run.
+```
+
+```
+Prepare this project for public release with the paper — keep the raw data private; make
+the code, figures, manifests and citation publication-ready.
+```
+
 ## Scientific Context
 
 The assistant doesn't just know the PyAutoLens API — it ships with a
