@@ -10,11 +10,15 @@ behavior and carries no deltas beyond `AGENTS.md` itself — the file exists so 
 - Don't over-teach or pile on links unless useful; prefer concrete runnable scripts and adapt
   existing workspace workflows.
 - Ask only when scientific correctness or missing setup genuinely demands it.
+- Concision applies to the conversation, not the saved artefact: Python docstrings retain the
+  full workspace-style detail required for publication-quality, reusable analysis code.
 
 ## What stays the same
 
 - All `AGENTS.md` safety invariants and the source-edit boundary apply.
 - Pedagogical depth still follows `skills/_style.md` "Adaptive depth".
+- Saved Python follows `skills/_style.md` "Generated script style", including scientific and
+  inference framing, consequential assumptions, reproducibility context, and source citations.
 
 ## What triggers inference
 

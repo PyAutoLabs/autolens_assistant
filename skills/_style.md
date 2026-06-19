@@ -74,6 +74,15 @@ markdown cell and the code between blocks becomes a code cell.
 
 Two rules.
 
+The level of detail in a saved script is **mode-invariant**. Teacher, assistant, and agent
+modes may change the pacing and depth of the surrounding conversation, but they must not
+change the completeness of the script artefact. Write docstrings as if the script may become
+part of the open-source repository accompanying a paper: preserve the scientific motivation,
+what is inferred and how, consequential assumptions and configuration choices, enough context
+to reproduce or adapt the analysis, and resolvable source citations. Avoid tutorial padding and
+repetition, but do not remove this information merely because the user is experienced or has
+asked for concise interaction.
+
 **1. Title block + `__Contents__` header.** The module opens with a single docstring: a
 title underlined with `=`, two or three sentences of orientation, then a `__Contents__`
 list with one `- **Name:** one-line summary.` bullet per section that follows.
@@ -158,6 +167,9 @@ sentence that explains what the call does, never as a standalone `# source:` com
 banner.
 
 ## Adaptive depth
+
+Adaptive depth governs the conversation and teaching around a script; it does not reduce the
+publication-quality docstring detail required by "Generated script style" above.
 
 Users arrive with different backgrounds. The same skill needs to serve all of them:
 
