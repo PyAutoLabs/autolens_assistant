@@ -88,6 +88,22 @@ The wiki documents only the **current** API — fix stale references in place an
 don't add `old → new` migration tables (they grow without bound and are themselves a drift
 surface, since they name removed symbols).
 
+### The code gate — manual checks and bypass
+
+The always-on code gate (`AGENTS.md` "Safety invariants") is the `PreToolUse` hook
+`.claude/hooks/validate_pyauto_code.py`, which blocks any Bash command running Python that
+references a PyAuto* symbol absent from the *installed* stack. Run the same validator by hand
+on a snippet or a file:
+
+```bash
+python autoassistant/audit_skill_apis.py --code "import autolens as al; al.FitImagingPlotter"  # exit 2
+python autoassistant/audit_skill_apis.py --file scripts/my_script.py                            # exit 0/2
+```
+
+When the gate blocks you, **do not guess a replacement** — grep `skills/` for the task or
+introspect `dir()` of the live module, then re-run. Escape hatch for deliberate
+pre-refactor/debugging work: set `PYAUTO_SKIP_API_GATE=1`.
+
 ## Ask — narrow the scope before fixing
 
 A complete audit may surface ten or more misses. Don't try to fix all of them in one
