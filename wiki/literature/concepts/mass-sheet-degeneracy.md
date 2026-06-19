@@ -3,9 +3,9 @@ title: Mass-sheet degeneracy
 type: concept
 topics: [degeneracies]
 sources:
-  - Strong_Lens/Birrer2020TDCOSMOSIVH0.pdf
-  - Strong_Lens/Wertz2018PySPT.pdf
-  - Strong_Lens/Tagore2017_Error_On_Ho.pdf
+  - Birrer et al. 2020 — TDCOSMOSIVH0
+  - Wertz et al. 2018 — Py SPT
+  - Tagore et al. 2017 — Error On Ho
 status: drafted
 ---
 

@@ -3,11 +3,11 @@ title: Mass models for lens galaxies
 type: concept
 topics: [lens-modelling]
 sources:
-  - Strong_Lens/Tessore2015Lensed.pdf
-  - Strong_Lens/Tessore2016PowerLaw.pdf
-  - Strong_Lens/Oguri2021CSE.pdf
-  - Strong_Lens/Shajib2020GaussianDecomp].pdf
-  - Strong_Lens/He2024MGE.pdf
+  - Tessore et al. 2015 — Lensed
+  - Tessore et al. 2016 — Power Law
+  - Oguri et al. 2021 — CSE
+  - Shajib et al. 2020 — Gaussian Decomp
+  - He et al. 2024 — MGE
 status: drafted
 ---
 

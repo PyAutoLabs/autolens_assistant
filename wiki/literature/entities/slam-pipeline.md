@@ -3,8 +3,8 @@ title: SLaM (Strong Lens Automated Modelling) pipeline
 type: entity
 topics: [software, pipeline]
 sources:
-  - Strong_Lens/Etherington2022SLaM.pdf
-  - Strong_Lens/Etherington2022BulgeHalo.pdf
+  - Etherington et al. 2022 — S La M
+  - Etherington et al. 2022 — Bulge Halo
 status: drafted
 ---
 

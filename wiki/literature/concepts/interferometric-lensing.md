@@ -3,12 +3,12 @@ title: Interferometric strong lensing
 type: concept
 topics: [methods, observations]
 sources:
-  - Strong_Lens/Powell2020interfermeter.pdf
-  - Strong_Lens/McKean2015SLSKA.pdf
-  - Strong_Lens/Jackson2015SLRadioMaseMerlin.pdf
-  - Strong_Lens/Dye2017ModelingAlma.pdf
-  - Strong_Lens/Enia2018AlmaImaging.pdf
-  - Strong_Lens/Stacey2024MultipolesALMA.pdf
+  - Powell et al. 2020 — interferometer
+  - McKean et al. 2015 — strong lensing SKA
+  - Jackson et al. 2015 — strong lensing radio MERLIN
+  - Dye et al. 2017 — modelling ALMA
+  - Enia et al. 2018 — ALMA imaging
+  - Stacey et al. 2024 — multipoles ALMA
 status: drafted
 ---
 

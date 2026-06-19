@@ -3,8 +3,8 @@ title: PyAutoLens
 type: entity
 topics: [software]
 sources:
-  - AutoLens.pdf
-  - autolens_paper1_resubmit_20180216.pdf
+  - AutoLens — PyAutoLens method/code paper
+  - AutoLens paper I (2018 resubmission)
 status: drafted
 ---
 

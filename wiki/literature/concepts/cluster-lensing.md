@@ -3,11 +3,11 @@ title: Cluster-scale strong lensing
 type: concept
 topics: [cluster-lensing]
 sources:
-  - StrongLensCluster/Richard2017HFFModels.pdf
-  - StrongLensCluster/Atek2015HFFUV.pdf
-  - StrongLensCluster/Jullo2008CosmologicalConstraints.pdf
-  - Strong_Lens/Chirivi2017_Lineofsight_Clusters.pdf
-  - Strong_Lens/Schneider2013SPT.pdf
+  - Richard et al. 2017 — HFF models
+  - Atek et al. 2015 — HFF UV
+  - Jullo et al. 2008 — cosmological constraints
+  - Chirivi et al. 2017 — line-of-sight clusters
+  - Schneider et al. 2013 — SPT
 status: drafted
 ---
 

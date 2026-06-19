@@ -3,7 +3,7 @@ title: Strong-Lens Finding Challenge
 type: entity
 topics: [lens-finding, methods]
 sources:
-  - Strong_Lens/Metcalf2018LensFindingChallenge.pdf
+  - Metcalf et al. 2018 — Lens Finding Challenge
 status: drafted
 ---
 

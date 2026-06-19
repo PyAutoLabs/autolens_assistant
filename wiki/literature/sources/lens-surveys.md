@@ -14,7 +14,7 @@ load data from it.
 
 ## Bolton 2006 — SLACS-I
 
-**File:** https://arxiv.org/abs/astro-ph/0511453 (ApJ 638, 703)
+**Reference:** https://arxiv.org/abs/astro-ph/0511453 (ApJ 638, 703)
 **Concepts:** [[slacs]], [[lens-finding]]
 **Status:** drafted
 
@@ -30,7 +30,7 @@ Nightingale / Etherington PyAutoLens development. When a fork user says
 
 ## Brownstein 2012 — BELLS-I
 
-**File:** https://arxiv.org/abs/1112.3683 (ApJ 744, 41)
+**Reference:** https://arxiv.org/abs/1112.3683 (ApJ 744, 41)
 **Concepts:** [[bells-gallery]], [[lens-finding]]
 **Status:** drafted
 
@@ -46,7 +46,7 @@ Ritondale 2018 in `sources/dark-matter-substructure.md`).
 
 ## Suyu 2017 — H0LiCOW-I
 
-**File:** https://arxiv.org/abs/1607.00017 (MNRAS 468, 2590)
+**Reference:** https://arxiv.org/abs/1607.00017 (MNRAS 468, 2590)
 **Concepts:** [[h0licow]], [[time-delay-cosmography]], [[hubble-tension]]
 **Status:** drafted
 

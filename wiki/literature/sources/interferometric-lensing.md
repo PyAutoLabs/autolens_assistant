@@ -9,7 +9,7 @@ status: drafted
 
 ## Powell 2020 — VLBI subhalo
 
-**File:** `Strong_Lens/Powell2020interfermeter.pdf`
+**Reference:** Powell 2020 — VLBI subhalo
 **Concepts:** [[interferometric-lensing]],
 [[dark-matter-substructure]]
 **Summary:** First subhalo detection in a VLBI-mapped radio lens
@@ -17,33 +17,33 @@ status: drafted
 
 ## McKean 2015 — SKA strong lensing
 
-**File:** `Strong_Lens/McKean2015SLSKA.pdf`
+**Reference:** McKean 2015 — SKA strong lensing
 **Concepts:** [[interferometric-lensing]]
 **Summary:** Forecasts for strong-lens science with SKA.
 
 ## Jackson 2015 — SL radio MERLIN
 
-**File:** `Strong_Lens/Jackson2015SLRadioMaseMerlin.pdf`
+**Reference:** Jackson 2015 — SL radio MERLIN
 **Concepts:** [[interferometric-lensing]]
 **Summary:** Strong-lens radio masing / continuum observations
 with MERLIN.
 
 ## Dye 2017 — modelling ALMA
 
-**File:** `Strong_Lens/Dye2017ModelingAlma.pdf`
+**Reference:** Dye 2017 — modelling ALMA
 **Concepts:** [[interferometric-lensing]],
 [[source-reconstruction]]
 **Summary:** ALMA visibility-plane modelling of lensed DSFGs.
 
 ## Enia 2018 — ALMA imaging
 
-**File:** `Strong_Lens/Enia2018AlmaImaging.pdf`
+**Reference:** Enia 2018 — ALMA imaging
 **Concepts:** [[interferometric-lensing]]
 **Summary:** ALMA imaging of lensed DSFGs.
 
 ## Wong 2015 — SDP.81 central image
 
-**File:** `Strong_Lens/Wong2071ALMACentralImage.pdf`
+**Reference:** Wong 2015 — SDP.81 central image
 **Concepts:** [[interferometric-lensing]],
 [[smbh-from-lensing]]
 **Summary:** Uses long-baseline ALMA plus HST imaging of SDP.81 to search

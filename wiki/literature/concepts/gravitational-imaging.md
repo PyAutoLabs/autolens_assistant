@@ -3,10 +3,10 @@ title: Gravitational imaging
 type: concept
 topics: [dark-matter, methods]
 sources:
-  - Strong_Lens/Koopmans2005GravImaging.pdf
-  - Strong_Lens/Vegetti2018StellarNeutrinos.pdf
-  - Strong_Lens/Nightingale2022Scanm.pdf
-  - Strong_Lens/Verbados2022PotentialCoorr.pdf
+  - Koopmans et al. 2005 — gravitational imaging
+  - Vegetti et al. 2018 — stellar neutrinos
+  - Nightingale et al. 2022 — scan method
+  - Verbados et al. 2022 — potential correction
 status: drafted
 ---
 

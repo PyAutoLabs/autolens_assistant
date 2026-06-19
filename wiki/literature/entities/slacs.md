@@ -3,10 +3,10 @@ title: SLACS (Sloan Lens ACS Survey)
 type: entity
 topics: [survey, sample]
 sources:
-  - Strong_Lens/Shu2012SLACSXII.pdf
-  - Strong_Lens/Shu2018SLACS4Mass.pdf
-  - Strong_Lens/Sonnenfeld2024SlacsDebiased.pdf
-  - Strong_Lens/Sonnefendl2025SLACSDebiadedII.pdf
+  - Shu et al. 2012 — SLACSXII
+  - Shu et al. 2018 — SLACS4 Mass
+  - Sonnenfeld et al. 2024 — Slacs Debiased
+  - Sonnefendl et al. 2025 — SLACS Debiaded II
 status: drafted
 ---
 

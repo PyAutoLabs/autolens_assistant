@@ -3,7 +3,7 @@ title: TDCOSMO
 type: entity
 topics: [cosmography, collaboration]
 sources:
-  - Strong_Lens/Birrer2020TDCOSMOSIVH0.pdf
+  - Birrer et al. 2020 — TDCOSMOSIVH0
 status: drafted
 ---
 

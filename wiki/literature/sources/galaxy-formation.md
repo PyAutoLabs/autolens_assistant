@@ -11,11 +11,11 @@ Papers in scope that bear on the galaxy-formation / DM-halo connection
 used by lens-galaxy modellers (mostly cross-listed here for completeness;
 primary topic-home noted).
 
-- IllustrisTNG ellipticals — see [[sources-bulge-halo]] (`Wang*IllustrisTNG.pdf`).
-- WDM N-body sims — see [[sources-dark-matter-physics]] (`Bose2016WDMSims.pdf`).
-- NFW foundational — see [[sources-dark-matter-physics]] (`Navarro1996*`).
+- IllustrisTNG ellipticals — see [[sources-bulge-halo]] (Wang et al. — IllustrisTNG ellipticals).
+- WDM N-body sims — see [[sources-dark-matter-physics]] (Bose et al. 2016 — WDM sims).
+- NFW foundational — see [[sources-dark-matter-physics]] (Navarro et al. 1996).
 - "The Chosen Few" hydrosims — see [[sources-dark-matter-substructure]]
-  (`Sawala2016TheChosenFew.pdf`).
+  (Sawala et al. 2016 — The Chosen Few).
 - Robertson SIDM — see [[sources-dark-matter-physics]].
 
 This file is a hub. New galaxy-formation-only papers should be added

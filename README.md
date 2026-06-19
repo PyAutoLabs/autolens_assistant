@@ -104,6 +104,14 @@ papers. When you ask a science question or start a modelling discussion,
 the assistant grounds itself in this material rather than guessing from
 general knowledge.
 
+This is a **base** literature wiki — a self-contained starting point that ships with the
+assistant. It is intentionally **not** tied to any external paper archive: every page stands
+on its own and cites papers by arXiv/DOI link or author-year, so a fresh clone has full
+scientific context with nothing else to download. It is also deliberately **not exhaustive**.
+The wiki is yours to grow: as you work on a project, you add the papers, results and context
+*your* science needs, and from then on the assistant reasons and cites from them. (A future
+guided "new science project" workflow will walk you through this setup explicitly.)
+
 If a paper matters to your science case and isn't in the wiki yet, you
 can ask the assistant to ingest it. Give it either a local PDF or an
 arXiv URL and it adds a summary to the right topic bibliography, cross-

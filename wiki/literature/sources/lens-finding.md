@@ -9,113 +9,113 @@ status: drafted
 
 ## Metcalf 2018 — Lens Finding Challenge
 
-**File:** `Strong_Lens/Metcalf2018LensFindingChallenge.pdf`
+**Reference:** Metcalf 2018 — Lens Finding Challenge
 **Concepts:** [[lens-finding]], [[lens-finding-challenge]]
 **Summary:** Community blind benchmark of lens-finding
 algorithms.
 
 ## Jacobs 2019 — DES lenses
 
-**File:** `Strong_Lens/Jacbos2019SLDES.pdf`
+**Reference:** Jacobs 2019 — DES lenses
 **Concepts:** [[lens-finding]], [[des-lenses]]
 **Summary:** CNN-based lens finding in DES.
 
 ## Jaelani 2023 — HSC lens find
 
-**File:** `Strong_Lens/Jaelani2023SLFindHSC.pdf`
+**Reference:** Jaelani 2023 — HSC lens find
 **Concepts:** [[lens-finding]], [[hsc-survey-lenses]]
 **Summary:** Recent HSC lens catalogue.
 
 ## Rojas 2022 — DES lens modelling+finding
 
-**File:** `Strong_Lens/Rojas2022DESLensMOdelFinding.pdf`
+**Reference:** Rojas 2022 — DES lens modelling+finding
 **Concepts:** [[lens-finding]], [[deep-learning-lensing]]
 **Summary:** Combined finding + modelling pipeline for DES.
 
 ## Holloway 2024 — Bayesian lens finding
 
-**File:** `Strong_Lens/Holloway2024BayesLensFind.pdf`
+**Reference:** Holloway 2024 — Bayesian lens finding
 **Concepts:** [[lens-finding]], [[pyautolens]]
 **Summary:** Uses PyAutoLens Bayesian evidence as a lens-finding
 criterion.
 
 ## Gavazzi 2012 — SL2S I
 
-**File:** `Strong_Lens/Gavazzi2012SL2SI.pdf`
+**Reference:** Gavazzi 2012 — SL2S I
 **Concepts:** [[sl2s]], [[lens-statistics]]
 **Summary:** First major SL2S sample paper characterising the
 CFHTLS-selected galaxy-scale lenses; mass-slope and σ–θ_E scaling.
 
 ## Gavazzi 2014 — Ringfinder
 
-**File:** `Strong_Lens/Gavazzi2014Ringfinder.pdf`
+**Reference:** Gavazzi 2014 — Ringfinder
 **Concepts:** [[lens-finding]], [[sl2s]]
 **Summary:** Colour-residual-based lens finder used in CFHTLS.
 
 ## Sonnenfeld 2018 — Yattalens
 
-**File:** `Strong_Lens/Sonnenfeld2018Yattalens.pdf`
+**Reference:** Sonnenfeld 2018 — Yattalens
 **Concepts:** [[lens-finding]], [[hsc-survey-lenses]]
 **Summary:** Bayesian plus photometric lens classifier for HSC.
 
 ## Sonnenfeld 2020 — HSC modelling + finding
 
-**File:** `Strong_Lens/Sonnenfeld2020HSCLENSMODELINGFIND.pdf`
+**Reference:** Sonnenfeld 2020 — HSC modelling + finding
 **Concepts:** [[lens-finding]], [[hsc-survey-lenses]]
 **Summary:** Joint modelling + finding pipeline applied to HSC.
 
 ## Space Warps 2017 — Spaghetti
 
-**File:** `Strong_Lens/Spacewarms2017Spaghetti.pdf`
+**Reference:** Space Warps 2017 — Spaghetti
 **Concepts:** [[lens-finding]], [[space-warps]]
 **Summary:** Citizen-science lens discoveries.
 
 ## Tran 2022 — AGEL
 
-**File:** `Strong_Lens/Tran2022AGEL.pdf`
+**Reference:** Tran 2022 — AGEL
 **Concepts:** [[des-lenses]], [[lens-finding]]
 **Summary:** Spectroscopic confirmation programme for DES /
 Gemini lens candidates.
 
 ## d'Exivry 2009 — atlas of lenses
 
-**File:** `Strong_Lens/dexivry2009AtlasStrongLneses.pdf`
+**Reference:** d'Exivry 2009 — atlas of lenses
 **Concepts:** [[lens-finding]]
 **Summary:** Early atlas of known strong lenses.
 
 ## Pearson 2020 — ML + parametric finding
 
-**File:** `Strong_Lens/Pearson2020MLAndParametric.pdf`
+**Reference:** Pearson 2020 — ML + parametric finding
 **Concepts:** [[lens-finding]], [[deep-learning-lensing]]
 **Summary:** Machine-learning lens finding with parametric follow-up.
 
 ## O'Riordan 2023 — Euclid
 
-**File:** `Strong_Lens/ORiodan2023Euclid.pdf`
+**Reference:** O'Riordan 2023 — Euclid
 **Concepts:** [[euclid-q1]]
 **Summary:** Euclid forecast and methodology paper for lens discovery.
 
 ## Wang 2025 — Euclid
 
-**File:** `Strong_Lens/Wang2025SLEuclid.pdf`
+**Reference:** Wang 2025 — Euclid
 **Concepts:** [[euclid-q1]]
 **Summary:** Lensing science with Euclid Q1 / DR1.
 
 ## Euclid Q1 2025 — paper I
 
-**File:** `Strong_Lens/EuclidQ12025paperI.pdf`
+**Reference:** Euclid Q1 2025 — paper I
 **Concepts:** [[euclid-q1]]
 **Summary:** First in the Q1 strong-lens series.
 
 ## Euclid Q1 2025 — paper II
 
-**File:** `Strong_Lens/EuclidQ12025paperII.pdf`
+**Reference:** Euclid Q1 2025 — paper II
 **Concepts:** [[euclid-q1]]
 **Summary:** Q1 paper II.
 
 ## Euclid Q1 2025 — paper III
 
-**File:** `Strong_Lens/EuclidQ12025paperIII.pdf`
+**Reference:** Euclid Q1 2025 — paper III
 **Concepts:** [[euclid-q1]]
 **Summary:** Q1 paper III.
 

@@ -3,11 +3,11 @@ title: Source reconstruction
 type: concept
 topics: [lens-modelling]
 sources:
-  - Strong_Lens/Galan2021SLIT.pdf
-  - Strong_Lens/Galan2022Wavelet.pdf
-  - Strong_Lens/Koopmans2005GravImaging.pdf
-  - Strong_Lens/Ding2016_SHARPIXGalRecon.pdf
-  - Strong_Lens/Suyu2009SpiralPotentialCorr.pdf
+  - Galan et al. 2021 — SLIT
+  - Galan et al. 2022 — Wavelet
+  - Koopmans et al. 2005 — Grav Imaging
+  - Ding et al. 2016 — SHARPIX Gal Recon
+  - Suyu et al. 2009 — Spiral Potential Corr
 status: drafted
 ---
 

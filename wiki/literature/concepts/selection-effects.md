@@ -3,9 +3,9 @@ title: Selection effects in strong-lens samples
 type: concept
 topics: [populations, systematics]
 sources:
-  - Strong_Lens/Sonnenfeld2023SelectionEffects.pdf
-  - Strong_Lens/Sonnenfeld2024SlacsDebiased.pdf
-  - Strong_Lens/Sonnefendl2025SLACSDebiadedII.pdf
+  - Sonnenfeld et al. 2023 — Selection Effects
+  - Sonnenfeld et al. 2024 — Slacs Debiased
+  - Sonnefendl et al. 2025 — SLACS Debiaded II
 status: drafted
 ---
 

@@ -3,9 +3,9 @@ title: HSC lens samples
 type: entity
 topics: [survey, sample]
 sources:
-  - Strong_Lens/Sonnenfeld2018Yattalens.pdf
-  - Strong_Lens/Sonnenfeld2020HSCLENSMODELINGFIND.pdf
-  - Strong_Lens/Jaelani2023SLFindHSC.pdf
+  - Sonnenfeld et al. 2018 — Yattalens
+  - Sonnenfeld et al. 2020 — HSCLENSMODELINGFIND
+  - Jaelani et al. 2023 — SL Find HSC
 status: drafted
 ---
 

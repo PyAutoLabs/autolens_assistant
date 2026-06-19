@@ -2,24 +2,31 @@
 
 This sub-wiki (`autolens_assistant/wiki/literature/`) gives the assistant the broad
 scientific context of strong gravitational lensing. It follows Karpathy's "LLM Wiki"
-pattern: the source PDFs are the immutable raw layer (kept **outside** this repo — see
-below) and this folder is the compiled, cross-linked knowledge layer the assistant reads at
-query time and that lives in git for collaborators.
+pattern: a compiled, cross-linked knowledge layer the assistant reads at query time.
 
-## Where the PDFs live
+It ships as a **self-contained base literature wiki** — a starting body of strong-lensing
+science that every clone of the assistant gets out of the box. It is **not** tied to any
+external paper repository or personal PDF library: every page stands on its own, and papers
+are referenced by arXiv/DOI link and/or citation, never by a local file path. Users are
+expected to **extend** it with the papers and context their own project needs (see
+[`skills/al_ingest_paper.md`](../../skills/al_ingest_paper.md)).
 
-The PDFs are kept in the sibling **`PyAutoPaper/`** repo (cloned at `../PyAutoPaper/`
-relative to this workspace; PDFs themselves are gitignored / backed up externally). This
-literature wiki shares its schema with PyAutoPaper's `lensing_wiki/`. External references in
-pages below therefore use a path relative to the `PyAutoPaper/` repo root, e.g.
-`Strong_Lens/Suyu2016Holicow.pdf`. Collaborators cloning only `autolens_assistant` will see
-the references but need to source the PDFs separately (most are on arXiv or the journal
-site).
+## References — how papers are cited
+
+Papers are identified by a **public reference**, not a file on disk:
+
+- An **arXiv** link/ID (`arXiv:2011.10627`) or a **DOI**/journal URL when one is known, and/or
+- a **citation** — author(s), year, and a short descriptive tag (e.g.
+  `Minor et al. 2021 — J0946 subhalo overconcentration`).
+
+Never record a local PDF path, and **never fabricate** an arXiv ID or DOI: if no public
+identifier is known for a paper, cite it by author/year/title only. A reader who wants the
+PDF sources it from arXiv or the journal using the reference.
 
 ## Layout
 
 ```
-wiki/literature/             # this folder — the compiled wiki (in git)
+wiki/literature/             # the compiled wiki (in git)
 ├── AGENTS.md                # this file — schema + usage rules (canonical)
 ├── CLAUDE.md                # one-line import stub of AGENTS.md
 ├── index.md                 # top-level navigation
@@ -29,8 +36,8 @@ wiki/literature/             # this folder — the compiled wiki (in git)
 └── sources/                 # per-topic bibliography pages (one paper = one section)
 ```
 
-The PDFs are the ground truth. Wiki pages are syntheses. If a wiki page and a PDF disagree,
-the PDF wins; the wiki page should be updated and the change noted in `log.md`.
+Wiki pages are syntheses. If a page and the paper it cites disagree, the paper wins; update
+the page and note the change in `log.md`.
 
 ## Page types
 
@@ -55,8 +62,8 @@ Use `[[page-slug]]` for wiki-internal links — for example
 `.md`. A `[[link]]` that has no target file yet is fine — it marks a future
 page to write.
 
-External references point at the PDF using a relative path from the `PyAutoPaper/` repo
-root, e.g. `Strong_Lens/Suyu2016Holicow.pdf` (see "Where the PDFs live" above).
+External references point at a paper by its arXiv/DOI link and/or citation (see "References"
+above), never a local path.
 
 ## Frontmatter
 
@@ -67,9 +74,9 @@ Every wiki file starts with YAML frontmatter:
 title: Mass-sheet degeneracy
 type: concept            # concept | entity | sources | meta
 topics: [degeneracies, cosmography]
-sources:                 # optional — papers most relevant to this page
-  - Strong_Lens/Suyu2016Holicow.pdf
-  - Strong_Lens/Birrer2020TDCOSMOSIVH0.pdf
+sources:                 # optional — papers most relevant to this page,
+  - arXiv:1607.00017     # by arXiv ID, DOI, or "Author Year — tag" citation
+  - Suyu et al. 2010 — H0 from B1608+656
 status: stub             # stub | drafted | reviewed
 ---
 ```
@@ -116,10 +123,9 @@ cross-link from concept and entity pages with `[[sources-<topic>#author-year-slu
 
 ## Author Year — short tag
 
-**File:** `Strong_Lens/Filename.pdf`
+**Reference:** arXiv:1607.00017  (or a DOI/journal URL, and/or "Author Year — title")
 **Concepts:** [[concept-1]], [[concept-2]]
-**Summary:** one-paragraph stub inferred from filename and field knowledge.
-Mark `(stub — verify against PDF)` if not yet read.
+**Summary:** one-paragraph stub. Mark `(stub — verify against the paper)` if not yet read.
 ```
 
 ## How the assistant should use this wiki
@@ -127,24 +133,18 @@ Mark `(stub — verify against PDF)` if not yet read.
 1. On a user question, first open `index.md`.
 2. Follow the relevant `concepts/` or `entities/` page.
 3. Cite specific results by linking the `[[sources-topic#author-year]]`
-   anchor. If a claim is needed and the source stub is unread, open the
-   PDF at the path in the stub's `File:` line.
-4. When a PDF is read in full, upgrade the stub's `status:` from `stub` to
+   anchor. If a claim is needed and the source stub is unread, fetch the paper
+   from the arXiv/DOI in the stub's `Reference:` line.
+4. When a paper is read in full, upgrade the stub's `status:` from `stub` to
    `drafted`, replace the inferred summary with what the paper actually
    says, and add a line to `log.md`.
-5. Never fabricate a citation. If a result is not on a wiki page, say so
-   and offer to read the relevant PDF.
+5. Never fabricate a citation or identifier. If a result is not on a wiki page, say so
+   and offer to read the relevant paper.
 
-## Scope
+## Extending the wiki
 
-In-scope topics for the current wiki build (matching the PyAutoPaper PDF folders):
-
-- `Strong_Lens/`           — primary
-- `Substructure/`
-- `StrongLensCluster/`
-- `Dark_Matter_Detection/`
-- `DarkMatterModels/`
-
-Other folders (`WeakLensing/`, `Ellipticals/`, `Deep Learning/`, etc.)
-contain papers that touch lensing tangentially but are out of scope until
-explicitly added — see `log.md` for the decision.
+This base wiki is a starting point, not a fixed corpus. When a user's project needs a paper
+that isn't here yet, add it via [`skills/al_ingest_paper.md`](../../skills/al_ingest_paper.md):
+create or update the relevant `sources/<topic>.md` section, cross-link the impacted
+`concepts/` and `entities/` pages with `[[wiki-link]]`s, and append a row to `log.md`. Over
+time the wiki grows into the project's own literature record.

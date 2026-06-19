@@ -3,9 +3,9 @@ title: Lensed supernovae
 type: concept
 topics: [cosmology, transients]
 sources:
-  - Strong_Lens/Goobar2016_MultiImSuperNova.pdf
-  - Strong_Lens/Grillo2018RefsdelHo.pdf
-  - Strong_Lens/Ryberg2018StrongLensSupernovaRedshift7.pdf
+  - Goobar et al. 2016 — Multi Im Super Nova
+  - Grillo et al. 2018 — Refsdel Ho
+  - Ryberg et al. 2018 — Strong Lens Supernova Redshift7
 status: drafted
 ---
 

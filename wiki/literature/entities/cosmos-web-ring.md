@@ -3,7 +3,7 @@ title: COSMOS-Web Ring
 type: entity
 topics: [specific-lens, jwst]
 sources:
-  - Strong_Lens/Mercier2024COSMOSRing.pdf
+  - Mercier et al. 2024 — COSMOS Ring
 status: drafted
 ---
 

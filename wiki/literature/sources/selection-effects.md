@@ -9,46 +9,46 @@ status: drafted
 
 ## Sonnenfeld 2023 — selection effects
 
-**File:** `Strong_Lens/Sonnenfeld2023SelectionEffects.pdf`
+**Reference:** Sonnenfeld 2023 — selection effects
 **Concepts:** [[selection-effects]]
 **Summary:** Formal treatment of the lens-sample selection
 function and its propagation into scaling-relation inference.
 
 ## Sonnenfeld 2024 — SLACS debiased
 
-**File:** `Strong_Lens/Sonnenfeld2024SlacsDebiased.pdf`
+**Reference:** Sonnenfeld 2024 — SLACS debiased
 **Concepts:** [[selection-effects]], [[slacs]]
 **Summary:** Reanalysis of SLACS with explicit selection-function
 debiasing — shifts the recovered mass slopes.
 
 ## Sonnenfeld 2025 — SLACS debiased II
 
-**File:** `Strong_Lens/Sonnefendl2025SLACSDebiadedII.pdf`
+**Reference:** Sonnenfeld 2025 — SLACS debiased II
 **Concepts:** [[selection-effects]], [[slacs]]
 **Summary:** Continuation of the SLACS-debiased programme.
 
 ## Shu 2012 — SLACS XII
 
-**File:** `Strong_Lens/Shu2012SLACSXII.pdf`
+**Reference:** Shu 2012 — SLACS XII
 **Concepts:** [[slacs]]
 **Summary:** SLACS programme paper XII on sample definition and modelling.
 
 ## Shu 2016 — BELLS-GALLERY
 
-**File:** `Strong_Lens/Shu2016BELLSGALLERY.pdf`
+**Reference:** Shu 2016 — BELLS-GALLERY
 **Concepts:** [[bells-gallery]]
 **Summary:** Introduces BELLS-GALLERY, the LAE-source subsample of
 BELLS.
 
 ## Shu 2018 — SLACS 4 mass
 
-**File:** `Strong_Lens/Shu2018SLACS4Mass.pdf`
+**Reference:** Shu 2018 — SLACS 4 mass
 **Concepts:** [[slacs]], [[mass-models]]
 **Summary:** SLACS mass-model analysis paper.
 
 ## Cornachione 2017 — BELLS source
 
-**File:** `Strong_Lens/cornachione2017BellsSource.pdf`
+**Reference:** Cornachione 2017 — BELLS source
 **Concepts:** [[bells-gallery]],
 [[lensed-source-science]]
 **Summary:** Source-plane analysis of BELLS-GALLERY lenses.

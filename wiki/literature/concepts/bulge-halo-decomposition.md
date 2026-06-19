@@ -3,11 +3,11 @@ title: Bulge–halo (stellar + dark matter) decomposition
 type: concept
 topics: [galaxy-structure]
 sources:
-  - Strong_Lens/Etherington2022BulgeHalo.pdf
-  - Strong_Lens/Etherington2022SLaM.pdf
-  - Strong_Lens/Etherington2023aBeyondBulge.pdf
-  - Strong_Lens/Shajib2021MassSlopeNFW.pdf
-  - Strong_Lens/Oldham2018StellarAndDark.pdf
+  - Etherington et al. 2022 — bulge-halo decomposition
+  - Etherington et al. 2022 — SLaM
+  - Etherington et al. 2023a — beyond bulge
+  - Shajib et al. 2021 — mass slope NFW
+  - Oldham et al. 2018 — stellar and dark
 status: drafted
 ---
 

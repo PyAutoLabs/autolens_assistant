@@ -3,10 +3,10 @@ title: Flux-ratio anomalies
 type: concept
 topics: [dark-matter, methods]
 sources:
-  - Strong_Lens/Gilman2018ProbeNatureDMForwardModel.pdf
-  - Strong_Lens/Gilman2019ConstraintsDM.pdf
-  - Strong_Lens/Gilman2016FluxMethod.pdf
-  - Strong_Lens/CyrRacine2018SLMany.pdf
+  - Gilman et al. 2018 — probing the nature of DM with forward modelling
+  - Gilman et al. 2019 — constraints on DM
+  - Gilman et al. 2016 — flux method
+  - Cyr-Racine et al. 2018 — strong lensing many (subhaloes)
 status: drafted
 ---
 

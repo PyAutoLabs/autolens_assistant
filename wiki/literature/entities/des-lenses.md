@@ -3,9 +3,9 @@ title: DES lens samples
 type: entity
 topics: [survey, sample]
 sources:
-  - Strong_Lens/Jacbos2019SLDES.pdf
-  - Strong_Lens/Rojas2022DESLensMOdelFinding.pdf
-  - Strong_Lens/Tran2022AGEL.pdf
+  - Jacbos et al. 2019 — SLDES
+  - Rojas et al. 2022 — DES Lens M Odel Finding
+  - Tran et al. 2022 — AGEL
 status: drafted
 ---
 

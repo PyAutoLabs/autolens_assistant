@@ -3,7 +3,7 @@ title: IMF from microlensing of lensed quasars
 type: concept
 topics: [galaxy-structure]
 sources:
-  - Strong_Lens/Medevilla2019QuasarIMF.pdf
+  - Medevilla et al. 2019 — Quasar IMF
 status: drafted
 ---
 

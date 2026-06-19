@@ -3,8 +3,8 @@ title: Tests of GR with strong lensing
 type: concept
 topics: [cosmology, fundamental-physics]
 sources:
-  - Strong_Lens/Collett2018GR.pdf
-  - Strong_Lens/Melo2023ProbeGR.pdf
+  - Collett et al. 2018 — GR
+  - Melo et al. 2023 — probing GR
 status: drafted
 ---
 

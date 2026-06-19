@@ -3,11 +3,11 @@ title: Time-delay cosmography (H0 from strong lensing)
 type: concept
 topics: [cosmology]
 sources:
-  - Strong_Lens/Suyu2016Holicow.pdf
-  - Strong_Lens/Birrer2018HolicowIX.pdf
-  - Strong_Lens/Birrer2020TDCOSMOSIVH0.pdf
-  - Strong_Lens/Wong2019H0licow6lenses.pdf
-  - Strong_Lens/Grillo2018RefsdelHo.pdf
+  - Suyu et al. 2016 — Holicow
+  - Birrer et al. 2018 — Holicow IX
+  - Birrer et al. 2020 — TDCOSMOSIVH0
+  - Wong et al. 2019 — H0licow6lenses
+  - Grillo et al. 2018 — Refsdel Ho
 status: drafted
 ---
 

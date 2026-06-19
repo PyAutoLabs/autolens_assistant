@@ -9,21 +9,21 @@ status: drafted
 
 ## Galan 2021 — SLIT
 
-**File:** `Strong_Lens/Galan2021SLIT.pdf`
+**Reference:** Galan 2021 — SLIT
 **Concepts:** [[source-reconstruction]] (wavelet / sparse)
 **Summary:** Wavelet and sparse source-plane reconstruction
 (SLIT-ronomy). Alternative to Gaussian-prior pixelated grids.
 
 ## Galan 2022 — wavelet lensing
 
-**File:** `Strong_Lens/Galan2022Wavelet.pdf`
+**Reference:** Galan 2022 — wavelet lensing
 **Concepts:** [[source-reconstruction]]
 **Summary:** Follow-up to SLIT with multi-scale wavelet source
 reconstruction with applications.
 
 ## Koopmans 2005 — gravitational imaging
 
-**File:** https://arxiv.org/abs/astro-ph/0501324 (MNRAS 363, 1136)
+**Reference:** https://arxiv.org/abs/astro-ph/0501324 (MNRAS 363, 1136)
 **Concepts:** [[gravitational-imaging]], [[source-reconstruction]],
 [[dark-matter-substructure]]
 **Status:** drafted
@@ -59,7 +59,7 @@ of choice over parametric perturber fits.
 
 ## Suyu 2006 — Bayesian regularised source inversion
 
-**File:** https://arxiv.org/abs/astro-ph/0601493 (MNRAS 371, 983)
+**Reference:** https://arxiv.org/abs/astro-ph/0601493 (MNRAS 371, 983)
 **Concepts:** [[source-reconstruction]], [[bayesian-inference-lensing]],
 [[regularization]]
 **Status:** drafted
@@ -95,7 +95,7 @@ invoked in a paper.**
 
 ## Ding 2016 — SHARP IX source reconstruction
 
-**File:** `Strong_Lens/Ding2016_SHARPIXGalRecon.pdf`
+**Reference:** Ding 2016 — SHARP IX source reconstruction
 **Concepts:** [[source-reconstruction]]
 **Summary:** Pixelated source reconstruction in a SHARP sample
 lens, possibly with stellar-population implications for the source
@@ -103,14 +103,14 @@ galaxy.
 
 ## Suyu 2009 — spiral potential correction
 
-**File:** `Strong_Lens/Suyu2009SpiralPotentialCorr.pdf`
+**Reference:** Suyu 2009 — spiral potential correction
 **Concepts:** [[gravitational-imaging]]
 **Summary:** Pixelated potential corrections and detection of
 spiral-like residual structure in a specific lens.
 
 ## Vernardos 2022 — The Very Knotty Lenser
 
-**File:** `Strong_Lens/Verbados2022PotentialCoorr.pdf`
+**Reference:** Vernardos 2022 — The Very Knotty Lenser
 **Concepts:** [[gravitational-imaging]]
 **Summary:** Explores regularization choices in simultaneous source and
 potential reconstruction using Gaussian process regression, showing how
@@ -119,14 +119,14 @@ true perturbations in gravitational-imaging analyses.
 
 ## Minor 2024 — pixel supersampling
 
-**File:** `Strong_Lens/Minor2024PixelSuperSample.pdf`
+**Reference:** Minor 2024 — pixel supersampling
 **Concepts:** [[source-reconstruction]], [[gravitational-imaging]]
 **Summary:** Supersampling of source-plane pixels to access
 substructure below the nominal pixel scale.
 
 ## Minor 2025 — supersampling II
 
-**File:** `Strong_Lens/Minor2025SuperSamplin.pdf`
+**Reference:** Minor 2025 — supersampling II
 **Concepts:** [[source-reconstruction]]
 **Summary:** Continuation and application of pixel supersampling
 methodology.

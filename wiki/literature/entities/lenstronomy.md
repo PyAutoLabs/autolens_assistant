@@ -3,8 +3,8 @@ title: lenstronomy
 type: entity
 topics: [software]
 sources:
-  - Strong_Lens/Biirrer2018lenstronomy.pdf
-  - Strong_Lens/Birrer2018KLenstronomy.pdf
+  - Biirrer et al. 2018 — lenstronomy
+  - Birrer et al. 2018 — K Lenstronomy
 status: drafted
 ---
 

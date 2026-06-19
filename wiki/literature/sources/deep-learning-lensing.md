@@ -9,7 +9,7 @@ status: drafted
 
 ## Pearson 2024 — strong-lens JWST
 
-**File:** `Strong_Lens/Pearson2024StrongLensJWST.pdf`
+**Reference:** Pearson 2024 — strong-lens JWST
 **Concepts:** [[deep-learning-lensing]]
 **Summary:** Forecast-style paper on how modern deep-learning workflows
 can exploit JWST-quality strong-lens data. The relevant message for this
@@ -20,7 +20,7 @@ population-scale inference.
 
 ## Morningstar 2019 — deep-learning source reconstruction
 
-**File:** `Strong_Lens/Morningstar2019DeepLearnGalaxyRecon.pdf`
+**Reference:** Morningstar 2019 — deep-learning source reconstruction
 **Concepts:** [[deep-learning-lensing]], [[source-reconstruction]]
 **Summary:** Presents recurrent inference machines for reconstructing the
 unlensed source image directly from strong-lens data, coupled to a CNN
@@ -30,7 +30,7 @@ of a hand-written physical model.
 
 ## Wagner-Carena 2021 — hierarchical BNN
 
-**File:** `Strong_Lens/WagnerCarena2021BNNHierachical.pdf`
+**Reference:** Wagner-Carena 2021 — hierarchical BNN
 **Concepts:** [[deep-learning-lensing]], [[lens-statistics]]
 **Summary:** Shows how Bayesian neural networks can be embedded in a
 hierarchical inference framework so that population hyperparameters can be
@@ -40,7 +40,7 @@ sample-level inference, not only point predictions for single lenses.
 
 ## Brehmer 2019 — mining DM substructure
 
-**File:** `Strong_Lens/Brehmer2019MiningDMSub.pdf`
+**Reference:** Brehmer 2019 — mining DM substructure
 **Concepts:** [[deep-learning-lensing]],
 [[dark-matter-substructure]]
 **Summary:** Uses simulation-based inference and machine learning to

@@ -3,10 +3,10 @@ title: BELLS / BELLS-GALLERY
 type: entity
 topics: [survey, sample]
 sources:
-  - Strong_Lens/Shu2016BELLSGALLERY.pdf
-  - Strong_Lens/cornachione2017BellsSource.pdf
-  - Substructure/Ritondale2018BELLS.pdf
-  - Substructure/Ritondale2018BELLLymaAlphs.pdf
+  - Shu et al. 2016 — BELLSGALLERY
+  - cornachione et al. 2017 — Bells Source
+  - Ritondale et al. 2018 — BELLS
+  - Ritondale et al. 2018 — BELL Lyma Alphs
 status: drafted
 ---
 

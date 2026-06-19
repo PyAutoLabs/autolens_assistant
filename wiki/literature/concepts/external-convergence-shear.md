@@ -3,10 +3,10 @@ title: External convergence and shear
 type: concept
 topics: [systematics, environment]
 sources:
-  - Strong_Lens/Wong2011ShearEnvironment.pdf
-  - Strong_Lens/Birrer2019ShearWLSL.pdf
-  - Strong_Lens/Fleury2022LosShear.pdf
-  - Strong_Lens/Chirivi2017_Lineofsight_Clusters.pdf
+  - Wong et al. 2011 — shear environment
+  - Birrer et al. 2019 — shear weak-lensing strong-lensing
+  - Fleury et al. 2022 — line-of-sight shear
+  - Chirivi et al. 2017 — line-of-sight clusters
 status: drafted
 ---
 

@@ -3,11 +3,11 @@ title: Dark matter substructure from strong lensing
 type: concept
 topics: [dark-matter]
 sources:
-  - Strong_Lens/Vegetti2018StellarNeutrinos.pdf
-  - Strong_Lens/Nightingale2022Scanm.pdf
-  - Strong_Lens/Despali2022Sensitivity.pdf
-  - Strong_Lens/Despali2024SensitivityII.pdf
-  - Strong_Lens/Gilman2019ConstraintsDM.pdf
+  - Vegetti et al. 2018 — stellar neutrinos
+  - Nightingale et al. 2022 — scan method
+  - Despali et al. 2022 — sensitivity
+  - Despali et al. 2024 — sensitivity II
+  - Gilman et al. 2019 — constraints on DM
 status: drafted
 ---
 

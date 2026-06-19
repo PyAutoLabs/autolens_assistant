@@ -9,7 +9,7 @@ status: drafted
 
 ## Wong 2011 — shear environment
 
-**File:** `Strong_Lens/Wong2011ShearEnvironment.pdf`
+**Reference:** Wong 2011 — shear environment
 **Concepts:** [[external-convergence-shear]]
 **Summary:** Compares fitted external shear in lens models to the
 shear inferred from galaxy counting along the LOS. Establishes when each
@@ -17,13 +17,13 @@ matches the other.
 
 ## Birrer 2019 — shear from weak + strong lensing
 
-**File:** `Strong_Lens/Birrer2019ShearWLSL.pdf`
+**Reference:** Birrer 2019 — shear from weak + strong lensing
 **Concepts:** [[external-convergence-shear]]
 **Summary:** Joint inference of γ_ext using strong+weak lensing.
 
 ## Fleury 2022 — LOS shear
 
-**File:** `Strong_Lens/Fleury2022LosShear.pdf`
+**Reference:** Fleury 2022 — LOS shear
 **Concepts:** [[line-of-sight-effects]],
 [[external-convergence-shear]]
 **Summary:** Beyond-leading-order LOS terms and flexion-like
@@ -31,26 +31,26 @@ contributions to lensing.
 
 ## Chirivì 2017 — LOS clusters
 
-**File:** `Strong_Lens/Chirivi2017_Lineofsight_Clusters.pdf`
+**Reference:** Chirivì 2017 — LOS clusters
 **Concepts:** [[line-of-sight-effects]], [[cluster-lensing]]
 **Summary:** LOS halos perturb cluster lens models; multi-plane
 ray tracing necessary.
 
 ## Jaroszynski 2012 — shear redshift
 
-**File:** `Strong_Lens/Jaroszynski2012ShearRedshift.pdf`
+**Reference:** Jaroszynski 2012 — shear redshift
 **Concepts:** [[external-convergence-shear]]
 **Summary:** External shear versus lens redshift trend.
 
 ## Kuhn 2020 — SL+WL+COSMOS shear
 
-**File:** `Strong_Lens/Kuhn2020SLWLCOSMOSSHEAR.pdf`
+**Reference:** Kuhn 2020 — SL+WL+COSMOS shear
 **Concepts:** [[external-convergence-shear]]
 **Summary:** Joint SL+WL shear analysis in COSMOS-style data.
 
 ## He 2021 — LOS
 
-**File:** `Strong_Lens/He2021LoS.pdf`
+**Reference:** He 2021 — LOS
 **Concepts:** [[line-of-sight-effects]],
 [[dark-matter-substructure]]
 **Summary:** LOS halos' contribution to substructure inference;

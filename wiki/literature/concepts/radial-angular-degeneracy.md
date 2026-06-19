@@ -3,9 +3,9 @@ title: Radial-angular decomposition of lensing constraints
 type: concept
 topics: [degeneracies]
 sources:
-  - Strong_Lens/Kochanek2020radialangular.pdf
-  - Strong_Lens/Kochanek2021radialdog.pdf
-  - Strong_Lens/Saha2000.pdf
+  - Kochanek et al. 2020 — radialangular
+  - Kochanek et al. 2021 — radialdog
+  - Saha et al. 2000
 status: drafted
 ---
 
