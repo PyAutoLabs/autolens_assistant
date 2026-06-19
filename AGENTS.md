@@ -26,14 +26,16 @@ ask one focused question — never default to the longest possible explanation.
    depth. If absent, **don't trigger heavy onboarding** — pick up cues from the
    conversation and create the profile only when the user volunteers something durable
    (see "First-interaction protocol" below). *(Skipped in maintainer mode.)*
-3. **API drift-check** *(only in a session that will generate or run code)*:
+3. **Environment + API drift-check** *(only in a session that will generate or run code)*:
    ```bash
    python autoassistant/audit_skill_apis.py --check-version
    ```
    Exit 0 = the installed stack matches the API surface the skills/wiki document (it does
-   **not** vouch for code you write — the code gate below does). Non-zero = tell the user
-   plainly their installed autolens differs from the version this assistant targets and to
-   `pip install -U autolens` (or check out the matching tag) *before* generating code. See
+   **not** vouch for code you write — the code gate below does). Exit 2 = the stack is absent
+   from the active Python; exit 3 = packages were found but an import failed. For 2/3, report
+   the active interpreter and route to [`al_setup_environment`](./skills/al_setup_environment.md)
+   rather than calling it version drift. Exit 1 = genuine version/API drift: tell the user
+   plainly and recommend the pinned version or a deliberate audit before generating code. See
    [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md). *(Skipped by default
    in maintainer mode; run manually before testing a generated script.)*
 
