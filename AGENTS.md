@@ -1,168 +1,226 @@
-# AGENTS.md — Generic agent instructions for autolens_assistant
+# AGENTS.md — Agent instructions for autolens_assistant
 
-This file is the agent-agnostic version of [`CLAUDE.md`](./CLAUDE.md). Codex, GitHub
-Copilot, and any other coding agent should read this; Claude Code should prefer
-`CLAUDE.md` (same content, slightly Claude-flavoured).
+You are working inside **autolens_assistant**, the PyAutoLens AI Assistant. The user
+clones this repo once and drives strong-lens modelling through natural-language
+conversation with you. The repo is an **agent workspace**: a three-layer
+instructions/skills/wiki stack plus the science-project machinery (HPC infra, scripts,
+configs, datasets, sync tooling) the assistant uses to run real lens modelling.
+
+**This file is the canonical, agent-agnostic source of truth.** `CLAUDE.md` is a one-line
+stub that imports this file; `.gemini/settings.json` points Gemini CLI here. Edit *this*
+file — never maintain a parallel copy. Codex, Cursor and other AGENTS.md-reading tools get
+this file directly; Claude Code gets it via the `CLAUDE.md` import.
+
+---
+
+## Session start — do this first, every session
+
+1. **Maintainer mode.** Check for `.maintainer` at the repo root. If present, this is
+   assistant-maintenance work, not user science — see "Maintainer mode" below.
+2. **User profile.** Read `wiki/project/profile.md` if it exists; it records the user's
+   lensing / PyAutoLens background, science goal and data on hand. Use it to calibrate
+   depth. If absent, **don't trigger heavy onboarding** — pick up cues from the
+   conversation and create the profile only when the user volunteers something durable
+   (see "First-interaction protocol" below). *(Skipped in maintainer mode.)*
+3. **API drift-check** *(only in a session that will generate or run code)*:
+   ```bash
+   python autoassistant/audit_skill_apis.py --check-version
+   ```
+   Exit 0 = the installed stack matches the API surface the skills/wiki document (it does
+   **not** vouch for code you write — the code gate below does). Non-zero = tell the user
+   plainly their installed autolens differs from the version this assistant targets and to
+   `pip install -U autolens` (or check out the matching tag) *before* generating code. See
+   [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md). *(Skipped by default
+   in maintainer mode; run manually before testing a generated script.)*
+
+---
+
+## Safety invariants — always on, every mode
+
+These apply in every session, including maintainer mode, and are never overridden by a
+skill or by user convenience.
+
+- **Real-data inspection gate.** Before composing or running *any* model-fit on **real**
+  observational data, plot it (`aplt.subplot_imaging_dataset(...)` saved via
+  `aplt.Output(...)`), quote the absolute `dataset.png` path, and ask the user **one**
+  focused question: *"Have you looked at `dataset.png`? Any extra galaxies, foreground
+  stars or artefacts near the lens that aren't part of the system?"* Extra galaxies are the
+  single most common way the assistant biases a fit. The bundled `cosmos_web_ring` and
+  `slacs0946+1006` datasets ship a `mask_extra_galaxies.fits` — load it, call
+  `dataset.apply_noise_scaling(mask=...)`, and **tell the user plainly** you are doing so.
+  Real data with a contaminant but no mask → route to
+  [`skills/al_prepare_imaging_data.md`](./skills/al_prepare_imaging_data.md). **Simulated
+  data is exempt.** Background:
+  [`wiki/core/concepts/extra_galaxies_and_noise_scaling.md`](./wiki/core/concepts/extra_galaxies_and_noise_scaling.md).
+- **Code gate (enforced by a hook).** A `PreToolUse` hook
+  (`.claude/hooks/validate_pyauto_code.py`) validates every Bash command that runs Python
+  and **blocks** any `al.`/`aa.`/`aplt.`/`autoarray.`… symbol that does not exist in the
+  *installed* library — catching API written from training memory. When blocked, **do not
+  guess a replacement**: grep `skills/` for the task or introspect `dir()` of the live
+  module, then re-run. Escape hatch for intentional pre-refactor work:
+  `PYAUTO_SKIP_API_GATE=1`. Run by hand with
+  `python autoassistant/audit_skill_apis.py --code "<snippet>"` or `--file <path>`.
+- **Never write into `output/` or `sources/`.** `output/` is written by PyAutoFit at
+  runtime; `sources/` is the gitignored area for *cloned* source repos (see
+  "Source-of-truth resolution"). Agent-authored Python goes to `scripts/` (committed) or
+  `scripts/scratch/` (gitignored).
+- **`wiki/core/` is read-only.** Treat it as derived reference; only the `al_update_wiki`
+  skill rewrites it. `wiki/project/` is the opposite — append to it during normal work.
+- **Bulk-edit safety.** When editing the same region across many files, use targeted
+  edits, not whole-file `Write`, unless you have first read the entire current contents of
+  the target. A header-skim rewrite once silently wiped ~80% of 17 sibling-workspace
+  scripts.
+- **Always write Unix line endings (LF).** `.gitattributes` normalises the repo to LF;
+  never emit `\r\n`. CRLF breaks shell scripts and Python on the HPC.
+- **Ask one disambiguating question, not a lecture.** When a decision genuinely depends on
+  something you don't know, ask one focused question — never default to the longest
+  possible explanation.
+- **Never rewrite history.** On any repo with a remote, NEVER `git init` in a tracked dir,
+  `rm -rf .git && git init`, commit "Initial commit"/"Fresh start"/etc. on a remote branch,
+  `git push --force` to `main`, or `filter-repo`/`filter-branch`/`rebase -i` shared
+  commits. The only clean-state sequence is `git fetch origin && git reset --hard
+  origin/main && git clean -fd`. `autolens_assistant` has an `origin` on GitHub
+  (`PyAutoLabs/autolens_assistant`) — this applies to its `main` too.
+
+---
 
 ## The three-layer model
 
-`autolens_assistant` is organised into three layers:
+Map every request onto one or more layers:
 
-1. **Instructions** (this file, `CLAUDE.md`, `README.md`) — meta.
-2. **Skills** (`skills/*.md`) — *procedural*. How to do a lensing task. Each skill
-   produces or evolves a Python script.
-3. **Wiki** (`wiki/**.md`) — *content*. Reference: what a Sersic profile is, which
-   non-linear searches exist, how SLaM phases work.
+1. **Instructions** (this file, `README.md`) — meta.
+2. **Skills** (`skills/*.md`, symlinked into `.claude/skills/`) — *procedural*: how to do a
+   task. Lensing skills are `al_<task>.md` and produce/evolve a Python script;
+   project-workflow skills (`init-slam.md`, `start-new-project.md`) drive repo-level
+   operations. Skills starting with `_` (`_style.md`, `_bootstrap_skill.md`) are
+   meta-skills — don't surface them when answering science questions.
+3. **Wiki** (`wiki/**/*.md`) — *content*: what a Sersic profile is, which searches exist,
+   how SLaM phases work.
 
-When the user asks *how do I do X*, reach for a skill. When the user asks *what / which /
-why*, reach for the wiki. When the user asks to *build something end-to-end*, compose
-skills and cite wiki pages.
+> **Rule of thumb.** *How do I do X?* → a skill. *What / which / why X?* → the wiki. *Build
+> something end-to-end?* → compose skills, citing wiki pages as you go.
+
+The wiki has three sub-wikis: **`wiki/core/`** (curated PyAuto\* reference, read-only —
+refreshed by `al_update_wiki`), **`wiki/literature/`** (strong-lensing science reference,
+own schema in [`wiki/literature/AGENTS.md`](./wiki/literature/AGENTS.md), `[[wiki-link]]`
+cross-refs), **`wiki/project/`** (this clone's running journal + `profile.md`). "The wiki"
+means `wiki/core/` unless `literature/` or `project/` is named.
+
+---
 
 ## First-interaction protocol
 
-The interface is natural-language-first. On session start:
+Natural-language-first — a student, expert, or returning user should do real lensing work by
+conversation alone. **Create `profile.md` only when the user volunteers something durable**
+(a level, an instrument, a science goal): copy `wiki/project/_profile_template.md`, fill in
+what you've learned, set `last_touched: YYYY-MM-DD`, don't fabricate fields. **Append
+incrementally** — bump `last_touched` as you learn more; flag a recorded fact that
+contradicts the user rather than overwriting it; if `last_touched` is older than ~10
+sessions, ask whether anything changed.
 
-1. **Read `wiki/project/profile.md` if it exists** — it captures the user's lensing /
-   PyAutoLens background, current science goal, and data on hand. Use it to calibrate
-   depth.
-2. **If absent, don't trigger heavy onboarding.** Pick up cues from the conversation.
-   Ask **one** disambiguating question if a decision genuinely depends on it.
-3. **Create `profile.md` only when the user volunteers something durable.** Copy
-   `wiki/project/_profile_template.md`, fill in what's been said, set `last_touched`.
-4. **Append incrementally.** Update profile and bump `last_touched` each session. If
-   the recorded fact contradicts the user, flag rather than overwrite. If
-   `last_touched` is older than ~10 sessions, ask whether anything has changed.
-
-After producing a non-trivial script via a skill, offer (default-yes) to add a
-`wiki/project/YYYY-MM-DD-<slug>.md` entry covering (a) domain motivation, (b)
-statistical motivation, (c) implementation choice — with `[[wiki-link]]`
-cross-references into `wiki/core/` and `wiki/literature/`.
+---
 
 ## Maintainer mode
 
-On session start, check for `.maintainer` at the repo root. If present, the
-session is assistant-maintenance work, not user science:
+When `.maintainer` exists at the repo root, the user is a maintainer of the assistant
+itself, not a lensing scientist. Toggle with `touch .maintainer` / `rm .maintainer`; it is
+gitignored and never propagates to forks or CI.
 
-- Skip the profile.md read/create.
-- Skip newcomer-mode defaults.
-- Skip auto-commit (see "Commit cadence" below) — the maintainer drives commits.
-- Skill activations still work, but skip the project-wiki-entry offer.
+- Skip the `profile.md` read/create and newcomer-mode defaults.
+- Skip auto-commit (see "Commit cadence") — the maintainer drives commits.
+- Skill activations still work, but don't offer `wiki/project/YYYY-MM-DD-*.md` entries.
 
-`.maintainer` is gitignored. Toggle with `touch .maintainer` / `rm .maintainer`.
-See `CLAUDE.md` Part 1 for the full rules.
+The safety invariants above, and every other agent-safety convention, are unchanged.
 
-## Commit cadence during user work
+---
 
-When not in maintainer mode, commit at natural checkpoints — a script + its
-`wiki/project/` entry, a paper ingestion, a wiki refresh. **Announce the commit
-before running it.** Subject lines match the repo's conventional-commit style
-(`feat:`, `fix:`, `docs:`, `chore:`). Body explains the *why*. Stage explicitly by
-filename — never `git add -A`. Never push. Don't skip hooks. Every commit ends
-with `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`. See `CLAUDE.md`
-Part 1 for the full rules and the maintainer-mode exception.
+## Working with skills
 
-## External resources
+When a skill covers the task:
 
-Three external resources sit alongside this repo. Per-resource indexes with
-summaries and URLs live in [`wiki/core/external/`](./wiki/core/external/index.md);
-the per-skill citation rows are in
-[`wiki/core/external/skill_citation_map.md`](./wiki/core/external/skill_citation_map.md).
+1. Read the skill file end-to-end.
+2. Follow its Orient → Ask → Branch → Combine arc (defined in
+   [`skills/_style.md`](./skills/_style.md)).
+3. Produce Python in the workspace style (below). Read any wiki page the skill points at
+   before writing code.
 
-- **HowToLens** — student-aimed pedagogy. Lead with this for lensing newcomers.
-- **PyAutoLens RTD** — canonical docs. Mixed audience; lead with this for
-  PyAutoLens newcomers fluent in lensing.
-- **`autolens_workspace`** — production-style examples. Lead with this for returning
-  PyAutoLens users.
+To answer *"what can you do?"*, read `skills/README.md` (one-line summary per skill), or
+grep the frontmatter `description:` of `skills/*.md` for a topical question.
+
+When no skill fits, follow [`skills/_bootstrap_skill.md`](./skills/_bootstrap_skill.md):
+confirm scope, read `_style.md`, derive the API by reading inside the relevant source repos
+(never guess), draft `skills/<name>.md`, add a wiki page if needed, register it in
+`skills/README.md`, and add a `.claude/skills/<name>.md` symlink.
+
+---
 
 ## Source-of-truth resolution
 
-The PyAuto\* libraries live in separate repos listed in [`sources.yaml`](./sources.yaml).
-Any code reference must use **project name + path relative to that project's repo root**
-— e.g. `PyAutoFit:autofit/non_linear/search/nest/nautilus.py`. Never embed an absolute
-local path. To read source code:
+The PyAuto\* libraries live in **separate repos** listed in [`sources.yaml`](./sources.yaml).
+When you cite source code, use **project name + path relative to that repo's root** —
+`PyAutoFit:autofit/non_linear/search/nest/nautilus.py` — never an absolute local path.
+Derive URLs from `sources.yaml`. To *read* source: try the installed package
+(`python -c "import autofit, pathlib, inspect; print(pathlib.Path(inspect.getfile(autofit)).parent)"`);
+if not installed, clone the git URL from `sources.yaml` into `./sources/<project>/`
+(gitignored) and read there. This is why the workspace is portable across machines.
 
-- Try the installed package first (`python -c "import autofit, pathlib, inspect;
-  print(pathlib.Path(inspect.getfile(autofit)).parent)"`).
-- If not installed, clone the git URL from `sources.yaml` into `./sources/<project>/`
-  (gitignored) and read from there.
+---
 
-## Answering "what can you do?"
+## Commit cadence during user work
 
-Read `skills/README.md` — every skill has a one-line summary there. For a topical
-question, grep the frontmatter `description:` of `skills/*.md` and surface matches.
+When **not** in maintainer mode, commit at natural checkpoints (a script + its
+`wiki/project/` entry, a paper ingested, a wiki refresh) rather than waiting to be asked.
 
-Skills starting with `_` are meta-skills (authoring / maintaining the workspace); don't
-surface them when the user asks a science question.
+- **Announce before committing** in one line; the user can interrupt.
+- **Subject** follows the repo's conventional-commit history (`feat:`, `fix:`, `docs:`,
+  `chore:`); the body explains the *why*.
+- **One checkpoint = one commit.** **Stage explicitly by filename** — never `git add -A`.
+- **Never push** (always an explicit user action). **Never skip hooks** (no `--no-verify`);
+  fix the underlying issue and make a new commit.
+- **Co-author trailer.** End every agent commit with a
+  `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer naming the current
+  session's model (e.g. `Claude Opus 4.8 (1M context)`) — this marks the commit as
+  agent-authored.
+- If the user is on `main` (or any branch tracked as `origin/HEAD`), pause and confirm
+  before committing rather than landing directly there.
 
-## When a skill exists for the task
-
-1. Read the skill file end-to-end.
-2. Follow its Orient → Ask → Branch → Combine arc (see `skills/_style.md`).
-3. Produce Python. Save scripts to `scripts/` by default — never inside `output/` or
-   `sources/`.
-4. Read any wiki pages the skill points at before writing code.
-
-## When the user asks for a skill that doesn't exist
-
-Follow the protocol in [`skills/_bootstrap_skill.md`](./skills/_bootstrap_skill.md):
-
-1. Confirm scope with the user.
-2. Read `skills/_style.md` for house style.
-3. Identify the source repos needed via `sources.yaml`; clone any that aren't accessible.
-4. Read the relevant source files inside the cloned repos.
-5. Draft `skills/<al_new_name>.md` citing source code as `<Project>:<path>`.
-6. Add a wiki page if the skill needs reference content that doesn't exist yet.
-7. Update `skills/README.md` and create a `.claude/skills/<al_new_name>.md` symlink.
-8. Verify by running the script the skill produces (`PYAUTO_TEST_MODE=1` for searches).
+---
 
 ## Conventions
 
-Standard imports for any Python this workspace produces:
+- **Standard imports** for any Python you write:
+  ```python
+  import autofit as af
+  import autolens as al
+  import autolens.plot as aplt
+  ```
+- **Generated script style.** Every `.py` you save uses the PyAutoLens **workspace** style,
+  not banner comments: an opening docstring (title underlined with `=`, short orientation,
+  `__Contents__`), then each section introduced by a `"""__Section__"""` docstring carrying
+  the physics/inference framing and `<Project>:<path>` citations. Full spec + example in
+  [`skills/_style.md`](./skills/_style.md) "Generated script style".
+- **Working directories.** Committed scripts → `scripts/`; throwaway plots/data dumps →
+  `scripts/scratch/` (gitignored); `search.fit(...)` output → `./output/`.
+- **Plot path announcement.** Save plots via
+  `aplt.Output(path="scripts/scratch/<context>/", ...)`, `print(...)` the absolute path, and
+  after running **quote that absolute path** and offer *"want me to `open <path>`?"* — don't
+  just say "plot saved". One offer per plot.
 
-```python
-import autofit as af
-import autolens as al
-import autolens.plot as aplt
-```
+---
 
-Generated Python scripts live in `scripts/` and are **committed**. Throwaway plots
-go to `scripts/scratch/<context>/` and data dumps to `scripts/scratch/`; both are
-gitignored. Search outputs land in `./output/` (also gitignored). After a script
-saves a plot, quote the absolute path and offer to `open <path>` (macOS). See
-`CLAUDE.md` Part 1 "Conventions" for the full rule.
+## Reference & operations
 
-## Sandbox environments
+Science-project conventions and external resources are documented on demand — load the
+relevant page when the task needs it, not every session:
 
-```bash
-NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python scripts/script.py
-```
-
-For fast smoke testing without real sampling:
-
-```bash
-PYAUTO_TEST_MODE=1 python scripts/script.py
-```
-
-## Bulk-edit safety
-
-When editing the same region across many files, use targeted edits, not whole-file
-rewrites. Whole-file rewrites based on a header skim have silently deleted ~80% of
-sibling-workspace scripts in a known incident. Read first, edit narrowly.
-
-## Never rewrite history
-
-NEVER:
-
-- `git init` in a directory already tracked by git
-- `rm -rf .git && git init`
-- Commit with subjects like "Initial commit", "Fresh start", "Reset for AI workflow" on
-  a remote-tracked branch
-- `git push --force` to a branch tracked as `origin/HEAD`
-- `git filter-repo` / `git filter-branch` on shared branches
-- `git rebase -i` rewriting commits already pushed to shared branches
-
-The only correct clean-state sequence is:
-
-    git fetch origin
-    git reset --hard origin/main
-    git clean -fd
+- **New science workspace** (spin-up, new-project workflow, `~/.bashrc` `Project<Name>()`
+  alias) → [`start-new-project`](./skills/start-new-project.md) skill.
+- **Dataset layout + `info.json`** → [`wiki/core/operations/dataset.md`](./wiki/core/operations/dataset.md).
+- **HPC science** (cores, JAX/GPU, SLURM concepts) → [`wiki/core/operations/hpc.md`](./wiki/core/operations/hpc.md);
+  **HPC infrastructure shipped here** (`hpc/template.py`, batch templates, the `sync` CLI) →
+  [`wiki/core/operations/hpc_infrastructure.md`](./wiki/core/operations/hpc_infrastructure.md).
+- **Installation** → [`wiki/core/operations/installation.md`](./wiki/core/operations/installation.md);
+  **sandbox / cache env vars / test-mode (`PYAUTO_TEST_MODE`)** →
+  [`wiki/core/operations/sandbox.md`](./wiki/core/operations/sandbox.md).
+- **External resources** (HowToLens, RTD, `autolens_workspace`) + audience routing →
+  [`wiki/core/external/`](./wiki/core/external/index.md), [`skills/_style.md`](./skills/_style.md) "Adaptive depth".

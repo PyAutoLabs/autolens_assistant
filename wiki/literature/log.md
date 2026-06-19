@@ -38,13 +38,13 @@ Dark_Matter_Detection (2), DarkMatterModels (5).
   `Deep Learning/`, `Stats/`, `IFUs/`, `SMBHs/`, root-level `AutoLens.pdf` &
   `autolens_paper1_resubmit_*.pdf`) contain material a PyAutoLens
   assistant would benefit from. User chose to defer ingesting these in
-  this build. To extend later, follow the procedure in `CLAUDE.md`.
+  this build. To extend later, follow the procedure in `AGENTS.md`.
 
 **Provenance note**
 
 The format follows Karpathy's LLM Wiki pattern (April 2026 gist): raw PDFs
 are immutable, the wiki layer is compiled and cross-linked, and the
-schema lives in `CLAUDE.md` so the maintaining LLM has a stable contract.
+schema lives in `AGENTS.md` so the maintaining LLM has a stable contract.
 
 ---
 

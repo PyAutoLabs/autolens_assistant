@@ -1,6 +1,6 @@
 ---
 name: al_ingest_paper
-description: Ingest a strong-lensing paper into `wiki/literature/`. Accepts a local PDF path or an arxiv URL. Reads the paper, identifies concepts and entities, creates or updates the relevant `sources/<topic>.md` stub, adds `[[wiki-link]]` cross-references on impacted concept and entity pages, and appends a dated row to `log.md`. Follows the schema in `wiki/literature/CLAUDE.md`. Use when the user wants a paper added to the literature wiki so later concept pages and project-wiki entries can cite it.
+description: Ingest a strong-lensing paper into `wiki/literature/`. Accepts a local PDF path or an arxiv URL. Reads the paper, identifies concepts and entities, creates or updates the relevant `sources/<topic>.md` stub, adds `[[wiki-link]]` cross-references on impacted concept and entity pages, and appends a dated row to `log.md`. Follows the schema in `wiki/literature/AGENTS.md`. Use when the user wants a paper added to the literature wiki so later concept pages and project-wiki entries can cite it.
 ---
 
 # Ingesting a paper into the literature wiki
@@ -13,7 +13,7 @@ paper) that everything else cites. This skill drives adding a new paper to that
 record.
 
 The binding schema lives in
-[`wiki/literature/CLAUDE.md`](../wiki/literature/CLAUDE.md) — page types,
+[`wiki/literature/AGENTS.md`](../wiki/literature/AGENTS.md) — page types,
 frontmatter, the `[[wiki-link]]` form, the per-paper section shape. Read that file
 first; this skill orchestrates the ingestion but does not restate the schema.
 
@@ -62,7 +62,7 @@ The flow:
    `Suyu2016Holicow`, matching the existing wiki convention.
 3. **Append a per-paper H2 section** to `wiki/literature/sources/<topic>.md`
    following the schema in
-   [`wiki/literature/CLAUDE.md`](../wiki/literature/CLAUDE.md). For stub
+   [`wiki/literature/AGENTS.md`](../wiki/literature/AGENTS.md). For stub
    ingestion the `Summary:` field is one paragraph inferred from the abstract
    and marked `(stub — verify against PDF)`. The `File:` field carries the
    arxiv URL or local path if one is available.
@@ -70,7 +70,7 @@ The flow:
    `YYYY-MM-DD — ingested arxiv:2401.01234 as <slug> (stub)`.
 
 If the topic file doesn't exist yet, create it with the sources-page frontmatter
-from `wiki/literature/CLAUDE.md` before appending the section.
+from `wiki/literature/AGENTS.md` before appending the section.
 
 ## Branch — from a local PDF
 
@@ -136,7 +136,7 @@ Pathological signs:
 
 ## Further reading
 
-- **Schema** — [`wiki/literature/CLAUDE.md`](../wiki/literature/CLAUDE.md):
+- **Schema** — [`wiki/literature/AGENTS.md`](../wiki/literature/AGENTS.md):
   page types, frontmatter, `[[wiki-link]]` form, and the
   concept/entity/sources structure. Read this before adding anything.
 - **Existing concept pages** —
