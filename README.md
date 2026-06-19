@@ -14,6 +14,8 @@ stay in your repo.
 
 ## Getting Started
 
+### Recommended: work inside the repository
+
 Clone the `autolens_assistant` repo:
 
 ```bash
@@ -21,25 +23,47 @@ git clone https://github.com/PyAutoLabs/autolens_assistant.git
 cd autolens_assistant
 ```
 
-Open a CLI AI agent session inside the repo. The assistant has been tested
-with four CLI agents:
+Open a CLI coding-agent session inside that directory. This is the primary and most capable way to
+use the assistant because the agent can read the full instructions, inspect data, write scripts,
+run checks, and keep project state with you. Coding agents often require a paid subscription or
+metered API account for sustained use, although limited free tiers and organization or student
+access may be available.
 
-- **Claude Code** and **Codex** — tested most thoroughly and give the best
-  results. Recommended if you have access to them.
-- **Gemini CLI** and **OpenCode** — also work, and both offer free models, so
-  you can use the assistant without a paid subscription. Of the two, Gemini CLI
-  is preferred over OpenCode.
+| Interface | Support | Access and cost | Notes |
+|---|---|---|---|
+| **Claude Code** | Primary; thoroughly tested | Normally a [paid Claude subscription or metered API usage](https://code.claude.com/docs/en/costs). | Loads the canonical instructions through `CLAUDE.md`. |
+| **Codex CLI** | Primary; thoroughly tested | A [limited free plan](https://developers.openai.com/codex/pricing/) may be available; paid plans or API billing provide more usage. | Reads `AGENTS.md` directly and can edit and run the project locally. |
+| **Gemini CLI** | Supported | Offers [limited free quotas](https://github.com/google-gemini/gemini-cli/blob/main/docs/resources/quota-and-pricing.md); subscriptions or usage billing provide higher limits. | Loads the repository instructions through `.gemini/settings.json`. |
+| **OpenCode** | Supported | The client is open source; model-provider access may be free or paid. | Use it from the repository root so it can discover the project context. |
+| **GitHub Copilot CLI** | Compatible; verification pending | [Copilot Free](https://docs.github.com/copilot/get-started/plans-for-github-copilot) has limited usage; paid or organization plans are common. | GitHub documents direct support for root `AGENTS.md` instructions. |
 
 ```bash
-claude        # or `codex`, `gemini`, `opencode`
+claude        # alternatively: codex, gemini, opencode, or copilot
 ```
 
-Each agent automatically reads the project's instructions on session start — they live in
-`AGENTS.md` (Claude Code loads it via a one-line `CLAUDE.md`, and Gemini CLI via `.gemini/`),
-so you don't need to preload anything. If
-you don't have PyAutoLens installed yet, the assistant will guide you
-through that. Then tell it about your science case or ask it a question to
-get the conversation going.
+These agents load the project instructions automatically, so you do not need to paste a large
+system prompt. If PyAutoLens is not installed in the active environment, the assistant checks the
+setup and guides you through it. Then describe your science case or ask a question, see
+the example starting prompts below.
+
+### Browser and chat-only use
+
+If you are more familiar with conversation-based AI assistants such as ChatGPT or Claude on the
+web, you can still use `autolens_assistant` by giving the assistant the repository URL and opening
+with the following prompt:
+
+```text
+I'd like to use the PyAutoLens Assistant for this conversation:
+https://github.com/PyAutoLabs/autolens_assistant
+
+Please familiarize yourself with the project and use its guidance and scientific reference
+material when answering my questions. I'll provide any local files or results you need.
+```
+
+This is effective for learning PyAutoLens, asking how to perform lensing calculations or modelling
+tasks, interpreting and debugging errors, and getting draft code. However, it is not fully agentic:
+the assistant cannot inspect your local data, run the code, or maintain a science project unless
+you provide the relevant files and outputs.
 
 ## Modes
 
