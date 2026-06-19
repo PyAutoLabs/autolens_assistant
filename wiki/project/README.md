@@ -39,7 +39,7 @@ anything has changed before relying on it.
 
 **Maintainer mode skips profile capture.** When `.maintainer` exists at the repo
 root, the agent is editing the assistant itself, not doing science — see
-`CLAUDE.md` Part 1 "Maintainer mode".
+`AGENTS.md` "Maintainer mode".
 
 **Dated entries.** When you finish a piece of work that the user will want to recall
 later, ask:
@@ -73,5 +73,5 @@ already?"**:
    decisions on the topic.
 
 The journal is the project's memory across sessions. Treat it as part of the
-context-gathering step, like reading `CLAUDE.md`, the relevant `core/` pages, and
+context-gathering step, like reading `AGENTS.md`, the relevant `core/` pages, and
 `profile.md`.

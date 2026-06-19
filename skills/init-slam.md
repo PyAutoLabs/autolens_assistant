@@ -128,5 +128,5 @@ Report:
 - Which scripts were copied and their destination filenames
 - That `slam_claude.md` was created/updated
 - Remind the user to update dataset-specific values at the bottom of each script, or ensure
-  `info.json` provides them (see the project CLAUDE.md for the full checklist)
+  `info.json` provides them (see the `start-new-project` skill for the full checklist)
 - Remind them to run `dos2unix` on the copied scripts if working on Windows/WSL

@@ -54,7 +54,7 @@ Ask the user:
 
 > **Give a short description of this project's scientific goals.**
 >
-> This will be written into the project's `CLAUDE.md` so that future AI sessions understand
+> This will be written into the project's `AGENTS.md` so that future AI sessions understand
 > the purpose and scope of the project. A sentence or two is fine — e.g. "Subhalo detection
 > in SLACS lenses using pixelized source reconstruction" or "MGE modeling of Euclid strong
 > lens candidates for the initial catalog."
@@ -67,10 +67,11 @@ Ask the user:
 
 > **Do you have datasets to include in this project?**
 >
-> Datasets live under `dataset/<sample_name>/<dataset_name>/`, where `sample_name` is the
-> survey or batch (e.g. `slacs`, `bells`) and `dataset_name` is the individual lens (e.g.
-> `slacs0737+3216`). Each dataset directory should contain at minimum `data.fits`,
-> `noise_map.fits`, and an `info.json` with fields like `pixel_scale`, `redshift_lens`, etc.
+> Datasets live under `dataset/<sample>/<dataset_name>/`, where `<sample>` is a grouping
+> directory (the bundled datasets group by data type, e.g. `imaging/`) and `<dataset_name>`
+> is the individual lens (e.g. `slacs0946+1006`). Each dataset directory should contain at
+> minimum `data.fits`, `noise_map.fits`, and an `info.json` (`pixel_scale`, `redshift_lens`,
+> …). See `wiki/core/operations/dataset.md` for the full layout and `info.json` fields.
 >
 > You can either:
 > - **Point me to dataset paths** and I'll copy them into the project
@@ -149,10 +150,11 @@ directory has at least `data.fits` and `info.json`.
 If the user provided or selected scripts, copy them into
 `<NEW_PROJECT>/scripts/`.
 
-### 5d — Update CLAUDE.md
+### 5d — Update AGENTS.md
 
-Open `<NEW_PROJECT>/CLAUDE.md`. Add a project-specific section
-at the very top, before the existing assistant instructions:
+Open `<NEW_PROJECT>/AGENTS.md` (the canonical instruction file; `CLAUDE.md` is a one-line
+stub that imports it, so writing here reaches Claude, Codex and Gemini alike). Add a
+project-specific section at the very top, before the existing assistant instructions:
 
 ```markdown
 # <PROJECT_NAME>
@@ -281,7 +283,7 @@ Report a summary:
   - Verify `info.json` in each dataset if datasets were copied
   - Update HPC submit templates (`hpc/batch_gpu/template`, `hpc/batch_cpu/template`) with job
     name, `--array` range, `SCRIPT=`, `sample=`, and `datasets=(...)`
-  - Run a test: `PYAUTOFIT_TEST_MODE=1 python3 scripts/<type>.py --sample=<sample> --dataset=<dataset>`
+  - Run a test: `PYAUTO_TEST_MODE=1 python3 scripts/<type>.py --sample=<sample> --dataset=<dataset>`
   - Use `/init-slam` if they skipped modeling scripts and want to set up SLaM pipelines later
   - If GitHub repo was created: push changes with `git add -A && git commit -m "..." && git push`
     after making edits

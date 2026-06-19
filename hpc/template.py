@@ -17,7 +17,7 @@ and GPU batch templates depend on it.
 
 This file is written in the project's generated-script style (title + `__Contents__`
 header, with each section introduced by a triple-quoted `__Section__` docstring) — see the
-project root `CLAUDE.md` "Conventions" and `skills/_style.md` "Generated script style".
+project root `AGENTS.md` "Conventions" and `skills/_style.md` "Generated script style".
 Keep that style when you adapt it.
 
 __Contents__

@@ -331,7 +331,7 @@ Skills that produce visualisations save them through the function-style
    Preview.
 
 The full convention — committed Python lives in `scripts/`; throwaway plots and data
-dumps go to the gitignored `scripts/scratch/` — is in `CLAUDE.md` Part 1
+dumps go to the gitignored `scripts/scratch/` — is in `AGENTS.md`
 "Conventions". Skills here are the application of that rule.
 
 ## External resource citation

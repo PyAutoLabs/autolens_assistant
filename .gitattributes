@@ -1,0 +1,12 @@
+# Normalise all text files to Unix line endings (LF) on commit and checkout.
+# LF is load-bearing: CRLF breaks shell scripts and Python on the HPC. End users
+# clone on Windows, so this guarantees the repo stays LF regardless of platform.
+* text=auto eol=lf
+
+# Treat binary dataset/model artefacts as binary so git never touches their bytes.
+*.fits binary
+*.png binary
+*.npy binary
+*.pkl binary
+*.hdf5 binary
+*.gz binary

@@ -64,7 +64,7 @@ VERSIONED_MODULES: tuple[str, ...] = (
 )
 
 # ---------------------------------------------------------------------------
-# Aliases. Standardised in CLAUDE.md Part 1 "Conventions". Order is
+# Aliases. Standardised in AGENTS.md "Conventions". Order is
 # length-descending so the regex alternation prefers `autolens` over `al`.
 # ---------------------------------------------------------------------------
 ALIAS_TO_MODULE: dict[str, str] = {

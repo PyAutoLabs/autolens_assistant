@@ -34,8 +34,9 @@ with four CLI agents:
 claude        # or `codex`, `gemini`, `opencode`
 ```
 
-The agent reads `CLAUDE.md` (or `AGENTS.md`) on session start and already
-knows the project conventions, so you don't need to preload anything. If
+Each agent automatically reads the project's instructions on session start — they live in
+`AGENTS.md` (Claude Code loads it via a one-line `CLAUDE.md`, and Gemini CLI via `.gemini/`),
+so you don't need to preload anything. If
 you don't have PyAutoLens installed yet, the assistant will guide you
 through that. Then tell it about your science case or ask it a question to
 get the conversation going.

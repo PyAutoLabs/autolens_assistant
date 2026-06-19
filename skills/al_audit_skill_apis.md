@@ -70,7 +70,7 @@ it:
 
 ```bash
 # Cheap drift-check — compares the installed stack to the committed baseline.
-# No Markdown scan; safe to run at session start (CLAUDE.md First-interaction protocol).
+# No Markdown scan; safe to run at session start (AGENTS.md "Session start").
 python autoassistant/audit_skill_apis.py --check-version
 
 # Re-pin: snapshot the installed stack into the baseline after a deliberate, audited upgrade.
@@ -84,8 +84,9 @@ to silence a red drift-check on a stack you haven't audited. Because a wiki refr
 (`al_update_wiki` / `al_refresh_api_docs`) pulls from upstream source, follow either with
 `--check-version` so any newly-introduced drift surfaces immediately.
 
-Per CLAUDE.md "API version drift-check", the wiki documents only the **current** API — fix
-stale references in place and re-pin; don't add `old → new` migration tables.
+The wiki documents only the **current** API — fix stale references in place and re-pin;
+don't add `old → new` migration tables (they grow without bound and are themselves a drift
+surface, since they name removed symbols).
 
 ## Ask — narrow the scope before fixing
 

@@ -1,6 +1,6 @@
 # PyAutoLens Strong Lensing Wiki — Index
 
-Top-level navigation. See `CLAUDE.md` for the schema and how the assistant
+Top-level navigation. See `AGENTS.md` for the schema and how the assistant
 should use this wiki.
 
 ## Start here
