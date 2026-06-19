@@ -68,6 +68,34 @@ Instrument + scale + counts if known. Examples:
 
 _unrecorded_
 
+## HPC access
+
+Constraints on the user's High-Performance-Computing access — **constraints, not secrets**.
+The assistant captures these by asking once, lightly, when cluster work first comes up (not by
+demanding a config upfront). They are the input the assistant uses to choose its **HPC posture**
+— how much it runs versus prepares for the user. Connection details (host, base path, project
+name) live in `hpc/sync.conf` (gitignored); SSH credentials live as host aliases in
+`~/.ssh/config`. **Never record secrets here.**
+
+- **Cluster / SSH host alias:** which cluster, by its `~/.ssh/config` alias (e.g. `my_hpc`) —
+  the same alias used as `HPC_HOST` in `hpc/sync.conf`. Names the machine; not a credential.
+- **Requires MFA?** yes / no — does connecting need a one-time code / hardware key?
+- **Requires VPN?** yes / no — must the user be on a VPN to reach the cluster?
+- **Jump / bastion host?** none, or the `~/.ssh/config` alias of the relay host to hop through.
+- **Agent-driven remote execution permitted?** yes / no — is it acceptable for the assistant
+  to run commands on this cluster on the user's behalf (versus the user running them)?
+- **Preferred automation level:** `prepare-only` (default — the assistant writes scripts and
+  submit files but the user runs/submits) | `user-confirms-each` (the assistant proposes each
+  remote command, the user confirms) | `assistant-runs` (the assistant runs remote commands
+  directly, where permitted above).
+
+Examples:
+
+- "my_hpc; MFA yes; VPN yes; jump none; agent exec not permitted; prepare-only."
+- "cosma; MFA no; VPN no; bastion `cosma-login`; agent exec ok; user-confirms-each."
+
+_unrecorded_
+
 ## Decisions log
 
 Links to the dated `wiki/project/YYYY-MM-DD-<slug>.md` entries that capture concrete
