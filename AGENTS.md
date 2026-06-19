@@ -11,12 +11,16 @@ stub that imports this file; `.gemini/settings.json` points Gemini CLI here. Edi
 file — never maintain a parallel copy. Codex, Cursor and other AGENTS.md-reading tools get
 this file directly; Claude Code gets it via the `CLAUDE.md` import.
 
+**Interaction principle.** When a decision genuinely depends on something you don't know,
+ask one focused question — never default to the longest possible explanation.
+
 ---
 
 ## Session start — do this first, every session
 
 1. **Maintainer mode.** Check for `.maintainer` at the repo root. If present, this is
-   assistant-maintenance work, not user science — see "Maintainer mode" below.
+   assistant-maintenance work, not user science — read `modes/maintainer.md` and follow its
+   behavior delta. (`touch`/`rm .maintainer`; gitignored.)
 2. **User profile.** Read `wiki/project/profile.md` if it exists; it records the user's
    lensing / PyAutoLens background, science goal and data on hand. Use it to calibrate
    depth. If absent, **don't trigger heavy onboarding** — pick up cues from the
@@ -35,52 +39,32 @@ this file directly; Claude Code gets it via the `CLAUDE.md` import.
 
 ---
 
-## Safety invariants — always on, every mode
+## Safety invariants — default non-negotiable
 
-These apply in every session, including maintainer mode, and are never overridden by a
-skill or by user convenience.
+Apply in every session. Overridable only by the named maintainer workflow that owns the
+rule (`al_update_wiki` for `wiki/core/`; `PYAUTO_SKIP_API_GATE=1` for the code gate during a
+deliberate refactor). Two are NEVER overridden: the real-data gate and never-rewrite-history.
 
-- **Real-data inspection gate.** Before composing or running *any* model-fit on **real**
-  observational data, plot it (`aplt.subplot_imaging_dataset(...)` saved via
-  `aplt.Output(...)`), quote the absolute `dataset.png` path, and ask the user **one**
-  focused question: *"Have you looked at `dataset.png`? Any extra galaxies, foreground
-  stars or artefacts near the lens that aren't part of the system?"* Extra galaxies are the
-  single most common way the assistant biases a fit. The bundled `cosmos_web_ring` and
-  `slacs0946+1006` datasets ship a `mask_extra_galaxies.fits` — load it, call
-  `dataset.apply_noise_scaling(mask=...)`, and **tell the user plainly** you are doing so.
-  Real data with a contaminant but no mask → route to
-  [`skills/al_prepare_imaging_data.md`](./skills/al_prepare_imaging_data.md). **Simulated
-  data is exempt.** Background:
-  [`wiki/core/concepts/extra_galaxies_and_noise_scaling.md`](./wiki/core/concepts/extra_galaxies_and_noise_scaling.md).
-- **Code gate (enforced by a hook).** A `PreToolUse` hook
-  (`.claude/hooks/validate_pyauto_code.py`) validates every Bash command that runs Python
-  and **blocks** any `al.`/`aa.`/`aplt.`/`autoarray.`… symbol that does not exist in the
-  *installed* library — catching API written from training memory. When blocked, **do not
-  guess a replacement**: grep `skills/` for the task or introspect `dir()` of the live
-  module, then re-run. Escape hatch for intentional pre-refactor work:
-  `PYAUTO_SKIP_API_GATE=1`. Run by hand with
-  `python autoassistant/audit_skill_apis.py --code "<snippet>"` or `--file <path>`.
-- **Never write into `output/` or `sources/`.** `output/` is written by PyAutoFit at
-  runtime; `sources/` is the gitignored area for *cloned* source repos (see
-  "Source-of-truth resolution"). Agent-authored Python goes to `scripts/` (committed) or
-  `scripts/scratch/` (gitignored).
-- **`wiki/core/` is read-only.** Treat it as derived reference; only the `al_update_wiki`
-  skill rewrites it. `wiki/project/` is the opposite — append to it during normal work.
-- **Bulk-edit safety.** When editing the same region across many files, use targeted
-  edits, not whole-file `Write`, unless you have first read the entire current contents of
-  the target. A header-skim rewrite once silently wiped ~80% of 17 sibling-workspace
-  scripts.
-- **Always write Unix line endings (LF).** `.gitattributes` normalises the repo to LF;
-  never emit `\r\n`. CRLF breaks shell scripts and Python on the HPC.
-- **Ask one disambiguating question, not a lecture.** When a decision genuinely depends on
-  something you don't know, ask one focused question — never default to the longest
-  possible explanation.
-- **Never rewrite history.** On any repo with a remote, NEVER `git init` in a tracked dir,
-  `rm -rf .git && git init`, commit "Initial commit"/"Fresh start"/etc. on a remote branch,
-  `git push --force` to `main`, or `filter-repo`/`filter-branch`/`rebase -i` shared
-  commits. The only clean-state sequence is `git fetch origin && git reset --hard
-  origin/main && git clean -fd`. `autolens_assistant` has an `origin` on GitHub
-  (`PyAutoLabs/autolens_assistant`) — this applies to its `main` too.
+- **Real data → inspect before fitting.** Before composing or running any model-fit on real
+  observational data, plot it, show the user the `dataset.png` path, and ask one question
+  about extra galaxies / foreground stars / artefacts (the #1 source of fit bias). Procedure,
+  bundled-dataset masks, exemptions: [`skills/al_prepare_imaging_data.md`](./skills/al_prepare_imaging_data.md). Simulated data is exempt.
+- **Code gate.** A PreToolUse hook validates PyAuto* symbols against the installed library
+  and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
+  `dir()`, then re-run. (Manual run + bypass: [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md).)
+- **Never write into `output/`** (PyAutoFit runtime) **or `sources/`** (cloned repos);
+  agent-authored Python → `scripts/` or `scripts/scratch/`.
+- **`wiki/core/` is read-only** (only `al_update_wiki` rewrites it); append to `wiki/project/`.
+- **Source-edit boundary.** In ordinary (non-maintainer) sessions, don't edit
+  PyAuto*/PyAutoLabs source, rewrite `wiki/core/`, or change hooks / assistant infrastructure
+  unless the user explicitly asks for maintainer/developer work.
+- **Bulk-edit safety.** Read a file's full current contents before any whole-file `Write`;
+  prefer targeted edits.
+- **Never rewrite history** on a repo with a remote: no `git init` in a tracked dir,
+  `rm -rf .git`, "Initial commit"/"Fresh start"-style resets on a remote branch,
+  `push --force` to `main`, or `filter-repo`/`filter-branch`/`rebase -i` of shared commits.
+  Clean-state: `git fetch origin && git reset --hard origin/main && git clean -fd`.
+  (`PyAutoLabs/autolens_assistant` has an origin; applies to its `main`.)
 
 ---
 
@@ -117,20 +101,6 @@ what you've learned, set `last_touched: YYYY-MM-DD`, don't fabricate fields. **A
 incrementally** — bump `last_touched` as you learn more; flag a recorded fact that
 contradicts the user rather than overwriting it; if `last_touched` is older than ~10
 sessions, ask whether anything changed.
-
----
-
-## Maintainer mode
-
-When `.maintainer` exists at the repo root, the user is a maintainer of the assistant
-itself, not a lensing scientist. Toggle with `touch .maintainer` / `rm .maintainer`; it is
-gitignored and never propagates to forks or CI.
-
-- Skip the `profile.md` read/create and newcomer-mode defaults.
-- Skip auto-commit (see "Commit cadence") — the maintainer drives commits.
-- Skill activations still work, but don't offer `wiki/project/YYYY-MM-DD-*.md` entries.
-
-The safety invariants above, and every other agent-safety convention, are unchanged.
 
 ---
 
