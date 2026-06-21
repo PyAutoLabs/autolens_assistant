@@ -12,32 +12,37 @@ projects:
   - name: PyAutoConf
     import: autoconf
     role: config           # YAML config loading, prior resolution
-    git: https://github.com/rhayes777/PyAutoConf
+    git: https://github.com/PyAutoLabs/PyAutoConf
 
   - name: PyAutoArray
     import: autoarray
     role: arrays           # numpy arrays, grids, masks, geometry, structures
-    git: https://github.com/Jammy2211/PyAutoArray
+    git: https://github.com/PyAutoLabs/PyAutoArray
 
   - name: PyAutoFit
     import: autofit
     role: modelling        # model composition, non-linear searches, samples, aggregator
-    git: https://github.com/rhayes777/PyAutoFit
+    git: https://github.com/PyAutoLabs/PyAutoFit
 
   - name: PyAutoGalaxy
     import: autogalaxy
     role: galaxies         # light + mass profiles, galaxy, cosmology, plane
-    git: https://github.com/Jammy2211/PyAutoGalaxy
+    git: https://github.com/PyAutoLabs/PyAutoGalaxy
 
   - name: PyAutoLens
     import: autolens
     role: lensing          # tracer, ray tracing, lensing-specific analysis
-    git: https://github.com/Jammy2211/PyAutoLens
+    git: https://github.com/PyAutoLabs/PyAutoLens
 
   - name: autolens_workspace
     import: null
     role: tutorial-scripts # existing example scripts (read-only reference)
-    git: https://github.com/Jammy2211/autolens_workspace
+    git: https://github.com/PyAutoLabs/autolens_workspace
+
+  - name: HowToLens
+    import: null
+    role: tutorial-lectures # HowToLens lecture-series notebooks (read-only reference)
+    git: https://github.com/PyAutoLabs/HowToLens
 
   - name: autolens_assistant
     import: null
