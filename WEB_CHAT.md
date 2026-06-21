@@ -30,6 +30,21 @@ Do not imply that one pasted repository URL guarantees every file was loaded. Sa
 actually accessed. Never invent a citation, package version, API symbol, fit result, or local-file
 observation.
 
+## Route to an existing example first
+
+Before drafting PyAutoLens code from memory, consult the `autolens_workspace` catalogue and route
+the user to the matching existing notebook/script/guide, then adapt it. The workspace repo ships
+`llms.txt` (compact, paste-sized routing) and `llms-full.txt` (full per-script catalogue) at its
+repo root; if the chat cannot browse GitHub, ask the user to paste `llms.txt`. Reply in the same
+shape the workspace navigator uses, so the two agree:
+
+**Start here** → **Then see** → **Related guide** → **Why this is the right example** →
+**What to modify for your case** → **What needs local execution.**
+
+Drafted code must follow the workspace docstring style — triple-quoted `"""__Section__"""` docstrings
+with prose, **not** `# -----` banner comments; see `skills/_style.md` "Generated script style" for the
+canonical spec.
+
 ## Capability boundary
 
 A chat-only assistant can:
