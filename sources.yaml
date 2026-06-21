@@ -39,6 +39,11 @@ projects:
     role: tutorial-scripts # existing example scripts (read-only reference)
     git: https://github.com/PyAutoLabs/autolens_workspace
 
+  - name: HowToLens
+    import: null
+    role: tutorial-lectures # HowToLens lecture-series notebooks (read-only reference)
+    git: https://github.com/PyAutoLabs/HowToLens
+
   - name: autolens_assistant
     import: null
     role: assistant        # this repo — PyAutoLens AI Assistant
