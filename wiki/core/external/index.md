@@ -35,8 +35,10 @@ profile exists yet, infer from the immediate conversation cues (see
 
 ## Local copies vs URL pointers
 
-`workspace.md` is a curated **index of URLs** for upstream resources the agent can
-point users to when a workspace example is the right reference.
+`workspace.md` no longer hand-lists script URLs. It points at the workspace's own
+**generated catalogue** (`llms.txt` / `llms-full.txt` / `workspace_index.json`, at the
+repo root), which the agent reads — after resolving `autolens_workspace` per
+`sources.yaml` — to route users to the current, correct example.
 
 ## See also
 

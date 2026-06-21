@@ -19,10 +19,16 @@ Cells reference the path relative to each resource. Expand using:
 - **HowToLens (notebook):** `https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/<cell>.ipynb`
 - **HowToLens (script):** `https://github.com/PyAutoLabs/HowToLens/blob/main/scripts/<cell>.py`
 - **RTD:** `https://pyautolens.readthedocs.io/en/latest/<cell>.html`
-- **workspace/lens script:** `https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/<cell>`
+- **workspace/lens script:** `https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/<cell>`
 
 Pick notebook vs script per audience (default `.ipynb` for student-leaning users;
 `.py` for returning PyAutoLens users).
+
+> The `workspace/lens` cells below are routing hints. The authoritative, always-current
+> example paths are the workspace's own generated catalogue (`llms-full.txt` /
+> `workspace_index.json` at the repo root); if a cell's path no longer resolves, resolve
+> it against the catalogue rather than trusting this table. See
+> [`workspace.md`](./workspace.md).
 
 ## Table
 
