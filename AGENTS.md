@@ -132,7 +132,8 @@ When a skill covers the task:
 2. Follow its Orient → Ask → Branch → Combine arc (defined in
    [`skills/_style.md`](./skills/_style.md)).
 3. Produce Python in the workspace style (below). Read any wiki page the skill points at
-   before writing code.
+   before writing code. Before writing a script from scratch, check the `autolens_workspace`
+   catalogue (`llms-full.txt`) for an existing example to adapt.
 
 To answer *"what can you do?"*, read `skills/README.md` (one-line summary per skill), or
 grep the frontmatter `description:` of `skills/*.md` for a topical question.
