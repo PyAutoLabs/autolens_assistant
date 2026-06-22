@@ -228,3 +228,14 @@ extend with their own papers via `al_ingest_paper`.
 Added the paired canonical BibTeX and alias layer, citation validation tooling, and compact
 claim-support schema. Normalised the supplied bibliography without local file paths or
 abstracts, and repaired the clearly matched Euclid Q1 and lens-finding source entries.
+
+---
+
+## 2026-06-22 — Expanded citation support for Euclid paper review
+
+**By:** Codex.
+
+Added canonical bibliography and claim-support entries for Maresca 2021,
+Nightingale 2025 COWLS, and Bolton 2008. This resolves manuscript citation
+review items for automated source-reconstruction checks, JWST lens-finding
+with modelling, and SLACS mass-measurement context.

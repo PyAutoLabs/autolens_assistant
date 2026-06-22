@@ -206,6 +206,28 @@ status: drafted
 **Do not use for:**
 - Lens-candidate discovery or finder completeness.
 
+## Nightingale 2025 — COSMOS-Web Lens Survey (COWLS) I
+
+**Canonical BibTeX key:** `Nightingale2025COWLS`
+**Reference:** MNRAS 543, 203--222; doi:10.1093/mnras/staf1253
+**Concepts:** [[lens-finding]], [[pyautolens]], [[lensed-source-science]]
+
+**Supports:**
+- The COSMOS-Web Lens Survey found over 100 high-redshift strong-lens
+  candidates in 0.54 deg² of contiguous JWST imaging.
+- Traditional lens modelling via PyAutoLens was used to help decide
+  whether candidates were genuine strong lenses.
+- Lens modelling can reveal faint counter-images and improve candidate
+  ranking in JWST imaging.
+
+**Use when:**
+- Citing JWST-based lens searches that combine visual inspection with
+  modelling-assisted confirmation.
+
+**Do not use for:**
+- Euclid Q1 catalogue statistics or Euclid-specific lens-finding
+  performance.
+
 ## O'Riordan 2023 — Euclid
 
 **Canonical BibTeX key:** `ORiordan2023`
