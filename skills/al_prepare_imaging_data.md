@@ -13,7 +13,8 @@ contaminating galaxies. The output is a ready-to-fit `al.Imaging` object.
 
 For real observational data, treat preprocessing as part of model setup, not an
 optional cleanup step. **The first action is always to plot the dataset and look at it**:
-call `aplt.subplot_imaging_dataset(dataset=dataset)`, save it via `aplt.Output(...)`,
+call `aplt.subplot_imaging_dataset(dataset=dataset, output_path=..., output_filename="dataset",
+output_format="png")` (the functional plot API takes the output path directly),
 quote the `dataset.png` path, and ask the user to confirm they've inspected it — flagging
 **extra galaxies** (nearby companions, foreground stars, data-reduction artefacts) as the
 single most important thing to check. Only once that's done, decide how large the modelled

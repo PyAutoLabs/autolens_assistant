@@ -192,10 +192,12 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
   [`skills/_style.md`](./skills/_style.md) "Generated script style".
 - **Working directories.** Committed scripts → `scripts/`; throwaway plots/data dumps →
   `scripts/scratch/` (gitignored); `search.fit(...)` output → `./output/`.
-- **Plot path announcement.** Save plots via
-  `aplt.Output(path="scripts/scratch/<context>/", ...)`, `print(...)` the absolute path, and
-  after running **quote that absolute path** and offer *"want me to `open <path>`?"* — don't
-  just say "plot saved". One offer per plot.
+- **Plot path announcement.** The plot API is functional: pass
+  `output_path="scripts/scratch/<context>/"`, `output_filename=...`, `output_format="png"`
+  straight to the `aplt.*` plotting call (e.g. `aplt.subplot_imaging_dataset`,
+  `aplt.subplot_fit_imaging`) — there is no separate `aplt.Output`/`MatPlot2D` object.
+  Then `print(...)` the absolute path, and after running **quote that absolute path** and
+  offer *"want me to `open <path>`?"* — don't just say "plot saved". One offer per plot.
 
 ---
 

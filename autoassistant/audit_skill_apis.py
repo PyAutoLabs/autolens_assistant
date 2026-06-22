@@ -1001,8 +1001,15 @@ def main() -> int:
     files = select_files(root, args.scope)
     occurrences_by_file: dict[Path, dict[Symbol, set[str]]] = {}
     all_symbols: set[Symbol] = set()
+    skipped: list[Path] = []
     for f in files:
         text = f.read_text(encoding="utf-8")
+        # Opt-out parity with the code gate: a file that *documents* the API surface
+        # (this skill's own meta-docs, intentional stale-symbol examples) carries the
+        # `pyauto-api-gate: skip` marker so its examples aren't mistaken for real usage.
+        if IDIOM_SKIP_MARKER in text:
+            skipped.append(f)
+            continue
         # `.py` files (scripts scope) are code throughout; Markdown is split into
         # code/prose segments by extract_symbols.
         per_file = (
@@ -1010,6 +1017,13 @@ def main() -> int:
         )
         occurrences_by_file[f] = per_file
         all_symbols.update(per_file)
+
+    if skipped:
+        print(
+            f"[audit] skipped {len(skipped)} marker-opted-out file(s): "
+            + ", ".join(str(p.relative_to(root)) for p in skipped),
+            file=sys.stderr,
+        )
 
     print(
         f"[audit] scanned {len(files)} files; {len(all_symbols)} unique symbols",

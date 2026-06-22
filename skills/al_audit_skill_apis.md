@@ -3,6 +3,10 @@ name: al_audit_skill_apis
 description: Verify every PyAuto* API symbol cited in skills/, wiki/core/api+stack/, and generated scripts (scripts/) resolves in the currently installed stack. Reports stale references (renamed, moved, or removed) with suggested replacements drawn from string-similarity and a cross-module search. Also owns the API version baseline (`wiki/core/api_audit_baseline.json`) that pins the workspace to an autolens version: `--write-baseline` records the installed versions + public-API-surface hash, and `--check-version` (the cheap session-start drift-check) flags when the installed stack has moved. Pairs with `al_update_wiki` (which detects prose drift via pinned source commits) — this skill closes the complementary gap that skills have no pinned commits and that wiki pages can name symbols that no longer exist. Run when a user reports an API error, after a PyAuto* upgrade, or on a manual cadence; the helper script `autoassistant/audit_skill_apis.py` does the mechanical pass and this skill drives interpretation and curates fixes.
 ---
 
+<!-- pyauto-api-gate: skip — this skill documents the audit itself and cites intentional
+stale-symbol examples (e.g. `al.FitImagingPlotter`) to demonstrate the gate. The symbol
+audit and idiom lint therefore skip it; do not read its examples as current API. -->
+
 # Auditing skill + wiki API references against the installed stack
 
 Skills cite a lot of PyAuto\* symbols — class names, search algorithms, profiles, the
