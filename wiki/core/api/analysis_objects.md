@@ -6,8 +6,14 @@ sources:
       - autolens/imaging/model/analysis.py
       - autolens/interferometer/model/analysis.py
       - autolens/point/model/analysis.py
-    pinned_commit: a91febcb1aa12797f9d5ece54c1cbbac528cd087
-last_updated: 2026-05-22
+    pinned_commit: ae4a27afc0fe7ad712777807d4269759c1a2b6ed
+  - project: PyAutoFit
+    paths:
+      - autofit/graphical/declarative/factor/analysis.py
+      - autofit/graphical/declarative/collection.py
+      - autofit/graphical/declarative/abstract.py
+    pinned_commit: ce2baa2b6611de99922e04d44b272de1be3ceb8e
+last_updated: 2026-06-22
 ---
 
 # Analysis objects
@@ -74,19 +80,55 @@ analysis = al.AnalysisPoint(dataset=dataset, solver=al.PointSolver(...))
 `AnalysisPoint` needs a `PointSolver` that maps source-plane positions back to image
 positions — typically via a ray-tracing root-find on the lens equation.
 
-## Multi-dataset analysis
+## Multi-dataset analysis — the factor graph
 
-For multi-wavelength or imaging + interferometer joint fits, combine analyses:
+To fit one lens to several datasets at once (multi-wavelength imaging, joint
+imaging + interferometer, multi-epoch), you do **not** combine the `Analysis` objects
+directly. You build one `Analysis` per dataset, wrap each in an `af.AnalysisFactor`
+that pairs it with a model, and combine the factors into an `af.FactorGraphModel`. The
+factor graph's log-likelihood is the sum of the per-factor log-likelihoods, and the
+graph machinery decides which priors are shared across datasets and which are free.
 
 ```python
-analysis = analysis_imaging + analysis_interferometer
+import autofit as af
+
+# 1. One analysis per dataset.
+analysis_list = [al.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
+
+# 2. Wrap each analysis in a factor, pairing it with a (copy of the) model.
+analysis_factor_list = [
+    af.AnalysisFactor(prior_model=model.copy(), analysis=analysis)
+    for analysis in analysis_list
+]
+
+# 3. Combine the factors into one global model.
+factor_graph = af.FactorGraphModel(*analysis_factor_list)
+
+# 4. Fit. The model passed to the search is the graph's global prior model; the
+#    analysis is the graph itself. The result is one Result per factor.
+result_list = search.fit(
+    model=factor_graph.global_prior_model, analysis=factor_graph
+)
 ```
 
-The combined analysis sums log-likelihoods. Each component can have its own model
-(e.g. different source intensities per band) or share parameters across analyses
-via the model composition.
+- **`af.AnalysisFactor(prior_model, analysis, optimiser=None, name=None)`** — pairs one
+  analysis with the model whose log-likelihood it evaluates
+  (`PyAutoFit:autofit/graphical/declarative/factor/analysis.py`).
+- **`af.FactorGraphModel(*model_factors, name=None, ...)`** — collects the factors; its
+  `global_prior_model` property is the `Collection` (one model per factor) you hand to
+  the search (`PyAutoFit:autofit/graphical/declarative/collection.py`,
+  `PyAutoFit:autofit/graphical/declarative/abstract.py`).
+- **`search.fit(...)`** returns a `CombinedResult` — iterable and indexable, one `Result`
+  per factor in order (`PyAutoFit:autofit/non_linear/combined_result.py`).
 
-See `autolens_workspace:scripts/multi/modeling.py`.
+**Shared vs. per-dataset parameters.** With a bare `model.copy()` per factor and no prior
+overrides, every prior is *identified* across factors — the graph deduplicates them, so
+the global model has the same dimensionality as the single-dataset model (everything
+shared). To free a parameter per dataset (e.g. a per-band source `intensity`, or a
+per-dataset astrometric offset), override that prior on the `model.copy()` *before*
+wrapping it in its `AnalysisFactor`. See `autolens_workspace:scripts/multi/start_here.py`
+for the canonical walkthrough, and [`../concepts/multi_wavelength.md`](../concepts/multi_wavelength.md)
+for the shared-vs-free design.
 
 ## Calling the analysis
 

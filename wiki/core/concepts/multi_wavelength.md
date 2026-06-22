@@ -1,12 +1,18 @@
 ---
 title: Multi-wavelength and multi-dataset strong lensing
 sources:
+  - project: PyAutoFit
+    paths:
+      - autofit/graphical/declarative/factor/analysis.py
+      - autofit/graphical/declarative/collection.py
+      - autofit/graphical/declarative/abstract.py
+    pinned_commit: ce2baa2b6611de99922e04d44b272de1be3ceb8e
   - project: PyAutoLens
     paths:
       - autolens/imaging/model/analysis.py
       - autolens/interferometer/model/analysis.py
-    pinned_commit: main
-last_updated: 2026-05-22
+    pinned_commit: ae4a27afc0fe7ad712777807d4269759c1a2b6ed
+last_updated: 2026-06-22
 ---
 
 # Multi-wavelength / multi-dataset modelling
@@ -69,22 +75,41 @@ clumps and line-emission structure at high effective resolution. A joint
 fit forces one mass model to satisfy both views at once, which is often
 more constraining than either dataset individually.
 
-## Analysis composition pattern
+## Analysis composition pattern — the factor graph
 
-At the API level, multi-dataset fitting is just composition of analysis
-objects. Each dataset gets its own `AnalysisImaging` or
-`AnalysisInterferometer`, and the combined fit is formed with the `+`
-operator:
+At the API level, multi-dataset fitting is a factor graph. Each dataset
+gets its own `AnalysisImaging` or `AnalysisInterferometer`; each analysis
+is wrapped in an `af.AnalysisFactor` that pairs it with a model; and the
+factors are combined into an `af.FactorGraphModel` whose log-likelihood is
+the sum of the per-factor log-likelihoods.
 
 ```python
-analysis = analysis_g + analysis_r + analysis_alma
+import autofit as af
+
+analysis_list = [al.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
+
+analysis_factor_list = [
+    af.AnalysisFactor(prior_model=model.copy(), analysis=analysis)
+    for analysis in analysis_list
+]
+
+factor_graph = af.FactorGraphModel(*analysis_factor_list)
+
+result_list = search.fit(
+    model=factor_graph.global_prior_model, analysis=factor_graph
+)
 ```
 
-The combined analysis sums log likelihoods. Shared parameters are created
-in the model composition, not by special-casing the datasets. When the
-dependency graph becomes more complicated than "sum these analyses",
-PyAutoFit's graphical-model framework generalizes the same idea via
-`AnalysisFactor` and `FactorGraphModel`.
+Shared vs. free parameters are expressed through the model, not by
+special-casing the datasets. With a bare `model.copy()` and no overrides,
+the graph *identifies* (deduplicates) every prior across factors, so the
+whole model is shared. Free a parameter per dataset — a per-band source
+`intensity`, a per-dataset astrometric offset — by overriding that prior on
+the `model.copy()` before wrapping it in its `AnalysisFactor`. The same
+machinery scales smoothly to genuinely hierarchical graphs (population
+priors over many lenses) via `af.HierarchicalFactor`, without changing the
+composition pattern. See `autolens_workspace:scripts/multi/start_here.py`
+and [`api/analysis_objects.md`](../api/analysis_objects.md).
 
 ## Astrometric offset nuisance parameters
 
@@ -97,8 +122,8 @@ source plane without forcing the mass model to fake the registration.
 ## Related pages
 
 - [`api/datasets.md`](../api/datasets.md) — per-dataset classes.
-- [`api/analysis_objects.md`](../api/analysis_objects.md) — analysis
-  combination operator.
+- [`api/analysis_objects.md`](../api/analysis_objects.md) — the
+  `AnalysisFactor` / `FactorGraphModel` combination API.
 - [`concepts/interferometer_theory.md`](./interferometer_theory.md) —
   for the visibility side of joint fits.
 - [`concepts/hierarchical_models.md`](./hierarchical_models.md) —
