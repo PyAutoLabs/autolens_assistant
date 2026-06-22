@@ -107,6 +107,20 @@ repo. Update `last_updated` to today's date.
 git -C sources/PyAutoFit rev-parse HEAD
 ```
 
+Then **stamp the page's provenance** — this records that the content you just rewrote was
+validated against that commit, and is what the release/PR provenance check verifies (see
+[`al_audit_skill_apis.md`](./al_audit_skill_apis.md) "Provenance"). Do this only after the
+rewrite is correct against the new pin; never to silence a red check:
+
+```bash
+python autoassistant/audit_skill_apis.py --write-provenance --page wiki/core/<page>.md
+```
+
+Re-pin/stamp honestly: a bumped `pinned_commit` whose content you did **not** re-validate
+is exactly the drift this guards against. Judge currency from installed source / `dir()`
+and the workspace `*/start_here.py` scripts — never from changelogs or release notes (see
+AGENTS.md "Source-of-truth resolution").
+
 ### 5. Surface new APIs the user might want a page for
 
 Compare the `__all__` / top-level imports of each source package between the old pinned

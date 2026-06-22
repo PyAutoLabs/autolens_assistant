@@ -14,6 +14,7 @@ sources:
       - autofit/graphical/declarative/abstract.py
     pinned_commit: ce2baa2b6611de99922e04d44b272de1be3ceb8e
 last_updated: 2026-06-22
+content_sha256: 8c415d521a9a0e4789eeb9ef69cb9bc9371ae5e7131e4035506554ed443d765b
 ---
 
 # Analysis objects

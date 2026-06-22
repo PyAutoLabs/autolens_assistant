@@ -11,6 +11,7 @@ sources:
       - autolens/point/dataset.py
     pinned_commit: ae4a27afc0fe7ad712777807d4269759c1a2b6ed
 last_updated: 2026-06-22
+content_sha256: c4f11bede2be7c49f280ae7ce8f2062c41301eff95c44f4957ac389aa3c09598
 ---
 
 # Datasets

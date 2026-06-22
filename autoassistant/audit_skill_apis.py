@@ -32,12 +32,18 @@ import importlib.util
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
-from typing import Iterable
+from typing import Iterable, Optional
+
+try:
+    import yaml
+except ImportError:  # pragma: no cover - yaml ships with the stack (autoconf dep)
+    yaml = None
 
 # ---------------------------------------------------------------------------
 # API baseline. autolens_assistant is tied to an autolens version; this file
@@ -840,6 +846,279 @@ def check_version(root: Path) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Provenance enforcement — bind content to the version it was validated against.
+#
+# The version baseline hashes the *public API surface*; the idiom lint catches dead
+# *constructions*. Neither verifies that a wiki/core page's `pinned_commit` is honest.
+# The original drift shipped precisely because pins were bumped without re-validating
+# content: a freshly stamped page carried a dead idiom. This check closes that gap with
+# two independent signals:
+#
+#   (a) Commit reachability (git mode) — when a git checkout of the cited project is
+#       resolvable, every sha-shaped `pinned_commit` must be a real commit object AND an
+#       ancestor of (or equal to) HEAD. A forged sha, or one rewritten out of history,
+#       FAILS. Pins to a moving ref (`main`) are flagged but not failed — they are
+#       "unpinned", a nudge to re-pin, not a forgery.
+#
+#   (b) Content binding (git-free, CI-safe) — a `content_sha256` frontmatter field that
+#       the refresh (`--write-provenance`) stamps with a hash of the page body at
+#       validation time. If a page declares it and the body no longer matches, the page
+#       was edited after stamping without re-validation → FAIL. Missing field → "not
+#       provenance-stamped" warning. This needs no source checkout, so it is the arm that
+#       runs in a packaged-install CI job where the git-mode checks are skipped.
+#
+# Severity: ERROR (exit 1) for a forged/divergent pin or a content_sha256 mismatch; WARN
+# (exit 0 unless --strict) for an unpinned `main` ref or a missing stamp. This lets the
+# release/PR check go red on genuine forgery/staleness without nuking the 50+ legacy
+# `main`-pinned pages that predate the discipline.
+# ---------------------------------------------------------------------------
+PROJECT_IMPORT: dict[str, str] = {
+    "PyAutoConf": "autoconf",
+    "PyAutoArray": "autoarray",
+    "PyAutoFit": "autofit",
+    "PyAutoGalaxy": "autogalaxy",
+    "PyAutoLens": "autolens",
+}
+_SHA_RE = re.compile(r"[0-9a-f]{7,40}\Z")
+_MOVING_REFS = {"main", "master", "head"}
+_FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---\n?(.*)\Z", re.DOTALL)
+
+_repo_cache: dict[str, Optional[Path]] = {}
+
+
+def split_frontmatter(text: str) -> tuple[Optional[str], str]:
+    """Return (frontmatter_yaml, body). `(None, text)` when the file has no leading
+    `---` frontmatter block. Only the *leading* block is treated as frontmatter — a
+    fenced ```yaml example in the body (e.g. a page documenting the schema) is left in
+    the body and never parsed as provenance."""
+    m = _FRONTMATTER_RE.match(text)
+    if not m:
+        return None, text
+    return m.group(1), m.group(2)
+
+
+def _body_hash(body: str) -> str:
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
+
+
+def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["git", "-C", str(repo), *args],
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+
+
+def _project_repo(project: str) -> Optional[Path]:
+    """Resolve a git checkout of `project`: a `sources/<project>/` clone, else the git
+    toplevel enclosing the installed package. None when neither exists (packaged install
+    with no source tree — the caller then skips git-mode checks)."""
+    if project in _repo_cache:
+        return _repo_cache[project]
+    result: Optional[Path] = None
+    imp = PROJECT_IMPORT.get(project)
+    if imp:
+        try:
+            mod = importlib.import_module(imp)
+            pkg_dir = Path(mod.__file__).resolve().parent
+            proc = _git(pkg_dir, "rev-parse", "--show-toplevel")
+            if proc.returncode == 0:
+                result = Path(proc.stdout.strip())
+        except Exception:  # noqa: BLE001
+            result = None
+    _repo_cache[project] = result
+    return result
+
+
+@dataclass
+class ProvenanceIssue:
+    page: Path
+    severity: str  # "error" | "warn"
+    message: str
+
+
+def _check_page_provenance(page: Path, root: Path) -> list[ProvenanceIssue]:
+    text = page.read_text(encoding="utf-8")
+    fm_text, body = split_frontmatter(text)
+    if fm_text is None:
+        return []  # no frontmatter — not a provenance-bearing page
+    try:
+        meta = yaml.safe_load(fm_text) or {}
+    except yaml.YAMLError as e:  # noqa: BLE001
+        return [ProvenanceIssue(page, "error", f"unparseable frontmatter: {e}")]
+    if not isinstance(meta, dict):
+        return []
+
+    issues: list[ProvenanceIssue] = []
+
+    # (b) Content binding.
+    declared = meta.get("content_sha256")
+    if declared:
+        actual = _body_hash(body)
+        if declared != actual:
+            issues.append(
+                ProvenanceIssue(
+                    page,
+                    "error",
+                    f"content_sha256 mismatch — body edited after stamping "
+                    f"(declared {str(declared)[:12]}…, actual {actual[:12]}…). "
+                    f"Re-validate against the pinned commit, then --write-provenance.",
+                )
+            )
+    else:
+        issues.append(
+            ProvenanceIssue(
+                page,
+                "warn",
+                "no content_sha256 — content not provenance-stamped "
+                "(run --write-provenance after validating against the pinned commit).",
+            )
+        )
+
+    # (a) Commit reachability.
+    for source in meta.get("sources") or []:
+        if not isinstance(source, dict):
+            continue
+        project = source.get("project")
+        pin = str(source.get("pinned_commit", "")).strip()
+        if not project or not pin:
+            issues.append(
+                ProvenanceIssue(page, "warn", f"source missing project/pinned_commit")
+            )
+            continue
+        repo = _project_repo(project)
+        if repo is None:
+            issues.append(
+                ProvenanceIssue(
+                    page,
+                    "warn",
+                    f"{project}: no git checkout resolvable — commit checks skipped "
+                    f"(packaged install?).",
+                )
+            )
+            continue
+        if pin.lower() in _MOVING_REFS:
+            issues.append(
+                ProvenanceIssue(
+                    page,
+                    "warn",
+                    f"{project}: pinned to moving ref '{pin}', not a commit — re-pin to a sha.",
+                )
+            )
+            continue
+        if not _SHA_RE.match(pin):
+            # A tag or other named ref: acceptable iff it resolves in the repo.
+            if _git(repo, "rev-parse", "--verify", "--quiet", f"{pin}^{{commit}}").returncode != 0:
+                issues.append(
+                    ProvenanceIssue(
+                        page, "error", f"{project}: pinned ref '{pin}' does not resolve."
+                    )
+                )
+            continue
+        if _git(repo, "cat-file", "-t", pin).stdout.strip() != "commit":
+            issues.append(
+                ProvenanceIssue(
+                    page,
+                    "error",
+                    f"{project}: pinned_commit {pin[:12]}… is not a real commit "
+                    f"(forged or unreachable).",
+                )
+            )
+        elif _git(repo, "merge-base", "--is-ancestor", pin, "HEAD").returncode != 0:
+            issues.append(
+                ProvenanceIssue(
+                    page,
+                    "error",
+                    f"{project}: pinned_commit {pin[:12]}… is not an ancestor of HEAD "
+                    f"(stale or divergent pin).",
+                )
+            )
+    return issues
+
+
+def check_provenance(root: Path, *, strict: bool = False) -> int:
+    """Verify every wiki/core page's provenance. Exit 1 on any ERROR (or, under
+    --strict, any WARN); exit 0 otherwise."""
+    if yaml is None:
+        print("[provenance] PyYAML not importable — cannot parse frontmatter.", file=sys.stderr)
+        return 1
+    pages = sorted((root / "wiki" / "core").rglob("*.md"))
+    all_issues: list[ProvenanceIssue] = []
+    for page in pages:
+        all_issues.extend(_check_page_provenance(page, root))
+
+    errors = [i for i in all_issues if i.severity == "error"]
+    warns = [i for i in all_issues if i.severity == "warn"]
+
+    for issue in sorted(all_issues, key=lambda i: (i.severity != "error", str(i.page))):
+        rel = issue.page.relative_to(root)
+        tag = "ERROR" if issue.severity == "error" else "warn "
+        print(f"[provenance] {tag} {rel}: {issue.message}", file=sys.stderr)
+
+    print(
+        f"[provenance] scanned {len(pages)} wiki/core pages — "
+        f"{len(errors)} error(s), {len(warns)} warning(s).",
+        file=sys.stderr,
+    )
+    if errors or (strict and warns):
+        return 1
+    return 0
+
+
+def write_provenance(root: Path, only: Optional[list[Path]] = None) -> int:
+    """Stamp `content_sha256` onto wiki/core pages that are *deliberately pinned* (at
+    least one source on a real sha, not `main`). This is the signal check_provenance
+    reads, so it asserts "this content was validated against its pinned commit" — only
+    run it on pages you actually re-validated.
+
+    `only` restricts stamping to an explicit page list (`--page`), the honest default for
+    a targeted refresh. With no `--page`, every deliberately-pinned page is (re)stamped —
+    a deliberate full re-pin after a validated sweep. Pages pinned to `main` are always
+    skipped (they make no validation claim)."""
+    if yaml is None:
+        print("[provenance] PyYAML not importable — cannot parse frontmatter.", file=sys.stderr)
+        return 1
+    only_resolved = {p.resolve() for p in only} if only else None
+    pages = sorted((root / "wiki" / "core").rglob("*.md"))
+    stamped: list[Path] = []
+    for page in pages:
+        if only_resolved is not None and page.resolve() not in only_resolved:
+            continue
+        text = page.read_text(encoding="utf-8")
+        fm_text, body = split_frontmatter(text)
+        if fm_text is None:
+            continue
+        try:
+            meta = yaml.safe_load(fm_text) or {}
+        except yaml.YAMLError:
+            continue
+        if not isinstance(meta, dict):
+            continue
+        pins = [
+            str(s.get("pinned_commit", "")).strip()
+            for s in (meta.get("sources") or [])
+            if isinstance(s, dict)
+        ]
+        if not any(_SHA_RE.match(p) for p in pins):
+            continue  # not deliberately pinned — make no validation claim
+
+        h = _body_hash(body)
+        fm_lines = [ln for ln in fm_text.split("\n") if not ln.startswith("content_sha256:")]
+        fm_lines.append(f"content_sha256: {h}")
+        new_text = "---\n" + "\n".join(fm_lines) + "\n---\n" + body
+        if new_text != text:
+            page.write_text(new_text, encoding="utf-8")
+            stamped.append(page)
+
+    if stamped:
+        for p in stamped:
+            print(f"[provenance] stamped {p.relative_to(root)}", file=sys.stderr)
+    print(f"[provenance] stamped {len(stamped)} deliberately-pinned page(s).", file=sys.stderr)
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Code gate (--code / --file)
 # ---------------------------------------------------------------------------
 def validate_source(text: str) -> tuple[int, list[str]]:
@@ -957,6 +1236,33 @@ def main() -> int:
         "installed stack. Catches dead constructions the symbol audit is blind to.",
     )
     parser.add_argument(
+        "--check-provenance",
+        action="store_true",
+        help="Verify every wiki/core page's pinned_commit is a real, reachable commit "
+        "(git mode) and that its content_sha256 still matches the body (git-free). Exit 1 "
+        "on a forged/divergent pin or a stamped-but-edited page; 0 otherwise.",
+    )
+    parser.add_argument(
+        "--write-provenance",
+        action="store_true",
+        help="Stamp content_sha256 onto deliberately-pinned wiki/core pages (run by the "
+        "refresh after validating content against its pinned commit). Restrict to "
+        "specific pages with --page; otherwise stamps every deliberately-pinned page.",
+    )
+    parser.add_argument(
+        "--page",
+        action="append",
+        default=None,
+        help="With --write-provenance, restrict stamping to this page (repeatable). The "
+        "honest default for a targeted refresh — only stamp what you re-validated.",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="With --check-provenance, also fail on warnings (unpinned `main` refs, "
+        "unstamped pages), not just errors.",
+    )
+    parser.add_argument(
         "--code",
         default=None,
         help="Validate a Python snippet's PyAuto* symbols against the installed stack "
@@ -984,6 +1290,13 @@ def main() -> int:
     # Idiom lint is self-contained (no installed stack, no Markdown symbol scan).
     if args.lint_idioms:
         return run_idiom_lint(root)
+
+    # Provenance actions are self-contained too (frontmatter + optional git).
+    if args.write_provenance:
+        only = [Path(p) for p in args.page] if args.page else None
+        return write_provenance(root, only=only)
+    if args.check_provenance:
+        return check_provenance(root, strict=args.strict)
 
     # Baseline actions short-circuit the (expensive) Markdown/script scan.
     if args.check_version:

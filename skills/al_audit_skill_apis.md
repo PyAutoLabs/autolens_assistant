@@ -127,6 +127,38 @@ agent is about to execute is checked for these idioms too. **Add an entry whenev
 "rewrite the construction", not "rename the symbol"** — the two audits are complementary. A file
 of intentional fixtures opts out with the `pyauto-api-gate: skip` marker.
 
+### 5. Provenance — bind page content to the version it was validated against
+
+The version baseline hashes the API *surface*; the idiom lint catches dead *constructions*.
+Neither verifies a `wiki/core` page's `pinned_commit` is honest — and the original drift
+shipped exactly because a pin was bumped without re-validating content. Provenance closes
+that with two signals:
+
+```bash
+python autoassistant/audit_skill_apis.py --check-provenance         # 0 ok, 1 on error
+python autoassistant/audit_skill_apis.py --check-provenance --strict # also fail on warnings
+```
+
+- **Commit reachability (git mode).** When a git checkout of the cited project is
+  resolvable, each sha-shaped `pinned_commit` must be a real commit *and* an ancestor of
+  HEAD. A **forged sha** or one rewritten out of history is an ERROR. A pin to a moving ref
+  (`main`) is a warning — "unpinned", a nudge to re-pin, not a forgery.
+- **Content binding (git-free).** A `content_sha256` frontmatter field the refresh stamps
+  with a hash of the page body. If a page declares it and the body later changes without
+  re-stamping, that's an ERROR (stamped-but-edited). This arm needs no source checkout, so
+  it is what runs in a packaged-install CI job where the git-mode checks are skipped.
+
+Stamp a page **only after validating its content against its pinned commit** (this is the
+honest re-pin, the partner of `al_update_wiki` step 4):
+
+```bash
+python autoassistant/audit_skill_apis.py --write-provenance --page wiki/core/api/<page>.md
+```
+
+ERRORs fail the check; warnings (unpinned `main`, unstamped legacy pages) do not unless
+`--strict`, so the release/PR check goes red on genuine forgery/staleness without nuking the
+50+ legacy `main`-pinned pages that predate the discipline.
+
 ### The code gate — manual checks and bypass
 
 The always-on code gate (`AGENTS.md` "Safety invariants") is the `PreToolUse` hook
