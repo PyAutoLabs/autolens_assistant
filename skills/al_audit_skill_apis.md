@@ -99,6 +99,30 @@ The wiki documents only the **current** API — fix stale references in place an
 don't add `old → new` migration tables (they grow without bound and are themselves a drift
 surface, since they name removed symbols).
 
+### 4. Idiom deny-list — drift the symbol audit cannot see
+
+The symbol resolver above only checks *alias-rooted dotted symbols* (`al.AnalysisImaging`).
+It is structurally blind to a defunct **operator idiom** — one where every named symbol still
+imports but the *construction* was removed. The canonical case is analysis-summing: the old
+multi-dataset combine joined analyses with `+` (or folded a list with `sum(...)`) to sum their
+log-likelihoods. Every token still resolves, so `--scope all` and the code gate report it
+clean — yet the `+` overload is gone, and the current combine is the factor graph
+(`af.AnalysisFactor` wrapped per dataset, combined with `af.FactorGraphModel`, run via
+`search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)`).
+
+The deny-list (`DENY_LIST` in `autoassistant/audit_skill_apis.py`) closes that gap. Each entry
+is `{regex, why_defunct, replacement, citation}`. Scan the docs for hits:
+
+```bash
+python autoassistant/audit_skill_apis.py --lint-idioms   # 0 clean, 1 on any hit
+```
+
+It scans `skills/` + `wiki/` (all of it, including `concepts/`) + `scripts/`, is self-contained
+(no installed stack needed), and is also run inside the code gate, so a snippet or `.py` file the
+agent is about to execute is checked for these idioms too. **Add an entry whenever a fix is
+"rewrite the construction", not "rename the symbol"** — the two audits are complementary. A file
+of intentional fixtures opts out with the `pyauto-api-gate: skip` marker.
+
 ### The code gate — manual checks and bypass
 
 The always-on code gate (`AGENTS.md` "Safety invariants") is the `PreToolUse` hook

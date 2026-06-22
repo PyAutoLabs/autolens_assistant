@@ -99,6 +99,113 @@ INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
 
 
 # ---------------------------------------------------------------------------
+# Idiom deny-list — content-vs-version drift the symbol resolver cannot see.
+#
+# Both the symbol resolver above and the validate_pyauto_code.py gate only resolve
+# *alias-rooted dotted symbols* (`al.AnalysisImaging`) against the installed stack.
+# They are structurally blind to a defunct *operator idiom* — `analysis + analysis`,
+# `sum(analysis_list)` — where every named symbol still exists but the construction
+# itself was removed from the API. The analysis-summing idiom is the canonical case:
+# `al.AnalysisImaging(...) + al.AnalysisInterferometer(...)` resolves symbol-by-symbol,
+# yet the `+` overload that summed log-likelihoods is gone. The current way to combine
+# datasets is the factor graph (`af.AnalysisFactor` + `af.FactorGraphModel`). This
+# curated list flags such idioms by *shape* so the audit and the gate stop trusting a
+# dead construction just because its tokens still import.
+#
+# A file opts out (intentional fixtures, this script's own regex strings) by carrying
+# the `pyauto-api-gate: skip` marker — same escape hatch the code gate honours.
+# ---------------------------------------------------------------------------
+IDIOM_SKIP_MARKER = "pyauto-api-gate: skip"
+
+
+@dataclass(frozen=True)
+class IdiomRule:
+    name: str
+    regex: re.Pattern
+    why_defunct: str
+    replacement: str
+    citation: str
+
+
+@dataclass(frozen=True)
+class IdiomHit:
+    rule: IdiomRule
+    line_no: int
+    line: str
+
+
+# Seeded with the analysis-summing idiom (the removed multi-dataset combine). Add an
+# entry whenever a construction is retired but its constituent symbols survive — i.e.
+# whenever a fix is "rewrite the idiom", not "rename the symbol".
+DENY_LIST: tuple[IdiomRule, ...] = (
+    IdiomRule(
+        name="analysis-summing-operator",
+        # Both operands of a `+` name an analysis — correct factor-graph code never adds
+        # two analyses, it builds an AnalysisFactor list. Catches all three forms the
+        # removed idiom appears in:
+        #   - bare variables:   analysis_imaging + analysis_interferometer
+        #   - constructor calls: al.AnalysisImaging(...) + al.AnalysisInterferometer(...)
+        #   - inline-code prose: `AnalysisImaging` + `AnalysisInterferometer`
+        # `[\w.]*` allows the alias-dotted form; the optional `\(...\)` (non-greedy,
+        # single-line — backtracks through nested parens) skips constructor args between
+        # the class name and the operator; `[\s`]*` tolerates markdown backticks.
+        regex=re.compile(
+            r"\b[\w.]*[Aa]nalysis\w*\s*(?:\([^\n]*?\))?[\s`]*\+[\s`]*[\w.]*[Aa]nalysis\w*"
+        ),
+        why_defunct=(
+            "the `+` operator that summed analysis log-likelihoods to combine datasets "
+            "was removed; every named symbol still resolves, so the symbol audit and the "
+            "code gate cannot see it"
+        ),
+        replacement=(
+            "wrap each analysis in af.AnalysisFactor(prior_model=..., analysis=...), "
+            "combine them with af.FactorGraphModel(*analysis_factor_list), then call "
+            "result_list = search.fit(model=factor_graph.global_prior_model, "
+            "analysis=factor_graph)"
+        ),
+        citation=(
+            "PyAutoFit:autofit/graphical/declarative/factor/analysis.py; "
+            "autolens_workspace:scripts/multi/start_here.py"
+        ),
+    ),
+    IdiomRule(
+        name="analysis-summing-sum-builtin",
+        # `sum(analysis...` — folding a list of analyses with the builtin relied on the
+        # same removed Analysis.__add__.
+        regex=re.compile(r"\bsum\(\s*analysis"),
+        why_defunct=(
+            "sum(analysis_list) folded a list of analyses into one summed-likelihood "
+            "analysis via the removed Analysis.__add__"
+        ),
+        replacement=(
+            "build an analysis_factor_list of af.AnalysisFactor(prior_model=..., "
+            "analysis=...) and pass it to af.FactorGraphModel(*analysis_factor_list)"
+        ),
+        citation=(
+            "PyAutoFit:autofit/graphical/declarative/collection.py; "
+            "autolens_workspace:scripts/multi/start_here.py"
+        ),
+    ),
+)
+
+
+def lint_idioms(text: str) -> list[IdiomHit]:
+    """Return every deny-list idiom hit in `text` (line-numbered).
+
+    Whole-text, line-by-line scan: an idiom is drift whether it appears in a fenced
+    code block, an inline span, or a prose sentence, so we do not split Markdown here.
+    A file carrying the skip marker opts out entirely (returns no hits)."""
+    if IDIOM_SKIP_MARKER in text:
+        return []
+    hits: list[IdiomHit] = []
+    for i, line in enumerate(text.splitlines(), start=1):
+        for rule in DENY_LIST:
+            if rule.regex.search(line):
+                hits.append(IdiomHit(rule=rule, line_no=i, line=line.strip()))
+    return hits
+
+
+# ---------------------------------------------------------------------------
 # Data classes
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
@@ -324,6 +431,59 @@ def select_files(root: Path, scope: str) -> list[Path]:
     if scope == "all":
         return skills + wiki_api + wiki_stack + scripts
     raise SystemExit(f"unknown scope: {scope!r}")
+
+
+def select_idiom_files(root: Path) -> list[Path]:
+    """Files the idiom lint scans: every `skills/` + `wiki/` Markdown page and every
+    `scripts/` Python file.
+
+    Deliberately broader than `select_files`' API-doc scope: a defunct idiom can sit
+    in any prose page (e.g. `wiki/core/concepts/multi_wavelength.md`), not only the
+    API tables under `wiki/core/api`+`stack`. This script's own tooling is excluded —
+    it holds the deny-list regex strings as text, not as executed/ documented idioms."""
+    tooling = {"audit_skill_apis.py", "refresh_api_docs.py", "test_api_gate.py"}
+    md = sorted((root / "skills").glob("*.md")) + sorted((root / "wiki").rglob("*.md"))
+    py = [p for p in sorted((root / "scripts").rglob("*.py")) if p.name not in tooling]
+    return md + py
+
+
+def run_idiom_lint(root: Path) -> int:
+    """Scan skills/ + wiki/ + scripts/ for deny-list idioms. Exit 1 on any hit.
+
+    Self-contained — needs neither `sources.yaml` nor the installed stack, so it is
+    safe to run in a packaged-install CI job that has no source checkout."""
+    files = select_idiom_files(root)
+    by_file: list[tuple[Path, list[IdiomHit]]] = []
+    total = 0
+    for f in files:
+        try:
+            text = f.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        hits = lint_idioms(text)
+        if hits:
+            by_file.append((f, hits))
+            total += len(hits)
+
+    if total == 0:
+        print(
+            f"[idiom] clean — scanned {len(files)} files, no defunct idioms.",
+            file=sys.stderr,
+        )
+        return 0
+
+    print(
+        f"[idiom] {total} defunct idiom(s) across {len(by_file)} file(s):",
+        file=sys.stderr,
+    )
+    for f, hits in by_file:
+        rel = f.relative_to(root)
+        for hit in hits:
+            print(f"  {rel}:{hit.line_no}  [{hit.rule.name}]  {hit.line}", file=sys.stderr)
+            print(f"      why: {hit.rule.why_defunct}", file=sys.stderr)
+            print(f"      use: {hit.rule.replacement}", file=sys.stderr)
+            print(f"      ref: {hit.rule.citation}", file=sys.stderr)
+    return 1
 
 
 # ---------------------------------------------------------------------------
@@ -735,16 +895,30 @@ def run_code_gate(*, code: str | None, file: str | None) -> int:
         text, label = p.read_text(encoding="utf-8"), str(p)
 
     n_stale, report = validate_source(text)
-    if n_stale:
+
+    # Idiom lint runs alongside symbol resolution: the gate must catch a dead
+    # *construction* (`analysis + analysis`) as well as a dead *symbol*. Emit the
+    # hits as `STALE-IDIOM` lines so the PreToolUse hook (which collects `STALE*`
+    # stderr lines) surfaces them with the same deny path.
+    idiom_hits = lint_idioms(text)
+    for hit in idiom_hits:
+        report.append(
+            f"STALE-IDIOM  {hit.rule.name}  —  {hit.rule.why_defunct}; "
+            f"instead {hit.rule.replacement} ({hit.rule.citation})"
+        )
+
+    n_bad = n_stale + len(idiom_hits)
+    if n_bad:
         print(
-            f"[gate] {n_stale} stale PyAuto* symbol(s) in {label} — "
+            f"[gate] {n_bad} stale PyAuto* reference(s) in {label} "
+            f"({n_stale} symbol(s), {len(idiom_hits)} idiom(s)) — "
             f"fix against the live API before running:",
             file=sys.stderr,
         )
         for line in report:
             print("  " + line, file=sys.stderr)
         return 2
-    print(f"[gate] {label}: all PyAuto* symbols resolve.", file=sys.stderr)
+    print(f"[gate] {label}: all PyAuto* symbols and idioms resolve.", file=sys.stderr)
     return 0
 
 
@@ -776,6 +950,13 @@ def main() -> int:
         "(non-zero on drift). Cheap — no Markdown scan; safe at session start.",
     )
     parser.add_argument(
+        "--lint-idioms",
+        action="store_true",
+        help="Scan skills/ + wiki/ + scripts/ for defunct API idioms from the deny-list "
+        "(e.g. analysis-summing) and exit (0 clean, 1 hits). Self-contained; needs no "
+        "installed stack. Catches dead constructions the symbol audit is blind to.",
+    )
+    parser.add_argument(
         "--code",
         default=None,
         help="Validate a Python snippet's PyAuto* symbols against the installed stack "
@@ -799,6 +980,10 @@ def main() -> int:
     root = Path(args.root) if args.root else Path(__file__).resolve().parent.parent
     if not (root / "sources.yaml").exists():
         sys.exit(f"sources.yaml not found under {root}; pass --root.")
+
+    # Idiom lint is self-contained (no installed stack, no Markdown symbol scan).
+    if args.lint_idioms:
+        return run_idiom_lint(root)
 
     # Baseline actions short-circuit the (expensive) Markdown/script scan.
     if args.check_version:

@@ -33,6 +33,18 @@ GOOD_AUTOCONF_SUBMODULE = "import autoconf.dictable"
 STALE_PLOTTER = "import autolens as al; al.FitImagingPlotter(fit=fit).subplot_fit()"
 STALE_KERNEL = "from autoarray.structures.arrays.kernel_2d import Kernel2D"
 
+# Defunct *idiom* (every named symbol still resolves): the removed analysis-summing
+# combine. The factor-graph form below must NOT be flagged.
+IDIOM_SUM_OPERATOR = (
+    "a = al.AnalysisImaging(dataset=d) + al.AnalysisInterferometer(dataset=d2)"
+)
+IDIOM_SUM_BUILTIN = "total = sum(analysis_list)"
+GOOD_FACTOR_GRAPH = (
+    "import autofit as af\n"
+    "factors = [af.AnalysisFactor(prior_model=m, analysis=a) for a in analysis_list]\n"
+    "fg = af.FactorGraphModel(*factors)"
+)
+
 # Keep numba/matplotlib caches writable in sandboxed/CI runs (see CLAUDE.md).
 ENV = {
     **os.environ,
@@ -171,6 +183,58 @@ def test_hook_validates_py_file_argument(tmp_path):
     bad = tmp_path / "bad.py"
     bad.write_text(f"import autolens as al\n{STALE_PLOTTER}\n", encoding="utf-8")
     assert _decision(_run_hook(f"{sys.executable} {bad}")) == "deny"
+
+
+# --- idiom deny-list (validator --code / --lint-idioms) --------------------------------
+def test_validator_flags_summing_operator_idiom():
+    proc = _run_validator("--code", IDIOM_SUM_OPERATOR)
+    assert proc.returncode == 2
+    assert "analysis-summing-operator" in proc.stderr
+    assert "AnalysisFactor" in proc.stderr  # the replacement is surfaced
+
+
+def test_validator_flags_sum_builtin_idiom():
+    proc = _run_validator("--code", IDIOM_SUM_BUILTIN)
+    assert proc.returncode == 2
+    assert "analysis-summing-sum-builtin" in proc.stderr
+
+
+def test_validator_passes_factor_graph_api():
+    # Every symbol resolves AND no idiom — the current combine pattern must be clean.
+    assert _run_validator("--code", GOOD_FACTOR_GRAPH).returncode == 0
+
+
+def test_hook_denies_summing_idiom():
+    proc = _run_hook(f'{sys.executable} -c "{IDIOM_SUM_OPERATOR}"')
+    assert _decision(proc) == "deny"
+    assert "analysis-summing-operator" in proc.stdout
+
+
+def test_lint_idioms_flags_planted_doc(tmp_path):
+    # Acceptance: the audit over the docs flags a planted summing idiom. Build a minimal
+    # tree (sources.yaml marks the root) with one wiki page carrying the dead idiom.
+    (tmp_path / "sources.yaml").write_text("projects: []\n", encoding="utf-8")
+    page = tmp_path / "wiki" / "core" / "concepts" / "planted.md"
+    page.parent.mkdir(parents=True)
+    page.write_text(
+        "# Planted\n\n```python\nanalysis = analysis_g + analysis_r\n```\n",
+        encoding="utf-8",
+    )
+    proc = _run_validator("--lint-idioms", "--root", str(tmp_path))
+    assert proc.returncode == 1
+    assert "planted.md" in proc.stderr
+    assert "analysis-summing-operator" in proc.stderr
+
+
+def test_lint_idioms_clean_tree(tmp_path):
+    (tmp_path / "sources.yaml").write_text("projects: []\n", encoding="utf-8")
+    page = tmp_path / "wiki" / "core" / "concepts" / "clean.md"
+    page.parent.mkdir(parents=True)
+    page.write_text(
+        "# Clean\n\n```python\nfg = af.FactorGraphModel(*analysis_factor_list)\n```\n",
+        encoding="utf-8",
+    )
+    assert _run_validator("--lint-idioms", "--root", str(tmp_path)).returncode == 0
 
 
 if __name__ == "__main__":
