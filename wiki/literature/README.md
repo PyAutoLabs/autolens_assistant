@@ -19,25 +19,26 @@ the papers their own project needs.
 |---|---|---|
 | `concepts/` | concept | one scientific concept per page (e.g. `mass-sheet-degeneracy.md`) |
 | `entities/` | entity | one named thing per page (survey, lens, code, collaboration) |
-| `sources/` | sources | bibliography of papers on one topic, one section per paper |
+| `sources/` | sources | compact claim support, one paper section per topic |
+| `bibliography/` | metadata | canonical BibTeX, key aliases, and citation workflow |
 | `index.md` | meta | top-level navigation |
 | `log.md` | meta | append-only compilation log |
 
 ## How papers are referenced
 
-Each paper is cited by a **public reference** — an arXiv/DOI link and/or an author-year
-citation — recorded on the `**Reference:**` line of its `sources/` entry. There are no PDFs
-in this repo; a reader sources the paper from arXiv or the journal using that reference. See
-[`AGENTS.md`](./AGENTS.md) "References" for the exact convention.
+Each source entry records a verified public reference, a canonical BibTeX key, and only the
+claims the paper directly supports. Citation metadata lives separately in
+[`bibliography/autolens_literature.bib`](./bibliography/autolens_literature.bib). See
+[`bibliography/README.md`](./bibliography/README.md) for adding papers, aliases, downstream
+key resolution, and validation.
 
 ## When you, the agent, should write here
 
 - A user asks about a specific lensing paper or result and you can find the topic
   in the wiki — quote and cite from the existing page.
 - A new paper has been read and the user explicitly asks for the wiki to be
-  updated. Follow the schema in `AGENTS.md`: add a section to the relevant
-  `sources/<topic>.md` page, update the relevant `concepts/` and `entities/`
-  pages with `[[link]]` references, and append a line to `log.md`.
+  updated. Use [`al_ingest_paper`](../../skills/al_ingest_paper.md), which updates canonical
+  metadata and compact claim support together and runs citation validation.
 
 Do **not** treat this folder as scratch space, and do **not** invent citations:
 the schema demands that any cited result trace back to an actual paper stub.

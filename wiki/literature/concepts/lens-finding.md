@@ -20,21 +20,19 @@ status: drafted
 
 Wide imaging surveys contain ~10²–10⁴ strong lenses per 10⁴ deg² (Collett
 2015). Finding them requires automated classification; the field
-converged on convolutional neural networks (Jacobs 2019, Pearson 2020,
-Rojas 2022) trained on simulated lenses and validated against
-spectroscopic confirmations. Citizen-science (Space Warps, Spacewarms
-2017) provides labels and ground truth.
+converged on convolutional neural networks (Jacobs 2019, Rojas 2022) trained on simulated
+lenses and validated against expert inspection and spectroscopic follow-up. Citizen-science
+projects such as Space Warps provide classifications and validation samples.
 
 ## What it is
 
 - **Ringfinder** (Gavazzi 2014) — colour-image residuals after PSF
   subtraction.
-- **Yattalens** (Sonnenfeld 2018) — Bayesian classifier on photometric
-  features.
+- **YattaLens** (Sonnenfeld 2018) — arc detection followed by lens-model fitting.
 - **CNN lens finders** — Jacobs et al., Petrillo et al.,
-  Schaefer/Pearson, Rojas 2022; standard for DES, KIDS, HSC.
-- **Bayesian lens-find pipelines** (Holloway 2024) — fold lens-modelling
-  evidence into the find step.
+  Schaefer, Rojas 2022; standard for DES, KiDS, HSC.
+- **Calibrated classifier ensembles** (Holloway 2024) — combine citizen-science and
+  neural-network scores into probabilities suitable for candidate ranking.
 - **Citizen science** — Space Warps for HFF and CFHT-LS;
   human-classification is still competitive on rare morphologies.
 
@@ -49,10 +47,8 @@ spectroscopic confirmations. Citizen-science (Space Warps, Spacewarms
 
 ## Why it matters for PyAutoLens
 
-PyAutoLens can be used downstream of a finder to model candidates in
-batch. The finder's selection function is an input to any population
-study built on the PyAutoLens models. Holloway 2024 specifically uses
-PyAutoLens evidence as a finding metric.
+PyAutoLens can be used downstream of a finder to model candidates in batch. The finder's
+selection function is an input to any population study built on the PyAutoLens models.
 
 ## See also
 

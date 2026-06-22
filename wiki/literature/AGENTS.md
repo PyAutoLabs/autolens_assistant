@@ -4,24 +4,23 @@ This sub-wiki (`autolens_assistant/wiki/literature/`) gives the assistant the br
 scientific context of strong gravitational lensing. It follows Karpathy's "LLM Wiki"
 pattern: a compiled, cross-linked knowledge layer the assistant reads at query time.
 
-It ships as a **self-contained base literature wiki** — a starting body of strong-lensing
-science that every clone of the assistant gets out of the box. It is **not** tied to any
-external paper repository or personal PDF library: every page stands on its own, and papers
-are referenced by arXiv/DOI link and/or citation, never by a local file path. Users are
-expected to **extend** it with the papers and context their own project needs (see
-[`skills/al_ingest_paper.md`](../../skills/al_ingest_paper.md)).
+It ships as a **self-contained base literature wiki** paired with a canonical BibTeX
+bibliography. It is not tied to a PDF library: pages use public references and canonical
+keys, never local file paths. Users extend it through
+[`skills/al_ingest_paper.md`](../../skills/al_ingest_paper.md).
 
-## References — how papers are cited
+## References and citation metadata
 
-Papers are identified by a **public reference**, not a file on disk:
+The two layers have separate roles:
 
-- An **arXiv** link/ID (`arXiv:2011.10627`) or a **DOI**/journal URL when one is known, and/or
-- a **citation** — author(s), year, and a short descriptive tag (e.g.
-  `Minor et al. 2021 — J0946 subhalo overconcentration`).
+- `sources/*.md` records compact, claim-oriented guidance about what a paper supports.
+- `bibliography/autolens_literature.bib` records canonical citation metadata and keys.
+- `bibliography/bibkey_aliases.yaml` maps known alternate keys to canonical keys.
 
-Never record a local PDF path, and **never fabricate** an arXiv ID or DOI: if no public
-identifier is known for a paper, cite it by author/year/title only. A reader who wants the
-PDF sources it from arXiv or the journal using the reference.
+Use an arXiv ID, DOI, journal reference, or author/year/title when verified. Never record a
+local PDF path or fabricate metadata. A canonical key is local to this repository: before
+patching a paper's LaTeX, resolve it against that project's `.bib` and use its existing local
+key where available. Detailed rules are in [`bibliography/README.md`](./bibliography/README.md).
 
 ## Layout
 
@@ -33,7 +32,8 @@ wiki/literature/             # the compiled wiki (in git)
 ├── log.md                   # append-only compilation log
 ├── concepts/                # one topic per page — the science
 ├── entities/                # specific surveys, lenses, collaborations, software
-└── sources/                 # per-topic bibliography pages (one paper = one section)
+├── sources/                 # per-topic claim support (one paper = one section)
+└── bibliography/            # canonical BibTeX, aliases, and citation instructions
 ```
 
 Wiki pages are syntheses. If a page and the paper it cites disagree, the paper wins; update
@@ -62,8 +62,7 @@ Use `[[page-slug]]` for wiki-internal links — for example
 `.md`. A `[[link]]` that has no target file yet is fine — it marks a future
 page to write.
 
-External references point at a paper by its arXiv/DOI link and/or citation (see "References"
-above), never a local path.
+External references use verified public metadata, never a local path.
 
 ## Frontmatter
 
@@ -113,7 +112,7 @@ Use entity pages for: surveys (SLACS, BELLS, H0liCOW), specific lenses
 (Abell 1201, the Cosmic Horseshoe), software (PyAutoLens, lenstronomy),
 collaborations (TDCOSMO, Space Warps).
 
-## Source-collection page structure
+## Source-entry structure
 
 ```
 # Sources: <topic>
@@ -123,28 +122,36 @@ cross-link from concept and entity pages with `[[sources-<topic>#author-year-slu
 
 ## Author Year — short tag
 
+**Canonical BibTeX key:** `KeyYYYY`
 **Reference:** arXiv:1607.00017  (or a DOI/journal URL, and/or "Author Year — title")
 **Concepts:** [[concept-1]], [[concept-2]]
-**Summary:** one-paragraph stub. Mark `(stub — verify against the paper)` if not yet read.
+
+**Supports:**
+- Claim this paper directly supports.
+- Another claim this paper directly supports.
+
+**Use when:**
+- Situation where the citation is appropriate.
+
+**Do not use for:**
+- Similar but unsupported claim.
 ```
+
+Keep entries short: normally 2–5 support bullets and no long prose. Do not copy abstracts or
+turn source pages into paper summaries. If a claim has not been verified, add a TODO rather
+than guessing.
 
 ## How the assistant should use this wiki
 
 1. On a user question, first open `index.md`.
 2. Follow the relevant `concepts/` or `entities/` page.
-3. Cite specific results by linking the `[[sources-topic#author-year]]`
-   anchor. If a claim is needed and the source stub is unread, fetch the paper
-   from the arXiv/DOI in the stub's `Reference:` line.
-4. When a paper is read in full, upgrade the stub's `status:` from `stub` to
-   `drafted`, replace the inferred summary with what the paper actually
-   says, and add a line to `log.md`.
-5. Never fabricate a citation or identifier. If a result is not on a wiki page, say so
-   and offer to read the relevant paper.
+3. Follow the source entry for claim scope and its canonical key for metadata.
+4. Resolve that key against any downstream project's `.bib` before changing LaTeX.
+5. If support or metadata is unclear, read the public paper and add a TODO rather than guess.
 
 ## Extending the wiki
 
 This base wiki is a starting point, not a fixed corpus. When a user's project needs a paper
-that isn't here yet, add it via [`skills/al_ingest_paper.md`](../../skills/al_ingest_paper.md):
-create or update the relevant `sources/<topic>.md` section, cross-link the impacted
-`concepts/` and `entities/` pages with `[[wiki-link]]`s, and append a row to `log.md`. Over
-time the wiki grows into the project's own literature record.
+that is not here, use [`skills/al_ingest_paper.md`](../../skills/al_ingest_paper.md). Add the
+verified BibTeX metadata, a compact source entry, relevant cross-links, and a log row; then
+run `python -m autoassistant.literature validate-citations`.

@@ -81,6 +81,9 @@ should use this wiki.
 
 ## Sources (bibliography by topic)
 
+These pages describe claim support. Canonical citation metadata and key-management rules
+live in [`bibliography/`](./bibliography/README.md).
+
 - [[sources-lens-modeling-methods]]
 - [[sources-mass-models]]
 - [[sources-source-reconstruction]]
