@@ -155,6 +155,25 @@ Derive URLs from `sources.yaml`. To *read* source: try the installed package
 if not installed, clone the git URL from `sources.yaml` into `./sources/<project>/`
 (gitignored) and read there. This is why the workspace is portable across machines.
 
+**Deciding whether an API or idiom is current.** Truth order, highest first:
+
+1. **Installed source / `dir()`** — what the imported library actually exposes
+   (`getattr`, `inspect.signature`, reading the source file). This is ground truth.
+2. **The workspace `*/start_here.py` scripts** — `autolens_workspace`'s
+   `scripts/**/start_here.py` (and the `features/` examples) are regenerated against
+   each release and show the *current idiom*, including operator/construction patterns
+   that `dir()` alone can't reveal (e.g. "combine analyses via `af.FactorGraphModel`,
+   not by adding them"). When a construction is in question, grep the workspace.
+
+**Never** judge currency from **changelogs, release notes, or git history.** They are
+append-only records of what *changed*, not what *is* — a removed API still appears in the
+notes that introduced it, so they will happily "confirm" a dead idiom. (That is exactly how
+the analysis-summing API was falsely re-confirmed on pushback.) If installed source and a
+changelog disagree, the source wins, always. The release-time and PR checks in
+[`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md) enforce this order
+mechanically (symbol resolution + idiom deny-list + provenance), but the discipline applies
+to every manual judgement too.
+
 ---
 
 ## Commit cadence during user work
