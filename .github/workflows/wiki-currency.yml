@@ -1,0 +1,123 @@
+# Wiki-currency check — the single home of the "is the wiki current?" rules.
+#
+# This workflow is the ONLY place the check logic lives (symbol audit, idiom deny-list,
+# provenance). It versions with the content it grades, which is why it lives in
+# autolens_assistant and not in the release hub. Two triggers feed it:
+#
+#   1. workflow_call  — invoked by PyAutoBuild at stack-release time with the new version,
+#      so a release that moves the API is graded against the wiki immediately. PyAutoBuild
+#      only calls and reports; it owns none of the rules below.
+#   2. pull_request / schedule / workflow_dispatch — runs in this repo against the
+#      currently-released stack, catching drift introduced by assistant changes themselves.
+#
+# See skills/al_audit_skill_apis.md and modes/maintainer.md "Release-time wiki-currency
+# check" for the two-trigger / one-check design.
+name: wiki-currency
+
+on:
+  workflow_call:
+    inputs:
+      stack_version:
+        description: "PyAutoLens version to install and check against (empty = latest released)."
+        required: false
+        type: string
+        default: ""
+      assistant_ref:
+        description: "Ref of autolens_assistant to check out (empty = the triggering ref)."
+        required: false
+        type: string
+        default: ""
+  workflow_dispatch:
+    inputs:
+      stack_version:
+        description: "PyAutoLens version to install and check against (empty = latest released)."
+        required: false
+        type: string
+        default: ""
+  pull_request:
+  schedule:
+    # Mondays 06:00 UTC — re-check the wiki against the currently-released stack.
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  wiki-currency:
+    runs-on: ubuntu-latest
+    env:
+      NUMBA_CACHE_DIR: /tmp/numba_cache
+      MPLCONFIGDIR: /tmp/matplotlib
+      PYAUTO_SKIP_WORKSPACE_VERSION_CHECK: "1"
+    steps:
+      # Always check out autolens_assistant. On native triggers github.ref already points
+      # here; under workflow_call github.ref is the *caller's* ref, so PyAutoBuild passes
+      # assistant_ref (e.g. main / the release tag) to pin the version of the rules used.
+      - name: Check out autolens_assistant
+        uses: actions/checkout@v4
+        with:
+          repository: PyAutoLabs/autolens_assistant
+          ref: ${{ inputs.assistant_ref || github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the released stack
+        run: |
+          python -m pip install --upgrade pip
+          VER="${{ inputs.stack_version }}"
+          if [ -n "$VER" ]; then
+            echo "Installing autolens==$VER (pulls the pinned autoconf/autoarray/autofit/autogalaxy)."
+            pip install "autolens==$VER"
+          else
+            echo "Installing the latest released autolens."
+            pip install autolens
+          fi
+
+      - name: Run wiki-currency checks
+        id: checks
+        run: |
+          set +e
+          REPORT=drift-report.md
+          {
+            echo "# Wiki-currency drift report"
+            echo
+            echo "- stack_version: \`${{ inputs.stack_version || 'latest released' }}\`"
+            echo "- assistant_ref: \`${{ inputs.assistant_ref || github.ref }}\`"
+            echo
+          } > "$REPORT"
+
+          fail=0
+          run() {
+            local name="$1"; shift
+            echo "## $name" >> "$REPORT"
+            echo '```' >> "$REPORT"
+            python autoassistant/audit_skill_apis.py "$@" >> "$REPORT" 2>&1
+            local rc=$?
+            echo '```' >> "$REPORT"
+            if [ "$rc" -ne 0 ]; then
+              echo "**FAILED** — \`$name\` exited $rc" >> "$REPORT"
+              fail=1
+            fi
+            echo >> "$REPORT"
+          }
+
+          # The released stack installed above is the ground truth for all four checks.
+          run "Version drift (--check-version)"     --check-version
+          run "Symbol audit (--scope all)"          --scope all
+          run "Idiom deny-list (--lint-idioms)"     --lint-idioms
+          run "Provenance (--check-provenance)"     --check-provenance
+
+          cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::wiki-currency drift detected — see the job summary / drift-report artifact."
+          fi
+          exit "$fail"
+
+      - name: Upload drift report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wiki-drift-report
+          path: drift-report.md
