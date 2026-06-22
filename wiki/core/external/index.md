@@ -35,10 +35,11 @@ profile exists yet, infer from the immediate conversation cues (see
 
 ## Local copies vs URL pointers
 
-`workspace.md` no longer hand-lists script URLs. It points at the workspace's own
-**generated catalogue** (`llms.txt` / `llms-full.txt` / `workspace_index.json`, at the
-repo root), which the agent reads — after resolving `autolens_workspace` per
-`sources.yaml` — to route users to the current, correct example.
+Neither `workspace.md` nor `howtolens.md` hand-lists URLs any more. Each points at its
+repo's own **generated catalogue** (`llms.txt` / `llms-full.txt` / `workspace_index.json`,
+at the repo root) — `autolens_workspace` for production examples, `HowToLens` for the
+lecture series — which the agent reads, after resolving the repo per `sources.yaml`, to
+route users to the current, correct tutorial or example.
 
 ## See also
 

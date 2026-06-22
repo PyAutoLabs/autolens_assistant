@@ -157,7 +157,7 @@ Top-level entry point to the four-chapter HowToLens series. Each chapter takes
 
 - URL: https://pyautolens.readthedocs.io/en/latest/howtolens/howtolens.html
 - Audience: newcomer
-- See also: [`howtolens.md`](./howtolens.md) — per-tutorial map
+- See also: [`howtolens.md`](./howtolens.md) — lecture catalogue routing
 
 ## API reference
 
