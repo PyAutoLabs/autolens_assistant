@@ -53,3 +53,25 @@ it grades, so it must not be reimplemented anywhere else. Two triggers feed that
 Ordering matters at release: PyAutoBuild regenerates + commits the API baseline **before**
 calling this workflow, so `--check-version` compares the new stack against an already-updated
 baseline. When you change the rules, edit them here only; never copy a rule into PyAutoBuild.
+
+## Chat-surface compatibility smoke test
+
+Run these checks after documentation changes are available on the public GitHub repository. Do
+not claim a surface is tested merely because its documentation says repository access is
+supported.
+
+- **ChatGPT with GitHub access:** provide the repository URL and the bootstrap prompt from
+  [`llms.txt`](../llms.txt); ask it to name the exact instruction, skill-index, and wiki files
+  it read before answering one installation question and one modelling question.
+- **ChatGPT without GitHub access:** attach `llms.txt`, `AGENTS.md`, and one selected skill;
+  confirm it states the capability boundary and requests missing local evidence rather than
+  pretending to inspect files.
+- **Codex web:** connect the repository, ask it to summarize the active `AGENTS.md`
+  constraints, then request a read-only plan for a small modelling task. Confirm it grounds the
+  plan in the relevant skill and does not make an unrequested edit or pull request.
+- **Non-agentic CLI/chat:** provide the same bootstrap and either browsing access or attached
+  files; confirm it produces commands for the user to run instead of claiming execution.
+
+Record the surface, date, plan/account context, files successfully loaded, and any limitations.
+Plan availability changes, so test results should describe observed behavior rather than promise
+that a feature is free for every user.

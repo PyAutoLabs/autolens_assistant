@@ -49,16 +49,9 @@ the example starting prompts below.
 ### Browser and chat-only use
 
 If you are more familiar with conversation-based AI assistants such as ChatGPT or Claude on the
-web, you can still use `autolens_assistant` by giving the assistant the repository URL and opening
-with the following prompt:
-
-```text
-I'd like to use the PyAutoLens Assistant for this conversation:
-https://github.com/PyAutoLabs/autolens_assistant
-
-Please familiarize yourself with the project and use its guidance and scientific reference
-material when answering my questions. I'll provide any local files or results you need.
-```
+web, you can still use `autolens_assistant`. The front-door [`llms.txt`](llms.txt) holds the
+bootstrap prompt and read-order: give the assistant this repository's URL together with that
+prompt, or — if the chat cannot browse GitHub — paste `llms.txt` and `AGENTS.md` directly.
 
 This is effective for learning PyAutoLens, asking how to perform lensing calculations or modelling
 tasks, interpreting and debugging errors, and getting draft code. However, it is not fully agentic:

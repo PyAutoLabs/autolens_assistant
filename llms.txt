@@ -1,0 +1,34 @@
+# PyAutoLens Assistant
+
+> The PyAutoLens Assistant is an AI assistant for doing strong-lens science with PyAutoLens — agent instructions, task skills, and a reference wiki in one cloned repo you drive by conversation. This file is the front door: it routes you by intent — start a chat session, see what the assistant can do, read the reference, or jump to runnable examples.
+
+## Using it in chat (start here)
+
+Point a coding agent or browser chat (ChatGPT, Claude) at this repo and open with:
+
+```text
+I'd like to use the PyAutoLens Assistant for this conversation:
+https://github.com/PyAutoLabs/autolens_assistant
+
+Please familiarize yourself with the project and use its guidance and scientific
+reference material when answering my questions. I'll provide any local files or results you need.
+```
+
+Read order: [AGENTS.md](./AGENTS.md) → [skills/README.md](./skills/README.md) → the relevant skill → [wiki/](./wiki). If the chat can't browse GitHub, paste this file and `AGENTS.md`. The assistant can route to examples, explain lensing, review pasted scripts/errors/figures, and draft code; it cannot run code, inspect your files, or guarantee drafts against your installed PyAutoLens version. For repeated edits, live execution, or multi-session project state, switch to a local coding agent (or Codex web with the repo connected).
+
+## Agent instructions (canonical)
+
+- [AGENTS.md](./AGENTS.md): safety rules, modes, and repository conventions — the source of truth.
+
+## What it can do
+
+- [skills/README.md](./skills/README.md): one-line index of every task skill.
+
+## Reference
+
+- [wiki/](./wiki): curated PyAuto* reference (`wiki/core/`) plus the strong-lensing science wiki (`wiki/literature/`).
+
+## Runnable examples & tutorials (elsewhere)
+
+- [autolens_workspace navigator](https://github.com/PyAutoLabs/autolens_workspace/blob/main/llms.txt): paste-friendly task router for end-to-end example scripts and notebooks.
+- [HowToLens](https://github.com/PyAutoLabs/HowToLens): from-first-principles strong-lensing lecture series.
