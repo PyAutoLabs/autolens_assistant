@@ -200,11 +200,23 @@ deflection formalism. Used by PyAutoLens, lenstronomy, etc.
 
 ## Maresca 2021 — unphysical perturbers
 
-**Reference:** Maresca 2021 — unphysical perturbers
+**Canonical BibTeX key:** `Maresca2021`
+**Reference:** MNRAS 503, 2229--2241; arXiv:2012.04665; doi:10.1093/mnras/stab387
 **Concepts:** [[gravitational-imaging]], [[dark-matter-substructure]]
-**Summary:** Argues that the data preference for pseudo-Jaffe over
-NFW perturbers in subhalo searches reflects a flexibility bias rather than
-DM physics. Important systematic warning.
+
+**Supports:**
+- Incorrectly initialised lens models can produce unphysical source
+  reconstructions in semi-analytic strong-lens modelling.
+- CNN-based checks can catch those reconstructions and re-initialise the
+  lens model automatically, reducing the rate of unphysical source
+  reconstructions.
+
+**Use when:**
+- Justifying automated quality-control steps for lens-model fits and
+  source reconstructions.
+
+**Do not use for:**
+- Claims about subhalo mass profiles or perturber physics.
 
 ## Tan 2024 — strong-lens slope
 

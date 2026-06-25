@@ -66,6 +66,28 @@ or isothermal estimates.
 **Summary:** Apparent discrepancy between SIS-based Einstein
 mass and alternative estimates.
 
+## Bolton 2008 — SLACS V / full ACS strong-lens sample
+
+**Canonical BibTeX key:** `Bolton2008`
+**Reference:** ApJ 682, 964--984; arXiv:0805.1931; doi:10.1086/589327
+**Concepts:** [[slacs]], [[einstein-radius]], [[mass-models]]
+
+**Supports:**
+- The full SLACS ACS sample contains 63 clear galaxy-scale strong lenses
+  with singular isothermal ellipsoid and light-traces-mass models fitted
+  to the imaging data.
+- The paper supplements the strong-lensing mass measurements with
+  magnitudes, effective radii, redshifts, and velocity dispersions, making
+  it a standard benchmark for galaxy-scale mass measurements.
+
+**Use when:**
+- Citing SLACS as a reference sample for strong-lensing mass
+  measurements or for the relationship between mass, light, and
+  kinematics in early-type galaxies.
+
+**Do not use for:**
+- Euclid Q1 catalogue statistics or JWST lens-finding performance.
+
 ## See also
 
 - [[mass-models]]

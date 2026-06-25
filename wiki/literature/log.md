@@ -218,3 +218,24 @@ entry heading or the source filename. Frontmatter `sources:` PDF paths across `c
 known arXiv/DOI are cited by author/year/title only. The schema (`AGENTS.md`) now documents
 this reference convention, and the README frames the wiki as a base literature set users
 extend with their own papers via `al_ingest_paper`.
+
+---
+
+## 2026-06-22 — Added canonical citation metadata
+
+**By:** Codex (maintainer session).
+
+Added the paired canonical BibTeX and alias layer, citation validation tooling, and compact
+claim-support schema. Normalised the supplied bibliography without local file paths or
+abstracts, and repaired the clearly matched Euclid Q1 and lens-finding source entries.
+
+---
+
+## 2026-06-22 — Expanded citation support for Euclid paper review
+
+**By:** Codex.
+
+Added canonical bibliography and claim-support entries for Maresca 2021,
+Nightingale 2025 COWLS, and Bolton 2008. This resolves manuscript citation
+review items for automated source-reconstruction checks, JWST lens-finding
+with modelling, and SLACS mass-measurement context.

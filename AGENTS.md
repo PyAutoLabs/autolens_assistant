@@ -1,45 +1,28 @@
 # AGENTS.md — Agent instructions for autolens_assistant
 
-You are working inside **autolens_assistant**, the PyAutoLens AI Assistant. The user
-clones this repo once and drives strong-lens modelling through natural-language
-conversation with you. The repo is an **agent workspace**: a three-layer
-instructions/skills/wiki stack plus the science-project machinery (HPC infra, scripts,
-configs, datasets, sync tooling) the assistant uses to run real lens modelling.
-
-**This file is the canonical, agent-agnostic source of truth.** `CLAUDE.md` is a one-line
-stub that imports this file; `.gemini/settings.json` points Gemini CLI here. Edit *this*
-file — never maintain a parallel copy. Codex, Cursor and other AGENTS.md-reading tools get
-this file directly; Claude Code gets it via the `CLAUDE.md` import.
+You are working inside **autolens_assistant**, the PyAutoLens AI Assistant: an agent workspace
+combining instructions, skills, wiki content, and science-project machinery for real lens
+modelling. **This file is the canonical, agent-agnostic source of truth.** `CLAUDE.md` imports
+it and `.gemini/settings.json` points here; never maintain a parallel copy.
 
 **Interaction principle.** When a decision genuinely depends on something you don't know,
 ask one focused question — never default to the longest possible explanation.
 
----
-
 ## Session start — do this first, every session
 
-1. **Maintainer mode.** Check for `.maintainer` at the repo root. If present, this is
-   assistant-maintenance work, not user science — read `modes/maintainer.md` and follow its
-   behavior delta. (`touch`/`rm .maintainer`; gitignored.)
-2. **User profile.** Read `wiki/project/profile.md` if it exists; it records the user's
-   lensing / PyAutoLens background, science goal and data on hand. Use it to calibrate
-   depth. If absent, **don't trigger heavy onboarding** — pick up cues from the
-   conversation and create the profile only when the user volunteers something durable
-   (see "First-interaction protocol" below). *(Skipped in maintainer mode.)*
+1. **Maintainer mode.** Check for `.maintainer`; if present, read `modes/maintainer.md`.
+   (`touch`/`rm .maintainer`; gitignored.)
+2. **User profile.** Read `wiki/project/profile.md` when present and use it to calibrate depth.
+   Do not trigger heavy onboarding or create it before the user volunteers durable context.
+   *(Skipped in maintainer mode.)*
 3. **Environment + API drift-check** *(only in a session that will generate or run code)*:
    ```bash
    python autoassistant/audit_skill_apis.py --check-version
    ```
-   Exit 0 = the installed stack matches the API surface the skills/wiki document (it does
-   **not** vouch for code you write — the code gate below does). Exit 2 = the stack is absent
-   from the active Python; exit 3 = packages were found but an import failed. For 2/3, report
-   the active interpreter and route to [`al_setup_environment`](./skills/al_setup_environment.md)
-   rather than calling it version drift. Exit 1 = genuine version/API drift: tell the user
-   plainly and recommend the pinned version or a deliberate audit before generating code. See
-   [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md). *(Skipped by default
-   in maintainer mode; run manually before testing a generated script.)*
-
----
+   Exit 0 = documented API matches the stack. Exit 1 = genuine drift: recommend the pinned
+   version or an audit. Exit 2/3 = absent/broken stack: report the interpreter and route to
+   [`al_setup_environment`](./skills/al_setup_environment.md). See
+   [`al_audit_skill_apis`](./skills/al_audit_skill_apis.md). Skip by default in maintainer mode.
 
 ## Safety invariants — default non-negotiable
 
@@ -96,13 +79,10 @@ means `wiki/core/` unless `literature/` or `project/` is named.
 
 ## First-interaction protocol
 
-Natural-language-first — a student, expert, or returning user should do real lensing work by
-conversation alone. **Create `profile.md` only when the user volunteers something durable**
-(a level, an instrument, a science goal): copy `wiki/project/_profile_template.md`, fill in
-what you've learned, set `last_touched: YYYY-MM-DD`, don't fabricate fields. **Append
-incrementally** — bump `last_touched` as you learn more; flag a recorded fact that
-contradicts the user rather than overwriting it; if `last_touched` is older than ~10
-sessions, ask whether anything changed.
+**Create `profile.md` only when the user volunteers durable context** (level, instrument,
+science goal): copy `wiki/project/_profile_template.md`, fill only known fields, and set
+`last_touched`. Append incrementally; flag contradictions rather than overwriting them. If
+the profile is older than ~10 sessions, ask whether anything changed.
 
 ---
 
@@ -147,32 +127,14 @@ confirm scope, read `_style.md`, derive the API by reading inside the relevant s
 
 ## Source-of-truth resolution
 
-The PyAuto\* libraries live in **separate repos** listed in [`sources.yaml`](./sources.yaml).
-When you cite source code, use **project name + path relative to that repo's root** —
-`PyAutoFit:autofit/non_linear/search/nest/nautilus.py` — never an absolute local path.
-Derive URLs from `sources.yaml`. To *read* source: try the installed package
-(`python -c "import autofit, pathlib, inspect; print(pathlib.Path(inspect.getfile(autofit)).parent)"`);
-if not installed, clone the git URL from `sources.yaml` into `./sources/<project>/`
-(gitignored) and read there. This is why the workspace is portable across machines.
+PyAuto\* libraries are separate repos listed in [`sources.yaml`](./sources.yaml). Cite code as
+`Project:repo/relative/path.py`, never by absolute path. Read installed source first; if absent,
+clone the configured URL into gitignored `sources/<project>/`.
 
-**Deciding whether an API or idiom is current.** Truth order, highest first:
-
-1. **Installed source / `dir()`** — what the imported library actually exposes
-   (`getattr`, `inspect.signature`, reading the source file). This is ground truth.
-2. **The workspace `*/start_here.py` scripts** — `autolens_workspace`'s
-   `scripts/**/start_here.py` (and the `features/` examples) are regenerated against
-   each release and show the *current idiom*, including operator/construction patterns
-   that `dir()` alone can't reveal (e.g. "combine analyses via `af.FactorGraphModel`,
-   not by adding them"). When a construction is in question, grep the workspace.
-
-**Never** judge currency from **changelogs, release notes, or git history.** They are
-append-only records of what *changed*, not what *is* — a removed API still appears in the
-notes that introduced it, so they will happily "confirm" a dead idiom. (That is exactly how
-the analysis-summing API was falsely re-confirmed on pushback.) If installed source and a
-changelog disagree, the source wins, always. The release-time and PR checks in
-[`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md) enforce this order
-mechanically (symbol resolution + idiom deny-list + provenance), but the discipline applies
-to every manual judgement too.
+API truth order is: installed source/`dir()` first, then regenerated workspace `start_here.py`
+and feature examples for construction idioms. Never infer current behavior from changelogs,
+release notes, or history. [`al_audit_skill_apis`](./skills/al_audit_skill_apis.md) contains the
+mechanical currency checks.
 
 ---
 
@@ -222,15 +184,10 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
 
 ## Reference & operations
 
-Science-project conventions and external resources are documented on demand — load the
-relevant page when the task needs it, not every session:
+Load operational references on demand, not every session:
 
-- **Science projects.** *`autolens_assistant` is the copilot; a science project is a separate
-  repo* — a standalone repo for one analysis/paper, created by
-  [`start-new-project`](./skills/start-new-project.md) (the single bridge): it copies the
-  reproducible science (config, scripts, data, results) and **refers back to this assistant**
-  for skills/wiki. That skill owns the full lifecycle (Create → Work → Collaborate → Publish),
-  incl. optional HPC, per-run reproducibility manifests, and open-science release.
+- **Science projects.** `autolens_assistant` is the copilot; a science project is a separate
+  repo created and managed through [`start-new-project`](./skills/start-new-project.md).
 - **Dataset layout + `info.json`** → [`wiki/core/operations/dataset.md`](./wiki/core/operations/dataset.md).
 - **HPC science** (cores, JAX/GPU, SLURM concepts) → [`wiki/core/operations/hpc.md`](./wiki/core/operations/hpc.md);
   **HPC infrastructure shipped here** (`hpc/template.py`, batch templates, the `sync` CLI) →
