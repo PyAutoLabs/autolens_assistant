@@ -1073,7 +1073,7 @@ __Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
-dataset_name = "Tile102022016RA0845191674116DECNEG0475870747274"
+dataset_name = "Tile102022525RA0960657896028DECNEG0471616737541"
 dataset_path = Path("dataset") / "sample_group" / dataset_name
 
 """
@@ -1117,21 +1117,6 @@ redshift_source = 1.0
 source_mge_radius = 1.0
 n_batch = 20
 
-# try:
-#     dataset_index_dict = dataset_instrument_hdu_dict_via_fits_from(
-#         dataset_path=dataset_path,
-#         dataset_fits_name=f"{dataset_name}_masked.fits",
-#         # image_tag="_FLUX",
-#         image_tag="_BGSUB"
-#     )
-# except FileNotFoundError:
-#     dataset_index_dict = dataset_instrument_hdu_dict_via_fits_from(
-#         dataset_path=dataset_path,
-#         dataset_fits_name=f"{dataset_name}.fits",
-#         # image_tag="_FLUX",
-#         image_tag="_BGSUB"
-#     )
-
 dataset_index_dict = dataset_instrument_hdu_dict_via_fits_from(
     dataset_path=dataset_path,
     dataset_fits_name=f"{dataset_name}.fits",
@@ -1153,7 +1138,7 @@ dataset = al.Imaging.from_fits(
 )
 
 # dataset = al.Imaging.from_fits(
-#     data_path=dataset_path / "data.fits",
+#     data_path=dataset_path / f"{dataset_name}.fits",
 #     psf_path=dataset_path / "psf.fits",
 #     noise_map_path=dataset_path / "noise_map.fits",
 #     pixel_scales=pixel_scale,

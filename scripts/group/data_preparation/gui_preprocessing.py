@@ -20,6 +20,12 @@ Step 5 uses the Scribbler GUI: spray-paint over any extra-galaxy regions whose e
 should be masked out of the data. Press Esc when finished. If no regions are painted
 the step is skipped and no .fits file is written.
 
+For the three optional steps (2, 3, 5), skipping does not just leave any existing output
+file untouched — if a file from a *previous* run of this script exists in the dataset
+folder, it is deleted. This keeps the dataset folder consistent with the latest GUI
+session: if you previously marked extra galaxies but decide this run that there are none,
+the stale `extra_galaxies_centres.json` is removed rather than silently left behind.
+
 Double-click on the data panel to record a position (snapped to the brightest pixel
 within the search box).  Close the window to advance to the next step.
 
@@ -31,6 +37,7 @@ Edit the USER SETTINGS block below, then run::
 """
 
 # ── standard library ──────────────────────────────────────────────────────────
+import os
 from os import path
 
 # ── third-party ───────────────────────────────────────────────────────────────
@@ -56,13 +63,13 @@ except ImportError:
 # USER SETTINGS — edit these before running
 # ─────────────────────────────────────────────────────────────────────────────
 
-dataset_name = "102160336_2685084962682049281"
+dataset_name = "Tile102029268RA0535908187946DECNEG0406175201805"
 dataset_path = path.join("..", "..", "..", "dataset", "sample_group", dataset_name)
 
 pixel_scales = 0.1   # arcsec / pixel
 
 # Circular mask applied to the data before all GUI steps
-mask_radius = 5.0
+mask_radius = 7.0
 mask_centre = (0.0, 0.0)   # (y, x) arcsec — overridden by info.json if present
 
 # Search box (pixels) — area around each click searched for the brightest pixel
@@ -75,6 +82,17 @@ figsize = (14, 7)
 # ─────────────────────────────────────────────────────────────────────────────
 # HELPER FUNCTIONS
 # ─────────────────────────────────────────────────────────────────────────────
+
+def _remove_stale_file(file_path):
+    """
+    Delete file_path if it exists. Used when an optional step is skipped, so
+    that a leftover output from a previous run of this script does not get
+    mistaken for a result of the current session.
+    """
+    if path.exists(file_path):
+        os.remove(file_path)
+        print(f"  Removed stale file → {path.basename(file_path)}")
+
 
 def _load_log_data(data):
     """Return a log10-scaled Array2D from masked data (NaN/inf-safe)."""
@@ -202,9 +220,8 @@ def _run_scribbler_gui(raw_data):
         centre=mask_centre,
     )
 
-    log_data = _load_log_data(raw_data)
-
-    scribbler = al.Scribbler(image=log_data.native,
+    scribbler = al.Scribbler(image=raw_data.native,
+                             cmap="jet",
                              mask_overlay=scribbler_mask,
                              brush_width=0.01)
     painted_mask = scribbler.show_mask()
@@ -394,6 +411,7 @@ def main():
     # STEP 2 — Extra galaxy centres  (optional)
     # ══════════════════════════════════════════════════════════════════════
     print("\n[2/5] Extra galaxy centres (optional — close without clicking to skip)")
+    extra_galaxies_centres_path = path.join(dataset_path, "extra_galaxies_centres.json")
     extra_galaxies_centres = _select_centres(
         log_data, masked_data, ext, rgb_image,
         label="Extra galaxy centres",
@@ -403,16 +421,18 @@ def main():
     if len(extra_galaxies_centres.in_list) > 0:
         al.output_to_json(
             obj=extra_galaxies_centres,
-            file_path=path.join(dataset_path, "extra_galaxies_centres.json"),
+            file_path=extra_galaxies_centres_path,
         )
         print("  Saved → extra_galaxies_centres.json")
     else:
         print("  Skipped — extra_galaxies_centres.json not written.")
+        _remove_stale_file(extra_galaxies_centres_path)
 
     # ══════════════════════════════════════════════════════════════════════
     # STEP 3 — Scaling galaxy centres  (optional)
     # ══════════════════════════════════════════════════════════════════════
     print("\n[3/5] Scaling galaxy centres (optional — close without clicking to skip)")
+    scaling_galaxies_centres_path = path.join(dataset_path, "scaling_galaxies_centres.json")
     scaling_galaxies_centres = _select_centres(
         log_data, masked_data, ext, rgb_image,
         label="Scaling galaxy centres",
@@ -422,11 +442,12 @@ def main():
     if len(scaling_galaxies_centres.in_list) > 0:
         al.output_to_json(
             obj=scaling_galaxies_centres,
-            file_path=path.join(dataset_path, "scaling_galaxies_centres.json"),
+            file_path=scaling_galaxies_centres_path,
         )
         print("  Saved → scaling_galaxies_centres.json")
     else:
         print("  Skipped — scaling_galaxies_centres.json not written.")
+        _remove_stale_file(scaling_galaxies_centres_path)
 
     # ══════════════════════════════════════════════════════════════════════
     # STEP 4 — Source positions  (required)
@@ -444,17 +465,19 @@ def main():
     # ══════════════════════════════════════════════════════════════════════
     print("\n[5/5] Extra masking — Scribbler (optional — close without painting to skip)")
     print("      Use this to mask extra-galaxy emission not captured by the centres above.")
+    extra_masking_path = path.join(dataset_path, "extra_masking.fits")
     extra_mask = _paint_extra_mask(raw_data)
 
     if extra_mask is not None:
         al.output_to_fits(
             values=extra_mask.astype(np.uint8),
-            file_path=path.join(dataset_path, "extra_masking.fits"),
+            file_path=extra_masking_path,
             overwrite=True,
         )
         print("  Saved → extra_masking.fits")
     else:
         print("  Skipped — extra_masking.fits not written.")
+        _remove_stale_file(extra_masking_path)
 
     # ══════════════════════════════════════════════════════════════════════
     # Summary preview
