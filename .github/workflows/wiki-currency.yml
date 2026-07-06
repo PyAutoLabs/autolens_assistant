@@ -35,9 +35,10 @@ on:
         type: string
         default: ""
   pull_request:
-  schedule:
-    # Mondays 06:00 UTC — re-check the wiki against the currently-released stack.
-    - cron: "0 6 * * 1"
+  # --- PAUSED 2026-07-06: routine cron disabled org-wide; re-enable by uncommenting ---
+  # schedule:
+  #   # Mondays 06:00 UTC — re-check the wiki against the currently-released stack.
+  #   - cron: "0 6 * * 1"
 
 permissions:
   contents: read
