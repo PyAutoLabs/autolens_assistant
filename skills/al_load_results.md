@@ -79,9 +79,14 @@ in the model.
 ```python
 lens = tracer.galaxies[0]
 einstein_radius_arcsec = lens.mass.einstein_radius  # for parametric mass
-# Or compute it numerically from the convergence:
-einstein_mass = tracer.einstein_mass_angular_from(grid=dataset.grid)
+# Or compute numerically — lensing calculations live on al.LensCalc:
+lens_calc = al.LensCalc.from_tracer(tracer=tracer)
+einstein_mass = lens_calc.einstein_mass_angular_from(grid=dataset.grid)
 ```
+
+Source: `PyAutoGalaxy:autogalaxy/operate/lens_calc.py` — `LensCalc.from_tracer` /
+`from_mass_obj` and the derived-quantity methods (Einstein radius/mass, shear,
+magnification).
 
 For the API surface, read [`wiki/core/concepts/galaxy_and_plane.md`](../wiki/core/concepts/galaxy_and_plane.md).
 
