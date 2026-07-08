@@ -48,8 +48,7 @@ papers/
 .maintainer
 
 # Interaction-mode override — optional per-clone file containing `teacher` or
-# `assistant` (`agent` = legacy alias for assistant-with-autonomy). See AGENTS.md
-# "Modes". `.maintainer` outranks it.
+# `assistant`. See AGENTS.md "Modes". `.maintainer` outranks it.
 .mode
 
 # Claude Code agent worktrees — ephemeral, machine-local.

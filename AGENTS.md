@@ -100,9 +100,8 @@ how it paces the work, not which workflows exist:
 
 Select (first match): explicit instruction → `.mode` file → `profile.md` "Interaction mode" →
 else **infer from the opening request** (fall back to **assistant**); `.maintainer` outranks
-`.mode`; `agent` is accepted anywhere a mode is named as a legacy alias for
-assistant-with-autonomy. State an inferred mode in one line and invite correction; acknowledge
-an explicit one only if it changes behavior. Read `modes/<mode>.md`; depth still follows
+`.mode`. State an inferred mode in one line and invite correction; acknowledge an explicit
+one only if it changes behavior. Read `modes/<mode>.md`; depth still follows
 `skills/_style.md` "Adaptive depth".
 
 ---

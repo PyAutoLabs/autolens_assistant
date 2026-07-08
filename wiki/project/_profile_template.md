@@ -40,9 +40,8 @@ _unrecorded_
 
 Durable preference for how the assistant should interact: `teacher` (learn the workflow) or
 `assistant` (do the workflow — note a preferred autonomy level in prose if it's durable).
-`agent` is still understood as a legacy alias for assistant-with-autonomy. Leave unrecorded
-to let the assistant infer the mode from each opening request. See `AGENTS.md` "Modes".
-Examples:
+Leave unrecorded to let the assistant infer the mode from each opening request. See
+`AGENTS.md` "Modes". Examples:
 
 - "teacher — workshop attendee, wants the science explained."
 - "assistant — prefers autonomous multi-session runs (subhalo project)."
