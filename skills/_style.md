@@ -1,9 +1,9 @@
 ---
 name: _style
-description: Writing guide for every the workspace skill. Read first before adding or revising a skill. Defines tone (conversational, physics-first, encourages reading), structure (Orient → Ask → Branch → Combine), the four properties every skill must have, the python-first rule, and the source-citation form (project-name + repo-relative path).
+description: Writing guide for every workspace skill. Read first before adding or revising a skill. Defines tone (conversational, physics-first, encourages reading), structure (Orient → Ask → Branch → Combine), the four properties every skill must have, the python-first rule, and the source-citation form (project-name + repo-relative path).
 ---
 
-# How to write a the workspace skill
+# How to write a workspace skill
 
 This file is a meta-skill: it does not help a user run a lensing task directly. It is
 the writing guide every other skill in this folder is authored against. Read it before

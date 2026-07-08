@@ -96,10 +96,11 @@ Commit conventions:
 
 - Subject must follow the repo's conventional style: `feat:`, `fix:`, `docs:`, `chore:`.
 - The body explains **why**, not just what changed.
-- Include the required trailer:
+- Include the required trailer, naming the **current session's model** (per `AGENTS.md`
+  "Commit cadence"), e.g.:
 
 ```text
-Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+Co-Authored-By: Claude <model name> <noreply@anthropic.com>
 ```
 
 If hooks fail, fix the underlying issue and create a new commit. Do not use `--no-verify`.

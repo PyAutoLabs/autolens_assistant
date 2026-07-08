@@ -1,9 +1,9 @@
 ---
 name: _bootstrap_skill
-description: Meta-skill the agent runs when a user requests a lensing capability that isn't covered by an existing skill. Walks through confirming scope, identifying source repos, reading the relevant API, drafting the new skill in the the workspace house style, adding any missing wiki content, and registering the skill in the index. Use only when a genuinely new skill is needed — don't invoke for variants that an existing skill already handles.
+description: Meta-skill the agent runs when a user requests a lensing capability that isn't covered by an existing skill. Walks through confirming scope, identifying source repos, reading the relevant API, drafting the new skill in the workspace house style, adding any missing wiki content, and registering the skill in the index. Use only when a genuinely new skill is needed — don't invoke for variants that an existing skill already handles.
 ---
 
-# Bootstrapping a new the workspace skill
+# Bootstrapping a new workspace skill
 
 When the user wants something this workspace can't already do, your job is to create a
 new skill that can do it, and to teach the user the underlying API along the way. This
