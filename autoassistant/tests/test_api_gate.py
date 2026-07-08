@@ -175,6 +175,14 @@ def test_hook_escape_hatch():
     assert _decision(proc) is None
 
 
+def test_hook_escape_hatch_command_prefix():
+    # The documented per-command form: the env var is a prefix on the command itself,
+    # so it never reaches the hook's own environment — the hook must detect it in the
+    # command text.
+    proc = _run_hook(f"PYAUTO_SKIP_API_GATE=1 {sys.executable} -c '{STALE_PLOTTER}'")
+    assert _decision(proc) is None
+
+
 def test_hook_validates_py_file_argument(tmp_path):
     good = tmp_path / "good.py"
     good.write_text(f"import autolens.plot as aplt\n{GOOD}\n", encoding="utf-8")
@@ -235,6 +243,45 @@ def test_lint_idioms_clean_tree(tmp_path):
         encoding="utf-8",
     )
     assert _run_validator("--lint-idioms", "--root", str(tmp_path)).returncode == 0
+
+
+# --- broken-stack handling (import failure is an env problem, not symbol drift) --------
+def _load_validator_module():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("audit_skill_apis_under_test", VALIDATOR)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod  # dataclasses resolve fields via sys.modules
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_validate_source_reports_broken_stack_once_not_stale():
+    mod = _load_validator_module()
+    wall = "WorkspaceVersionMismatchError('pinned != installed" + " x" * 200 + "')"
+    mod._module_cache["autolens"] = None
+    mod._import_errors["autolens"] = wall
+
+    n_stale, lines, import_failed = mod.validate_source("al.Tracer; al.Galaxy; al.FitImaging")
+
+    assert n_stale == 0 and lines == []  # broken stack is never "stale symbols"
+    assert list(import_failed) == ["autolens"]  # reported once, not per symbol
+    assert len(import_failed["autolens"]) <= 201  # truncated, not the full wall
+
+
+def test_render_installation_check_groups_identical_errors():
+    mod = _load_validator_module()
+    check = mod.InstallationCheck(
+        status="import_failed", python="py", prefix="env",
+        versions={}, locations={}, missing=[],
+        errors={name: "Boom: identical wall" for name in ("autofit", "autogalaxy", "autolens")},
+        install_kind="unknown", cache_defaults={},
+    )
+
+    text = mod.render_installation_check(check)
+
+    assert text.count("Boom: identical wall") == 1
+    assert "autofit, autogalaxy, autolens import failed" in text
 
 
 if __name__ == "__main__":
