@@ -148,5 +148,5 @@ doesn't match your problem.
 - **General reference** — [RTD: Model cookbook](https://pyautolens.readthedocs.io/en/latest/general/model_cookbook.html):
   systematic reference for inheriting and adjusting priors between models, the
   mechanical core of chaining.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/slam_start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/modeling/slam_start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/slam_start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/modeling/slam_start_here.py):
   SLaM is the canonical multi-phase chain; this script overviews it stage-by-stage.

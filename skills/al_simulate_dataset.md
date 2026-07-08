@@ -139,5 +139,5 @@ After simulating:
   the simulator runs.
 - **General reference** — [RTD: Start here](https://pyautolens.readthedocs.io/en/latest/overview/overview_1_start_here.html):
   core PyAutoLens concepts in practice — grids, profiles, ray-tracing with `Tracer`.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/simulators/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/simulators/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/simulators/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/simulators/start_here.py):
   canonical instrument-realistic simulation when no real data are on hand.

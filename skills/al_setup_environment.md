@@ -95,11 +95,13 @@ installed with `pip install -e .` in dependency order.
 mkdir -p sources && cd sources
 
 # Order matters — install from the bottom of the dependency chain up.
-git clone https://github.com/rhayes777/PyAutoConf.git
-git clone https://github.com/Jammy2211/PyAutoArray.git
-git clone https://github.com/rhayes777/PyAutoFit.git
-git clone https://github.com/Jammy2211/PyAutoGalaxy.git
-git clone https://github.com/Jammy2211/PyAutoLens.git
+# URLs come from ../sources.yaml (the PyAutoLabs org is canonical; the old
+# rhayes777/Jammy2211 URLs still redirect but should not be written anew).
+git clone https://github.com/PyAutoLabs/PyAutoConf.git
+git clone https://github.com/PyAutoLabs/PyAutoArray.git
+git clone https://github.com/PyAutoLabs/PyAutoFit.git
+git clone https://github.com/PyAutoLabs/PyAutoGalaxy.git
+git clone https://github.com/PyAutoLabs/PyAutoLens.git
 
 cd ..
 

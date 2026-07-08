@@ -197,5 +197,5 @@ If you're new to *what* this dataset represents physically, read
 - **General reference** — [RTD: New user guide](https://pyautolens.readthedocs.io/en/latest/overview/overview_2_new_user_guide.html):
   decision-tree routing by lens scale and data type — orients a new PyAutoLens user
   before they touch FITS data.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/data_preparation/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/data_preparation/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/data_preparation/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/data_preparation/start_here.py):
   canonical reference for getting telescope data analysis-ready.

@@ -36,7 +36,11 @@ deliberate refactor). Two are NEVER overridden: the real-data gate and never-rew
   bundled-dataset masks, exemptions: [`skills/al_prepare_imaging_data.md`](./skills/al_prepare_imaging_data.md). Simulated data is exempt.
 - **Code gate.** A PreToolUse hook validates PyAuto* symbols against the installed library
   and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
-  `dir()`, then re-run. (Manual run + bypass: [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md).)
+  `dir()`, then re-run. The hook fires only on harnesses with hook support (Claude Code);
+  **on any other harness (Codex, Gemini, OpenCode, Copilot, chat) self-enforce it**: run
+  `python autoassistant/audit_skill_apis.py --code "<snippet>"` (or `--file <script.py>`) on
+  generated PyAuto* code before executing it. (Manual run + bypass:
+  [`skills/al_audit_skill_apis.md`](./skills/al_audit_skill_apis.md).)
 - **Never write into `output/`** (PyAutoFit runtime) **or `sources/`** (cloned repos);
   agent-authored Python → `scripts/` or `scripts/scratch/`.
 - **`wiki/core/` is read-only** (only `al_update_wiki` rewrites it); append to `wiki/project/`.

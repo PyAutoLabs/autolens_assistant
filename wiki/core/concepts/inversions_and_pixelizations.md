@@ -68,7 +68,7 @@ there is no separate `image_mesh=` kwarg on `Pixelization`.
 > `AttributeError: 'NoneType' object has no attribute 'array'`. Use
 > `RectangularUniform` (or one of the `RectangularAdapt*` variants) until the
 > upstream fix lands. Tracking issue:
-> <https://github.com/Jammy2211/PyAutoArray/issues/332>.
+> <https://github.com/PyAutoLabs/PyAutoArray/issues/332>.
 
 Adaptive meshes are the right choice for production fits but need a parametric
 initial fit to seed the adapt image. The [`../../../skills/al_run_slam_pipeline.md`](../../../skills/al_run_slam_pipeline.md)

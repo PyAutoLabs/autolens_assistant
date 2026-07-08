@@ -132,7 +132,7 @@ set the wavelength-varying parameter from a shared relation (e.g. a linear
 - **Student / new to lensing** — _ (no direct HowToLens chapter).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   multi-dataset section.
-- **Experienced PyAutoLens user** — [workspace/lens: multi/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/multi/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: multi/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/multi/start_here.py):
   the canonical multi-dataset walkthrough; features/ folder has
   per-scenario examples.
 

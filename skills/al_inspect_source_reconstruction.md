@@ -49,7 +49,7 @@ function-style plot API is documented in
 > `KNNBarycentric` crash inside `FitImaging` (`'NoneType' object has no attribute
 > 'array'`), and `ConstantSplit` is broken on `RectangularUniform`. Use
 > `al.mesh.RectangularUniform` + `al.reg.Constant` for now; tracking:
-> <https://github.com/Jammy2211/PyAutoArray/issues/332>.
+> <https://github.com/PyAutoLabs/PyAutoArray/issues/332>.
 
 ## Branch — source-plane reconstruction
 
@@ -154,6 +154,6 @@ appear.
 - **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   the pixelization feature sits here alongside MGE / interferometry / shapelets —
   links into deeper docs.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/pixelization/modeling.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/features/pixelization/modeling.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/pixelization/modeling.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/features/pixelization/modeling.py):
   rectangular-mesh + constant-regularization pixelization model — production
   pattern for extended-arc sources.

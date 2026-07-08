@@ -60,7 +60,7 @@ image as the adapt source.
   pedagogical adaptive-pixelisation walkthrough.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   pixelisation feature section.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/pixelization/adaptive.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/features/pixelization/adaptive.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/pixelization/adaptive.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/features/pixelization/adaptive.py):
   the canonical adaptive setup.
 
 See also [`wiki/core/concepts/inversions_and_pixelizations.md`](../wiki/core/concepts/inversions_and_pixelizations.md)

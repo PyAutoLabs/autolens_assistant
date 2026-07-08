@@ -14,7 +14,7 @@ last_updated: 2026-05-22
 
 # PyAutoFit — model composition + non-linear search
 
-Project: [`PyAutoFit`](https://github.com/rhayes777/PyAutoFit). Import: `autofit`,
+Project: [`PyAutoFit`](https://github.com/PyAutoLabs/PyAutoFit). Import: `autofit`,
 aliased to `af` everywhere.
 
 PyAutoFit is the *probabilistic modelling and inference* layer. PyAutoLens uses it

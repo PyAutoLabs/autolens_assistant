@@ -50,9 +50,9 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--scope",
-        choices=("skills", "wiki", "all"),
+        choices=("skills", "wiki", "scripts", "all"),
         default="all",
-        help="Which maintenance surface to audit.",
+        help="Which maintenance surface to audit (matches audit_skill_apis.py --scope).",
     )
     args = parser.parse_args()
 

@@ -61,7 +61,7 @@ the scaling relation. Composed in one model.
   lensing is an advanced topic).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   group lensing in the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: group/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/group/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: group/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/group/start_here.py):
   the canonical group fit — extra galaxies, scaling relations, group
   SLaM.
 

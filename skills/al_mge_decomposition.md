@@ -70,7 +70,7 @@ useful for stellar-dynamics-style decompositions.
   HowToLens has its own chapter for).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   MGE in the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/multi_gaussian_expansion/modeling.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/features/multi_gaussian_expansion/modeling.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/multi_gaussian_expansion/modeling.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/features/multi_gaussian_expansion/modeling.py):
   the canonical MGE modeling script; sibling files cover SLaM, fit,
   likelihood.
 

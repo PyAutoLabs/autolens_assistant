@@ -55,7 +55,7 @@ Workspace path: `autolens_workspace:scripts/guides/modeling/advanced/hierarchica
 - **Student / new to lensing** — _ (advanced PyAutoFit topic).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   graphical models in the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/advanced/hierarchical.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/modeling/advanced/hierarchical.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/advanced/hierarchical.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/modeling/advanced/hierarchical.py):
   canonical hierarchical setup; sibling files cover graphical models and
   expectation propagation.
 

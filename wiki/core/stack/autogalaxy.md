@@ -15,7 +15,7 @@ last_updated: 2026-05-22
 
 # PyAutoGalaxy — light and mass profiles
 
-Project: [`PyAutoGalaxy`](https://github.com/Jammy2211/PyAutoGalaxy). Import:
+Project: [`PyAutoGalaxy`](https://github.com/PyAutoLabs/PyAutoGalaxy). Import:
 `autogalaxy`. Most of its classes are re-exported through PyAutoLens as `al.lp.*`,
 `al.mp.*`, `al.Galaxy`, etc.
 

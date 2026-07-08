@@ -49,7 +49,7 @@ the inner profile and the shear field pins the outer.
   weak is covered only in passing).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   weak lensing in the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: weak/fit.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/weak/fit.py):
+- **Experienced PyAutoLens user** — [workspace/lens: weak/fit.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/weak/fit.py):
   the canonical weak-lensing fit.
 
 See also [`wiki/core/concepts/weak_lensing.md`](../wiki/core/concepts/weak_lensing.md)

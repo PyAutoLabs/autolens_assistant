@@ -125,6 +125,6 @@ inputs — [`al_run_search`](./al_run_search.md) — and re-loading the new resu
 - **General reference** — [RTD: Demagnified solutions](https://pyautolens.readthedocs.io/en/latest/general/demagnified_solutions.html):
   how unphysical demagnified-source reconstructions arise in pixelised fits, and how
   `PositionsLH` penalties prevent them.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/tracer.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/tracer.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/tracer.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/tracer.py):
   inspecting an inferred model via `Tracer` — the patterns this skill uses to
   pull apart a failed fit.

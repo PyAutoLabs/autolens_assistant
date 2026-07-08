@@ -69,7 +69,7 @@ H0-inference workflow built on top of this.
   positions-only fitting looks like in isolation.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   short PointDataset / AnalysisPoint section in the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: point_source/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/point_source/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: point_source/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/point_source/start_here.py):
   full point-source fitting walkthrough — dataset, model, analysis, fit
   inspection.
 

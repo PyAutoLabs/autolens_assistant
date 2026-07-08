@@ -198,6 +198,6 @@ Sub-paths vary for interferometer / multi-wavelength fits.
 - **General reference** — [RTD: Likelihood function](https://pyautolens.readthedocs.io/en/latest/general/likelihood_function.html):
   how PyAutoLens computes likelihoods — useful when interpreting a loaded
   `samples.csv` or `model.results`.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/results/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/results/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/results/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/results/start_here.py):
   loading single fits from JSON/CSV and the aggregator pattern for hundreds of fits
   at once.

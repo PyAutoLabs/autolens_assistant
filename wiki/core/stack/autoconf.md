@@ -13,7 +13,7 @@ last_updated: 2026-05-22
 
 # PyAutoConf — the configuration layer
 
-Project: [`PyAutoConf`](https://github.com/rhayes777/PyAutoConf). Import: `autoconf`.
+Project: [`PyAutoConf`](https://github.com/PyAutoLabs/PyAutoConf). Import: `autoconf`.
 
 PyAutoConf is the configuration loader the rest of the stack reads from. Every
 PyAutoArray / PyAutoFit / PyAutoGalaxy / PyAutoLens package ships its own
