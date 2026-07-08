@@ -74,8 +74,8 @@ markdown cell and the code between blocks becomes a code cell.
 
 Two rules.
 
-The level of detail in a saved script is **mode-invariant**. Teacher, assistant, and agent
-modes may change the pacing and depth of the surrounding conversation, but they must not
+The level of detail in a saved script is **mode-invariant**. Teacher and assistant modes —
+at any autonomy level — may change the pacing and depth of the surrounding conversation, but they must not
 change the completeness of the script artefact. Write docstrings as if the script may become
 part of the open-source repository accompanying a paper: preserve the scientific motivation,
 what is inferred and how, consequential assumptions and configuration choices, enough context

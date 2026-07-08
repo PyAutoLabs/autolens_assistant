@@ -60,15 +60,20 @@ you provide the relevant files and outputs.
 
 ## Modes
 
-The assistant works in three modes, and you never have to choose one — it **infers the mode
+The assistant works in two modes, and you never have to choose one — it **infers the mode
 from your first message and tells you which it picked** (e.g. *"Mode: teacher — I'll explain
 as we go."*). If it guesses wrong, just say so. To set the mode yourself, start your message
 with it (the examples below do exactly that); to make a choice permanent, drop a `.mode` file
-in the repo containing `teacher`, `assistant`, or `agent`.
+in the repo containing `teacher` or `assistant`.
 
 - **Teacher** — *learn the workflow.* `Teacher mode: I'm new to PyAutoLens — how do I model this image?`
 - **Assistant** — *do the workflow.* `Assistant mode: set up a project for this dataset and write the first script.`
-- **Agent** — *run the project.* `Agent mode: model this lens end-to-end and track progress across sessions.`
+
+Assistant mode adapts how much it plans, talks, and acts to your request. By default it works
+conversationally — doing each step with you and checking in before big decisions. Ask for
+autonomy (*"model this lens end-to-end and track progress across sessions"*) and it plans in
+phases and runs with checkpoints instead. There is no separate mode to manage: just say how
+hands-on you want to be.
 
 ## Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
 
@@ -100,16 +105,16 @@ with concise output rather than a step-by-step tutorial.
 ```
 Assistant mode.
 
-Model the JWST imaging in dataset/imaging/cosmos_web_ring: perform data preparaton steps, 
+Model the JWST imaging in dataset/imaging/cosmos_web_ring: perform data preparation steps, 
 set up a sensible lens light and mass model with a pixelized source reconstruction, run 
 the fit, and show me the reconstructed source and the fit residuals.
 ```
 
-## Example Prompt 3 using Agent Mode: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
+## Example Prompt 3 asking Assistant Mode for Autonomy: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
 
 For users already comfortable with strong lens modelling who want to see
-how far the assistant can be pushed in **agent mode**. SLACS0946+1006 
-has a famous subhalo  detection that is argued to be unusually concentrated; 
+how far the assistant can be pushed when **asked to run autonomously**. SLACS0946+1006
+has a famous subhalo detection that is argued to be unusually concentrated; 
 this prompt asks the assistant to reproduce that detection and quantify the 
 concentration via Bayesian model comparison.
 
@@ -119,7 +124,8 @@ if needed, walk you through setting the analysis up on a High Performance
 Computer (HPC) you have access to.
 
 ```
-Agent mode.
+Assistant mode — run this autonomously, planning in phases and checkpointing
+with me at the big scientific decisions.
 
 The strong lens SLACS0946+1006 famously has a dark matter subhalo
 detection that many argue is unusually concentrated. I'd like to analyse
