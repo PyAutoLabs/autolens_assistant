@@ -103,6 +103,6 @@ for a complete example.
 - **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   tour of advanced features including interferometry, where the visibility-plane fit
   fits alongside MGE / pixelization / multi-wavelength capabilities.
-- **Experienced PyAutoLens user** — [workspace/lens: interferometer/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/interferometer/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: interferometer/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/interferometer/start_here.py):
   canonical strong-lens fit of radio/mm interferometer data — NUFFT-based forward
   model, scaling to millions of visibilities.

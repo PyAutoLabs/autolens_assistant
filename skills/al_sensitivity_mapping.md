@@ -59,7 +59,7 @@ WDM particle mass or the subhalo mass function normalisation.
   mapping is a research-grade workflow).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   brief mention of sensitivity mapping under subhalo features.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/advanced/subhalo/sensitivity/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/features/advanced/subhalo/sensitivity/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/advanced/subhalo/sensitivity/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/features/advanced/subhalo/sensitivity/start_here.py):
   the canonical sensitivity workflow — simulator config, fit-pair loop,
   evidence-map output.
 

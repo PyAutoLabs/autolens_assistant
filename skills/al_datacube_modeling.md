@@ -57,7 +57,7 @@ intensities — useful for line-emission morphology.
 - **Student / new to lensing** — _ (specialist workflow).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   interferometer / datacube feature section.
-- **Experienced PyAutoLens user** — [workspace/lens: interferometer/features/datacube/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/interferometer/features/datacube/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: interferometer/features/datacube/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/interferometer/features/datacube/start_here.py):
   the canonical datacube walkthrough.
 
 See also [`wiki/core/api/datacube.md`](../wiki/core/api/datacube.md) for

@@ -182,6 +182,6 @@ For mass profiles, also sanity-check `convergence_2d_from` against a known case 
 - **General reference** — [RTD: Model cookbook](https://pyautolens.readthedocs.io/en/latest/general/model_cookbook.html):
   systematic model-composition reference; covers using non-standard profiles
   inside `Model` and `Collection`.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/profiles/light.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/profiles/light.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/profiles/light.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/profiles/light.py):
   catalog of the built-in light profiles in `al.lp.*` — the patterns your subclass
   should match.

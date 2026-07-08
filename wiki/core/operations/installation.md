@@ -53,11 +53,11 @@ JIT-compiled geometry kernels in PyAutoArray.
 
 ```bash
 mkdir -p sources && cd sources
-git clone https://github.com/rhayes777/PyAutoConf.git
-git clone https://github.com/Jammy2211/PyAutoArray.git
-git clone https://github.com/rhayes777/PyAutoFit.git
-git clone https://github.com/Jammy2211/PyAutoGalaxy.git
-git clone https://github.com/Jammy2211/PyAutoLens.git
+git clone https://github.com/PyAutoLabs/PyAutoConf.git
+git clone https://github.com/PyAutoLabs/PyAutoArray.git
+git clone https://github.com/PyAutoLabs/PyAutoFit.git
+git clone https://github.com/PyAutoLabs/PyAutoGalaxy.git
+git clone https://github.com/PyAutoLabs/PyAutoLens.git
 cd ..
 
 for repo in PyAutoConf PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do

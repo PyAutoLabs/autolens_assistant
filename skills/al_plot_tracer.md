@@ -127,6 +127,6 @@ explanation.
 - **General reference** — [RTD: Start here](https://pyautolens.readthedocs.io/en/latest/overview/overview_1_start_here.html):
   the `Tracer` object in action — building one, evaluating it on a grid, plotting
   the result.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/tracer.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/tracer.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/tracer.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/tracer.py):
   full pattern for inspecting an inferred `Tracer` — ray tracing, profiles, numpy
   arrays, visualization.

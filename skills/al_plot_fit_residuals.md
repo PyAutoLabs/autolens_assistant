@@ -140,5 +140,5 @@ what each residual pattern usually means physically. Common cases:
 - **General reference** — [RTD: Likelihood function](https://pyautolens.readthedocs.io/en/latest/general/likelihood_function.html):
   how PyAutoLens computes the likelihood the residuals contribute to — useful for
   interpreting structured residuals statistically.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/results/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/results/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/results/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/results/start_here.py):
   production-quality fit inspection — residuals, chi-squared, FITS exports.

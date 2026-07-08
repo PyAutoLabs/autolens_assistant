@@ -135,6 +135,6 @@ See [`al_load_results`](./al_load_results.md) for the inverse — loading what
 - **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   tour of advanced capabilities; search configuration interacts directly with most
   of them (especially pixelization, MGE, point-source).
-- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/slam_start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/modeling/slam_start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/slam_start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/modeling/slam_start_here.py):
   the SLaM pipeline pre-configures sensible searches per stage — a reference for
   *which* knobs matter at *which* phase.

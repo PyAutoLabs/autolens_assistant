@@ -67,7 +67,7 @@ fit.
   lensing is research-grade).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   cluster lensing in the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: cluster/csv_api.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/cluster/csv_api.py):
+- **Experienced PyAutoLens user** — [workspace/lens: cluster/csv_api.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/cluster/csv_api.py):
   the canonical CSV schema + round-trip demo.
 
 See also [`wiki/core/api/csv_api.md`](../wiki/core/api/csv_api.md) for the

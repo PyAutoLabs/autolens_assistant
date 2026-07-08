@@ -162,6 +162,6 @@ Natural next steps:
 - **General reference** — [RTD: Model cookbook](https://pyautolens.readthedocs.io/en/latest/general/model_cookbook.html):
   systematic reference for building lens models with `Model` and `Collection` —
   two-component to multi-galaxy, prior customisation, parameter pairing, MGE.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/modeling/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/modeling/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/modeling/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/modeling/start_here.py):
   the canonical imaging-modeling script — light-profile choice (Sersic vs. MGE),
   non-linear-search configuration, JAX/GPU fitting.

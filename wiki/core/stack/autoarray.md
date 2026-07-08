@@ -14,7 +14,7 @@ last_updated: 2026-05-22
 
 # PyAutoArray — arrays, grids, masks, datasets
 
-Project: [`PyAutoArray`](https://github.com/Jammy2211/PyAutoArray). Import:
+Project: [`PyAutoArray`](https://github.com/PyAutoLabs/PyAutoArray). Import:
 `autoarray`. PyAutoLens re-exports the user-facing classes through `autolens`, so you
 mostly see them as `al.Array2D`, `al.Grid2D`, `al.Mask2D`, `al.Imaging`, etc.
 

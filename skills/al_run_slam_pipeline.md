@@ -142,6 +142,6 @@ all 4+ phases will short-circuit, but you'll catch import / config errors fast.
 - **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   SLaM sits alongside pixelization, MGE, subhalo detection and multi-wavelength on
   the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/slam_start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/modeling/slam_start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/modeling/slam_start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/modeling/slam_start_here.py):
   the canonical SLaM invocation script — all other SLaM scripts in the workspace are
   documented relative to it.

@@ -61,7 +61,7 @@ mass-sheet degeneracy. Adds a custom likelihood term — see
   point-source lensing tutorials, foundation for time-delay analyses.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   feature tour — point-source / time-delay section.
-- **Experienced PyAutoLens user** — [workspace/lens: point_source/features/time_delays.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/point_source/features/time_delays.py):
+- **Experienced PyAutoLens user** — [workspace/lens: point_source/features/time_delays.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/point_source/features/time_delays.py):
   the canonical H0 workflow.
 
 See also [`wiki/core/concepts/time_delay_cosmography.md`](../wiki/core/concepts/time_delay_cosmography.md)

@@ -70,7 +70,7 @@ stacks (model image, residuals, source map) and PNG sets per fit.
   lensing physics).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   results / aggregator section.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/results/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/results/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/results/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/results/start_here.py):
   the entry point — sub-folders cover aggregator, database, workflow
   outputs.
 

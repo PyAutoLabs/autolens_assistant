@@ -15,7 +15,7 @@ last_updated: 2026-05-22
 
 # PyAutoLens — strong lensing umbrella
 
-Project: [`PyAutoLens`](https://github.com/Jammy2211/PyAutoLens). Import: `autolens`,
+Project: [`PyAutoLens`](https://github.com/PyAutoLabs/PyAutoLens). Import: `autolens`,
 aliased to `al`. The user-facing library of the stack.
 
 PyAutoLens adds the lensing-specific pieces on top of PyAutoGalaxy: multi-plane ray

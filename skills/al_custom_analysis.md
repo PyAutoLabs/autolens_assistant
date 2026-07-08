@@ -91,7 +91,7 @@ external prior on a derived quantity). Source:
 - **Student / new to lensing** — _ (advanced PyAutoFit topic).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   analysis customisation in the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: guides/advanced/custom_analysis.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/guides/advanced/custom_analysis.py):
+- **Experienced PyAutoLens user** — [workspace/lens: guides/advanced/custom_analysis.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/guides/advanced/custom_analysis.py):
   the canonical custom-analysis walkthrough.
 
 See also [`wiki/core/api/analysis_objects.md`](../wiki/core/api/analysis_objects.md)

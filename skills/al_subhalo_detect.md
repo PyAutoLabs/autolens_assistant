@@ -58,7 +58,7 @@ local grid + a free-mass fit to pin down the subhalo's parameters.
   pixelised sources are the foundation for substructure detection.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   subhalo detection in the feature tour.
-- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/advanced/subhalo/detect/start_here.py](https://github.com/Jammy2211/autolens_workspace/blob/main/scripts/imaging/features/advanced/subhalo/detect/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: imaging/features/advanced/subhalo/detect/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/features/advanced/subhalo/detect/start_here.py):
   the canonical detection pipeline — base fit, grid search, evidence
   comparison.
 
