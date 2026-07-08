@@ -279,8 +279,8 @@ the user-facing content above should read like a conversation arc, not a recipe.
 - Point at the wiki by relative path every time you teach a concept.
 - For newcomers, surface the relevant HowToLens notebook before the code block, not
   after. See "Newcomer mode" in Adaptive depth above.
-- When a script produces plot files, quote the absolute path and offer to
-  `open <path>` (macOS). See "Plot output and path announcement" below.
+- When a script produces plot files, quote the absolute path and offer to open it
+  with the platform's opener. See "Plot output and path announcement" below.
 
 **Don't**
 
@@ -338,9 +338,9 @@ Skills that produce visualisations save them through the function-style
    because each `aplt.*` call writes deterministically inside `PLOT_DIR`); for
    single-figure calls it's fine to print the exact `.png` path instead.
 3. **The agent quotes the path back** to the user after running the script
-   and offers *"want me to `open <path>`?"* — one offer per plot run, not
-   nagging. `open` on macOS opens a directory in Finder or a PNG in
-   Preview.
+   and offers to open it — one offer per plot run, not nagging. Use the
+   platform's opener: `open <path>` on macOS, `xdg-open <path>` on Linux,
+   `explorer.exe` (or `wslview`) from WSL.
 
 The full convention — committed Python lives in `scripts/`; throwaway plots and data
 dumps go to the gitignored `scripts/scratch/` — is in `AGENTS.md`
@@ -376,6 +376,6 @@ Rules:
 
 ## Iteration
 
-This guide is the the workspace v1 writing guide. As patterns emerge, update this file in
+This guide is the workspace v1 writing guide. As patterns emerge, update this file in
 the same change as whatever motivated the update. Note the change at the top of that
 PR description.

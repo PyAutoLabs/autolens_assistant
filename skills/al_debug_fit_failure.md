@@ -35,18 +35,27 @@ Read the search log: `output/<path>/.../search.log`. Common causes:
 
 ## Branch — search completed but residuals are huge
 
-Load the result and look at the fit:
+Load the result and look at the fit (same pattern as
+[`al_load_results`](./al_load_results.md) — load the max-log-likelihood tracer from
+JSON, reload the dataset, rebuild the fit):
 
 ```python
-import autofit as af
+from pathlib import Path
+from autoconf.dictable import from_json
+import autolens as al
+import autolens.plot as aplt
 
-agg = af.Aggregator(af.db.open_database("sqlite://"))
-agg.add_directory("output/imaging/<your_lens>/<name>")
-result = list(agg.values("samples"))[-1]  # most recent run
+out = Path("output/imaging/<your_lens>/<name>/<hash>")
+tracer = from_json(file_path=out / "files" / "tracer.json")
 
-tracer = result.max_log_likelihood_tracer
+# Reload the dataset exactly as the fit script did (path, pixel_scales, mask).
+dataset = ...  # see al_prepare_imaging_data
+
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
-aplt.subplot_fit_imaging(fit=fit)
+aplt.subplot_fit_imaging(
+    fit=fit, output_path="scripts/scratch/debug/", output_filename="fit",
+    output_format="png",
+)
 ```
 
 Look at the residual map. Common signatures:

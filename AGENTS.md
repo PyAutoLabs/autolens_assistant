@@ -180,7 +180,8 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
   straight to the `aplt.*` plotting call (e.g. `aplt.subplot_imaging_dataset`,
   `aplt.subplot_fit_imaging`) — there is no separate `aplt.Output`/`MatPlot2D` object.
   Then `print(...)` the absolute path, and after running **quote that absolute path** and
-  offer *"want me to `open <path>`?"* — don't just say "plot saved". One offer per plot.
+  offer to open it (platform opener: `open` on macOS, `xdg-open` on Linux,
+  `explorer.exe`/`wslview` from WSL) — don't just say "plot saved". One offer per plot.
 
 ---
 
