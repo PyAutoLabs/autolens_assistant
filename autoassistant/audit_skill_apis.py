@@ -703,8 +703,14 @@ def render_installation_check(check: InstallationCheck) -> str:
         lines.append(f"  install type: {check.install_kind}")
     if check.missing:
         lines.append(f"  missing from this interpreter: {', '.join(check.missing)}")
+    # Group identical errors: with e.g. a workspace-version mismatch, autofit,
+    # autogalaxy and autolens all fail with the same multi-paragraph message —
+    # print it once, naming every module it applies to.
+    grouped: dict[str, list[str]] = {}
     for name, error in check.errors.items():
-        lines.append(f"  {name} import failed: {error}")
+        grouped.setdefault(error, []).append(name)
+    for error, names in grouped.items():
+        lines.append(f"  {', '.join(names)} import failed: {error}")
     if check.cache_defaults:
         defaults = ", ".join(
             f"{name}={value}" for name, value in check.cache_defaults.items()
@@ -1121,7 +1127,7 @@ def write_provenance(root: Path, only: Optional[list[Path]] = None) -> int:
 # ---------------------------------------------------------------------------
 # Code gate (--code / --file)
 # ---------------------------------------------------------------------------
-def validate_source(text: str) -> tuple[int, list[str]]:
+def validate_source(text: str) -> tuple[int, list[str], dict[str, str]]:
     """Resolve every alias-rooted symbol in raw Python `text` against the installed
     stack.
 
@@ -1129,21 +1135,33 @@ def validate_source(text: str) -> tuple[int, list[str]]:
     version baseline), this is a cheap, version-independent gate over a snippet or
     a single file the agent is *about to run* — the place a stale symbol like
     `al.Kernel2D` or `aplt.FitImagingPlotter` actually crashes. Returns
-    `(n_stale, report_lines)`; `report_lines` is empty when everything resolves.
+    `(n_stale, report_lines, import_failed)`; `report_lines` is empty when every
+    resolvable symbol resolves, and `import_failed` maps each root module that
+    failed to import to a truncated first error — a broken/blocked stack is an
+    environment problem, never counted as symbol staleness.
     """
     symbols = extract_symbols_code(text)
     lines: list[str] = []
     n_stale = 0
+    import_failed: dict[str, str] = {}
     for sym in sorted(symbols, key=lambda s: s.text):
         res = resolve(sym)
         if res.status == "ok":
+            continue
+        if res.status == "import_failed":
+            # The root module didn't import — an environment problem, not API
+            # drift. Marking every symbol under it STALE conflates the two and
+            # repeats the (often multi-paragraph) import error once per symbol.
+            module = ALIAS_TO_MODULE[sym.alias]
+            err = res.error or "import failed"
+            if len(err) > 200:
+                err = err[:200] + "…"
+            import_failed.setdefault(module, err)
             continue
         n_stale += 1
         if res.status == "missing_attr":
             tail = ".".join(sym.chain[res.resolved_depth :])
             status = f"not in installed stack (missing `.{tail}`)"
-        elif res.status == "import_failed":
-            status = f"import failed ({res.error})"
         else:
             status = f"error ({res.error})"
         # `candidates` are fuzzy/cross-module name matches, NOT a verified rename map
@@ -1156,14 +1174,15 @@ def validate_source(text: str) -> tuple[int, list[str]]:
                 "no close match — ground against skills/ or `dir()` of the live module"
             )
         lines.append(f"STALE  {sym.text}  —  {status}; {hint}")
-    return n_stale, lines
+    return n_stale, lines, import_failed
 
 
 def run_code_gate(*, code: str | None, file: str | None) -> int:
     """Validate a snippet (`--code`) or a single `.py` file (`--file`) and return an
     exit code: 0 = all symbols resolve, 2 = at least one stale symbol (distinct from
-    the report mode's 1). Self-contained — needs neither `sources.yaml` nor the
-    baseline, only the installed library."""
+    the report mode's 1), 3 (= INSTALL_IMPORT_FAILED) = the stack itself failed to
+    import so no symbol judgement is possible. Self-contained — needs neither
+    `sources.yaml` nor the baseline, only the installed library."""
     if code is not None:
         text, label = code, "<--code>"
     else:
@@ -1173,7 +1192,7 @@ def run_code_gate(*, code: str | None, file: str | None) -> int:
             return 2
         text, label = p.read_text(encoding="utf-8"), str(p)
 
-    n_stale, report = validate_source(text)
+    n_stale, report, import_failed = validate_source(text)
 
     # Idiom lint runs alongside symbol resolution: the gate must catch a dead
     # *construction* (`analysis + analysis`) as well as a dead *symbol*. Emit the
@@ -1197,6 +1216,20 @@ def run_code_gate(*, code: str | None, file: str | None) -> int:
         for line in report:
             print("  " + line, file=sys.stderr)
         return 2
+    if import_failed:
+        print(
+            f"[gate] cannot validate {label}: the PyAuto* stack failed to import — "
+            "an environment problem, not API drift:",
+            file=sys.stderr,
+        )
+        for module, err in import_failed.items():
+            print(f"  {module}: {err}", file=sys.stderr)
+        print(
+            "  Fix the environment first (skills/al_setup_environment.md); if this is "
+            "the workspace version check, set PYAUTO_SKIP_WORKSPACE_VERSION_CHECK=1.",
+            file=sys.stderr,
+        )
+        return INSTALL_IMPORT_FAILED
     print(f"[gate] {label}: all PyAuto* symbols and idioms resolve.", file=sys.stderr)
     return 0
 

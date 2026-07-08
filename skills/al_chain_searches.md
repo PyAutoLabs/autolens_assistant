@@ -77,8 +77,8 @@ result_1 = search_1.fit(model=model_1, analysis=analysis)
 """
 __Phase 2__
 
-Swap in a pixelised source (`al.mesh.Delaunay` + `al.reg.ConstantSplit`) for maximum source
-flexibility, inheriting the lens mass and shear from phase 1's posterior so the search
+Swap in a pixelised source for maximum source flexibility,
+inheriting the lens mass and shear from phase 1's posterior so the search
 starts from a good region of parameter space rather than the prior. `result_1.model`
 returns a new `af.Model` whose priors are the previous search's posterior, keeping the
 parameters free to vary.
@@ -95,8 +95,12 @@ source_2 = af.Model(
     redshift=1.0,
     pixelization=af.Model(
         al.Pixelization,
-        mesh=al.mesh.Delaunay,
-        regularization=al.reg.ConstantSplit,
+        # NOTE: Delaunay + ConstantSplit is the standard production choice, but a
+        # known regression (PyAutoArray #332, still open) crashes Delaunay inside
+        # FitImaging and breaks ConstantSplit on RectangularUniform. Until it is
+        # fixed, use the combination below.
+        mesh=al.mesh.RectangularUniform,
+        regularization=al.reg.Constant,
     ),
 )
 model_2 = af.Collection(galaxies=af.Collection(lens=lens_2, source=source_2))

@@ -84,8 +84,20 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 )
 dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
-aplt.subplot_imaging_dataset(dataset=dataset)
+# Save the inspection plot — never rely on interactive display.
+plot_dir = Path("scripts/scratch") / dataset_path.name
+plot_dir.mkdir(parents=True, exist_ok=True)
+aplt.subplot_imaging_dataset(
+    dataset=dataset,
+    output_path=str(plot_dir),
+    output_filename="dataset",
+    output_format="png",
+)
+print(f"Dataset plot saved to: {plot_dir.resolve()}")
 ```
+
+After running, quote the printed `dataset.png` path to the user and hold for their
+confirmation that they have inspected it (per the real-data gate) before moving on.
 
 Source citations:
 - `PyAutoArray:autoarray/dataset/imaging/dataset.py` — `Imaging.from_fits`, `apply_mask`,

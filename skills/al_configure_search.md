@@ -1,6 +1,6 @@
 ---
 name: al_configure_search
-description: Pick and tune a non-linear search for a lens-modelling fit. Defaults to Nautilus (nested sampling, the recommended choice); covers Dynesty, Emcee, Zeus, UltraNest, and the gradient/swarm options for completeness. Sets sampler-specific knobs (live points, walkers, tolerance) and the output `path_prefix` / `name` that determine where results land. Pairs with `al_run_search`, which actually calls `search.fit`.
+description: Pick and tune a non-linear search for a lens-modelling fit. Defaults to Nautilus (nested sampling, the recommended choice); covers Dynesty, Emcee, Zeus, and the gradient/optimizer options for completeness. Sets sampler-specific knobs (live points, walkers, tolerance) and the output `path_prefix` / `name` that determine where results land. Pairs with `al_run_search`, which actually calls `search.fit`.
 ---
 
 # Configuring a non-linear search
@@ -19,7 +19,7 @@ search (what nested sampling does, what MCMC does, what gradient descent does),
 
 - *"How complex is the model?"* — number of free parameters and whether any are
   expected to be multi-modal. Multi-modality strongly favours nested sampling
-  (Nautilus / Dynesty / UltraNest) over MCMC.
+  (Nautilus / Dynesty) over MCMC.
 - *"How fast does the likelihood evaluate?"* — fast (<1s with JAX) → can afford more
   live points or walkers. Slow → tighten the search.
 - *"Is this a first exploratory fit, or a final production run?"* — exploratory fits
@@ -41,7 +41,7 @@ search = af.Nautilus(
     name="modeling_sie_sersic",
     unique_tag="<your_dataset>",
     n_live=200,           # 100 for exploration, 200 for production, 400+ for complex models
-    iterations_per_update=2500,
+    iterations_per_full_update=2500,
     number_of_cores=4,    # parallel likelihood evaluations
 )
 ```
@@ -52,7 +52,8 @@ Knobs to know:
 - `n_live` — more = more accurate posterior, slower. Start at 200; go to 400+ only if
   the posterior looks multi-modal or thin.
 - `number_of_cores` — set to your CPU core count for parallel likelihood eval.
-- `iterations_per_update` — how often the search writes intermediate samples to disk.
+- `iterations_per_full_update` / `iterations_per_quick_update` — how often the search
+  writes full output (samples, visualisation) vs quick intermediate updates to disk.
 
 ## Branch — Dynesty
 
@@ -88,8 +89,8 @@ Source: `PyAutoFit:autofit/non_linear/search/mcmc/emcee.py`.
 
 ## Branch — Other searches
 
-Zeus (ensemble slice), UltraNest (nested sampling alternative), PySwarms (particle swarm),
-BFGS (gradient descent for MLE), Drawer (random prior draws — debugging only). See
+Zeus (ensemble slice MCMC), DynestyDynamic (dynamic nested sampling), BFGS / LBFGS
+(gradient descent for MLE), Drawer (random prior draws — debugging only). See
 [`wiki/core/api/searches.md`](../wiki/core/api/searches.md) for the comparison table.
 
 ## Output folder layout

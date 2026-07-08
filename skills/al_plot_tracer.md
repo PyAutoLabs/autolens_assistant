@@ -103,9 +103,10 @@ caustics directly — build the magnification map from the deflection Jacobian
 ## Branch — multi-plane systems (>2 redshifts)
 
 When the `Tracer` has more than two lens planes (e.g. cluster lenses), the source
-plane is the *final* plane. Plot each intermediate plane via
-`tracer.planes[i].galaxies[j]` and the dedicated `PlanePlotter`. See
-`PyAutoLens:autolens/lens/plot/`.
+plane is the *final* plane. There is no dedicated plane plotter in the flat function
+API — extract each intermediate plane's galaxies via `tracer.planes[i]`, evaluate
+their images on the traced grid for that plane, and pass the arrays to
+`aplt.plot_array`. See `PyAutoLens:autolens/lens/plot/`.
 
 [`wiki/core/concepts/tracer.md`](../wiki/core/concepts/tracer.md) — multi-plane ray tracing
 explanation.

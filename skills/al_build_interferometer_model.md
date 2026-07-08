@@ -48,6 +48,9 @@ dataset = al.Interferometer.from_fits(
     noise_map_path=dataset_path / "noise_map.fits",
     uv_wavelengths_path=dataset_path / "uv_wavelengths.fits",
     real_space_mask=real_space_mask,
+    # transformer_class defaults to al.TransformerNUFFT — the NUFFT that maps the
+    # model image to visibilities. al.TransformerDFT is exact but only viable for
+    # small visibility counts.
 )
 
 # Identical model composition to the imaging case.
@@ -64,12 +67,9 @@ source = af.Model(
 )
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
-# Difference from imaging: AnalysisInterferometer, plus a transformer class that
-# converts the model image to visibilities via NUFFT.
-analysis = al.AnalysisInterferometer(
-    dataset=dataset,
-    settings=al.Settings(),
-)
+# Difference from imaging: AnalysisInterferometer computes the likelihood in
+# visibility space (the transformer was chosen on the dataset above).
+analysis = al.AnalysisInterferometer(dataset=dataset)
 ```
 
 Source citations:

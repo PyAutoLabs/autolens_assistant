@@ -148,8 +148,8 @@ Source: `PyAutoFit:autofit/non_linear/search/mle/drawer.py`.
 | Production, multi-modal expected | `Nautilus(n_live=400)` |
 | Bayesian evidence comparison | `Nautilus` or `DynestyStatic` |
 | Posterior refinement around known mode | `Emcee` or `Zeus` |
-| Very high-D (>50 params) | `UltraNest` |
-| Find a starting point fast | `PySwarms` or `BFGS` |
+| Very high-D (>50 params) | `Nautilus(n_live=400+)` |
+| Find a starting point fast | `BFGS` or `LBFGS` |
 | Check that the prior is sane | `Drawer` |
 
 ## Shared knobs
@@ -160,8 +160,9 @@ Every search accepts:
 - `name: str` — identifier; combined with the model hash to form `unique_id`.
 - `unique_tag: Optional[str]` — extra discriminator for runs that share path + name.
 - `number_of_cores: int` — parallel likelihood evals.
-- `iterations_per_update: int` — checkpoint cadence.
-- `force_pickle_overwrite: bool` — overwrite on restart.
+- `iterations_per_quick_update: int` / `iterations_per_full_update: int` — checkpoint
+  cadence (quick intermediate writes vs full output + visualisation).
+- `silence: bool` — suppress console output.
 
 See `PyAutoFit:autofit/non_linear/search/abstract_search.py` for the common base
 class.

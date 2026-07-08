@@ -45,40 +45,47 @@ After running, the agent quotes `PLOT_DIR.resolve()` and offers
 function-style plot API is documented in
 [`wiki/core/api/plotting.md`](../wiki/core/api/plotting.md).
 
-> ⚠️ **Known regression in `2026.5.21.1`.** `Delaunay` and `KNNBarycentric`
-> currently crash inside `FitImaging` (`'NoneType' object has no attribute
-> 'array'`). Use `al.mesh.RectangularUniform` for now; tracking:
+> ⚠️ **Known regression (still open as of `2026.7.6`).** `Delaunay` and
+> `KNNBarycentric` crash inside `FitImaging` (`'NoneType' object has no attribute
+> 'array'`), and `ConstantSplit` is broken on `RectangularUniform`. Use
+> `al.mesh.RectangularUniform` + `al.reg.Constant` for now; tracking:
 > <https://github.com/PyAutoLabs/PyAutoArray/issues/332>.
 
 ## Branch — source-plane reconstruction
 
 Rebuild the fit so the inversion is computed, then plot the components:
 
+The quickest full view is the fit subplot — when the fit uses an inversion its
+final panel *is* the source-plane reconstruction:
+
 ```python
 # `dataset` from al_prepare_imaging_data, `tracer` from al_load_results.
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
+
+aplt.subplot_fit_imaging(
+    fit=fit, output_path=str(PLOT_DIR), output_format="png",
+)
+```
+
+For component-level access, the inversion exposes (names verified against the
+2026.7 stack):
+
+```python
 inv = fit.inversion
 
-# Source-plane reconstruction on the pixelisation mesh:
-aplt.plot_array(array=inv.reconstruction_dict_of_mapper(mapper_index=0),
+# Image-plane image the linear solution reconstructs (Array2D — plottable):
+aplt.plot_array(array=inv.mapped_reconstructed_data,
                 output_path=str(PLOT_DIR),
-                output_filename="reconstruction",
+                output_filename="mapped_reconstruction",
                 output_format="png")
 
-# Source-plane signal map (per-pixel inferred surface brightness):
-aplt.plot_array(array=inv.reconstructed_data_dict[next(iter(inv.reconstructed_data_dict))],
-                output_path=str(PLOT_DIR),
-                output_filename="reconstructed_data",
-                output_format="png")
+# Source-plane solution: a 1D vector of per-source-pixel intensities
+# (keyed per mapper in inv.reconstruction_dict). For a RectangularUniform
+# mesh, reshape to the mesh's native 2D shape to plot it.
+reconstruction = inv.reconstruction
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
-
-> The exact attribute names on `Inversion` (`reconstruction_dict_of_mapper`,
-> `reconstructed_data_dict`, etc.) evolved alongside the API rewrite —
-> `dir(inv)` is the canonical reference for which arrays the current release
-> exposes. The inversion plot helpers in `aplt.*` themselves are no longer
-> public.
 
 Source: `PyAutoArray:autoarray/inversion/inversion/`.
 

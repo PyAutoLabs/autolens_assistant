@@ -24,18 +24,21 @@ Canonical reference: `autolens_workspace:scripts/guides/advanced/add_a_profile.p
 
 ## Branch — custom light profile
 
-Subclass `LightProfile` (or `LightProfileLinear` for a profile whose intensity is
-solved during the fit). Implement `image_2d_from(grid)`:
+Subclass `ag.LightProfile` (or `LightProfileLinear` for a profile whose intensity is
+solved during the fit). Implement `image_2d_from(grid)` — the base class provides the
+geometry helpers (`elliptical_radii_grid_from` returns each coordinate's elliptical
+radius from the profile centre; the returned object exposes the raw values as
+`.array`). No serialisation mixin is needed: profiles serialise to `tracer.json`
+automatically from their constructor arguments.
 
 ```python
 # scripts/my_profile.py
 import numpy as np
 import autogalaxy as ag
-from autoconf.dictable import Dictable
 
 
-class TwistedSersic(ag.LightProfile, Dictable):
-    """Sersic light profile with isophote position-angle twist with radius."""
+class TruncatedSersic(ag.LightProfile):
+    """Sersic light profile with an exponential outer truncation."""
 
     def __init__(
         self,
@@ -44,41 +47,47 @@ class TwistedSersic(ag.LightProfile, Dictable):
         intensity=1.0,
         effective_radius=1.0,
         sersic_index=2.0,
-        twist_rate=0.0,
+        truncation_radius=5.0,
     ):
         super().__init__(centre=centre, ell_comps=ell_comps)
         self.intensity = intensity
         self.effective_radius = effective_radius
         self.sersic_index = sersic_index
-        self.twist_rate = twist_rate
+        self.truncation_radius = truncation_radius
+
+    @property
+    def sersic_constant(self):
+        # b_n via the Ciotti & Bertin (1999) expansion — the base class does not
+        # provide it for custom profiles, so state it explicitly.
+        n = self.sersic_index
+        return 2.0 * n - 1.0 / 3.0 + 4.0 / (405.0 * n) + 46.0 / (25515.0 * n**2)
 
     def image_2d_from(self, grid, **kwargs):
-        # Apply the elliptical + twisted transform manually, then evaluate Sersic.
-        radii = self._radii_from_grid(grid)              # helper method
-        intensity = self.intensity * np.exp(
-            -self._b_n() * ((radii / self.effective_radius) ** (1.0 / self.sersic_index) - 1.0)
+        radii = self.elliptical_radii_grid_from(grid)
+        sersic = self.intensity * np.exp(
+            -self.sersic_constant
+            * ((radii.array / self.effective_radius) ** (1.0 / self.sersic_index) - 1.0)
         )
-        return intensity
+        return sersic * np.exp(-((radii.array / self.truncation_radius) ** 2))
 ```
 
 Source citations:
-- `PyAutoGalaxy:autogalaxy/profiles/light/abstract.py` — `LightProfile` base class
-  and required interface.
+- `PyAutoGalaxy:autogalaxy/profiles/light/abstract.py` — `LightProfile` base class,
+  required interface, and the radii-grid helpers.
 - `PyAutoGalaxy:autogalaxy/profiles/light/standard/sersic.py` — Sersic implementation
-  to copy structure from.
-- `PyAutoConf:autoconf/dictable.py` — `Dictable` mixin so the profile serialises to
-  `tracer.json`.
+  to copy structure from (note how it reads `grid_radii.array`).
 
-Use in a model:
+Use in a model (both files live in `scripts/`, so a sibling import works when the
+script is run as `python scripts/build_model.py`):
 
 ```python
 import autofit as af
-from work.my_profile import TwistedSersic
+from my_profile import TruncatedSersic
 
 lens = af.Model(
     ag.Galaxy,
     redshift=0.5,
-    bulge=af.Model(TwistedSersic),  # new profile, slots into the af.Model API
+    bulge=af.Model(TruncatedSersic),  # new profile, slots into the af.Model API
 )
 ```
 
@@ -89,8 +98,8 @@ Subclass `MassProfile` and implement at least `convergence_2d_from(grid)` and
 deflection has no closed form.
 
 ```python
-class CustomNFW(ag.mp.MassProfile, Dictable):
-    """NFW with a custom inner-slope tweak."""
+class CustomNFW(ag.mp.MassProfile):
+    """NFW with a custom inner-slope tweak (spherical)."""
 
     def __init__(self, centre=(0.0, 0.0), kappa_s=1.0, scale_radius=1.0, inner_slope=1.0):
         super().__init__(centre=centre, ell_comps=(0.0, 0.0))
@@ -99,7 +108,7 @@ class CustomNFW(ag.mp.MassProfile, Dictable):
         self.inner_slope = inner_slope
 
     def convergence_2d_from(self, grid, **kwargs):
-        r = self._radii_from_grid(grid) / self.scale_radius
+        r = self.radial_grid_from(grid).array / self.scale_radius
         return self.kappa_s / (r ** self.inner_slope * (1.0 + r) ** (3.0 - self.inner_slope))
 
     def deflections_yx_2d_from(self, grid, **kwargs):
@@ -123,7 +132,7 @@ class that interpolates on the grid:
 ```python
 from scipy.interpolate import RegularGridInterpolator
 
-class TabulatedConvergence(ag.mp.MassProfile, Dictable):
+class TabulatedConvergence(ag.mp.MassProfile):
     def __init__(self, centre, table_path):
         super().__init__(centre=centre, ell_comps=(0.0, 0.0))
         self._interp = self._load_table(table_path)
@@ -137,17 +146,25 @@ it numerically but at a runtime cost. Profile your fit if this is slow.
 
 ## Priors and defaults
 
-For the new profile to play nicely in `af.Model`, give each parameter a sensible
-default prior. Either set it in the model declaration:
+A custom profile has **no default priors** — `af.Model(TruncatedSersic)` reports
+`prior_count == 0` and cannot be fit until every free parameter is given one. Set them
+explicitly in the model declaration:
 
 ```python
-profile = af.Model(TwistedSersic)
-profile.twist_rate = af.UniformPrior(lower_limit=-1.0, upper_limit=1.0)
+profile = af.Model(TruncatedSersic)
+profile.centre.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+profile.centre.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
+profile.intensity = af.LogUniformPrior(lower_limit=1e-4, upper_limit=1e2)
+profile.effective_radius = af.UniformPrior(lower_limit=0.0, upper_limit=5.0)
+profile.sersic_index = af.UniformPrior(lower_limit=0.5, upper_limit=8.0)
+profile.truncation_radius = af.UniformPrior(lower_limit=0.5, upper_limit=10.0)
 ```
 
-Or — for repeated use — add a default-priors YAML under
-`PyAutoGalaxy:autogalaxy/config/priors/` keyed by class name. The conf system reads
-it automatically.
+Or — for repeated use — add a default-priors YAML under **this workspace's**
+`config/priors/` (mirror the schema of the existing files in `config/priors/light/`),
+which the conf system reads automatically. Never write the YAML into the installed
+PyAutoGalaxy's own config — that edits library source, which the source-edit boundary
+forbids, and it is lost on the next upgrade.
 
 ## Verification
 
@@ -155,13 +172,15 @@ it automatically.
 # Sanity: image_2d_from returns the right shape and finite values.
 import autoarray as aa
 grid = aa.Grid2D.uniform(shape_native=(50, 50), pixel_scales=0.05)
-prof = TwistedSersic(centre=(0.0, 0.0), intensity=1.0, effective_radius=0.5, sersic_index=2.0, twist_rate=0.1)
+prof = TruncatedSersic(centre=(0.0, 0.0), intensity=1.0, effective_radius=0.5, sersic_index=2.0)
 img = prof.image_2d_from(grid=grid)
-assert img.shape == (2500,) and np.isfinite(img).all()
+assert np.asarray(img).shape == (2500,) and np.isfinite(np.asarray(img)).all()
 ```
 
-For mass profiles, also sanity-check `convergence_2d_from` against a known case (set
-`twist_rate=0`, your custom Sersic should match the built-in Sersic).
+Also sanity-check against a known case: with the custom behaviour switched off
+(here, `truncation_radius` set very large), the profile should match the built-in it
+extends (`ag.lp.Sersic` with the same parameters). For mass profiles do the same with
+`convergence_2d_from` against the canonical implementation.
 
 ## Combine
 

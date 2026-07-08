@@ -59,53 +59,42 @@ For the full conceptual treatment of SLaM,
 
 ## Branch — galaxy-scale imaging SLaM
 
-The SLaM API lives in `autolens_workspace:slam/` (a sibling module in the workspace
-that ships SLaM pipeline functions). The workspace doesn't ship its own copy; the recipe
-below mirrors `slam_start_here.py` and depends on the workspace pipelines being
-available.
+There is **no importable SLaM module**: each SLaM script defines its stages as plain
+Python functions inline (`source_lp`, `source_pix_1`, `source_pix_2`, `light_lp`,
+`mass_total`, …) and chains them by passing each stage's `af.Result` into the next.
+`slam_start_here.py` is the canonical, fully-documented instance of that pattern —
+so the recipe is *copy and adapt the template*, not write from scratch:
+
+```bash
+# The `init-slam` skill automates this copy; manually it is:
+cp <autolens_workspace>/scripts/guides/modeling/slam_start_here.py scripts/slam_pipeline.py
+```
+
+Then adapt the template's clearly-marked sections to the user's lens — dataset path
+and pixel scale, mask radius, lens/source redshifts, the LIGHT LP parameterisation,
+and the final MASS TOTAL model. The chaining skeleton you are editing looks like:
 
 ```python
-# scripts/slam_pipeline.py
-from autoconf import jax_wrapper
-from pathlib import Path
-import autofit as af
-import autolens as al
-from autolens_workspace.slam import slam_pipeline_main  # workspace dep
+# Inside scripts/slam_pipeline.py (structure of the copied template, abridged):
+source_lp_result = source_lp(analysis=analysis, ...)
+source_pix_result_1 = source_pix_1(analysis=analysis, source_lp_result=source_lp_result)
+source_pix_result_2 = source_pix_2(analysis, source_lp_result, source_pix_result_1)
+light_result = light_lp(analysis, source_pix_result_1, source_pix_result_2)
+mass_result = mass_total(analysis, source_pix_result_1, source_pix_result_2, light_result)
+```
 
-dataset_path = Path("dataset/imaging/<your_lens>")
-dataset = al.Imaging.from_fits(
-    data_path=dataset_path / "data.fits",
-    noise_map_path=dataset_path / "noise_map.fits",
-    psf_path=dataset_path / "psf.fits",
-    pixel_scales=0.06,
-)
-mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
-)
-dataset = dataset.apply_mask(mask=mask)
+Image positions (recommended for pixelised sources, to penalise unphysical
+demagnified solutions) load from JSON and wire into the stage functions via
+`positions_likelihood_from` / `al.PositionsLH`:
 
-# Optional: image positions to penalise unphysical mass models.
-positions = al.from_json(file_path=dataset_path / "positions.json")  # returns a Grid2DIrregular
+```python
+positions = al.from_json(file_path=dataset_path / "positions.json")  # Grid2DIrregular
 positions_likelihood = al.PositionsLH(positions=positions, threshold=0.5)
-
-# Driver — the actual SLaM pipeline functions live in autolens_workspace/slam/.
-# See slam_start_here.py for the canonical invocation: SOURCE LP → SOURCE PIX →
-# LIGHT LP → MASS TOTAL with their chaining of `result_*` objects.
-slam_pipeline_main(
-    dataset=dataset,
-    redshift_lens=0.5,
-    redshift_source=1.0,
-    path_prefix="imaging/<your_lens>/slam",
-    positions_likelihood=positions_likelihood,
-    mesh_shape=(35, 35),
-    # ... per-stage settings; defer to slam_start_here.py for the full list.
-)
 ```
 
 Source citations:
-- `autolens_workspace:scripts/guides/modeling/slam_start_here.py` — canonical invocation.
-- `autolens_workspace:slam/` — pipeline function definitions (the actual SLaM code is
-  in the workspace, not in PyAutoLens itself).
+- `autolens_workspace:scripts/guides/modeling/slam_start_here.py` — the canonical
+  template: stage functions, their chaining, and every per-stage setting.
 - `PyAutoLens:autolens/analysis/positions.py` — `PositionsLH`.
 
 ## Branch — interferometer SLaM

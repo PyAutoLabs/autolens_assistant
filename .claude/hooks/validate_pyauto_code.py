@@ -19,8 +19,13 @@ This hook closes that gap, independent of any version match:
      re-grounds against the live API / skills. Otherwise allow.
 
 Fail-open by design: any internal error (unparseable command, missing validator, etc.)
-allows the call — the gate must never block legitimate work because of its own bugs.
-Escape hatch: set PYAUTO_SKIP_API_GATE=1 to allow unconditionally.
+allows the call — the gate must never block legitimate work because of its own bugs. A
+broken stack (validator exit 3: imports fail, e.g. the workspace version check) also
+fails open: the command will surface the same import error itself, and blocking it
+would conflate a broken environment with symbol drift.
+Escape hatch: set PYAUTO_SKIP_API_GATE=1 — in the hook's environment, or as a prefix on
+the command itself (`PYAUTO_SKIP_API_GATE=1 python …`); the hook process env is the
+session's, not the command's, so the prefix form is detected in the command text.
 
 The same script backs both the autolens_assistant hook and the PyAutoLabs-monorepo hook;
 the validator path is resolved relative to this file, so it works from either project.
@@ -149,6 +154,12 @@ def main() -> None:
     command = (payload.get("tool_input") or {}).get("command") or ""
     cwd = Path(payload.get("cwd") or ".")
 
+    # Per-command escape hatch: an env-var prefix on the command sets the variable
+    # for the *command's* process, not this hook's, so it must be detected in the
+    # command text itself.
+    if re.search(r"\bPYAUTO_SKIP_API_GATE=1\b", command):
+        _allow()
+
     # Fast reject: not a Python invocation, or no PyAuto* symbol anywhere in the command.
     if "python" not in command or not _has_symbol(command):
         # `_has_symbol(command)` misses symbols that live only inside a referenced .py
@@ -178,6 +189,10 @@ def main() -> None:
             )
         except (OSError, subprocess.SubprocessError):
             continue  # validator unrunnable — fail open for this source
+        # Only returncode 2 (stale symbols/idioms) denies. Exit 3 — the stack itself
+        # failed to import (broken env / workspace version check) — falls through to
+        # allow: the command will raise the same import error on its own, and the
+        # gate only guards symbol drift.
         if proc.returncode == 2:
             stale = [
                 ln.strip()

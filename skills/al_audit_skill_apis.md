@@ -168,12 +168,18 @@ on a snippet or a file:
 
 ```bash
 python autoassistant/audit_skill_apis.py --code "import autolens as al; al.FitImagingPlotter"  # exit 2
-python autoassistant/audit_skill_apis.py --file scripts/my_script.py                            # exit 0/2
+python autoassistant/audit_skill_apis.py --file scripts/my_script.py                            # exit 0/2/3
 ```
+
+Exit 2 = stale symbol(s)/idiom(s) — the deny case. Exit 3 = the stack itself failed to
+import (broken env, or the workspace version check), reported once as an environment
+problem — the hook fails open on it, since the command would raise the same import
+error itself.
 
 When the gate blocks you, **do not guess a replacement** — grep `skills/` for the task or
 introspect `dir()` of the live module, then re-run. Escape hatch for deliberate
-pre-refactor/debugging work: set `PYAUTO_SKIP_API_GATE=1`.
+pre-refactor/debugging work: set `PYAUTO_SKIP_API_GATE=1` — in the environment, or as a
+prefix on the command itself (`PYAUTO_SKIP_API_GATE=1 python …`).
 
 ## Ask — narrow the scope before fixing
 
