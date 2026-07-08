@@ -54,6 +54,31 @@ Ordering matters at release: PyAutoBuild regenerates + commits the API baseline 
 calling this workflow, so `--check-version` compares the new stack against an already-updated
 baseline. When you change the rules, edit them here only; never copy a rule into PyAutoBuild.
 
+## Assistant-as-template: generic vs PyAutoLens-specific
+
+This repo is the reference implementation future PyAuto domain assistants (e.g.
+`autofit_assistant`, `autogalaxy_assistant`) will be modelled on. When maintaining it, keep
+this boundary in mind — it is the seam a future cloning workflow will cut along. Do not
+generalise anything pre-emptively; just avoid entangling the two sides.
+
+**Generic assistant infrastructure** (clones to any domain assistant near-verbatim):
+`AGENTS.md`'s skeleton (session start, safety invariants, three-layer model, mode
+selection, source-of-truth resolution, commit cadence), the Teacher/Assistant mode model
+and `modes/` machinery (`.mode`, `.maintainer` sentinels), the skills framework
+(`_style.md`, `_bootstrap_skill.md`, the README index conventions), the
+`core`/`literature`/`project` wiki split and its read-only/update rules, the science-project
+lifecycle (`start-new-project`, `contribute-upstream`), `sources.yaml` + the source
+registry pattern, the API gate (`autoassistant/audit_skill_apis.py` + wiki-currency
+workflow), and the profile template.
+
+**PyAutoLens-specific content** (regenerated per domain, never copied blind): every
+`al_*` skill body, `wiki/core/` reference pages, the entire `wiki/literature/` sub-wiki,
+bundled `dataset/` examples, the README's science framing and three example prompts, the
+standard-imports convention, and `hpc/` templates tuned to lensing runtimes.
+
+**Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
+`config/`, the maintainer smoke tests below.
+
 ## Chat-surface compatibility smoke test
 
 Run these checks after documentation changes are available on the public GitHub repository. Do

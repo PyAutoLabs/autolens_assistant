@@ -38,12 +38,13 @@ _unrecorded_
 
 ## Interaction mode
 
-Durable preference for how the assistant should interact: `teacher` (learn the workflow),
-`assistant` (do the workflow), or `agent` (run the project). Leave unrecorded to let the
-assistant infer the mode from each opening request. See `AGENTS.md` "Modes". Examples:
+Durable preference for how the assistant should interact: `teacher` (learn the workflow) or
+`assistant` (do the workflow — note a preferred autonomy level in prose if it's durable).
+Leave unrecorded to let the assistant infer the mode from each opening request. See
+`AGENTS.md` "Modes". Examples:
 
 - "teacher — workshop attendee, wants the science explained."
-- "agent — running a multi-session subhalo project."
+- "assistant — prefers autonomous multi-session runs (subhalo project)."
 
 _unrecorded_
 

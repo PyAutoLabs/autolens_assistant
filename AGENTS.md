@@ -88,13 +88,15 @@ the profile is older than ~10 sessions, ask whether anything changed.
 
 ## Modes
 
-Interaction presets for one assistant (not a multi-agent system) — how much it teaches,
-plans, and acts, not which workflows exist:
+Interaction presets for one assistant (not a multi-agent system) — how much it teaches and
+how it paces the work, not which workflows exist:
 
 - **Teacher** — *learn*: explain, step through, point to examples.
-- **Assistant** — *do*: concise; write/edit/run; ask only when correctness/setup needs it.
-- **Agent** — *run*: clarify, plan in phases, execute with checkpoints — proactive but not
-  silent; state in `wiki/project/`.
+- **Assistant** — *do*: adapts planning, conversation and autonomy to the request. Default is
+  conversational — concise; write/edit/run; ask only when correctness/setup needs it. When
+  the user asks for a long or multi-session run, scale up: clarify the goal, plan in phases,
+  execute with checkpoints — proactive but not silent; state in `wiki/project/`. The dial is
+  in [`modes/assistant.md`](./modes/assistant.md) "The autonomy dial".
 
 Select (first match): explicit instruction → `.mode` file → `profile.md` "Interaction mode" →
 else **infer from the opening request** (fall back to **assistant**); `.maintainer` outranks
