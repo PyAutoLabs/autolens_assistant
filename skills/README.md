@@ -24,6 +24,10 @@ configured) via symlinks; the canonical files live here.
 
 ## Index
 
+Every skill below is a **complete recipe** unless marked `(stub)` — the stubs are gathered
+under "Pending — stubbed" at the end, with a queue of catalogued-but-unstubbed topics after
+them.
+
 ### Meta
 
 - [`_style.md`](./_style.md) — writing guide every skill is authored against. Read first
