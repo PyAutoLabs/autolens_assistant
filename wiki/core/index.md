@@ -69,8 +69,8 @@ Physics + framework material the skills lean on.
 Task-oriented catalogues — comprehensive lists of what's available, with one-line
 "when to use" notes.
 
-- [Non-linear searches](./api/searches.md) — Nautilus, Dynesty, Emcee, Zeus,
-  UltraNest, PySwarms, BFGS, Drawer.
+- [Non-linear searches](./api/searches.md) — Nautilus, Dynesty (static/dynamic),
+  Emcee, Zeus, BFGS/LBFGS, Drawer.
 - [Light profile catalogue](./api/light_profile_catalog.md).
 - [Mass profile catalogue](./api/mass_profile_catalog.md).
 - [Datasets](./api/datasets.md) — Imaging, Interferometer, PointDataset.

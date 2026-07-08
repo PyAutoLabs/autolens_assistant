@@ -27,9 +27,10 @@ Source: `PyAutoFit:autofit/non_linear/samples/`.
 
 The flavour of `Samples` depends on the search:
 
-- **`SamplesNest`** — nested-sampler output (Nautilus, Dynesty, UltraNest).
+- **`SamplesNest`** — nested-sampler output (Nautilus, Dynesty).
 - **`SamplesMCMC`** — Emcee, Zeus.
-- **`SamplesMLE`** — BFGS, PySwarms, Drawer.
+- The optimizers (BFGS / LBFGS, Drawer) return a plain `Samples` without
+  posterior semantics (no `SamplesMLE` class is exposed).
 
 All share the same accessor API.
 

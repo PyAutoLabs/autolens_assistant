@@ -31,9 +31,11 @@ PyAutoFit groups searches into three families.
 Estimates the Bayesian evidence by sweeping a shrinking iso-likelihood surface.
 Naturally handles multi-modal posteriors. The right default for lensing.
 
-- **Nautilus** — fast, modern, well-tuned. The workspace' default.
+- **Nautilus** — fast, modern, well-tuned. The workspace's default.
 - **DynestyStatic / DynestyDynamic** — alternative, well-tested.
-- **UltraNest** — reactive, scales to higher dimensions.
+
+(UltraNest is not currently exposed as a public `autofit` search class — see
+[`../api/searches.md`](../api/searches.md).)
 
 ### MCMC
 
@@ -50,9 +52,10 @@ Finds the single max-likelihood point. No posterior; no errors. Used for
 exploration, gradient-based refinement, or producing a starting point for an MCMC
 chain.
 
-- **BFGS** — gradient descent.
-- **PySwarms** — particle swarm.
+- **BFGS / LBFGS** — gradient descent (LBFGS = limited-memory variant).
 - **Drawer** — random prior draws. Debugging only.
+
+(PySwarms is not currently exposed as a public `autofit` search class.)
 
 ## When to use which
 
@@ -62,8 +65,8 @@ chain.
 | Production posterior, multi-modal expected | `Nautilus` (n_live=300+) |
 | Posterior refinement around a known mode | `Emcee` or `Zeus` |
 | Bayesian evidence comparison | `Nautilus` or `DynestyStatic` |
-| Very high-dim model (>50 free parameters) | `UltraNest` |
-| Fast exploration / sanity check | `PySwarms` or `BFGS` |
+| Very high-dim model (>50 free parameters) | `Nautilus` (n_live=400+) |
+| Fast exploration / sanity check | `BFGS` or `LBFGS` |
 | Confirming the prior gives reasonable models | `Drawer` |
 
 ## Prior chaining

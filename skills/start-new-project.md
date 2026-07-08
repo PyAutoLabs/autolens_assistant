@@ -47,10 +47,10 @@ Store as `PROJECT_NAME`.
 Store as `PROJECT_DESCRIPTION`.
 
 ### 3. Datasets
-> **Datasets to include?** They live under `dataset/<sample>/<dataset_name>/` (`<sample>` a
-> grouping dir, e.g. `imaging/`); each needs at least `data.fits`, `noise_map.fits`,
-> `info.json` (see `wiki/core/operations/dataset.md`). Point me at paths to copy, or skip and
-> add later.
+> **Datasets to include?** In a project they live under `data/<sample>/<dataset_name>/`
+> (`<sample>` a grouping dir, e.g. `imaging/`; the assistant clone's equivalent folder is
+> `dataset/`); each needs at least `data.fits`, `noise_map.fits`, `info.json` (see
+> `wiki/core/operations/dataset.md`). Point me at paths to copy, or skip and add later.
 
 ### 4. Modeling scripts
 > **Modeling scripts?** They live in `scripts/`, normally adapted from `autolens_workspace`.
@@ -66,7 +66,8 @@ reproducible-science subset; generate the thin assistant layer; refer back for e
 - `config/` (PyAutoConf YAML — required: pipelines `conf.instance.push(config, output)`)
 - `activate.sh` (sourced locally and by HPC batch scripts)
 - `scripts/` (the chosen pipeline(s), or empty + `/init-slam` later)
-- datasets (Step 3) into `dataset/<sample>/...`
+- datasets (Step 3) into `data/<sample>/...` (the project's tracked-by-README data tree —
+  see the `.gitignore` below and the Publish gate, which audits `git ls-files data/`)
 
 **Generate the lean project tree:**
 ```
