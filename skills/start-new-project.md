@@ -102,6 +102,9 @@ Resolve the assistant clone, in order: `$AUTOLENS_ASSISTANT` → sibling `../aut
 → else clone `https://github.com/PyAutoLabs/autolens_assistant` into `sources/autolens_assistant/`
 (gitignored). Read its `AGENTS.md` and follow its constitution (safety invariants, conventions,
 modes); use its `skills/` and `wiki/` as the how-to and reference.
+After resolving, compare the clone's commit to `project.yaml`'s `assistant_ref.commit`; if they
+differ, mention the provenance drift and offer to re-pin — never block on it and never check
+out the pinned commit.
 
 ## This project
 - Context / decisions / results: `wiki/project/` (dated journal + `profile.md`).
@@ -197,6 +200,8 @@ on two things only — **no transcript/hash machinery**:
 2. **Dated journal** → `wiki/project/YYYY-MM-DD-<slug>.md` (use the existing `_template.md`
    shape: Context / What I did / Outcome), each entry referencing its `run_id`. This is the
    same `wiki/project/` mechanism the assistant already uses — do not invent a parallel log.
+   An accepted `assistant_ref` re-pin (from the provenance-drift check in "Locating the
+   assistant from a project" below) is one line in the day's entry, not a new log.
 
 ---
 
@@ -248,6 +253,15 @@ order — `$AUTOLENS_ASSISTANT` → `../autolens_assistant` → clone the record
 the gitignored `sources/autolens_assistant/` — then read `skills/` and `wiki/` from there. This
 mirrors the source-of-truth `sources/` clone-on-demand pattern in `AGENTS.md`; the project
 depends on no vendored copy of the assistant.
+
+**Provenance-drift check (non-blocking).** After resolving, compare the clone's commit
+(`git -C <resolved> rev-parse HEAD`) to `project.yaml`'s `assistant_ref.commit`. If they
+differ, tell the user once per session — both commits, and what the drift means (the toolchain
+moved since the project was pinned; a provenance note, not a correctness problem) — and offer
+to **re-pin**: update `assistant_ref.commit` to the resolved HEAD and note the re-pin in the
+day's `wiki/project/` journal entry. Never hard-block on drift and never check the clone out
+to the pinned commit — day-to-day operation always uses the resolved current clone, and the
+per-run manifest's `assistant.commit` remains the record of what was actually used.
 
 ## Example projects (registry)
 
