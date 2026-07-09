@@ -3,13 +3,13 @@ title: Sensitivity mapping for substructure detection
 sources:
   - project: PyAutoFit
     paths:
-      - autofit/non_linear/grid/sensitivity.py
+      - autofit/non_linear/grid/sensitivity/
     pinned_commit: main
   - project: PyAutoLens
     paths:
       - autolens/lens
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Sensitivity mapping
@@ -24,7 +24,7 @@ recording the evidence gain.
 ## The framework
 
 PyAutoFit provides the generic engine in
-`PyAutoFit:autofit/non_linear/grid/sensitivity.py`. The key abstraction is
+`PyAutoFit:autofit/non_linear/grid/sensitivity/`. The key abstraction is
 that you define:
 
 - a `base_model` that represents the smooth lens fit

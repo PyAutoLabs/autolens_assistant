@@ -46,7 +46,7 @@ search = af.Nautilus(
 )
 ```
 
-Source: `PyAutoFit:autofit/non_linear/search/nest/nautilus.py`.
+Source: `PyAutoFit:autofit/non_linear/search/nest/nautilus/`.
 
 Knobs to know:
 - `n_live` — more = more accurate posterior, slower. Start at 200; go to 400+ only if
@@ -68,7 +68,7 @@ search = af.DynestyStatic(
 )
 ```
 
-Source: `PyAutoFit:autofit/non_linear/search/nest/dynesty.py`.
+Source: `PyAutoFit:autofit/non_linear/search/nest/dynesty/`.
 
 ## Branch — Emcee (MCMC)
 
@@ -85,7 +85,7 @@ search = af.Emcee(
 )
 ```
 
-Source: `PyAutoFit:autofit/non_linear/search/mcmc/emcee.py`.
+Source: `PyAutoFit:autofit/non_linear/search/mcmc/emcee/`.
 
 ## Branch — Other searches
 

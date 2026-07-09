@@ -17,7 +17,7 @@ configured) via symlinks; the canonical files live here.
   + the understanding to evolve it. Project-workflow skills may instead drive `rsync`,
   `cp`, or other repo-level operations.
 - Source citations use the project-name + repo-relative-path form,
-  e.g. `PyAutoFit:autofit/non_linear/search/nest/nautilus.py`, resolved via
+  e.g. `PyAutoFit:autofit/non_linear/search/nest/nautilus/`, resolved via
   [`../sources.yaml`](../sources.yaml).
 - Wiki references use workspace-relative paths,
   e.g. `wiki/core/concepts/non_linear_search.md`.

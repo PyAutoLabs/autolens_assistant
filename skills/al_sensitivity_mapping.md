@@ -31,7 +31,7 @@ Workspace path:
 > TODO: recipe. The pattern: define a `SensitivityMapping` job that takes
 > the base fit + grid of perturber parameters; per cell, simulate, fit
 > base + fit perturbed, store Δlog-evidence. Aggregate into a map. See
-> `PyAutoFit:autofit/non_linear/grid/sensitivity.py` for the framework
+> `PyAutoFit:autofit/non_linear/grid/sensitivity/` for the framework
 > and `PyAutoLens:autolens/lens/sensitivity.py` (if present) for the
 > lensing wrapper.
 

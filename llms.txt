@@ -26,7 +26,8 @@ Read order: [AGENTS.md](./AGENTS.md) → [skills/README.md](./skills/README.md) 
 
 ## Reference
 
-- [wiki/](./wiki): curated PyAuto* reference (`wiki/core/`) plus the strong-lensing science wiki (`wiki/literature/`).
+- [wiki/core/index.md](./wiki/core/index.md): curated PyAuto* reference — stack, lensing concepts, API catalogues, operations.
+- [wiki/literature/index.md](./wiki/literature/index.md): strong-lensing science wiki — concepts, named entities (surveys, lenses), bibliography.
 
 ## Runnable examples & tutorials (elsewhere)
 

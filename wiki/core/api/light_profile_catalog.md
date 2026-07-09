@@ -7,7 +7,7 @@ sources:
       - autogalaxy/profiles/light/linear/
       - autogalaxy/profiles/light/operated/
       - autogalaxy/profiles/light/linear_operated/
-      - autogalaxy/profiles/light/basis.py
+      - autogalaxy/profiles/basis.py
     pinned_commit: 2547ca175a82f365a64af261923e0ac7232655ac
 last_updated: 2026-05-22
 ---
@@ -91,7 +91,7 @@ mge = af.Model(al.lp_basis.Basis, profile_list=gaussians)
 Multi-Gaussian Expansion is the canonical use. Other basis sets (Shapelet expansions)
 work the same way.
 
-Source: `PyAutoGalaxy:autogalaxy/profiles/light/basis.py`.
+Source: `PyAutoGalaxy:autogalaxy/profiles/basis.py`.
 
 ## Operated profiles
 

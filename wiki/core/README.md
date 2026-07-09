@@ -28,7 +28,7 @@ title: <Page title>
 sources:
   - project: PyAutoFit
     paths:
-      - autofit/non_linear/search/nest/nautilus.py
+      - autofit/non_linear/search/nest/nautilus/
     pinned_commit: <sha-or-tag>
 last_updated: 2026-05-22
 ---
@@ -48,7 +48,7 @@ Inside a wiki page, code references use the **project name + path relative to th
 project's repo root**, identical to the skill convention:
 
 ```
-See `PyAutoFit:autofit/non_linear/search/nest/nautilus.py` for the implementation.
+See `PyAutoFit:autofit/non_linear/search/nest/nautilus/` for the implementation.
 ```
 
 Resolve project names via [`../../sources.yaml`](../../sources.yaml). Never embed

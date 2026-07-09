@@ -68,7 +68,7 @@ done
 Order matters — install bottom-up so each pip install can resolve its previous
 dependency.
 
-Resolve git URLs via [`../../sources.yaml`](../../sources.yaml) rather than the inline
+Resolve git URLs via [`../../../sources.yaml`](../../../sources.yaml) rather than the inline
 hard-coded URLs above; the YAML is the source of truth and accommodates URL changes.
 
 ## Version pins worth knowing

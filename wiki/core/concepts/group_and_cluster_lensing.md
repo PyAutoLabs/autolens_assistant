@@ -4,12 +4,9 @@ sources:
   - project: PyAutoGalaxy
     paths:
       - autogalaxy/galaxy/galaxy.py
+      - autogalaxy/galaxy/galaxy_model_csv.py
     pinned_commit: main
-  - project: PyAutoLens
-    paths:
-      - autolens/csv
-    pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Group- and cluster-scale lensing

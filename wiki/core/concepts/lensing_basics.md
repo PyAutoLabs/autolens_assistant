@@ -7,9 +7,9 @@ sources:
     pinned_commit: main
   - project: PyAutoGalaxy
     paths:
-      - autogalaxy/profiles/mass/abstract.py
+      - autogalaxy/profiles/mass/abstract/
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Lensing basics
@@ -48,7 +48,7 @@ kappa = tracer.convergence_2d_from(grid=grid)
 A galaxy-cluster region typically has `κ > 1`; a small foreground halo `κ ≪ 1`.
 
 Source: `PyAutoLens:autolens/lens/tracer.py` (`convergence_2d_from`) and
-`PyAutoGalaxy:autogalaxy/profiles/mass/abstract.py` (`convergence_2d_from`).
+`PyAutoGalaxy:autogalaxy/profiles/mass/abstract/` (`convergence_2d_from`).
 
 ## Magnification
 

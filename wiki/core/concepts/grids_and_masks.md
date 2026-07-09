@@ -5,9 +5,9 @@ sources:
     paths:
       - autoarray/structures/grids/uniform_2d.py
       - autoarray/mask/mask_2d.py
-      - autoarray/operators/over_sampling.py
+      - autoarray/operators/over_sampling/over_sample_util.py
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Grids and masks
@@ -93,7 +93,7 @@ dataset = dataset.apply_over_sampling(over_sample_size_lp=over)
 `over_sample_size_lp` controls light-profile over-sampling. Mass-profile evaluation
 uses a separate `over_sample_size_pixelization` for inversions.
 
-Source: `PyAutoArray:autoarray/operators/over_sampling.py`.
+Source: `PyAutoArray:autoarray/operators/over_sampling/over_sample_util.py`.
 
 When to over-sample more aggressively:
 

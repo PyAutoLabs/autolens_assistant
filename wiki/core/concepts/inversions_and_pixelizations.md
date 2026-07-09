@@ -12,7 +12,7 @@ sources:
       - autolens/lens/to_inversion.py
       - autolens/analysis/positions.py
     pinned_commit: a91febcb1aa12797f9d5ece54c1cbbac528cd087
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Inversions and pixelisations
@@ -46,7 +46,7 @@ pixelization = al.Pixelization(
 source = al.Galaxy(redshift=1.0, pixelization=pixelization)
 ```
 
-Source: `PyAutoArray:autoarray/inversion/pixelization/` and
+Source: `PyAutoArray:autoarray/inversion/pixelization.py` and
 `PyAutoLens:autolens/lens/to_inversion.py`.
 
 ## Mesh choices

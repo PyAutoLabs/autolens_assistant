@@ -4,12 +4,13 @@ sources:
   - project: PyAutoLens
     paths:
       - autolens/lens
+      - autolens/lens/los.py
     pinned_commit: main
   - project: PyAutoGalaxy
     paths:
       - autogalaxy/profiles/mass/dark
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Substructure and subhaloes
@@ -98,6 +99,29 @@ PyAutoLens supports this distinction through its general multi-plane
 tracing machinery. Inference-wise, the practical lesson is that the
 population model should not collapse everything into "subhaloes" unless
 line-of-sight contributions have been modeled or marginalized over.
+
+### Simulating LOS halo populations
+
+PyAutoLens ships dedicated machinery for generating realistic LOS
+populations, in `PyAutoLens:autolens/lens/los.py`:
+
+- **`LOSSampler`** draws haloes from a cosmological halo mass function
+  within a light-cone geometry around the lens, converts them to
+  `al.mp.NFWTruncatedSph` profiles, and distributes them over multiple
+  redshift planes between the observer and the source.
+- **`los_planes_from`** assembles the sampled haloes into the per-plane
+  galaxy lists a multi-plane `Tracer` consumes.
+- Each plane also receives an `al.mp.MassSheet` with **negative
+  convergence**, compensating the mean convergence of the halo
+  population so total mass is conserved (following He et al. 2022,
+  MNRAS 511, 3046). Without these sheets the LOS population
+  systematically over-lenses: only the *fluctuations* about the mean
+  density should perturb the images, not the mean itself.
+
+The workspace example is
+`autolens_workspace:scripts/imaging/features/advanced/los_halos/simulator.py`
+(with a JAX variant alongside), which also writes the halo sample list
+and per-plane sheet values out as diagnostics.
 
 ## Subhalo mass parameterisations
 

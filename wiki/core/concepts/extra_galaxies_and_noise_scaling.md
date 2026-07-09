@@ -4,9 +4,10 @@ sources:
   - project: PyAutoArray
     paths:
       - autoarray/dataset/imaging/dataset.py
+      - autoarray/dataset/dataset_model.py
       - autoarray/mask/mask_2d.py
     pinned_commit: main
-last_updated: 2026-05-29
+last_updated: 2026-07-09
 ---
 
 # Extra galaxies and noise scaling
@@ -61,6 +62,30 @@ A `mask_extra_galaxies.fits` is created interactively with the data-preparation 
 manual script (`.../data_preparation/examples/optional/mask_extra_galaxies.py`).
 
 Source: `PyAutoArray:autoarray/dataset/imaging/dataset.py` (`apply_noise_scaling`).
+
+## Sky background
+
+The other light in every image that is not the strong lens is the **sky
+background** — sky glow, zodiacal light and unresolved field sources. Data
+reduction normally subtracts it, but the subtraction is never perfect, and its
+residual is degenerate with the faint outskirts of the lens galaxy's light: an
+over-subtracted sky can masquerade as a smaller effective radius or steeper
+Sersic index, and the formal errors on those parameters will be underestimated
+if the sky is assumed perfect.
+
+When low-surface-brightness structure matters, fit the sky as a model
+component: `al.DatasetModel(background_sky_level=...)` adds the sky level as a
+free parameter of the non-linear search (one extra dimension), so the
+posterior on every light-profile parameter marginalises over the sky
+uncertainty. The same `DatasetModel` object also carries `grid_offset` and
+`grid_rotation_angle`, the nuisance parameters used for astrometric offsets in
+multi-dataset fitting (see
+[`multi_wavelength`](./multi_wavelength.md)).
+
+Source: `PyAutoArray:autoarray/dataset/dataset_model.py`. Workspace example:
+`autolens_workspace:scripts/imaging/features/advanced/sky_background/modeling.py`
+(fits a dataset simulated *without* sky subtraction, so the image outskirts sit
+at the sky level rather than zero).
 
 ## Galaxy-scale vs group-scale
 

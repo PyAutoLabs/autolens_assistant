@@ -35,7 +35,8 @@ ranges.
 
 > TODO: recipe. Pattern: `model = al.csv.model_from(mass_csv=Path("mass.csv"),
 > light_csv=Path("light.csv"), point_csv=Path("point.csv"))` (verify
-> exact API in `PyAutoLens:autolens/csv/...` — module name may differ).
+> exact API in `PyAutoGalaxy:autogalaxy/galaxy/galaxy_model_csv.py`; the
+> workspace walkthrough is `autolens_workspace:scripts/cluster/csv_api.py`).
 
 ## Branch — adding scaling-tier members
 
