@@ -16,7 +16,7 @@ sources:
   - project: PyAutoLens
     paths: [autolens/config/]
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Configuration files
@@ -28,20 +28,21 @@ loads them (with override layering); the other packages query them via
 You rarely write code that calls `Conf.instance` directly — but you will edit YAMLs
 when you want to change default priors, plotting defaults, or output paths.
 
-## The five `general.yaml` / `notation.yaml` / `output.yaml` triads
+## What each package's `config/` ships
 
-Each package's `config/` has a `general.yaml` (runtime flags), `notation.yaml` (plot
-label conventions and unit strings), and `output.yaml` (where results are written).
+The file set differs per package — not every package has every YAML:
 
-- `PyAutoArray:autoarray/config/general.yaml` — grid layout defaults, numba flags.
-- `PyAutoArray:autoarray/config/notation.yaml` — `y, x` arcsecond axis labels.
-- `PyAutoArray:autoarray/config/output.yaml` — array-output filename conventions.
-- `PyAutoFit:autofit/config/general.yaml` — search runtime defaults.
-- `PyAutoFit:autofit/config/logging.yaml` — log levels.
-- `PyAutoFit:autofit/config/notation.yaml` — parameter symbol/LaTeX strings.
-- `PyAutoFit:autofit/config/output.yaml` — `output/` folder structure.
-- `PyAutoGalaxy:autogalaxy/config/...` — galaxy + profile defaults.
-- `PyAutoLens:autolens/config/...` — lensing-specific overrides.
+- `PyAutoArray:autoarray/config/` — `general.yaml` (grid/runtime flags),
+  `logging.yaml`, `visualize/`.
+- `PyAutoFit:autofit/config/` — `general.yaml` (search runtime defaults),
+  `logging.yaml`, `notation.yaml` (parameter symbol/LaTeX strings),
+  `output.yaml` (`output/` folder structure), `non_linear/` (per-search
+  defaults), `priors/`, `visualize/`.
+- `PyAutoGalaxy:autogalaxy/config/` — `general.yaml`, `latent.yaml`,
+  `notation.yaml`, `output.yaml`, `priors/`, `visualize/`.
+- `PyAutoLens:autolens/config/` — `general.yaml`, `latent.yaml`,
+  `non_linear.yaml`, `output.yaml`, `visualize/` (its priors ride on
+  PyAutoGalaxy's — there is no `autolens/config/priors/`).
 
 ## Priors
 
@@ -52,15 +53,19 @@ log-uniform between 0.01 and 8 arcseconds by default". Lives in
 `PyAutoFit:autofit/config/priors/` ships the meta-templates (`template.yaml`,
 `model.yaml`, `profile.yaml`).
 
-`PyAutoGalaxy:autogalaxy/config/priors/` ships per-class priors:
+`PyAutoGalaxy:autogalaxy/config/priors/` ships per-class priors, organised by
+family:
 
-- `Sersic.yaml` — defaults for all Sersic-family classes.
-- `Isothermal.yaml` / `PowerLaw.yaml` / `NFW.yaml` — defaults per mass profile.
+- `light/` and `mass/` — one YAML per profile class (Sersic family,
+  Isothermal, PowerLaw, NFW, …).
+- `galaxy/`, `ellipse/`, `point_sources.yaml` — composite-object defaults.
 - `cosmology.yaml` — cosmology constructor defaults.
 - `mesh/` — pixelisation mesh defaults.
-- `basis.yaml` — basis-expansion defaults.
+- `basis.yaml` — basis-expansion defaults; `dataset_model.yaml` — the
+  `DatasetModel` nuisance parameters (sky level, grid offset).
 
-`PyAutoLens:autolens/config/priors/` adds lensing-specific overrides.
+PyAutoLens no longer ships its own `config/priors/` — lensing classes take
+their defaults from the PyAutoGalaxy priors above.
 
 When you compose `af.Model(al.lp.Sersic)`, the constructor parameters get their
 default priors from these YAMLs.
@@ -77,12 +82,9 @@ sersic.intensity = af.UniformPrior(lower_limit=0.01, upper_limit=10.0)
 ## Visualize
 
 `<pkg>/config/visualize/` controls plot styling — colour maps, axis labels, output
-formats. Two sub-flavours per package:
-
-- `plots.yaml` / `plots_settings.yaml` — per-figure defaults (title, axis labels,
-  whether to log-scale).
-- `mat_wrap_1d/` and `mat_wrap_2d/` — matplotlib wrapper defaults (cmap, figure
-  size, etc.).
+formats — via a `plots.yaml` (per-figure defaults) and, in PyAutoGalaxy, a
+`general.yaml`. The old `mat_wrap_1d/` / `mat_wrap_2d/` wrapper folders belonged
+to the removed object-oriented plot system and no longer exist.
 
 Edit these to change plotting defaults workspace-wide.
 
@@ -104,10 +106,12 @@ defaults — extend or override entries there rather than editing the library YA
 
 ## Common tweaks
 
-- **Tighten a default prior** — edit the relevant YAML under `<pkg>/config/priors/`,
-  workspace-overlay or in-place.
-- **Change the default colormap** — edit `<pkg>/config/visualize/mat_wrap_2d/Cmap.yaml`.
-- **Change output filenames** — edit `<pkg>/config/output.yaml`.
+- **Tighten a default prior** — edit the relevant YAML under
+  `PyAutoGalaxy:autogalaxy/config/priors/` (or `PyAutoFit:autofit/config/priors/`
+  for the templates), workspace-overlay or in-place.
+- **Change plot styling / colormaps** — edit `<pkg>/config/visualize/plots.yaml`.
+- **Change output filenames** — edit `<pkg>/config/output.yaml` (PyAutoFit,
+  PyAutoGalaxy, PyAutoLens).
 - **Suppress noisy logs** — edit `PyAutoFit:autofit/config/logging.yaml`.
 
 ## See also

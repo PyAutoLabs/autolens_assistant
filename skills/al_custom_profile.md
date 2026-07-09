@@ -117,7 +117,7 @@ class CustomNFW(ag.mp.MassProfile):
         raise NotImplementedError("Wire up your deflection integral here.")
 ```
 
-Source: `PyAutoGalaxy:autogalaxy/profiles/mass/abstract.py` — interface.
+Source: `PyAutoGalaxy:autogalaxy/profiles/mass/abstract/` — interface.
 `PyAutoGalaxy:autogalaxy/profiles/mass/dark/nfw.py` — canonical NFW for shape.
 
 For the physics of what each method represents (convergence = surface mass density,

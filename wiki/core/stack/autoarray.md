@@ -7,9 +7,9 @@ sources:
       - autoarray/dataset/
       - autoarray/mask/
       - autoarray/operators/
-      - README.rst
+      - README.md
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # PyAutoArray — arrays, grids, masks, datasets
@@ -66,7 +66,7 @@ grid = grid.apply_over_sampling(over_sample_size=over)
 ```
 
 Sub-grids are denser where it matters and coarser everywhere else. Source:
-`PyAutoArray:autoarray/operators/over_sampling.py`.
+`PyAutoArray:autoarray/operators/over_sampling/over_sample_util.py`.
 
 ## Inversions
 

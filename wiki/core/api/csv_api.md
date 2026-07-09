@@ -1,11 +1,12 @@
 ---
 title: CSV API — spreadsheet-driven cluster model composition
 sources:
-  - project: PyAutoLens
+  - project: PyAutoGalaxy
     paths:
-      - autolens/csv
+      - autogalaxy/galaxy/galaxy_model_csv.py
+      - autogalaxy/galaxy/galaxy_table.py
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # CSV API — cluster-scale model composition
@@ -32,7 +33,9 @@ worth it when catalog size dominates the cognitive load.
 
 ## Schema — `mass.csv`, `light.csv`, `point.csv`
 
-The exact schema lives in `PyAutoLens:autolens/csv/`, but the conceptual
+The exact schema lives in `PyAutoGalaxy:autogalaxy/galaxy/galaxy_model_csv.py`
+(with `PyAutoGalaxy:autogalaxy/galaxy/galaxy_table.py` for the
+`output_to_csv` / `list_from_csv` table helpers), but the conceptual
 layout is stable:
 
 - one row per galaxy or point-source component

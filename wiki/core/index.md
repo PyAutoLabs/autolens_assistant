@@ -1,7 +1,7 @@
 ---
 title: Core wiki — PyAuto* reference
 sources: []
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Core wiki — PyAuto\* reference
@@ -30,8 +30,8 @@ Physics + framework material the skills lean on.
   linear vs. operated.
 - [Mass profiles](./concepts/mass_profiles.md) — Isothermal, PowerLaw, NFW, external
   shear, multipole.
-- [Galaxy and plane](./concepts/galaxy_and_plane.md) — how galaxies, redshifts, and
-  the tracer compose.
+- [Galaxy and Galaxies](./concepts/galaxy_and_plane.md) — how galaxies, redshifts,
+  and the tracer's redshift planes compose.
 - [Grids and masks](./concepts/grids_and_masks.md) — slim/native, over-sampling,
   sub-grids.
 - [Extra galaxies and noise scaling](./concepts/extra_galaxies_and_noise_scaling.md) —
@@ -46,7 +46,7 @@ Physics + framework material the skills lean on.
 - [Cosmology and units](./concepts/cosmology_and_units.md) — angular ↔ physical
   conversions.
 - [Point-source lensing](./concepts/point_source.md) — positions, flux
-  ratios, image-position solvers.
+  ratios, deblending, image-position solvers.
 - [Time-delay cosmography](./concepts/time_delay_cosmography.md) — H0
   from time-delay lenses, Fermat potential, mass-sheet degeneracy.
 - [Substructure and subhaloes](./concepts/substructure_and_subhalos.md)
@@ -57,8 +57,9 @@ Physics + framework material the skills lean on.
   — extra galaxies, scaling relations, cluster-scale composition.
 - [Multi-wavelength / multi-dataset](./concepts/multi_wavelength.md) —
   joint fits across bands and instruments.
-- [Weak lensing](./concepts/weak_lensing.md) — `WeakDataset` shear
-  catalogue fits.
+- [Weak lensing](./concepts/weak_lensing.md) — `WeakDataset` / `FitWeak`
+  shear-catalogue fits, reduced shear, real-catalogue workflow, joint
+  strong+weak.
 - [Hierarchical / graphical models](./concepts/hierarchical_models.md)
   — population-level inference, expectation propagation.
 - [Interferometer theory](./concepts/interferometer_theory.md) —
@@ -77,7 +78,8 @@ Task-oriented catalogues — comprehensive lists of what's available, with one-l
 - [Plotting](./api/plotting.md) — `aplt` entry points, subplot helpers, direct plotting functions.
 - [Configuration](./api/configuration.md) — `<pkg>/config/*.yaml` semantics.
 - [Analysis objects](./api/analysis_objects.md) — `AnalysisImaging`,
-  `AnalysisInterferometer`, `AnalysisPoint`.
+  `AnalysisInterferometer`, `AnalysisPoint`, factor-graph multi-dataset
+  fits, custom `Analysis` subclasses.
 - [Aggregator and result database](./api/aggregator.md) — bulk loading
   of completed fits, derived quantities, optional SQLite backend.
 - [CSV API](./api/csv_api.md) — cluster-scale spreadsheet model
@@ -89,6 +91,17 @@ Task-oriented catalogues — comprehensive lists of what's available, with one-l
 
 - [Installation](./operations/installation.md) — pip vs. editable clone, version
   pins.
+- [Dataset layout](./operations/dataset.md) — on-disk dataset conventions and
+  `info.json`.
 - [Sandbox / restricted environments](./operations/sandbox.md) — `NUMBA_CACHE_DIR`,
   `MPLCONFIGDIR`, `PYAUTO_TEST_MODE` and friends.
-- [HPC](./operations/hpc.md) — running fits on a cluster.
+- [HPC](./operations/hpc.md) — running fits on a cluster (concepts: cores,
+  JAX/GPU, SLURM).
+- [HPC infrastructure](./operations/hpc_infrastructure.md) — the `hpc/` template,
+  batch scripts and the `sync` CLI shipped with this workspace.
+
+## External resources
+
+- [External routing index](./external/index.md) — HowToLens, RTD and
+  `autolens_workspace` catalogues, audience routing, and the per-skill
+  citation map.

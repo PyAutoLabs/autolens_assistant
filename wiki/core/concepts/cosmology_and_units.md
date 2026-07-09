@@ -5,7 +5,7 @@ sources:
     paths:
       - autogalaxy/cosmology/
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Cosmology and units
@@ -19,7 +19,7 @@ Source: `PyAutoGalaxy:autogalaxy/cosmology/`.
 
 ## Default cosmology
 
-Each `Tracer` (or `Plane`, or analysis object) carries a cosmology. The default is
+Each `Tracer` (or analysis object) carries a cosmology. The default is
 Planck 2018 via astropy:
 
 ```python

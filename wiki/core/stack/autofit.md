@@ -7,9 +7,9 @@ sources:
       - autofit/non_linear/
       - autofit/aggregator/
       - autofit/database/
-      - README.rst
+      - README.md
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # PyAutoFit — model composition + non-linear search

@@ -4,9 +4,8 @@ sources:
   - project: autolens_workspace
     paths:
       - scripts/guides/modeling/slam_start_here.py
-      - slam/
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # SLaM pipeline — Source, Light, Mass
@@ -95,12 +94,16 @@ production tooling, not an introductory workflow.
 
 ## How to actually run it
 
-The SLaM driver functions live in the workspace at `autolens_workspace:slam/`, not in
-PyAutoLens itself. From a workspace clone:
+The SLaM driver functions live in the workspace, not in PyAutoLens itself — defined
+**inline** in `autolens_workspace:scripts/guides/modeling/slam_start_here.py` (the
+canonical reference for pipeline structure and function signatures; there is no
+separate `slam/` package). Per-topic SLaM examples live under each topic's
+`features/slam/` folder. From a workspace clone:
 
-```python
-from autolens_workspace.slam import slam_main
-slam_main(dataset=dataset, redshift_lens=0.5, redshift_source=1.0, ...)
+```bash
+# The pipeline stages (source_lp -> source_pix -> light -> mass) are plain
+# functions defined inline in the script; copy it and adapt the stages.
+python scripts/guides/modeling/slam_start_here.py
 ```
 
 See [`../../../skills/al_run_slam_pipeline.md`](../../../skills/al_run_slam_pipeline.md).

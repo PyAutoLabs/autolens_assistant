@@ -151,7 +151,7 @@ project's repo root**, resolvable via [`../sources.yaml`](../sources.yaml).
 
 Good:
 
-> See `PyAutoFit:autofit/non_linear/search/nest/nautilus.py` for the search's default
+> See `PyAutoFit:autofit/non_linear/search/nest/nautilus/` for the search's default
 > settings, and `wiki/core/api/searches.md#nautilus` for when to pick it.
 
 Bad:

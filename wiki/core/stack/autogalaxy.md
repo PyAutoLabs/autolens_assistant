@@ -6,11 +6,11 @@ sources:
       - autogalaxy/profiles/light/
       - autogalaxy/profiles/mass/
       - autogalaxy/galaxy/
-      - autogalaxy/plane/
+      - autogalaxy/galaxy/
       - autogalaxy/cosmology/
-      - README.rst
+      - README.md
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # PyAutoGalaxy — light and mass profiles
@@ -28,8 +28,8 @@ PyAutoGalaxy is the *galaxy modelling* layer. It defines:
   external shear, point mass, mass sheets, …) — see
   [`api/mass_profile_catalog`](../api/mass_profile_catalog.md).
 - **`Galaxy`** — composes light + mass profiles with a redshift.
-- **`Plane`** — one redshift slice of a lens system; multiple planes make a tracer
-  (in PyAutoLens).
+- **`Galaxies`** — one redshift slice of a lens system (lensing theory's "plane");
+  multiple make a tracer (in PyAutoLens).
 - **Cosmology** helpers — distance + redshift conversions.
 
 It's used both standalone (for non-lens galaxy fitting) and as PyAutoLens's profile

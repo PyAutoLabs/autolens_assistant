@@ -31,11 +31,11 @@ title: Non-linear searches
 sources:
   - project: PyAutoFit
     paths:
-      - autofit/non_linear/search/nest/nautilus.py
-      - autofit/non_linear/search/nest/dynesty.py
-      - autofit/non_linear/search/mcmc/emcee.py
-      - autofit/non_linear/search/mle/bfgs.py
-      - autofit/non_linear/search/mle/pyswarms.py
+      - autofit/non_linear/search/nest/nautilus/
+      - autofit/non_linear/search/nest/dynesty/
+      - autofit/non_linear/search/mcmc/emcee/
+      - autofit/non_linear/search/mle/bfgs/
+      - autofit/non_linear/search/mle/pyswarms/
     pinned_commit: <sha-or-tag>
 last_updated: 2026-05-22
 ---
@@ -93,7 +93,7 @@ unaffected prose just because the page was touched — small, reviewable diffs.
 
 When rewriting:
 
-- Cite source code as `<Project>:<path>` (e.g. `PyAutoFit:autofit/non_linear/search/nest/nautilus.py`).
+- Cite source code as `<Project>:<path>` (e.g. `PyAutoFit:autofit/non_linear/search/nest/nautilus/`).
 - Update tables of classes / functions / parameters to match what's actually exported.
 - Add new entries when the source has new public items in `__all__` or top-level
   imports.

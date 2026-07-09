@@ -8,9 +8,9 @@ sources:
       - autolens/interferometer/model/
       - autolens/point/
       - autolens/quantity/
-      - README.rst
+      - README.md
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # PyAutoLens — strong lensing umbrella
@@ -31,7 +31,7 @@ packages.
 ## Tracer — multi-plane ray tracing
 
 The headline lensing object. A `Tracer` takes an ordered list of `Galaxy` objects
-(or `Plane` objects for multi-plane systems) and knows how to ray-trace image-plane
+(grouped into per-redshift `Galaxies` planes for multi-plane systems) and knows how to ray-trace image-plane
 grids through them.
 
 ```python

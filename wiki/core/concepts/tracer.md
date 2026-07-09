@@ -4,16 +4,16 @@ sources:
   - project: PyAutoLens
     paths:
       - autolens/lens/tracer.py
-      - autolens/lens/plane.py
+      - autolens/lens/tracer_util.py
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Tracer — multi-plane ray tracing
 
 `al.Tracer` is the central lensing object. It composes one or more `Galaxy` objects
-(or `Plane` objects, each grouping galaxies at the same redshift) and knows how to
-ray-trace a grid of image-plane coordinates back to each subsequent plane.
+(grouped internally into one `Galaxies` collection per redshift plane) and knows how
+to ray-trace a grid of image-plane coordinates back to each subsequent plane.
 
 Source: `PyAutoLens:autolens/lens/tracer.py`.
 
@@ -28,9 +28,9 @@ source = al.Galaxy(redshift=1.0, bulge=al.lp.SersicCore(...))
 tracer = al.Tracer(galaxies=[lens, source])
 ```
 
-`Tracer` reads the redshifts off the galaxies and constructs `Plane` objects
-internally — one per unique redshift, in ascending order. With two redshifts you get
-two planes; with three or more you get a multi-plane system.
+`Tracer` reads the redshifts off the galaxies and groups them into `Galaxies`
+collections internally — one per unique redshift, in ascending order. With two
+redshifts you get two planes; with three or more you get a multi-plane system.
 
 ## What a tracer computes
 
@@ -56,7 +56,7 @@ For physical-unit equivalents, see [`cosmology_and_units`](./cosmology_and_units
 
 ```python
 tracer.galaxies                         # list of Galaxy objects, by redshift order
-tracer.planes                           # list of Plane objects, each a redshift slice
+tracer.planes                           # list of Galaxies collections, one per redshift slice
 tracer.galaxies[0].image_2d_from(grid)  # image-plane image of just the first galaxy
 tracer.planes[-1].image_2d_from(grid)   # image of the source plane
 ```
@@ -84,7 +84,20 @@ The relative angular-diameter distances `D_ij` between every pair of planes are
 computed from a cosmology (default Planck 2018; set explicitly on the tracer if you
 need otherwise).
 
-Source: `PyAutoLens:autolens/lens/plane.py`.
+The showcase multi-plane application is the **double Einstein ring** — two
+sources at different redshifts behind one lens, where the inner source is
+itself a deflector of the outer one. Because the ring radii depend on distance
+ratios between *three* planes, these systems constrain cosmological parameters
+in a way single-ring lenses cannot. Fitting them is a hard initialisation
+problem (the tutorial `modeling.py` only converges by starting at the truth):
+the practical recipe is the chained two-search script, and SLaM for production.
+Workspace:
+`autolens_workspace:scripts/imaging/features/advanced/double_einstein_ring/`
+(`modeling.py` → `chaining.py` → `slam.py`). LOS-halo populations (see
+[`substructure_and_subhalos`](./substructure_and_subhalos.md)) are the other
+routine multi-plane use.
+
+Source: `PyAutoLens:autolens/lens/tracer_util.py`.
 
 ## Pixelised tracer output
 
@@ -101,7 +114,7 @@ max-log-likelihood lens model.
 ## See also
 
 - [`lensing_basics`](./lensing_basics.md) — the physics of every quantity above.
-- [`galaxy_and_plane`](./galaxy_and_plane.md) — what `Galaxy` and `Plane` are.
+- [`galaxy_and_plane`](./galaxy_and_plane.md) — what `Galaxy` and `Galaxies` are.
 - [`../api/analysis_objects`](../api/analysis_objects.md) — how a tracer plugs into
   `AnalysisImaging` for fitting.
 - [`../../../skills/al_plot_tracer.md`](../../../skills/al_plot_tracer.md).

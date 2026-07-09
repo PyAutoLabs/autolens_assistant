@@ -125,10 +125,13 @@ script that skill would generate.
 
 ## Combine — what "complete" looks like
 
-A full refresh pass is complete when all four are true:
+A full refresh pass is complete when all five are true:
 
 - the PyAuto* stack imports in the target environment
 - `autoassistant/audit_skill_apis.py --scope <scope>` reports zero misses
+- `autoassistant/audit_skill_apis.py --check-citations` reports zero missing paths
+  (symbols and citation paths are independent failure axes — see
+  `al_audit_skill_apis` §6)
 - every touched wiki page has either an updated `pinned_commit` or an explicit decision
   that the source diff was cosmetic
 - any materially changed skill recipe has been smoke-tested with `PYAUTO_TEST_MODE=1`

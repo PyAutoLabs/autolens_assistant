@@ -155,6 +155,27 @@ honest re-pin, the partner of `al_update_wiki` step 4):
 python autoassistant/audit_skill_apis.py --write-provenance --page wiki/core/api/<page>.md
 ```
 
+### 6. Citation paths — the layout axis the symbol audit is blind to
+
+A page can cite only live `al.*` symbols while its `` `Project:relative/path` ``
+source citations point at a pre-refactor file layout (module → package moves like
+`nest/nautilus.py` → `nest/nautilus/`, deleted files, renamed READMEs). The
+2026-07-09 release audit found ~30 such stale paths on an otherwise
+0-broken-symbols tree — the two are independent failure axes.
+
+```bash
+python autoassistant/audit_skill_apis.py --check-citations   # 0 ok, 1 on missing path
+```
+
+It scans `skills/`, `wiki/core/`, `AGENTS.md` and `llms.txt` for inline
+`` `<project>:<path>` `` citations (projects from `sources.yaml`) plus each wiki
+page's frontmatter `sources[].paths[]`, and resolves every path against a checkout
+of the cited project (installed → `sources/<project>/` → sibling clone). A path
+containing `...` is a deliberate abbreviation — only its concrete prefix must
+exist. Missing paths are ERRORs; a project with no resolvable checkout downgrades
+to a warning. Run it alongside the symbol audit in every refresh
+(`al_refresh_api_docs`) and before a release.
+
 ERRORs fail the check; warnings (unpinned `main`, unstamped legacy pages) do not unless
 `--strict`, so the release/PR check goes red on genuine forgery/staleness without nuking the
 50+ legacy `main`-pinned pages that predate the discipline.

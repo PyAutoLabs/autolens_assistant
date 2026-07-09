@@ -33,7 +33,7 @@ The workspace path is
 > a `Grid2D` of subhalo positions, refitting at each cell with an added
 > `al.mp.NFW` (or similar). Compare per-cell log evidence to the base
 > evidence; significant gains flag detections. See
-> `PyAutoLens:autolens/lens/subhalo/...` for the subhalo helper module
+> `PyAutoLens:autolens/lens/subhalo.py` for the subhalo helper module
 > if one exists, otherwise compose by hand.
 
 ## Branch — followup on a detection candidate

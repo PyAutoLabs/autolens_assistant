@@ -103,7 +103,7 @@ Source citations:
 - `PyAutoArray:autoarray/dataset/imaging/dataset.py` — `Imaging.from_fits`, `apply_mask`,
   `apply_over_sampling`.
 - `PyAutoArray:autoarray/mask/mask_2d.py` — `Mask2D.circular`.
-- `PyAutoArray:autoarray/operators/over_sampling.py` — `over_sample_size_via_radial_bins_from`.
+- `PyAutoArray:autoarray/operators/over_sampling/over_sample_util.py` — `over_sample_size_via_radial_bins_from`.
 
 Read [`wiki/core/concepts/grids_and_masks.md`](../wiki/core/concepts/grids_and_masks.md) for
 *why* over-sampling matters (steep light profiles in pixels near the centre alias

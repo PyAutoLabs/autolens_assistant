@@ -8,9 +8,9 @@ sources:
     pinned_commit: main
   - project: PyAutoGalaxy
     paths:
-      - autogalaxy/profiles/point/abstract.py
+      - autogalaxy/profiles/point_sources.py
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
 # Point-source lensing
@@ -52,6 +52,28 @@ components present in the dataset and supported by the chosen point
 profile. Sources:
 `PyAutoLens:autolens/point/model/analysis.py` and
 `PyAutoLens:autolens/point/fit/dataset.py`.
+
+## Where the positions come from — deblending
+
+The `PointDataset` positions must first be *measured* from imaging.
+Reading off the brightest 2 or 4 pixels (ds9, a GUI) is often good
+enough, but it gives no sub-pixel precision, ignores the PSF, and blends
+the point-source fluxes with the lens galaxy's light.
+
+The **deblending** workflow fixes this by fitting the `Imaging` data
+directly, modeling each multiple image as an independent PSF-convolved
+light profile **in the image plane** — deliberately *without* a
+source-plane point source or ray tracing. The reason is microlensing:
+stars in the lens galaxy boost or suppress each image's magnification in
+a way no smooth mass model can capture, so tying the image fluxes
+together through a source-plane model would bias them. Leaving each
+image's `intensity` free absorbs the microlensing, which is also why
+fluxes are usually down-weighted or omitted in point-source fits.
+
+The fit simultaneously models the lens galaxy's light, so its output is
+sub-pixel image positions, PSF-deblended fluxes *and* lens light
+properties — ready to feed into a `PointDataset`. Workspace example:
+`autolens_workspace:scripts/point_source/features/deblending/modeling.py`.
 
 ## Solving the lens equation for image positions
 

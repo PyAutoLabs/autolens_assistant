@@ -13,8 +13,8 @@ sources:
       - autofit/graphical/declarative/collection.py
       - autofit/graphical/declarative/abstract.py
     pinned_commit: ce2baa2b6611de99922e04d44b272de1be3ceb8e
-last_updated: 2026-06-22
-content_sha256: 8c415d521a9a0e4789eeb9ef69cb9bc9371ae5e7131e4035506554ed443d765b
+last_updated: 2026-07-09
+content_sha256: 4d96296dca40cf01909f7426f1639417b9fc0af02124e6389e649bae26baa21b
 ---
 
 # Analysis objects
@@ -143,6 +143,29 @@ loglike = analysis.log_likelihood_function(instance=instance)
 
 This evaluates the model at a specific parameter vector and returns the
 log-likelihood. Useful for prior-bound sanity checks.
+
+## Custom `Analysis` subclasses
+
+When a dataset doesn't fit any built-in analysis, write your own: subclass
+`af.Analysis`, store the dataset in `__init__`, and implement
+`log_likelihood_function(instance)` — the instance is the lens model at one
+parameter vector (galaxies, profiles, all as concrete objects), and the return
+value is the log likelihood the non-linear search samples. Everything else
+(searches, priors, samples, the aggregator) works unchanged, because the
+`Analysis` class is PyAutoFit's only contract between model and data.
+
+The built-in analyses are the reference implementations — they live in the
+`imaging/model/`, `interferometer/model/`, `point/model/` packages of
+PyAutoGalaxy/PyAutoLens, and a shortened `AnalysisImaging` is walked through in
+the workspace guide. Weak lensing is the instructive precedent: it began life
+as exactly this kind of custom analysis before graduating into the built-in
+`AnalysisWeak` (see [`../concepts/weak_lensing.md`](../concepts/weak_lensing.md)).
+
+Workspace guide: `autolens_workspace:scripts/guides/advanced/custom_analysis.py`.
+PyAutoFit's analysis cookbook
+(https://pyautofit.readthedocs.io/en/latest/cookbooks/analysis.html) is the
+concise API reference. This is the ground the
+[`al_custom_analysis`](../../../skills/al_custom_analysis.md) skill covers.
 
 ## Visualisations during fit
 

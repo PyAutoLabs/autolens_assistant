@@ -86,7 +86,7 @@ Symptoms: parameter posteriors are tight but at unphysical values (einstein radi
 The inversion has over-fitted background noise into the source plane.
 
 - **Regularisation too low.** Bump the regularisation coefficient range — see
-  `PyAutoLens:autolens/inversion/regularization/`. The `ConstantSplit` regularisation
+  `PyAutoArray:autoarray/inversion/regularization/`. The `ConstantSplit` regularisation
   with sensible coefficients usually works.
 - **No positions penalty.** Add a `PositionsLH` to prevent the inversion from
   demagnifying the source into infinity.

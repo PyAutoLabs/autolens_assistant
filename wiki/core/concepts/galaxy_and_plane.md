@@ -1,22 +1,24 @@
 ---
-title: Galaxy and Plane
+title: Galaxy and Galaxies (redshift planes)
 sources:
   - project: PyAutoGalaxy
     paths:
       - autogalaxy/galaxy/galaxy.py
-      - autogalaxy/plane/plane.py
+      - autogalaxy/galaxy/galaxies.py
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-09
 ---
 
-# Galaxy and Plane
+# Galaxy and Galaxies (redshift planes)
 
 The two structural objects between profiles (`al.lp.*`, `al.mp.*`) and a `Tracer`.
-A `Galaxy` bundles light + mass profiles at one redshift; a `Plane` (used internally
-by `Tracer`) groups galaxies at the same redshift.
+A `Galaxy` bundles light + mass profiles at one redshift; a `Galaxies` collection
+(used internally by `Tracer`) groups galaxies at the same redshift — what lensing
+theory calls a *plane*. (Older PyAutoLens versions had a dedicated `Plane` class;
+it no longer exists — the redshift slice is now just a `Galaxies` collection.)
 
 Source: `PyAutoGalaxy:autogalaxy/galaxy/galaxy.py` and
-`PyAutoGalaxy:autogalaxy/plane/plane.py`.
+`PyAutoGalaxy:autogalaxy/galaxy/galaxies.py`.
 
 ## Galaxy
 
@@ -55,22 +57,24 @@ defl = galaxy.deflections_yx_2d_from(grid)  # sum of mass profile deflections
 These delegate to the profiles. For lensing-specific operations (ray tracing,
 critical curves, magnification), wrap the galaxies in a `Tracer`.
 
-## Plane
+## Galaxies — the redshift-plane grouping
 
-A `Plane` groups galaxies at the *same* redshift. Most users never construct one
-manually — `Tracer` builds them internally from the input galaxy list:
+`al.Galaxies` is a list-like collection of galaxies that computes summed
+quantities (`image_2d_from`, `convergence_2d_from`, `deflections_yx_2d_from`)
+over its members. `Tracer` groups its input galaxy list by redshift into one
+`Galaxies` per plane:
 
 ```python
 tracer = al.Tracer(galaxies=[lens, source])
-tracer.planes      # [Plane(z=0.5, [lens]), Plane(z=1.0, [source])]
+tracer.planes      # [Galaxies([lens]), Galaxies([source])] — ascending redshift
 ```
 
-You'd build a `Plane` directly only when you have multiple galaxies at exactly the
-same redshift and want them as a single unit (e.g. a cluster lens with member
-galaxies). The standard workflow is to pass the full list to `Tracer` and let it
-group by redshift.
+You'd build a `Galaxies` directly only when you want several same-redshift
+galaxies treated as a single unit outside a tracer (e.g. plotting a cluster
+plane's total convergence). The standard workflow is to pass the full list to
+`Tracer` and let it group by redshift.
 
-Source: `PyAutoGalaxy:autogalaxy/plane/plane.py`.
+Source: `PyAutoGalaxy:autogalaxy/galaxy/galaxies.py`.
 
 ## Galaxies in `af.Model`
 

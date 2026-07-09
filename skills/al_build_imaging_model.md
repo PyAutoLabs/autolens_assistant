@@ -117,7 +117,7 @@ for g in gaussian_per_basis[1:]:
 lens_bulge = af.Model(al.lp_basis.Basis, profile_list=gaussian_per_basis)
 ```
 
-See `PyAutoGalaxy:autogalaxy/profiles/light_linear/` for the linear-profile classes.
+See `PyAutoGalaxy:autogalaxy/profiles/light/linear/` for the linear-profile classes.
 
 ## Branch — pixelised source
 
