@@ -169,12 +169,16 @@ python autoassistant/audit_skill_apis.py --check-citations   # 0 ok, 1 on missin
 
 It scans `skills/`, `wiki/core/`, `AGENTS.md` and `llms.txt` for inline
 `` `<project>:<path>` `` citations (projects from `sources.yaml`) plus each wiki
-page's frontmatter `sources[].paths[]`, and resolves every path against a checkout
-of the cited project (installed → `sources/<project>/` → sibling clone). A path
-containing `...` is a deliberate abbreviation — only its concrete prefix must
-exist. Missing paths are ERRORs; a project with no resolvable checkout downgrades
-to a warning. Run it alongside the symbol audit in every refresh
-(`al_refresh_api_docs`) and before a release.
+page's frontmatter `sources[].paths[]`, and resolves every path against a source
+tree of the cited project: a full checkout (installed-from-git →
+`sources/<project>/` → sibling clone) checks everything; a plain pip install
+(CI) checks package-internal paths (`autofit/…`) and skips repo-level ones
+(README.md, docs/) rather than false-flagging them. A path containing `...` is a
+deliberate abbreviation — only its concrete prefix must exist. Missing paths are
+ERRORs; a project with no resolvable tree downgrades to a warning. Run it
+alongside the symbol audit in every refresh (`al_refresh_api_docs`) and before a
+release; it is also the fifth leg of the `wiki-currency` CI workflow, so PRs are
+graded on it automatically.
 
 ERRORs fail the check; warnings (unpinned `main`, unstamped legacy pages) do not unless
 `--strict`, so the release/PR check goes red on genuine forgery/staleness without nuking the

@@ -104,11 +104,15 @@ jobs:
             echo >> "$REPORT"
           }
 
-          # The released stack installed above is the ground truth for all four checks.
+          # The released stack installed above is the ground truth for all five checks.
+          # Citations resolve against the pip install (package-internal paths only —
+          # repo-level cites like README.md are skipped here and checked by local runs
+          # with full checkouts; see skills/al_audit_skill_apis.md §6).
           run "Version drift (--check-version)"     --check-version
           run "Symbol audit (--scope all)"          --scope all
           run "Idiom deny-list (--lint-idioms)"     --lint-idioms
           run "Provenance (--check-provenance)"     --check-provenance
+          run "Citation paths (--check-citations)"  --check-citations
 
           cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
           if [ "$fail" -ne 0 ]; then
