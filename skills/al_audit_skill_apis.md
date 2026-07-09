@@ -169,11 +169,21 @@ python autoassistant/audit_skill_apis.py --check-citations   # 0 ok, 1 on missin
 
 It scans `skills/`, `wiki/core/`, `AGENTS.md` and `llms.txt` for inline
 `` `<project>:<path>` `` citations (projects from `sources.yaml`) plus each wiki
-page's frontmatter `sources[].paths[]`, and resolves every path against a checkout
-of the cited project (installed → `sources/<project>/` → sibling clone). A path
-containing `...` is a deliberate abbreviation — only its concrete prefix must
-exist. Missing paths are ERRORs; a project with no resolvable checkout downgrades
-to a warning. Run it alongside the symbol audit in every refresh
+page's frontmatter `sources[].paths[]`, and resolves every path against a source
+tree of the cited project: a full checkout (installed-from-git →
+`sources/<project>/` → sibling clone) checks everything; a plain pip install is
+the last-resort fallback, checking package-internal paths (`autofit/…`) and
+skipping repo-level ones (README.md, docs/) rather than false-flagging them. A
+path containing `...` is a deliberate abbreviation — only its concrete prefix
+must exist. Missing paths are ERRORs; a project with no resolvable tree
+downgrades to a warning.
+
+**Ground truth is the ref the docs pin, not the released wheel.** The docs track
+`main`, so a post-release file move (e.g. a sampler module becoming a package)
+would false-fail against a pip release. The `wiki-currency` CI workflow therefore
+shallow-clones the cited repos into `sources/` before running this as its fifth
+leg — the release install stays the ground truth only for the symbol / version /
+idiom checks. Run it alongside the symbol audit in every refresh
 (`al_refresh_api_docs`) and before a release.
 
 ERRORs fail the check; warnings (unpinned `main`, unstamped legacy pages) do not unless

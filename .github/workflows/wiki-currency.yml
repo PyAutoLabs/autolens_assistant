@@ -76,6 +76,24 @@ jobs:
             pip install autolens
           fi
 
+      # Citation paths are graded against the refs the docs pin (`main` checkouts),
+      # NOT the pip-installed release above — post-release file moves would otherwise
+      # false-fail the docs. The pip install stays the ground truth for the symbol /
+      # version / idiom checks (what users actually run); the clones land in sources/,
+      # the resolver's documented fallback. autolens_workspace is sparse-cloned to its
+      # cited surface (scripts/ + root catalogues) to skip the heavy dataset blobs.
+      - name: Clone cited source trees (citation ground truth)
+        run: |
+          mkdir -p sources
+          for repo in PyAutoConf PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
+            git clone --quiet --depth 1 "https://github.com/PyAutoLabs/$repo" "sources/$repo"
+          done
+          git clone --quiet --depth 1 --filter=blob:none --sparse \
+            https://github.com/PyAutoLabs/autolens_workspace sources/autolens_workspace
+          # Cone mode: directories only; root-level files (llms.txt, llms-full.txt,
+          # workspace_index.json) are always included automatically.
+          git -C sources/autolens_workspace sparse-checkout set scripts
+
       - name: Run wiki-currency checks
         id: checks
         run: |
@@ -104,11 +122,14 @@ jobs:
             echo >> "$REPORT"
           }
 
-          # The released stack installed above is the ground truth for all four checks.
+          # The released stack installed above is the ground truth for the first four
+          # checks; citations resolve against the sources/ clones from the previous
+          # step (the refs the docs pin — see skills/al_audit_skill_apis.md §6).
           run "Version drift (--check-version)"     --check-version
           run "Symbol audit (--scope all)"          --scope all
           run "Idiom deny-list (--lint-idioms)"     --lint-idioms
           run "Provenance (--check-provenance)"     --check-provenance
+          run "Citation paths (--check-citations)"  --check-citations
 
           cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
           if [ "$fail" -ne 0 ]; then

@@ -5,11 +5,9 @@ sources:
     paths:
       - autofit/non_linear/search/nest/nautilus/
       - autofit/non_linear/search/nest/dynesty/
-      - autofit/non_linear/search/nest/ultranest/
       - autofit/non_linear/search/mcmc/emcee/
       - autofit/non_linear/search/mcmc/zeus/
       - autofit/non_linear/search/mle/bfgs/
-      - autofit/non_linear/search/mle/pyswarms/
       - autofit/non_linear/search/mle/drawer/
     pinned_commit: main
 last_updated: 2026-07-09
@@ -60,15 +58,14 @@ Reference: Speagle (2020), arXiv:1904.02180 — see
 
 ### UltraNest
 
-UltraNest is not currently exposed as a public `autofit` search class in the
-2026.5.29.4 stack. Prefer `af.Nautilus`, `af.DynestyStatic`, or
-`af.DynestyDynamic` for nested-sampling runs.
+UltraNest is not exposed as a public `autofit` search class, and its former
+`nest/ultranest/` module has been removed from `main` entirely. Prefer
+`af.Nautilus`, `af.DynestyStatic`, or `af.DynestyDynamic` for nested-sampling
+runs.
 
 ```python
 af.Nautilus(path_prefix=..., name=..., n_live=200)
 ```
-
-Source: `PyAutoFit:autofit/non_linear/search/nest/ultranest/`. Optional dep.
 
 Reference: Buchner — algorithmic foundation in
 [`wiki/literature/concepts/nested-sampling.md`](../../literature/concepts/nested-sampling.md)
@@ -120,8 +117,9 @@ Source: `PyAutoFit:autofit/non_linear/search/mle/bfgs/`.
 
 ### Particle Swarm / MLE Searches
 
-PySwarms is not currently exposed as a public `autofit` search class in the
-2026.5.29.4 stack. Use the public MLE/debug searches instead.
+PySwarms is not exposed as a public `autofit` search class, and its former
+`mle/pyswarms/` module has been removed from `main` entirely. Use the public
+MLE/debug searches instead.
 
 ```python
 af.LBFGS(path_prefix=..., name=...)

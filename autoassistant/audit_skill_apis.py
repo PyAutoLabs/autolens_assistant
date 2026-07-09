@@ -1146,16 +1146,31 @@ def _sources_projects(root: Path) -> list[str]:
         return list(PROJECT_IMPORT)
 
 
-def _project_tree(project: str, root: Path) -> Optional[Path]:
-    """A directory holding `project`'s source tree: the installed checkout
-    (_project_repo), else `sources/<project>/`, else a sibling clone of this repo.
+def _project_tree(project: str, root: Path) -> Optional[tuple[Path, str]]:
+    """A directory holding `project`'s source tree, tagged with how complete it is:
+
+    - `("…", "repo")` — a full checkout: the installed package's enclosing git repo,
+      a `sources/<project>/` clone, or a sibling clone. Every repo-relative path is
+      checkable.
+    - `("…", "package")` — a plain pip install (CI): the site-packages directory
+      containing the imported package. Only paths under the package itself
+      (`autofit/…`) are checkable; repo-level files (README.md, docs/) are not, and
+      the caller must skip them rather than flag them.
+
     None when nothing is present — the caller downgrades to a warning."""
     repo = _project_repo(project)
     if repo is not None:
-        return repo
+        return repo, "repo"
     for candidate in (root / "sources" / project, root.parent / project):
         if candidate.is_dir():
-            return candidate
+            return candidate, "repo"
+    imp = PROJECT_IMPORT.get(project)
+    if imp:
+        try:
+            mod = importlib.import_module(imp)
+            return Path(mod.__file__).resolve().parent.parent, "package"
+        except Exception:  # noqa: BLE001
+            pass
     return None
 
 
@@ -1177,25 +1192,35 @@ def check_citations(root: Path) -> int:
     warns: list[str] = []
     seen_missing_tree: set[str] = set()
     n_citations = 0
+    n_skipped = 0
 
     def _check_one(rel_file: Path, project: str, cited: str) -> None:
-        nonlocal n_citations
+        nonlocal n_citations, n_skipped
         n_citations += 1
         if project == "autolens_assistant":
-            tree: Optional[Path] = root  # self-citations resolve against this repo
+            resolved: Optional[tuple[Path, str]] = (root, "repo")  # self-citations
         else:
-            tree = _project_tree(project, root)
-        if tree is None:
+            resolved = _project_tree(project, root)
+        if resolved is None:
             if project not in seen_missing_tree:
                 seen_missing_tree.add(project)
                 warns.append(
-                    f"{project}: no checkout resolvable (installed/sources/sibling) — "
+                    f"{project}: no source tree resolvable (checkout or install) — "
                     f"its citations skipped."
                 )
+            n_skipped += 1
             return
+        tree, kind = resolved
         concrete = cited.split("...")[0].rstrip("/")
         if not concrete:
             return
+        if kind == "package":
+            # Plain pip install: only package-internal paths exist on disk. Skip
+            # repo-level citations (README.md, docs/) — a full checkout checks them.
+            imp = PROJECT_IMPORT.get(project, "")
+            if concrete.split("/")[0] != imp:
+                n_skipped += 1
+                return
         if not (tree / concrete).exists():
             errors.append(f"{rel_file}: `{project}:{cited}` — {concrete} not in {tree}")
 
@@ -1228,8 +1253,8 @@ def check_citations(root: Path) -> int:
     for e in errors:
         print(f"[citations] ERROR {e}", file=sys.stderr)
     print(
-        f"[citations] scanned {len(files)} files, {n_citations} citation(s) — "
-        f"{len(errors)} missing path(s), {len(warns)} warning(s).",
+        f"[citations] scanned {len(files)} files, {n_citations} citation(s) "
+        f"({n_skipped} skipped) — {len(errors)} missing path(s), {len(warns)} warning(s).",
         file=sys.stderr,
     )
     return 1 if errors else 0

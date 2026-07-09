@@ -7,7 +7,6 @@ sources:
       - autolens/imaging/model/
       - autolens/interferometer/model/
       - autolens/point/
-      - autolens/quantity/
       - README.md
     pinned_commit: main
 last_updated: 2026-07-09
@@ -95,11 +94,14 @@ See [`concepts/inversions_and_pixelizations`](../concepts/inversions_and_pixeliz
 
 Used for quasar lensing and time-delay cosmography.
 
-## Quantity API
+## Derived quantities
 
-`autolens/quantity/` exposes objects for measuring derived lensing quantities — total
-Einstein mass within a radius, projected enclosed mass, mass-to-light ratios — with
-proper uncertainty propagation from the posterior. See
+The former `autolens/quantity/` package has been archived (it lives on in
+`autolens_workspace_developer/legacy`). Derived lensing quantities — Einstein
+radius/mass, enclosed masses, magnifications — are computed from `Tracer`
+methods and posterior samples directly; the workspace guides
+(`autolens_workspace:scripts/guides/lens_calc.py`, `scripts/guides/units/`) are
+the recipes. See
 [`concepts/samples_and_posteriors`](../concepts/samples_and_posteriors.md) and
 [`concepts/cosmology_and_units`](../concepts/cosmology_and_units.md).
 
