@@ -1125,6 +1125,117 @@ def write_provenance(root: Path, only: Optional[list[Path]] = None) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Citation-path check (--check-citations)
+# ---------------------------------------------------------------------------
+# The symbol audit and the citation paths are independent failure axes: a page can
+# cite only live `al.*` symbols while its `Project:relative/path` source citations
+# point at a pre-refactor file layout (module → package moves, deleted files). This
+# check resolves every citation — inline backticked `<project>:<path>` in the body
+# and each `sources[].paths[]` entry in wiki frontmatter — against a real checkout.
+
+
+def _sources_projects(root: Path) -> list[str]:
+    """Project names from sources.yaml — the canonical set a citation may reference."""
+    if yaml is None:
+        return list(PROJECT_IMPORT)
+    try:
+        data = yaml.safe_load((root / "sources.yaml").read_text(encoding="utf-8")) or {}
+        names = [p["name"] for p in data.get("projects", []) if isinstance(p, dict) and p.get("name")]
+        return names or list(PROJECT_IMPORT)
+    except Exception:  # noqa: BLE001
+        return list(PROJECT_IMPORT)
+
+
+def _project_tree(project: str, root: Path) -> Optional[Path]:
+    """A directory holding `project`'s source tree: the installed checkout
+    (_project_repo), else `sources/<project>/`, else a sibling clone of this repo.
+    None when nothing is present — the caller downgrades to a warning."""
+    repo = _project_repo(project)
+    if repo is not None:
+        return repo
+    for candidate in (root / "sources" / project, root.parent / project):
+        if candidate.is_dir():
+            return candidate
+    return None
+
+
+def check_citations(root: Path) -> int:
+    """Resolve every `Project:path` citation in skills/, wiki/core/, AGENTS.md and
+    llms.txt against a checkout of the cited project. A path containing `...` is a
+    deliberate abbreviation — only its concrete prefix is required to exist. Exit 1
+    on any missing path; unresolvable project trees are warnings (packaged install
+    with no clone), missing paths are errors."""
+    projects = _sources_projects(root)
+    cite_re = re.compile(
+        r"`(" + "|".join(re.escape(p) for p in projects) + r"):([A-Za-z0-9_./\-]+?)`"
+    )
+    files = sorted((root / "skills").glob("*.md"))
+    files += sorted((root / "wiki" / "core").rglob("*.md"))
+    files += [p for p in (root / "AGENTS.md", root / "llms.txt") if p.exists()]
+
+    errors: list[str] = []
+    warns: list[str] = []
+    seen_missing_tree: set[str] = set()
+    n_citations = 0
+
+    def _check_one(rel_file: Path, project: str, cited: str) -> None:
+        nonlocal n_citations
+        n_citations += 1
+        if project == "autolens_assistant":
+            tree: Optional[Path] = root  # self-citations resolve against this repo
+        else:
+            tree = _project_tree(project, root)
+        if tree is None:
+            if project not in seen_missing_tree:
+                seen_missing_tree.add(project)
+                warns.append(
+                    f"{project}: no checkout resolvable (installed/sources/sibling) — "
+                    f"its citations skipped."
+                )
+            return
+        concrete = cited.split("...")[0].rstrip("/")
+        if not concrete:
+            return
+        if not (tree / concrete).exists():
+            errors.append(f"{rel_file}: `{project}:{cited}` — {concrete} not in {tree}")
+
+    for f in files:
+        text = f.read_text(encoding="utf-8")
+        if IDIOM_SKIP_MARKER in text:
+            continue
+        rel = f.relative_to(root)
+        fm_text, body = split_frontmatter(text)
+        for m in cite_re.finditer(body if fm_text is not None else text):
+            _check_one(rel, m.group(1), m.group(2))
+        # Frontmatter sources[].paths[] make the same claim in structured form.
+        if fm_text is not None and yaml is not None:
+            try:
+                meta = yaml.safe_load(fm_text) or {}
+            except yaml.YAMLError:
+                meta = {}
+            if isinstance(meta, dict):
+                for source in meta.get("sources") or []:
+                    if not isinstance(source, dict):
+                        continue
+                    project = source.get("project")
+                    if project not in projects:
+                        continue
+                    for path in source.get("paths") or []:
+                        _check_one(rel, project, str(path))
+
+    for w in warns:
+        print(f"[citations] warn  {w}", file=sys.stderr)
+    for e in errors:
+        print(f"[citations] ERROR {e}", file=sys.stderr)
+    print(
+        f"[citations] scanned {len(files)} files, {n_citations} citation(s) — "
+        f"{len(errors)} missing path(s), {len(warns)} warning(s).",
+        file=sys.stderr,
+    )
+    return 1 if errors else 0
+
+
+# ---------------------------------------------------------------------------
 # Code gate (--code / --file)
 # ---------------------------------------------------------------------------
 def validate_source(text: str) -> tuple[int, list[str], dict[str, str]]:
@@ -1290,6 +1401,13 @@ def main() -> int:
         "honest default for a targeted refresh — only stamp what you re-validated.",
     )
     parser.add_argument(
+        "--check-citations",
+        action="store_true",
+        help="Resolve every `Project:path` source citation (inline + wiki frontmatter "
+        "sources paths) against a checkout of the cited project and exit (0 ok, 1 "
+        "missing). Catches pre-refactor path staleness the symbol audit is blind to.",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="With --check-provenance, also fail on warnings (unpinned `main` refs, "
@@ -1330,6 +1448,8 @@ def main() -> int:
         return write_provenance(root, only=only)
     if args.check_provenance:
         return check_provenance(root, strict=args.strict)
+    if args.check_citations:
+        return check_citations(root)
 
     # Baseline actions short-circuit the (expensive) Markdown/script scan.
     if args.check_version:

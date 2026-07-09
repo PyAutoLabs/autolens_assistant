@@ -8,7 +8,7 @@ sources:
       - autolens/interferometer/model/
       - autolens/point/
       - autolens/quantity/
-      - README.rst
+      - README.md
     pinned_commit: main
 last_updated: 2026-07-09
 ---

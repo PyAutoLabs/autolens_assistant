@@ -7,7 +7,7 @@ sources:
       - autoarray/dataset/
       - autoarray/mask/
       - autoarray/operators/
-      - README.rst
+      - README.md
     pinned_commit: main
 last_updated: 2026-07-09
 ---
