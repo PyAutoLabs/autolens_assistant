@@ -90,7 +90,9 @@ jobs:
           done
           git clone --quiet --depth 1 --filter=blob:none --sparse \
             https://github.com/PyAutoLabs/autolens_workspace sources/autolens_workspace
-          git -C sources/autolens_workspace sparse-checkout set scripts llms.txt llms-full.txt workspace_index.json
+          # Cone mode: directories only; root-level files (llms.txt, llms-full.txt,
+          # workspace_index.json) are always included automatically.
+          git -C sources/autolens_workspace sparse-checkout set scripts
 
       - name: Run wiki-currency checks
         id: checks
