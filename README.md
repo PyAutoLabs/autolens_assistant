@@ -20,19 +20,19 @@ depending on how hands-on you want the AI to be:
 ### AI Chat Assistant
 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
-in the browser. Point it at the `autolens_assistant` repository and ask questions
-like *"How do I model a galaxy-scale strong lens observed with Hubble imaging?"*.
-This is ideal for learning the API, working out how to perform a calculation,
-creating end-to-end example Python scripts, and interpreting or debugging errors.
-
-For example, paste this straight into ChatGPT or Claude:
+in the browser. Paste this straight into ChatGPT or Claude to get started:
 
 ```
 Read and use the autolens_assistant repository at
 https://github.com/PyAutoLabs/autolens_assistant to answer PyAutoLens questions.
+If you cannot browse GitHub, ask me to paste the repository's llms.txt and
+AGENTS.md files instead.
 
 How do I model a galaxy-scale strong lens observed with Hubble imaging?
 ```
+
+This is ideal for learning the API, working out how to perform a calculation,
+and creating end-to-end example Python scripts.
 
 ### Fully Agentic AI
 
@@ -41,7 +41,7 @@ Use an agentic coding tool such as **Claude Code** or **Codex** together with
 manage an end-to-end lens modeling project directly on your machine. See
 [Setting up an agentic assistant](#setting-up-an-agentic-assistant) below for setup.
 
-## Modes
+## Fully Agentic Modes
 
 The assistant works in two modes, and you never have to choose one — it **infers the mode
 from your first message and tells you which it picked** (e.g. *"Mode: teacher — I'll explain
@@ -58,7 +58,7 @@ autonomy (*"model this lens end-to-end and track progress across sessions"*) and
 phases and runs with checkpoints instead. There is no separate mode to manage: just say how
 hands-on you want to be.
 
-## Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
+## Fully Agentic Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
 
 A good first session if you're new to PyAutoLens and want to learn the modelling
 workflow end-to-end on data you generate yourself. Working from a simulation keeps
@@ -79,7 +79,7 @@ to read the result. So I come away understanding the workflow, not just the
 commands.
 ```
 
-## Example Prompt 2 using Assistant Mode: Model JWST Imaging of a Strong Lens
+## Fully Agentic Example Prompt 2 using Assistant Mode: Model JWST Imaging of a Strong Lens
 
 For users comfortable with strong lensing who just want the modelling done. It points
 the assistant at the bundled JWST data and asks for a pixelized source reconstruction,
@@ -93,7 +93,7 @@ set up a sensible lens light and mass model with a pixelized source reconstructi
 the fit, and show me the reconstructed source and the fit residuals.
 ```
 
-## Example Prompt 3 asking Assistant Mode for Autonomy: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
+## Fully Agentic Example Prompt 3 asking Assistant Mode for Autonomy: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
 
 For users already comfortable with strong lens modelling who want to see
 how far the assistant can be pushed when **asked to run autonomously**. SLACS0946+1006
