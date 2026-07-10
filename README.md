@@ -124,8 +124,7 @@ if needed, walk you through setting the analysis up on a High Performance
 Computer (HPC) you have access to.
 
 ```
-Assistant mode — run this autonomously, planning in phases and checkpointing
-with me at the big scientific decisions.
+Assistant mode.
 
 The strong lens SLACS0946+1006 famously has a dark matter subhalo
 detection that many argue is unusually concentrated. I'd like to analyse
@@ -192,6 +191,17 @@ Prepare this project for public release as the open-source repo that goes with t
 keep the raw data private; make the code, figures, manifests, citation and DOI
 publication-ready.
 ```
+
+## Benchmarks
+
+The three example prompts above (plus the hard cross-package benchmark) are
+also shipped as **frozen benchmark prompts** under [`benchmarks/`](benchmarks/),
+with scoring rubrics and a small harness that records each run's conversation,
+results and score. Run them against different AI agents and models — or the
+same model on different days — and the committed run records in
+`benchmarks/runs/` plus the regenerated tables in `benchmarks/RESULTS.md` give
+you an evidence-backed comparison of how well each setup drives the assistant.
+The protocol is in [`benchmarks/README.md`](benchmarks/README.md).
 
 ## Scientific Context
 
