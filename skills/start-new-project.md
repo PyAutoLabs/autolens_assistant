@@ -1,6 +1,6 @@
 ---
 name: start-new-project
-description: The single bridge from the assistant to a standalone science project, and the project's full lifecycle. Use when the user says "start a new project", "create a project", "set up a science project", "set up a paper repo", "share this analysis with collaborators", or "prepare this project for public release". Creates a separate, self-contained git repo for one analysis/paper that refers back to this assistant for skills and wiki, then carries it through Create → Work → Collaborate → Publish.
+description: The single bridge from the assistant to a standalone science project, and the project's full lifecycle. Use when the user says "start a new project", "create a project", "set up a science project", "set up a paper repo", "share this analysis with collaborators", "continue a collaborator's project" (they forked/cloned one), "open-source the repo that goes with my paper", or "prepare this project for public release". Creates a separate, self-contained git repo for one analysis/paper that refers back to this assistant for skills and wiki, then carries it through Create → Work → Collaborate → Publish.
 user-invocable: true
 ---
 
@@ -72,6 +72,7 @@ reproducible-science subset; generate the thin assistant layer; refer back for e
 **Generate the lean project tree:**
 ```
 <NEW_PROJECT>/
+  README.md                 # front door: reproduce + continue-this-work (template below)
   AGENTS.md                 # thin: project context + refer-back + locate rule (below)
   CLAUDE.md                 # one-line `@AGENTS.md` stub
   .gemini/settings.json     # context.fileName -> AGENTS.md
@@ -110,6 +111,40 @@ out the pinned commit.
 - Context / decisions / results: `wiki/project/` (dated journal + `profile.md`).
 - Toolchain provenance: `project.yaml` (`assistant_ref`) + per-run `results/manifests/`.
 - Reproducibility: every meaningful run writes `results/manifests/<run_id>.json`.
+```
+
+**Project `README.md`** (generate — the front door a collaborator, referee or reader sees
+first on GitHub; keep it this short, the detail lives in `AGENTS.md` and the journal):
+```markdown
+# <PROJECT_NAME>
+
+<PROJECT_DESCRIPTION>
+
+A science project built with
+[autolens_assistant](https://github.com/PyAutoLabs/autolens_assistant), the PyAutoLens AI
+assistant. This repo is self-contained: everything needed to reproduce the analysis is here.
+
+## Reproduce this analysis
+
+Set up the environment with `source activate.sh` (packages: `environment.yml`). The modeling
+scripts are in `scripts/`; every meaningful run is recorded in `results/manifests/` (exact
+command, seed, package versions, input/output checksums), so any result can be traced and
+re-run.
+
+## Continue this work
+
+Fork or clone this repo and drive it with your own AI assistant: point `$AUTOLENS_ASSISTANT`
+at a local `autolens_assistant` clone — or just start your agent here and let it clone the
+assistant on demand (see `AGENTS.md`). You inherit the same skills, reference wiki and safety
+rules this project was built with, plus the full decision journal in `wiki/project/`.
+
+## Data availability
+
+<!-- Filled in at Publish: where each dataset lives, and its access terms. -->
+
+## Citation
+
+See `CITATION.cff`.
 ```
 
 **`project.yaml`** (minimal; records intent + the provenance pin):
@@ -207,8 +242,20 @@ on two things only — **no transcript/hash machinery**:
 
 ## Phase 3 — Collaborate
 
+A science project is **built to be shared** — the repo itself is the collaboration surface.
+Encourage sharing as soon as a second person appears in the conversation: nothing needs to be
+prepared, exported, or handed over out-of-band.
+
 - Push to a **private** GitHub repo if not already (`gh repo create … --private`); optionally
   add branch protection / PRs / light CI for coauthors.
+- **A collaborator continues the work by forking or cloning the project** and starting their
+  own assistant session inside it: the thin `AGENTS.md` resolves an `autolens_assistant` clone
+  via refer-back (`$AUTOLENS_ASSISTANT` → sibling → clone-on-demand), so they inherit the same
+  skills, reference wiki, and safety rules the project was built with. Their first session:
+  read `README.md` and the latest `wiki/project/` entries, note the provenance-drift check
+  result, then continue the analysis — new runs write manifests and journal entries exactly as
+  Phase 2 describes. Point an arriving collaborator at the README's "Continue this work"
+  section; that is the whole onboarding.
 - **Collaborator updates are built from the `wiki/project/` journal** — synthesise the latest
   best model, key figures (paths), open concerns, and recommended next run into a short,
   skimmable summary (e.g. `wiki/project/collaborator_update.md`). Don't keep a second log.
@@ -216,6 +263,11 @@ on two things only — **no transcript/hash machinery**:
 ---
 
 ## Phase 4 — Publish (paper-companion hardening)
+
+Publishing turns the project into the **open-source companion to the paper**: the data (or its
+availability statement), the results, and every python script that produced them, in one
+citable repo a reader can reproduce — and fork to build on (the README's "Continue this work"
+section now speaks to them too).
 
 Gate — confirm **every** item before the repo goes public (`visibility_stage: public`):
 
@@ -225,7 +277,8 @@ Gate — confirm **every** item before the repo goes public (`visibility_stage: 
 - [ ] **LICENSE** chosen and added (e.g. MIT code; CC-BY-4.0 for shared figures/data); set
       `release.license`.
 - [ ] **CITATION.cff** correct (authors + ORCID, title, version).
-- [ ] **Data-availability statement** in `README.md` (where the data is, access terms).
+- [ ] **Data availability** section in `README.md` filled in (scaffolded at Create; where the
+      data is, access terms).
 - [ ] **Reproducible**: `scripts/` + `results/manifests/` + `environment.yml` present and the
       manifests reference the committed commit.
 

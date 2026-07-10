@@ -160,10 +160,27 @@ truth and no drift. Quick exploration can happen inside this clone (e.g. the bun
 README examples); a real analysis headed for a paper gets its own project.
 
 Starting one — and its whole lifecycle (create → work → collaborate → publish) — is handled by
-the single `start-new-project` skill. Example prompts:
+the single `start-new-project` skill.
+
+**Built to be shared.** The project repo is the collaboration surface: push it to GitHub and a
+collaborator simply **forks or clones it and continues the work with their own assistant** —
+the project refers back to `autolens_assistant` automatically, so they inherit the same
+skills, reference wiki and safety rules it was built with, plus your full decision journal.
+And when the paper is ready, the same repo is its natural **open-source companion**: the data
+(or its availability statement), the results, and every python script that produced them, in
+one citable repo — hardened by a publish checklist and released with a Zenodo DOI and
+`CITATION.cff`. Anyone who reads the paper can reproduce the analysis, and fork it to build
+on your work.
+
+Example prompts:
 
 ```
 Start a science project for my SLACS0946 analysis.
+```
+
+```
+Share this project with my collaborator — private GitHub repo, and tell me what they need
+to do to continue the work with their own assistant.
 ```
 
 ```
@@ -171,8 +188,9 @@ Give me a collaborator update: best model so far, key figures, open concerns, ne
 ```
 
 ```
-Prepare this project for public release with the paper — keep the raw data private; make
-the code, figures, manifests and citation publication-ready.
+Prepare this project for public release as the open-source repo that goes with the paper —
+keep the raw data private; make the code, figures, manifests, citation and DOI
+publication-ready.
 ```
 
 ## Scientific Context
