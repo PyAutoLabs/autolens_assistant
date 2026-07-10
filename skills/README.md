@@ -48,7 +48,8 @@ them.
   sweep across skill recipes, wiki API pages, and pinned-source drift after a PyAuto\*
   upgrade or source refresh.
 - [`al_ingest_paper.md`](./al_ingest_paper.md) — add a strong-lensing paper (local PDF
-  or arxiv URL) to `wiki/literature/`: per-paper stub, concept cross-links, log entry.
+  or arxiv URL): project-local `wiki/project/bibliography.md` by default inside a science
+  project; shared `wiki/literature/` in the assistant clone or on explicit promotion.
 
 ### Project workflow
 

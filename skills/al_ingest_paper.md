@@ -1,6 +1,6 @@
 ---
 name: al_ingest_paper
-description: Add a verified strong-lensing paper to the paired literature wiki and canonical BibTeX layer. Accepts a local PDF or public paper URL, resolves or adds canonical metadata, writes a compact claim-oriented `sources/*.md` entry, updates relevant concept/entity links, validates key consistency, and never records local PDF paths. Use when a user wants a paper added so future assistants can cite its supported claims reliably.
+description: Add a verified strong-lensing paper to the literature record — project-local (`wiki/project/bibliography.md`) by default when working inside a science project, or the shared literature wiki + canonical BibTeX layer when in the assistant clone or on explicit promotion. Accepts a local PDF or public paper URL, resolves or adds canonical metadata, writes a compact claim-oriented source entry, updates relevant concept/entity links, validates key consistency, and never records local PDF paths. Use when a user wants a paper added so future assistants can cite its supported claims reliably.
 ---
 
 # Ingesting a paper into the literature wiki
@@ -20,6 +20,25 @@ Do not save PDFs, local PDF paths, abstracts, or long paper summaries.
 Ingestion makes a paper discoverable from scientific concepts while preserving a reliable
 citation key. A normal addition changes the canonical `.bib`, one compact source section,
 relevant concept/entity links, and `log.md`.
+
+## Target — project-local or shared?
+
+Two destinations; pick before editing anything (the hybrid rule: general concepts stay
+shared, analysis-specific papers stay in the project):
+
+- **Inside a science project** (the working repo has `project.yaml` and a thin refer-back
+  `AGENTS.md`): the default target is the **project's** `wiki/project/bibliography.md` — one
+  `##` section per paper, exactly the "record claim support" shape below. Reuse the
+  assistant's canonical BibTeX key when the paper is already in `autolens_literature.bib`
+  (read-only lookup via refer-back); otherwise use a stable author-year key, aligned with the
+  project's own paper `.bib` if one exists. Do **not** edit the assistant clone's
+  `bibliography/` or `sources/` from a project session — that is promotion, below. The shared
+  quality gate does not run against a project page; keep it consistent by inspection.
+- **In the assistant clone, or on explicit promotion** of a generally-useful paper out of a
+  project: the shared `wiki/literature/` flow below — canonical `.bib`, `sources/<topic>.md`,
+  concept/entity links, `log.md`, `validate-citations`. Promotion is a deliberate act, never
+  the default, and is a verbatim copy of the project section into the right
+  `sources/<topic>.md` plus the canonical-metadata steps.
 
 ## Ask
 
