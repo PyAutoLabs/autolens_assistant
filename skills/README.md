@@ -106,6 +106,9 @@ them.
 - [`al_inspect_source_reconstruction.md`](./al_inspect_source_reconstruction.md) —
   inspect a pixelised inversion: regularisation, source-plane image, reconstruction
   diagnostics.
+- [`al_to_notebook.md`](./al_to_notebook.md) — convert a generated narrative-docstring
+  script to a Jupyter notebook (docstrings → markdown cells, code → code cells) via the
+  stdlib-only `autoassistant/to_notebook.py`.
 
 ### Pending — stubbed (need full recipes)
 
