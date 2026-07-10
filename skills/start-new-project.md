@@ -76,6 +76,7 @@ reproducible-science subset; generate the thin assistant layer; refer back for e
   AGENTS.md                 # thin: project context + refer-back + locate rule (below)
   CLAUDE.md                 # one-line `@AGENTS.md` stub
   .gemini/settings.json     # context.fileName -> AGENTS.md
+  .claude/settings.json     # PyAuto* API code-gate via refer-back (below)
   project.yaml              # minimal manifest incl. assistant_ref (below)
   config/  activate.sh  scripts/        # copied above
   data/  (datasets)
@@ -106,6 +107,15 @@ modes); use its `skills/` and `wiki/` as the how-to and reference.
 After resolving, compare the clone's commit to `project.yaml`'s `assistant_ref.commit`; if they
 differ, mention the provenance drift and offer to re-pin — never block on it and never check
 out the pinned commit.
+
+## Code gate
+This project ships the assistant's PyAuto* **API code-gate** (`.claude/settings.json`): before
+Bash runs generated PyAuto* code, a hook resolves the assistant (same order as above) and
+validates the symbols against the installed stack, denying code written from memory. It fails
+open if no assistant clone is found. Only Claude Code runs `.claude/` hooks — on any other
+harness (Codex, Gemini, chat), self-enforce it: run
+`python <resolved-assistant>/autoassistant/audit_skill_apis.py --code "<snippet>"` (or
+`--file <script.py>`) on generated PyAuto* code before executing it; never guess symbols.
 
 ## This project
 - Context / decisions / results: `wiki/project/` (dated journal + `profile.md`).
@@ -160,6 +170,30 @@ reproducibility: { environment_file: environment.yml, seed_policy: required, def
 release: { citation_cff: true, license: null, zenodo: planned }
 source_boundary: { edit_pyauto_source: false }
 ```
+
+**`.claude/settings.json`** (generate — the PyAuto* API code-gate via refer-back; **on by
+default and fail-open**: if no assistant clone resolves, the hook silently allows):
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'P=\"${CLAUDE_PROJECT_DIR:-.}\"; for d in \"$AUTOLENS_ASSISTANT\" \"$P/../autolens_assistant\" \"$P/sources/autolens_assistant\"; do [ -n \"$d\" ] && [ -f \"$d/.claude/hooks/validate_pyauto_code.py\" ] && exec python3 \"$d/.claude/hooks/validate_pyauto_code.py\"; done; exit 0'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+The validator stays in the assistant — `validate_pyauto_code.py` resolves
+`audit_skill_apis.py` relative to itself — so the project vendors nothing and bakes in no
+absolute paths. The cross-tool caveat (hooks are Claude Code-only; other harnesses
+self-enforce) is stated in the generated `AGENTS.md` "Code gate" section above.
 
 **`.gitattributes`**: `* text=auto eol=lf` (+ `*.fits *.png *.npy *.pkl binary`).
 
