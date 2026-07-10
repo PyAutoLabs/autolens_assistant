@@ -159,7 +159,14 @@ Every search accepts:
 - `unique_tag: Optional[str]` — extra discriminator for runs that share path + name.
 - `number_of_cores: int` — parallel likelihood evals.
 - `iterations_per_quick_update: int` / `iterations_per_full_update: int` — checkpoint
-  cadence (quick intermediate writes vs full output + visualisation).
+  cadence (quick intermediate writes, incl. the max-likelihood `fit.png`, vs full output +
+  visualisation). Config fallbacks in `general.yaml` `updates:` (HPC mode overrides under
+  `hpc:`).
+- `live_visual_update: bool` — default `False`; if `True`, each quick update is also pushed
+  to a live display surface (matplotlib viewer from a foreground script, in-place cell
+  refresh in Jupyter/Colab) in addition to the unconditional disk write. Keep `False` on
+  HPC/headless/background runs. Accepted by every search (common base class); reaches
+  `af.Nautilus(...)` via `**kwargs`.
 - `silence: bool` — suppress console output.
 
 See `PyAutoFit:autofit/non_linear/search/abstract_search.py` for the common base

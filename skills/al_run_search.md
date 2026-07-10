@@ -24,6 +24,12 @@ in `PYAUTO_TEST_MODE=1` for a smoke test or in production mode for the real fit.
 
 ## Branch — production run
 
+Operational reminder: if the search was configured with `live_visual_update=True`
+(`al_configure_search` "Live visual updates"), a foreground script opens a matplotlib viewer
+and a notebook cell refreshes in place — don't re-ask when the search configuration already
+records the choice, and keep it `False` for HPC/headless/background runs. `fit.png` is
+written to disk on every quick update either way.
+
 Assemble everything into one script (`scripts/run_fit.py`):
 
 ```python
