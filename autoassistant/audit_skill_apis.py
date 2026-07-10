@@ -1186,6 +1186,10 @@ def check_citations(root: Path) -> int:
     )
     files = sorted((root / "skills").glob("*.md"))
     files += sorted((root / "wiki" / "core").rglob("*.md"))
+    # Benchmark protocol docs + frozen prompt cards — but never runs/, whose
+    # transcripts are historical data and may legitimately quote stale paths.
+    files += sorted((root / "benchmarks").glob("*.md"))
+    files += sorted((root / "benchmarks" / "prompts").glob("*.md"))
     files += [p for p in (root / "AGENTS.md", root / "llms.txt") if p.exists()]
 
     errors: list[str] = []

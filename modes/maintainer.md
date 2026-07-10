@@ -69,15 +69,23 @@ and `modes/` machinery (`.mode`, `.maintainer` sentinels), the skills framework
 `core`/`literature`/`project` wiki split and its read-only/update rules, the science-project
 lifecycle (`start-new-project`, `contribute-upstream`), `sources.yaml` + the source
 registry pattern, the API gate (`autoassistant/audit_skill_apis.py` + wiki-currency
-workflow), and the profile template.
+workflow), the profile template, and the benchmark machinery (the
+`benchmarks/AGENTS.md` contract + the `autoassistant/benchmark.py` harness).
 
 **PyAutoLens-specific content** (regenerated per domain, never copied blind): every
 `al_*` skill body, `wiki/core/` reference pages, the entire `wiki/literature/` sub-wiki,
 bundled `dataset/` examples, the README's science framing and three example prompts, the
-standard-imports convention, and `hpc/` templates tuned to lensing runtimes.
+standard-imports convention, `hpc/` templates tuned to lensing runtimes, and the
+benchmark prompt cards (`benchmarks/prompts/` — a new domain writes its own
+easy/medium/hard assistant + teacher cards against its own bundled data).
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
-`config/`, the maintainer smoke tests below.
+`config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
+maintainer smoke tests below.
+
+**Per-clone data** (never copied to a newborn — each clone accumulates its own):
+`benchmarks/runs/` and the regenerated `benchmarks/RESULTS.md`. A newborn starts with
+empty runs and regenerates `RESULTS.md` via `python autoassistant/benchmark.py report`.
 
 ## Chat-surface compatibility smoke test
 
