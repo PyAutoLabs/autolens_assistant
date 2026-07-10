@@ -14,51 +14,34 @@ stay in your repo.
 
 ## Getting Started
 
-### Recommended: work inside the repository
+There are two ways to use `autolens_assistant`, and you can start with either
+depending on how hands-on you want the AI to be:
 
-Clone the `autolens_assistant` repo:
+### AI Chat Assistant
 
-```bash
-git clone https://github.com/PyAutoLabs/autolens_assistant.git
-cd autolens_assistant
+Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
+in the browser. Paste this straight into ChatGPT or Claude to get started:
+
+```
+Read and use the autolens_assistant repository at
+https://github.com/PyAutoLabs/autolens_assistant to answer PyAutoLens questions.
+If you cannot browse GitHub, ask me to paste the repository's llms.txt and
+AGENTS.md files instead.
+
+How do I model a galaxy-scale strong lens observed with Hubble imaging?
 ```
 
-Open a CLI coding-agent session inside that directory. This is the primary and most capable way to
-use the assistant because the agent can read the full instructions, inspect data, write scripts,
-run checks, and keep project state with you. Coding agents often require a paid subscription or
-metered API account for sustained use, although limited free tiers and organization or student
-access may be available.
+This is ideal for learning the API, working out how to perform a calculation,
+and creating end-to-end example Python scripts.
 
-| Interface | Support | Access and cost | Notes |
-|---|---|---|---|
-| **Claude Code** | Primary; thoroughly tested | Normally a [paid Claude subscription or metered API usage](https://code.claude.com/docs/en/costs). | Loads the canonical instructions through `CLAUDE.md`. |
-| **Codex CLI** | Primary; thoroughly tested | A [limited free plan](https://developers.openai.com/codex/pricing/) may be available; paid plans or API billing provide more usage. | Reads `AGENTS.md` directly and can edit and run the project locally. |
-| **Gemini CLI** | Supported | Offers [limited free quotas](https://github.com/google-gemini/gemini-cli/blob/main/docs/resources/quota-and-pricing.md); subscriptions or usage billing provide higher limits. | Loads the repository instructions through `.gemini/settings.json`. |
-| **OpenCode** | Supported | The client is open source; model-provider access may be free or paid. | Use it from the repository root so it can discover the project context. |
-| **GitHub Copilot CLI** | Compatible; verification pending | [Copilot Free](https://docs.github.com/copilot/get-started/plans-for-github-copilot) has limited usage; paid or organization plans are common. | GitHub documents direct support for root `AGENTS.md` instructions. |
+### Fully Agentic AI
 
-```bash
-claude        # alternatively: codex, gemini, opencode, or copilot
-```
+Use an agentic coding tool such as **Claude Code** or **Codex** together with
+`autolens_assistant`. These can inspect your data, write and run scripts, and
+manage an end-to-end lens modeling project directly on your machine. See
+[Setting up an agentic assistant](#setting-up-an-agentic-assistant) below for setup.
 
-These agents load the project instructions automatically, so you do not need to paste a large
-system prompt. If PyAutoLens is not installed in the active environment, the assistant checks the
-setup and guides you through it. Then describe your science case or ask a question, see
-the example starting prompts below.
-
-### Browser and chat-only use
-
-If you are more familiar with conversation-based AI assistants such as ChatGPT or Claude on the
-web, you can still use `autolens_assistant`. The front-door [`llms.txt`](llms.txt) holds the
-bootstrap prompt and read-order: give the assistant this repository's URL together with that
-prompt, or — if the chat cannot browse GitHub — paste `llms.txt` and `AGENTS.md` directly.
-
-This is effective for learning PyAutoLens, asking how to perform lensing calculations or modelling
-tasks, interpreting and debugging errors, and getting draft code. However, it is not fully agentic:
-the assistant cannot inspect your local data, run the code, or maintain a science project unless
-you provide the relevant files and outputs.
-
-## Modes
+## Fully Agentic Modes
 
 The assistant works in two modes, and you never have to choose one — it **infers the mode
 from your first message and tells you which it picked** (e.g. *"Mode: teacher — I'll explain
@@ -75,7 +58,7 @@ autonomy (*"model this lens end-to-end and track progress across sessions"*) and
 phases and runs with checkpoints instead. There is no separate mode to manage: just say how
 hands-on you want to be.
 
-## Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
+## Fully Agentic Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
 
 A good first session if you're new to PyAutoLens and want to learn the modelling
 workflow end-to-end on data you generate yourself. Working from a simulation keeps
@@ -96,7 +79,7 @@ to read the result. So I come away understanding the workflow, not just the
 commands.
 ```
 
-## Example Prompt 2 using Assistant Mode: Model JWST Imaging of a Strong Lens
+## Fully Agentic Example Prompt 2 using Assistant Mode: Model JWST Imaging of a Strong Lens
 
 For users comfortable with strong lensing who just want the modelling done. It points
 the assistant at the bundled JWST data and asks for a pixelized source reconstruction,
@@ -110,7 +93,7 @@ set up a sensible lens light and mass model with a pixelized source reconstructi
 the fit, and show me the reconstructed source and the fit residuals.
 ```
 
-## Example Prompt 3 asking Assistant Mode for Autonomy: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
+## Fully Agentic Example Prompt 3 asking Assistant Mode for Autonomy: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
 
 For users already comfortable with strong lens modelling who want to see
 how far the assistant can be pushed when **asked to run autonomously**. SLACS0946+1006
@@ -146,6 +129,55 @@ comparison.
 Assess whether the analysis will run fast on my laptop / PC GPU,
 and if not, set this up as a small project on the HPC I have access to.
 ```
+
+## Setting up an agentic assistant
+
+The **Fully Agentic AI** option above needs a local clone and a CLI coding agent.
+Here is how it works.
+
+### Recommended: work inside the repository
+
+Clone the `autolens_assistant` repo:
+
+```bash
+git clone https://github.com/PyAutoLabs/autolens_assistant.git
+cd autolens_assistant
+```
+
+Open a CLI coding-agent session inside that directory. This is the primary and most capable way to
+use the assistant because the agent can read the full instructions, inspect data, write scripts,
+run checks, and keep project state with you. Coding agents often require a paid subscription or
+metered API account for sustained use, although limited free tiers and organization or student
+access may be available.
+
+| Interface | Support | Access and cost | Notes |
+|---|---|---|---|
+| **Claude Code** | Primary; thoroughly tested | Normally a [paid Claude subscription or metered API usage](https://code.claude.com/docs/en/costs). | Loads the canonical instructions through `CLAUDE.md`. |
+| **Codex CLI** | Primary; thoroughly tested | A [limited free plan](https://developers.openai.com/codex/pricing/) may be available; paid plans or API billing provide more usage. | Reads `AGENTS.md` directly and can edit and run the project locally. |
+| **Gemini CLI** | Supported | Offers [limited free quotas](https://github.com/google-gemini/gemini-cli/blob/main/docs/resources/quota-and-pricing.md); subscriptions or usage billing provide higher limits. | Loads the repository instructions through `.gemini/settings.json`. |
+| **OpenCode** | Supported | The client is open source; model-provider access may be free or paid. | Use it from the repository root so it can discover the project context. |
+| **GitHub Copilot CLI** | Compatible; verification pending | [Copilot Free](https://docs.github.com/copilot/get-started/plans-for-github-copilot) has limited usage; paid or organization plans are common. | GitHub documents direct support for root `AGENTS.md` instructions. |
+
+```bash
+claude        # alternatively: codex, gemini, opencode, or copilot
+```
+
+These agents load the project instructions automatically, so you do not need to paste a large
+system prompt. If PyAutoLens is not installed in the active environment, the assistant checks the
+setup and guides you through it. Then describe your science case or ask a question, see
+the example starting prompts above.
+
+### Browser and chat-only use
+
+If you are more familiar with conversation-based AI assistants such as ChatGPT or Claude on the
+web, you can still use `autolens_assistant`. The front-door [`llms.txt`](llms.txt) holds the
+bootstrap prompt and read-order: give the assistant this repository's URL together with that
+prompt, or — if the chat cannot browse GitHub — paste `llms.txt` and `AGENTS.md` directly.
+
+This is effective for learning PyAutoLens, asking how to perform lensing calculations or modelling
+tasks, interpreting and debugging errors, and getting draft code. However, it is not fully agentic:
+the assistant cannot inspect your local data, run the code, or maintain a science project unless
+you provide the relevant files and outputs.
 
 ## Science Project
 
