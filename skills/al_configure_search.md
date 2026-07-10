@@ -93,6 +93,33 @@ Zeus (ensemble slice MCMC), DynestyDynamic (dynamic nested sampling), BFGS / LBF
 (gradient descent for MLE), Drawer (random prior draws — debugging only). See
 [`wiki/core/api/searches.md`](../wiki/core/api/searches.md) for the comparison table.
 
+## Branch — Live visual updates
+
+When configuring an **interactive production fit** (foreground script or notebook), ask once:
+*watch the fit update live?* The quick-update image (`fit.png`) is **always written to disk**
+every `iterations_per_quick_update` iterations regardless; `live_visual_update=True` (default
+`False`) additionally pushes it to a live display surface:
+
+- **foreground Python script** — a matplotlib viewer opens and refreshes with each quick
+  update;
+- **Jupyter / Colab** — the cell that ran `search.fit(...)` refreshes one image in place;
+- **HPC, headless, background, or unattended runs** — keep it `False` (nothing to attach to;
+  HPC mode disables it in config).
+
+```python
+search = af.Nautilus(
+    ...,
+    iterations_per_quick_update=1000,  # quick-update (and live refresh) cadence
+    live_visual_update=True,           # script: matplotlib viewer; notebook: in-place cell
+)
+```
+
+Both are shared search options (accepted by every search via the common base class), with
+config fallbacks in `config/general.yaml` `updates:`. Don't re-ask on later runs — the
+choice is recorded in the search configuration.
+
+Source: `PyAutoFit:autofit/non_linear/search/abstract_search.py`.
+
 ## Output folder layout
 
 After `search.fit(...)` runs, results land at:
