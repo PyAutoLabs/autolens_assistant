@@ -34,6 +34,31 @@ demand as the project matures. Match the user's intent to a phase and do only th
 
 ## Phase 1 — Create
 
+### 0. Environment discovery — run before asking setup questions
+
+Any step that needs identity or infrastructure values (name/ORCID for `project.yaml` +
+`CITATION.cff`, GitHub owner at step 6 / Collaborate, HPC alias for the `hpc/` step)
+**discovers before it asks**. Precedence: the user's current instruction → project
+configuration (`project.yaml`, `hpc/sync.conf`, `wiki/project/profile.md`) → detected
+standard-tool state → ask one focused question.
+
+Detect from standard tools (read-only; never store, echo, or copy credentials):
+
+- Git identity: `git config user.name` / `git config user.email`.
+- GitHub account + auth: `gh auth status`; default owner via `gh api user --jq .login`.
+- SSH host aliases (candidate HPC targets): `grep -E '^Host ' ~/.ssh/config` (skip quietly
+  if absent or unreadable).
+- The assistant profile (`wiki/project/profile.md`) and, inside a project, its `project.yaml`.
+
+When a detected value is used, say so in one line ("using GitHub owner `X` from `gh auth` —
+correct?") so the user can override; when nothing is detected, ask. State where an accepted
+value will be recorded (`project.yaml`, `profile.md`, or `hpc/sync.conf` — secrets only ever
+live in `~/.ssh/config` / `gh auth`). Standard tools stay authoritative for authentication
+and account selection: with multiple accounts, clusters, or SSH aliases detected, ask which
+to use — never assume one global default. This is a lightweight preflight, not an onboarding
+form: detect, state, confirm, move on. (A machine-local defaults file for non-secret values
+is deliberately deferred until real multi-project usage shows which values recur.)
+
 ### 1. Name
 > **What should this project be called?** (folder name, created at `<NEW_PROJECT>/` *outside*
 > this assistant clone; short and descriptive, e.g. `slacs_subhalo`, `euclid_pilot`.)
@@ -235,7 +260,8 @@ __pycache__/
 *.pyc
 ```
 
-**Optional HPC step — ask once:** *"Set up an HPC folder for this project?"*
+**Optional HPC step — ask once:** *"Set up an HPC folder for this project?"* (Offer step 0's
+detected SSH host aliases as candidate clusters instead of asking cold.)
 - **Yes** → copy the assistant's `hpc/` (batch templates, `sync`, `template.py`) into the
   project and configure (job name, `--array`, `SCRIPT=`, `sample=`, `datasets=(...)`).
 - **No** → create only `hpc/README.md` containing the ready-to-paste prompt:
@@ -254,7 +280,9 @@ to `~/.bashrc` (source the venv, `cd` in).
 
 ### 6. GitHub (private) — optional now, or at Collaborate
 Offer a **private** repo for backup/collaborators:
-`gh repo create <owner>/<slug> --private --source=. --push`. Public comes only at Publish.
+`gh repo create <owner>/<slug> --private --source=. --push` — `<owner>` from step 0's
+discovery (confirm in one line), asking only if multiple accounts/orgs are plausible.
+Public comes only at Publish.
 
 ---
 
