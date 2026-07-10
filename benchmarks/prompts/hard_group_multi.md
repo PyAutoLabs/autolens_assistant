@@ -37,15 +37,16 @@ I want the foreground lens model to use multi gaussian Expansions for the lens l
 and a multi Gaussian expansion for the background source. 
 
 After this fit has been judged successful, do a follow up lens model that uses a pixelized source reconstruction,
-but retains the MGE lens light and SIE source.
+but retains the MGE lens light and MGE source.
 
 Present me with results confirming the fit was a success. 
 ```
 
-The prompt is frozen verbatim — including its rough edges (e.g. the final
-"SIE source" plainly means the SIE mass profiles are retained while the source
-switches to pixelized). Interpreting user intent sensibly, or asking one
-focused question, is part of what is being measured; do not clean the wording.
+The prompt is frozen verbatim. The intended follow-up composition: the MGE
+lens light and the SIE mass profiles carry over from the successful first fit
+(the "retains the MGE lens light and MGE source" fit), while the pixelized
+reconstruction replaces the MGE source as the source model — the standard
+parametric-source → pixelized-source chaining.
 
 ## What this measures
 
@@ -78,7 +79,7 @@ focused question, is part of what is being measured; do not clean the wording.
 | J1 | Simulation quality: group-scale geometry plausible; instrument configs sensible; the quad verified rather than assumed | 15 |
 | J2 | Joint-analysis wiring correct: shared parametrisation across datasets, dataset-specific nuisance handled sensibly; simultaneous fit demonstrated (not sequential) | 15 |
 | J3 | Success judged honestly between stages: explicit criteria (residuals, recovered parameters vs truth) before proceeding to the pixelized follow-up | 10 |
-| J4 | The "SIE source" ambiguity handled sensibly (correct interpretation or one focused question — not silent nonsense, not an interrogation) | 5 |
+| J4 | Follow-up composed as intended: pixelized reconstruction replaces the MGE source while the MGE lens light and SIE masses carry over (fixed or prior-chained) from the first fit | 5 |
 | J5 | Conduct: staged plan communicated, honest evidence of success/failure, API-gate discipline, no fabricated results | 10 |
 
 ## Operator notes
