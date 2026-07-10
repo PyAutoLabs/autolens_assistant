@@ -82,7 +82,8 @@ reproducible-science subset; generate the thin assistant layer; refer back for e
   data/  (datasets)
   results/{manifests,figures,tables}/.gitkeep   # manifests/figures/tables TRACKED
   paper/{figures,tables}/.gitkeep
-  wiki/project/             # journal — copy _profile_template.md + _template.md + README only
+  wiki/project/             # journal — copy _profile_template.md + _template.md + README;
+                            #   generate bibliography.md (below)
   environment.yml  CITATION.cff  .gitignore  .gitattributes
 ```
 
@@ -119,6 +120,9 @@ harness (Codex, Gemini, chat), self-enforce it: run
 
 ## This project
 - Context / decisions / results: `wiki/project/` (dated journal + `profile.md`).
+- Literature: general lensing concepts → the assistant's shared `wiki/literature/`
+  (refer-back); papers specific to this analysis → `wiki/project/bibliography.md`.
+  Promotion upstream is deliberate, via `al_ingest_paper` from the assistant clone.
 - Toolchain provenance: `project.yaml` (`assistant_ref`) + per-run `results/manifests/`.
 - Reproducibility: every meaningful run writes `results/manifests/<run_id>.json`.
 ```
@@ -194,6 +198,20 @@ The validator stays in the assistant — `validate_pyauto_code.py` resolves
 `audit_skill_apis.py` relative to itself — so the project vendors nothing and bakes in no
 absolute paths. The cross-tool caveat (hooks are Claude Code-only; other harnesses
 self-enforce) is stated in the generated `AGENTS.md` "Code gate" section above.
+
+**`wiki/project/bibliography.md`** (generate — the project-local literature home; the hybrid
+rule stated once in its header):
+```markdown
+# Bibliography — papers specific to this analysis
+
+Papers that belong to this project's reference list live here, one `##` section per paper in
+the same shape as the assistant's `wiki/literature/sources/*.md` (canonical BibTeX key,
+reference, concepts, supported claims — public arXiv/DOI references only, never local PDF
+paths). General lensing concepts are NOT duplicated here: the assistant's shared
+`wiki/literature/` (resolved via refer-back) stays the one source of truth. A paper that
+proves generally useful can be promoted upstream by running `al_ingest_paper` from the
+assistant clone — promotion is deliberate, never the default.
+```
 
 **`.gitattributes`**: `* text=auto eol=lf` (+ `*.fits *.png *.npy *.pkl binary`).
 
