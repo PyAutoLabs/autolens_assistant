@@ -4,17 +4,17 @@
 
 ## Using it in chat (start here)
 
-Point a coding agent or browser chat (ChatGPT, Claude) at this repo and open with:
+First make sure your browser chat (ChatGPT, Claude) has a **GitHub connector** enabled so it can read this repository — without one it can't, so use a local coding agent instead. Then open with:
 
 ```text
-I'd like to use the PyAutoLens Assistant for this conversation:
+Use the autolens_assistant repository to answer my PyAutoLens questions:
 https://github.com/PyAutoLabs/autolens_assistant
 
-Please familiarize yourself with the project and use its guidance and scientific
-reference material when answering my questions. I'll provide any local files or results you need.
+First tell me whether you can actually read the repo. If you can't, say so
+plainly — don't answer from memory.
 ```
 
-Read order: [AGENTS.md](./AGENTS.md) → [skills/README.md](./skills/README.md) → the relevant skill → [wiki/](./wiki). If the chat can't browse GitHub, paste this file and `AGENTS.md`. The assistant can route to examples, explain lensing, review pasted scripts/errors/figures, and draft code; it cannot run code, inspect your files, or guarantee drafts against your installed PyAutoLens version. For repeated edits, live execution, or multi-session project state, switch to a local coding agent (or Codex web with the repo connected).
+Read order: [AGENTS.md](./AGENTS.md) → [skills/README.md](./skills/README.md) → the relevant skill → [wiki/](./wiki). The assistant can route to examples, explain lensing, review pasted scripts/errors/figures, and draft code; it cannot run code, inspect your files, or guarantee drafts against your installed PyAutoLens version. For repeated edits, live execution, or multi-session project state, switch to a local coding agent (or Codex web with the repo connected).
 
 ## Agent instructions (canonical)
 
