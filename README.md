@@ -20,13 +20,16 @@ depending on how hands-on you want the AI to be:
 ### AI Chat Assistant
 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
-in the browser. Paste this straight into ChatGPT or Claude to get started:
+in the browser. First make sure your assistant has a **GitHub connector** enabled
+so it can read this repository — without one it can't, and you should use a local
+coding agent (below) instead. Then paste this to get started:
 
 ```
-Read and use the autolens_assistant repository at
-https://github.com/PyAutoLabs/autolens_assistant to answer PyAutoLens questions.
-If you cannot browse GitHub, ask me to paste the repository's llms.txt and
-AGENTS.md files instead.
+Use the autolens_assistant repository to answer my PyAutoLens questions:
+https://github.com/PyAutoLabs/autolens_assistant
+
+First tell me whether you can actually read the repo. If you can't, say so
+plainly — don't answer from memory.
 
 How do I model a galaxy-scale strong lens observed with Hubble imaging?
 ```
@@ -171,8 +174,8 @@ the example starting prompts above.
 
 If you are more familiar with conversation-based AI assistants such as ChatGPT or Claude on the
 web, you can still use `autolens_assistant`. The front-door [`llms.txt`](llms.txt) holds the
-bootstrap prompt and read-order: give the assistant this repository's URL together with that
-prompt, or — if the chat cannot browse GitHub — paste `llms.txt` and `AGENTS.md` directly.
+bootstrap prompt and read-order: with a GitHub connector enabled, give the assistant this
+repository's URL and it reads the files itself.
 
 This is effective for learning PyAutoLens, asking how to perform lensing calculations or modelling
 tasks, interpreting and debugging errors, and getting draft code. However, it is not fully agentic:
