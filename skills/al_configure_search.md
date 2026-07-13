@@ -54,6 +54,16 @@ Knobs to know:
 - `number_of_cores` — set to your CPU core count for parallel likelihood eval.
 - `iterations_per_full_update` / `iterations_per_quick_update` — how often the search
   writes full output (samples, visualisation) vs quick intermediate updates to disk.
+  **Actively choose `iterations_per_quick_update` so the user always has quick access to
+  result inspection** — don't just take the default. Judge it against the likelihood cost so
+  the first on-the-fly `fit.png` / `samples` lands within a few minutes and refreshes
+  regularly, but not so often that per-update visualisation overhead eats into throughput.
+  Rules of thumb: ~500–1000 is a good interactive default; **lower it for a slow/expensive
+  likelihood** (large MGE, pixelised source, GPU-batched fit, high `n_live`) so an inspection
+  point still appears early; only **raise it** (≈2500–5000) when the likelihood is very fast
+  and frequent updates would measurably dominate runtime. A common failure is leaving it high
+  on a heavy fit, so the run shows *nothing* to inspect for an hour — avoid that. On HPC/batch
+  runs the same value governs what a `sync pull` surfaces, so pick it before submitting.
 
 ## Branch — Dynesty
 
