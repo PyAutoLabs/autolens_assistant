@@ -170,7 +170,8 @@ concise API reference. This is the ground the
 ## Visualisations during fit
 
 Analyses also produce diagnostic plots that PyAutoFit writes to `output/.../image/`
-at each update step (controlled by `iterations_per_update` on the search). The
+at each update step (controlled by `iterations_per_quick_update` /
+`iterations_per_full_update` on the search). The
 plot routines live in the same packages as the analyses:
 
 - `PyAutoLens:autolens/imaging/model/visualizer.py`

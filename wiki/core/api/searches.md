@@ -31,7 +31,7 @@ af.Nautilus(
     path_prefix=..., name=..., unique_tag=...,
     n_live=200,                  # 100 (exploration) / 200 (production) / 400+ (complex)
     number_of_cores=4,
-    iterations_per_update=2500,
+    iterations_per_quick_update=2500,  # cadence for the on-the-fly max-likelihood fit
 )
 ```
 
