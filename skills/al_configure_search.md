@@ -64,6 +64,16 @@ Knobs to know:
   and frequent updates would measurably dominate runtime. A common failure is leaving it high
   on a heavy fit, so the run shows *nothing* to inspect for an hour — avoid that. On HPC/batch
   runs the same value governs what a `sync pull` surfaces, so pick it before submitting.
+  - **Set it the right way — directly on the search.** Pass `iterations_per_quick_update=…`
+    straight to the search constructor, e.g. `af.Nautilus(..., iterations_per_quick_update=…)`
+    (the idiom used throughout `autolens_workspace`, e.g. `point_source/modeling.py`,
+    `weak/modeling.py`). Do **not** try to set it via `settings_search.search_dict[...] = …`:
+    `SettingsSearch.search_dict` is a fixed-key property (`path_prefix`, `unique_tag`,
+    `number_of_cores`, `session`, `use_jax_vmap`), so assigning a new key to it is a **silent
+    no-op** — the value never reaches the search and the config default (often `1e99`, i.e.
+    *never* quick-update) silently wins. To set it globally for a whole pipeline without
+    editing every search, write it to the live config once after `conf.instance.push(...)`:
+    `conf.instance["general"]["updates"]["iterations_per_quick_update"] = N`.
 
 ## Branch — Dynesty
 
