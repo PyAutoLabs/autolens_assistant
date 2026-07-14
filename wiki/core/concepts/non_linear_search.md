@@ -92,8 +92,9 @@ and of the SLaM pipeline.
   to produce a unique output directory.
 - **`unique_tag`** — extra identifier to distinguish otherwise-identical runs.
 - **`number_of_cores`** — parallel likelihood evaluations.
-- **`iterations_per_update`** — how often the search writes intermediate samples to
-  disk.
+- **`iterations_per_quick_update`** / **`iterations_per_full_update`** — how often the
+  search writes the on-the-fly max-likelihood fit (quick) vs the full output — samples,
+  visuals, `model.result` (full). There is no `iterations_per_update`.
 
 Per-search knobs (`n_live` for nested, `nwalkers` / `nsteps` for MCMC) are in the
 search-specific entries of [`../api/searches`](../api/searches.md).
