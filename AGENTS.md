@@ -102,10 +102,12 @@ how it paces the work, not which workflows exist:
   execute with checkpoints — proactive but not silent; state in `wiki/project/`. The dial is
   in [`modes/assistant.md`](./modes/assistant.md) "The autonomy dial".
 
-Select (first match): explicit instruction → `.mode` file → `profile.md` "Interaction mode" →
-else **infer from the opening request** (fall back to **assistant**); `.maintainer` outranks
-`.mode`. State an inferred mode in one line and invite correction; acknowledge an explicit
-one only if it changes behavior. Read `modes/<mode>.md`; depth still follows
+Select (first match): explicit instruction → `profile.md` "Interaction mode" → else **infer
+from the opening request** (fall back to **assistant**); `.maintainer` outranks both. There
+are exactly two mode names — a value that isn't one of them (e.g. `agent`, removed in July
+2026) is **not** a mode: ignore it, say so in one line, and fall through to inference rather
+than improvising. State an inferred mode in one line and invite correction; acknowledge an
+explicit one only if it changes behavior. Read `modes/<mode>.md`; depth still follows
 `skills/_style.md` "Adaptive depth".
 
 ---
