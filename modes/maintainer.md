@@ -64,7 +64,7 @@ generalise anything pre-emptively; just avoid entangling the two sides.
 **Generic assistant infrastructure** (clones to any domain assistant near-verbatim):
 `AGENTS.md`'s skeleton (session start, safety invariants, three-layer model, mode
 selection, source-of-truth resolution, commit cadence), the Teacher/Assistant mode model
-and `modes/` machinery (`.mode`, `.maintainer` sentinels), the skills framework
+and `modes/` machinery (the `.maintainer` sentinel), the skills framework
 (`_style.md`, `_bootstrap_skill.md`, the README index conventions), the
 `core`/`literature`/`project` wiki split and its read-only/update rules, the science-project
 lifecycle (`start-new-project`, `contribute-upstream`), `sources.yaml` + the source

@@ -49,8 +49,8 @@ manage an end-to-end lens modeling project directly on your machine. See
 The assistant works in two modes, and you never have to choose one — it **infers the mode
 from your first message and tells you which it picked** (e.g. *"Mode: teacher — I'll explain
 as we go."*). If it guesses wrong, just say so. To set the mode yourself, start your message
-with it (the examples below do exactly that); to make a choice permanent, drop a `.mode` file
-in the repo containing `teacher` or `assistant`.
+with it (the examples below do exactly that); to make a choice permanent, record it under
+"Interaction mode" in `wiki/project/profile.md`.
 
 - **Teacher** — *learn the workflow.* `Teacher mode: I'm new to PyAutoLens — how do I model this image?`
 - **Assistant** — *do the workflow.* `Assistant mode: set up a project for this dataset and write the first script.`
