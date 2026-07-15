@@ -65,6 +65,15 @@ If the script is destined for HPC array runs, preserve the command-line interfac
 `--number_of_cores`) — the `hpc/batch_cpu/template` and `hpc/batch_gpu/template` submit
 scripts run `scripts/$SCRIPT` and depend on it.
 
+**If the run is on CPU, wire the two acceleration regimes before submitting** — a SLaM pipeline
+spans both, and getting it wrong costs days: SOURCE LP is parametric and wants **JAX**
+(`use_jax=True`, no `number_of_cores`), while every pixelised stage after it wants the **sparse
+operator formalism** (`dataset.apply_sparse_operator_cpu()` + `use_jax=False` +
+`number_of_cores=N`). That means two `af.SettingsSearch` objects and two datasets. The workspace
+SLaM scripts do **not** do this by default. See
+[`al_configure_search`](./al_configure_search.md) "Branch — CPU acceleration" and
+`autolens_workspace:scripts/imaging/features/pixelization/cpu_fast_modeling.py`.
+
 Source paths (relative to `autolens_workspace/scripts/`):
 
 ```

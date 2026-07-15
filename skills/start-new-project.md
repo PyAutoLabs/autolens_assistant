@@ -21,7 +21,7 @@ project's whole lifecycle. There is no second science-project skill — this is 
 > README examples); a real analysis headed for a paper gets its own project.
 
 The project copies only what's needed to **reproduce the science** (`config/`, `activate.sh`,
-`scripts/`, `data/`, `results/`, `hpc/`) — not the copilot's brain (`skills/`, `wiki/core/`,
+`scripts/`, `dataset/`, `results/`, `hpc/`) — not the copilot's brain (`skills/`, `wiki/core/`,
 `wiki/literature/`, `autoassistant/`, `modes/`), which it refers back to. This keeps the
 published paper repo clean: a reviewer cloning it sees the analysis, not the whole assistant.
 
@@ -72,10 +72,20 @@ Store as `PROJECT_NAME`.
 Store as `PROJECT_DESCRIPTION`.
 
 ### 3. Datasets
-> **Datasets to include?** In a project they live under `data/<sample>/<dataset_name>/`
-> (`<sample>` a grouping dir, e.g. `imaging/`; the assistant clone's equivalent folder is
-> `dataset/`); each needs at least `data.fits`, `noise_map.fits`, `info.json` (see
-> `wiki/core/operations/dataset.md`). Point me at paths to copy, or skip and add later.
+> **Datasets to include?** In a project they live under `dataset/<sample>/<dataset_name>/`
+> (`<sample>` a grouping dir, e.g. `imaging/`); each needs at least `data.fits`,
+> `noise_map.fits`, `info.json` (see `wiki/core/operations/dataset.md`). Point me at paths to
+> copy, or skip and add later.
+
+> **The folder is `dataset/` — never `data/`. Be pedantic about this.** It is
+> `dataset/` everywhere in the PyAuto workspace convention: this assistant clone, every
+> `autolens_workspace` example, `PyAutoReduce`'s scripts/docs, and the `--sample`/`--dataset`
+> CLI idiom (`dataset/<sample>/<dataset_name>/`). A project that uses `data/` silently
+> diverges — scripts, `hpc/sync`'s `DATA_DIRS`, and anything copied from the workspace all
+> assume `dataset/`, so the mismatch surfaces later as "why did nothing sync / why can't the
+> script find the dataset". Do not "improve" on the name, and do not accept `data/` from an
+> existing project without flagging it. (Note `project.yaml`'s `data:` *key* is a different
+> thing — a metadata block, not the folder; leave it as `data:`.)
 
 ### 4. Modeling scripts
 > **Modeling scripts?** They live in `scripts/`, normally adapted from `autolens_workspace`.
@@ -91,8 +101,9 @@ reproducible-science subset; generate the thin assistant layer; refer back for e
 - `config/` (PyAutoConf YAML — required: pipelines `conf.instance.push(config, output)`)
 - `activate.sh` (sourced locally and by HPC batch scripts)
 - `scripts/` (the chosen pipeline(s), or empty + `/init-slam` later)
-- datasets (Step 3) into `data/<sample>/...` (the project's tracked-by-README data tree —
-  see the `.gitignore` below and the Publish gate, which audits `git ls-files data/`)
+- datasets (Step 3) into `dataset/<sample>/...` — **`dataset/`, not `data/`** (workspace
+  convention; see the pedantic note in Step 3). The project's tracked-by-README dataset tree —
+  see the `.gitignore` below and the Publish gate, which audits `git ls-files dataset/`
 
 **Generate the lean project tree:**
 ```
@@ -104,7 +115,7 @@ reproducible-science subset; generate the thin assistant layer; refer back for e
   .claude/settings.json     # PyAuto* API code-gate via refer-back (below)
   project.yaml              # minimal manifest incl. assistant_ref (below)
   config/  activate.sh  scripts/        # copied above
-  data/  (datasets)
+  dataset/  (datasets — `dataset/`, NEVER `data/`; workspace convention)
   results/{manifests,figures,tables}/.gitkeep   # manifests/figures/tables TRACKED
   paper/{figures,tables}/.gitkeep
   wiki/project/             # journal — copy _profile_template.md + _template.md + README;
@@ -242,11 +253,12 @@ assistant clone — promotion is deliberate, never the default.
 
 **`.gitignore`** (exclude data/output/secrets/cloned-assistant; **keep** manifests/figures/journal):
 ```
-data/raw/*
-data/reduced/*
-data/external/*
-!data/**/README.md
-!data/**/.gitkeep
+dataset/raw/*
+dataset/reduced/*
+dataset/external/*
+!dataset/**/README.md
+!dataset/**/.gitkeep
+!dataset/**/info.json
 output/
 results/runs/
 scripts/scratch/*
@@ -302,7 +314,7 @@ on two things only — **no transcript/hash machinery**:
   "environment_file": "environment.yml", "python_version": "3.11.x",
   "package_versions": { "autolens": "<v>", "autofit": "<v>", "numpy": "<v>", "jax": "<v>" },
   "seed": 42,
-  "inputs":  [{ "path": "data/reduced/slacs0946/data.fits", "sha256": "<hash>" }],
+  "inputs":  [{ "path": "dataset/reduced/slacs0946/data.fits", "sha256": "<hash>" }],
   "outputs": [{ "path": "results/figures/fit.png", "sha256": "<hash>" }],
   "started": "<iso8601>", "finished": "<iso8601>", "notes": "smooth SLaM baseline"
 }
@@ -351,7 +363,8 @@ section now speaks to them too).
 
 Gate — confirm **every** item before the repo goes public (`visibility_stage: public`):
 
-- [ ] **No raw/restricted data tracked** (`git ls-files data/` shows only READMEs/`.gitkeep`);
+- [ ] **No raw/restricted data tracked** (`git ls-files dataset/` shows only
+      READMEs/`.gitkeep`/`info.json`);
       `data.publish_raw` still `false` unless the user explicitly cleared it.
 - [ ] **No full transcripts / scratch / secrets** in history (`.env`, keys, `scripts/scratch/`).
 - [ ] **LICENSE** chosen and added (e.g. MIT code; CC-BY-4.0 for shared figures/data); set

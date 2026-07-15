@@ -51,7 +51,11 @@ Source: `PyAutoFit:autofit/non_linear/search/nest/nautilus/`.
 Knobs to know:
 - `n_live` — more = more accurate posterior, slower. Start at 200; go to 400+ only if
   the posterior looks multi-modal or thin.
-- `number_of_cores` — set to your CPU core count for parallel likelihood eval.
+- `number_of_cores` — parallel likelihood evaluations via Python multiprocessing, **only when
+  JAX is off**. JAX disables multiprocessing, so a JAX fit gains nothing from it — leave it
+  unset there (it defaults to 1; passing `1` explicitly just implies a parallelism that isn't
+  there). Set it to your core count only for non-JAX CPU fits — see
+  "Branch — CPU acceleration" below, which decides *which* regime a fit belongs to.
 - `iterations_per_full_update` / `iterations_per_quick_update` — how often the search
   writes full output (samples, visualisation) vs quick intermediate updates to disk.
   **Actively choose `iterations_per_quick_update` so the user always has quick access to
@@ -74,6 +78,52 @@ Knobs to know:
     *never* quick-update) silently wins. To set it globally for a whole pipeline without
     editing every search, write it to the live config once after `conf.instance.push(...)`:
     `conf.instance["general"]["updates"]["iterations_per_quick_update"] = N`.
+
+## Branch — CPU acceleration (JAX vs sparse operators)
+
+On CPU the right accelerator depends on the **source model**. This is the single biggest CPU
+runtime lever in lens modelling, and getting it backwards costs days, not minutes — a full SLaM
+run misconfigured here spends >12 h stuck in its first search.
+
+| Fit type | Accelerator | `use_jax` | `number_of_cores` | Dataset |
+|---|---|---|---|---|
+| **Parametric source** (`source_lp`, most non-pixelised fits) | JAX — vectorises the likelihood, parallelises well **on CPU** | `True` | leave unset (JAX disables multiprocessing) | plain |
+| **Pixelised source** (`source_pix`, `light`, `mass` — any fit with a `Pixelization`) | Sparse operator formalism (numba) | `False` | your core count | `dataset.apply_sparse_operator_cpu()` |
+
+Two rules that are easy to get wrong:
+
+- **JAX is not GPU-only.** It is the correct accelerator for *parametric* fits on CPU too. Do
+  not reach for `use_jax=False` + many cores just because there is no GPU.
+- **The sparse operator does not support JAX.** It is numba-based, so never combine them: a
+  pixelised CPU fit is `apply_sparse_operator_cpu()` + `use_jax=False` + `number_of_cores=N`.
+  `apply_sparse_operator_cpu()` precomputes operator matrices once (seconds to minutes) and
+  every later pixelised fit reuses them, exploiting the sparsity of the pixelisation linear
+  algebra for a large CPU speed-up.
+
+```python
+# Parametric source on CPU — JAX, no number_of_cores.
+analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
+settings_search = af.SettingsSearch(path_prefix=..., unique_tag=..., session=None)
+
+# Pixelised source on CPU — sparse operators, JAX off, multiprocessing on.
+dataset_pix = dataset.apply_sparse_operator_cpu()
+analysis = al.AnalysisImaging(dataset=dataset_pix, use_jax=False)
+settings_search = af.SettingsSearch(
+    path_prefix=..., unique_tag=..., session=None, number_of_cores=8
+)
+```
+
+`number_of_cores` reaches the search through `af.SettingsSearch` (it is one of `search_dict`'s
+fixed keys), so pass it there rather than to the search constructor.
+
+**A SLaM pipeline spans both regimes.** SOURCE LP is parametric (JAX); every stage after it uses
+a pixelised source (sparse/CPU). So build **two** `af.SettingsSearch` objects — one without
+`number_of_cores` for SOURCE LP, one with N for the pixelised stages — and hand each stage the
+right dataset (`dataset` vs `dataset_pix`). On **GPU**, JAX is used throughout and the sparse
+operator is not applied at all.
+
+Source / worked example:
+`autolens_workspace:scripts/imaging/features/pixelization/cpu_fast_modeling.py`.
 
 ## Branch — Dynesty
 
