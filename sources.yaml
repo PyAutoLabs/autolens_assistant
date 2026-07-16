@@ -49,6 +49,11 @@ projects:
     role: assistant        # this repo — PyAutoLens AI Assistant
     git: https://github.com/PyAutoLabs/autolens_assistant
 
+  - name: euclid_strong_lens_modeling_pipeline
+    import: null
+    role: euclid-pipeline  # the collaboration's Euclid modeling pipelines (euclid mode)
+    git: https://github.com/PyAutoLabs/euclid_strong_lens_modeling_pipeline
+
 # Dependency chain (top-to-bottom). Skills target the top; lower layers
 # surface in the wiki when the user needs to understand them.
 dependency_chain:

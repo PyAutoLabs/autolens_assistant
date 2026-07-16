@@ -65,19 +65,25 @@ Map every request onto one or more layers:
 2. **Skills** (`skills/*.md`, symlinked into `.claude/skills/`) — *procedural*: how to do a
    task. Lensing skills are `al_<task>.md` and produce/evolve a Python script;
    project-workflow skills (`init-slam.md`, `start-new-project.md`) drive repo-level
-   operations. Skills starting with `_` (`_style.md`, `_bootstrap_skill.md`) are
-   meta-skills — don't surface them when answering science questions.
+   operations; **euclid mode** skills are `euclid_<task>.md` — they pair the
+   collaboration's `euclid_strong_lens_modeling_pipeline` repo to the assistant, and any
+   request about modeling *Euclid* data routes through them (entry:
+   `skills/euclid_setup_pipeline.md`). Skills starting with `_` (`_style.md`,
+   `_bootstrap_skill.md`) are meta-skills — don't surface them when answering science
+   questions.
 3. **Wiki** (`wiki/**/*.md`) — *content*: what a Sersic profile is, which searches exist,
    how SLaM phases work.
 
 > **Rule of thumb.** *How do I do X?* → a skill. *What / which / why X?* → the wiki. *Build
 > something end-to-end?* → compose skills, citing wiki pages as you go.
 
-The wiki has three sub-wikis: **`wiki/core/`** (curated PyAuto\* reference, read-only —
+The wiki has four sub-wikis: **`wiki/core/`** (curated PyAuto\* reference, read-only —
 refreshed by `al_update_wiki`), **`wiki/literature/`** (strong-lensing science reference,
 own schema in [`wiki/literature/AGENTS.md`](./wiki/literature/AGENTS.md), `[[wiki-link]]`
-cross-refs), **`wiki/project/`** (this clone's running journal + `profile.md`). "The wiki"
-means `wiki/core/` unless `literature/` or `project/` is named.
+cross-refs), **`wiki/euclid/`** (Euclid mission + Euclid strong-lensing literature,
+same schema as `literature/`, paired with the `euclid_*` skills), **`wiki/project/`**
+(this clone's running journal + `profile.md`). "The wiki" means `wiki/core/` unless
+`literature/`, `euclid/` or `project/` is named.
 
 ---
 

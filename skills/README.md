@@ -12,6 +12,8 @@ configured) via symlinks; the canonical files live here.
 - File names use the `al_<task>` convention for lensing-API skills, e.g. `al_run_search.md`.
 - Project-workflow skills (repo-level operations, template manipulation) use a plain
   kebab-case name, e.g. `init-slam.md`, `start-new-project.md`.
+- Domain-mode skills that pair an external pipeline repo to the assistant use that
+  domain as prefix — `euclid_<task>.md` for the Euclid pipeline (euclid mode).
 - Meta-skills (writing guide, bootstrap protocol) start with `_`.
 - Every lensing-API skill is **python-first**: the deliverable is a runnable `.py` script
   + the understanding to evolve it. Project-workflow skills may instead drive `rsync`,
@@ -65,6 +67,26 @@ them.
 - [`init-slam.md`](./init-slam.md) — populate an empty `scripts/` folder with SLaM
   pipeline script(s) copied from `autolens_workspace` and tailored to the chosen data
   type.
+
+### Euclid mode (pipeline-paired)
+
+Skills pairing the collaboration's
+[`euclid_strong_lens_modeling_pipeline`](https://github.com/PyAutoLabs/euclid_strong_lens_modeling_pipeline)
+to the assistant; the paired literature context is the dedicated
+[`wiki/euclid/`](../wiki/euclid/index.md) sub-wiki.
+
+- [`euclid_setup_pipeline.md`](./euclid_setup_pipeline.md) — clone/install the pipeline,
+  the `dataset/<sample>/<dataset>/` layout, and the black-box `start_here.py` run.
+- [`euclid_prepare_data.md`](./euclid_prepare_data.md) — segmentation validation, binary
+  mask tuning, extra-galaxy masks/centres via the GUI tools, hand-assembling a dataset
+  folder.
+- [`euclid_model_lens.md`](./euclid_model_lens.md) — choose and run the staged
+  pipelines: initial MGE+SIE, Sersic photometry, lens-only subtraction, multi-waveband,
+  full SLaM.
+- [`euclid_workflow_products.md`](./euclid_workflow_products.md) — aggregate many fits
+  into .csv catalogues, .fits stacks, and one-line .png summaries via `workflow/`.
+- [`euclid_hpc_runs.md`](./euclid_hpc_runs.md) — `hpc/sync` configuration and the
+  SLURM batch-array templates for sample-scale runs.
 
 ### Data preparation
 
