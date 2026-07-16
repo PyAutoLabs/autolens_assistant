@@ -1,11 +1,12 @@
 # wiki/
 
-Three independently maintained sub-wikis. Each one answers a different question.
+Four independently maintained sub-wikis. Each one answers a different question.
 
 | Sub-wiki | Question | Provenance | Edited by |
 |---|---|---|---|
 | [`core/`](./core/) | *What is X / which X / why X* in the PyAuto\* stack? | Curated from source repos listed in [`../sources.yaml`](../sources.yaml) | `al_update_wiki` skill, against pinned source commits |
 | [`literature/`](./literature/) | *What does the strong-lensing literature say about X?* | Compiled syntheses of papers (PDFs typically kept outside the repo). Schema in [`literature/AGENTS.md`](./literature/AGENTS.md). | The user, when extending the literature wiki from new papers |
+| [`euclid/`](./euclid/) | *What do the Euclid mission and its strong-lensing literature say about X?* | Same schema as `literature/` (see [`euclid/AGENTS.md`](./euclid/AGENTS.md)); paired with the `skills/euclid_*` family | The user, when extending euclid mode from new papers |
 | [`project/`](./project/) | *What did we do in this fork, and why?* | Dated journal entries | Agent + user, every meaningful session |
 
 ## When to read which
@@ -13,6 +14,8 @@ Three independently maintained sub-wikis. Each one answers a different question.
 - A user asks **"what's the difference between Nautilus and Dynesty?"** → `core/api/searches.md`.
 - A user asks **"what's the mass-sheet degeneracy?"** or **"summarise the H0liCOW result"**
   → `literature/` (follow `literature/index.md`).
+- A user asks **"what's the Euclid VIS PSF?"** or **"which papers found the Q1 lenses?"**
+  → `euclid/` (follow `euclid/index.md`).
 - A user asks **"what fits have we already tried on slacs0737?"** → `project/`, grep for the
   dataset name.
 
