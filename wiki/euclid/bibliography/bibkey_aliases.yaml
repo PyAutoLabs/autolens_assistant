@@ -1,0 +1,27 @@
+# Common / informal / cross-wiki key: canonical euclid.bib key.
+# Aliases only for keys actually in use — never speculative.
+
+# Informal author-year names used in conversation and paper drafts
+Mellier2025: EuclidSkyOverview
+Cropper2025: EuclidSkyVIS
+Jahnke2025: EuclidSkyNISP
+Scaramella2022: Scaramella-EP1
+Desprez2020: Desprez-EP10
+Aussel2025: Q1-TP001
+McCracken2025: Q1-TP002
+Polenta2025: Q1-TP003
+Romelli2025: Q1-TP004
+Tucci2025: Q1-TP005
+Walmsley2025a: Q1-SP048
+Rojas2025: Q1-SP052
+Lines2025: Q1-SP053
+Li2025: Q1-SP054
+Holloway2025: Q1-SP059
+Ecker2026: Q1-Ecker
+Vincken2026: Q1-Vincken
+AcevedoBarroso2025: AcevedoBarroso24
+ORiordan2025: ORiordan25
+
+# Keys used for the same papers in ../../literature/bibliography/autolens_literature.bib
+EuclidCollaboration2025: Q1-SP048
+EuclidCollaboration2025b: Q1-SP052
