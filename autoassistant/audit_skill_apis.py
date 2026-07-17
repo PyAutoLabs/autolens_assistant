@@ -428,6 +428,9 @@ def select_files(root: Path, scope: str) -> list[Path]:
     scripts = [
         p for p in sorted((root / "scripts").rglob("*.py")) if p.name not in tooling
     ]
+    # The MCP server (autoassistant/mcp/) is the one part of autoassistant/ with
+    # real API usage rather than alias-pattern text, so it joins the scan.
+    scripts += sorted((root / "autoassistant" / "mcp").glob("*.py"))
     if scope == "skills":
         return skills
     if scope == "wiki":
@@ -450,6 +453,7 @@ def select_idiom_files(root: Path) -> list[Path]:
     tooling = {"audit_skill_apis.py", "refresh_api_docs.py", "test_api_gate.py"}
     md = sorted((root / "skills").glob("*.md")) + sorted((root / "wiki").rglob("*.md"))
     py = [p for p in sorted((root / "scripts").rglob("*.py")) if p.name not in tooling]
+    py += sorted((root / "autoassistant" / "mcp").glob("*.py"))
     return md + py
 
 
