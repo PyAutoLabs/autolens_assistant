@@ -69,15 +69,23 @@ and `modes/` machinery (the `.maintainer` sentinel), the skills framework
 `core`/`literature`/`project` wiki split and its read-only/update rules, the science-project
 lifecycle (`start-new-project`, `contribute-upstream`), `sources.yaml` + the source
 registry pattern, the API gate (`autoassistant/audit_skill_apis.py` + wiki-currency
-workflow), the profile template, and the benchmark machinery (the
-`benchmarks/AGENTS.md` contract + the `autoassistant/benchmark.py` harness).
+workflow), the profile template, the benchmark machinery (the
+`benchmarks/AGENTS.md` contract + the `autoassistant/benchmark.py` harness), and
+`.mcp.json` (it wires the results-inspector MCP, which *is* `autoassistant.mcp` —
+generic tooling, so the wiring carries no domain either).
 
 **PyAutoLens-specific content** (regenerated per domain, never copied blind): every
 `al_*` skill body, `wiki/core/` reference pages, the entire `wiki/literature/` sub-wiki,
 bundled `dataset/` examples, the README's science framing and three example prompts, the
-standard-imports convention, `hpc/` templates tuned to lensing runtimes, and the
+standard-imports convention, `hpc/` templates tuned to lensing runtimes, the
 benchmark prompt cards (`benchmarks/prompts/` — a new domain writes its own
-easy/medium/hard assistant + teacher cards against its own bundled data).
+easy/medium/hard assistant + teacher cards against its own bundled data), the
+**euclid mode** (`skills/euclid_*.md` + the `wiki/euclid/` sub-wiki — a
+survey-specific pipeline register that is lensing science throughout; a newborn
+grows whatever survey modes its own domain has, if any), `paper/` (this
+assistant's own JOSS paper — a newborn writes its own), and the bundled science
+scripts in `scripts/` (`*_cosmos_web_ring.py`, tied to a named lens; only
+`scripts/`'s own AGENTS/CLAUDE/README docs are generic).
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
 `config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
