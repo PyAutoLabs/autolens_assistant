@@ -286,3 +286,30 @@ def test_render_installation_check_groups_identical_errors():
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-v"]))
+
+
+# --- clause scoping (F5: python context must not leak across ; && || |) ---------
+def test_hook_allows_grep_of_pyauto_file_after_a_python_clause(tmp_path):
+    # The exact 2026-07-17 false positive: an earlier `python -c` clause
+    # latched saw_python, so the grep clause's .py argument was scanned and
+    # blocked. A pure grep of a source file must ALLOW regardless of a prior
+    # python clause.
+    script = tmp_path / "grep_after_python.py"
+    script.write_text(f"import autolens as al\n{STALE_PLOTTER}\n", encoding="utf-8")
+    proc = _run_hook(f'{sys.executable} -c "import yaml" ; grep -c autolens {script}')
+    assert _decision(proc) is None
+
+
+def test_hook_denies_stale_python_c_in_a_later_clause():
+    # Scoping must not hide real python-executed code that follows a separator.
+    proc = _run_hook(f'echo start && {sys.executable} -c "{STALE_PLOTTER}"')
+    assert _decision(proc) == "deny"
+
+
+def test_hook_allows_grep_piped_into_python(tmp_path):
+    # grep <file.py> | python -c "..." — the .py belongs to grep's clause, not
+    # python's, so it must not be scanned; the python snippet has no symbol.
+    script = tmp_path / "piped.py"
+    script.write_text(f"import autolens as al\n{STALE_PLOTTER}\n", encoding="utf-8")
+    proc = _run_hook(f'grep -n autolens {script} | {sys.executable} -c "import io"')
+    assert _decision(proc) is None
