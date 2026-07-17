@@ -100,39 +100,71 @@ def _has_symbol(text: str) -> bool:
     return bool(SYMBOL_RE.search(text))
 
 
-def _collect_sources(tokens: list[str], cwd: Path) -> tuple[str, list[tuple[str, str]]]:
-    """From shell tokens, return (interpreter, [(kind, payload), …]) where kind is
-    'code' (a -c snippet string) or 'file' (a .py path). Only sources that actually
-    contain a PyAuto* symbol are kept — that is the no-import pre-screen."""
-    interpreter = "python3"
-    saw_python = False
-    sources: list[tuple[str, str]] = []
-    i = 0
-    while i < len(tokens):
-        tok = tokens[i]
-        if PYTHON_RE.search(tok):
-            interpreter = tok
-            saw_python = True
-        elif saw_python and tok == "-c" and i + 1 < len(tokens):
-            snippet = tokens[i + 1]
-            if _has_symbol(snippet):
-                sources.append(("code", snippet))
-            i += 1
-        elif saw_python and tok.endswith(".py") and not tok.startswith("-"):
-            p = Path(tok)
-            if not p.is_absolute():
-                p = cwd / p
-            if p.name in _SELF_FILES:
+def _clauses(command: str) -> list[list[str]]:
+    """Split a (possibly compound) command into per-clause token lists at the
+    shell operators ``;`` ``&&`` ``||`` ``|``, with quotes respected. Returns
+    an empty list when the command cannot be parsed (caller fails open).
+
+    Clause scoping is what fixes the F5 false positive: ``python`` context must
+    NOT leak across a separator, so a ``.py`` argument to a *later* command
+    (``python3 -c "…"; grep x foo.py``) is no longer mistaken for a script the
+    interpreter executes."""
+    try:
+        lex = shlex.shlex(command, posix=True, punctuation_chars=";&|")
+        lex.whitespace_split = True
+        toks = list(lex)
+    except ValueError:
+        return []
+    clauses: list[list[str]] = []
+    cur: list[str] = []
+    for tok in toks:
+        if tok and set(tok) <= set(";&|"):
+            if cur:
+                clauses.append(cur)
+            cur = []
+        else:
+            cur.append(tok)
+    if cur:
+        clauses.append(cur)
+    return clauses
+
+
+def _collect_sources(command: str, cwd: Path) -> list[tuple[str, str, str]]:
+    """Return ``[(kind, payload, interpreter), …]`` where kind is 'code'
+    (a -c snippet) or 'file' (a .py path). Only sources that actually contain a
+    PyAuto* symbol are kept — the no-import pre-screen. ``saw_python`` is scoped
+    to a single clause, so a .py file that is an argument to a non-python
+    command in another clause is never scanned (F5)."""
+    sources: list[tuple[str, str, str]] = []
+    for tokens in _clauses(command):
+        interpreter = "python3"
+        saw_python = False
+        i = 0
+        while i < len(tokens):
+            tok = tokens[i]
+            if PYTHON_RE.search(tok):
+                interpreter = tok
+                saw_python = True
+            elif saw_python and tok == "-c" and i + 1 < len(tokens):
+                snippet = tokens[i + 1]
+                if _has_symbol(snippet):
+                    sources.append(("code", snippet, interpreter))
                 i += 1
-                continue
-            try:
-                text = p.read_text(encoding="utf-8") if p.is_file() else ""
-                if text and _SKIP_MARKER not in text and _has_symbol(text):
-                    sources.append(("file", str(p)))
-            except OSError:
-                pass
-        i += 1
-    return interpreter, sources
+            elif saw_python and tok.endswith(".py") and not tok.startswith("-"):
+                p = Path(tok)
+                if not p.is_absolute():
+                    p = cwd / p
+                if p.name in _SELF_FILES:
+                    i += 1
+                    continue
+                try:
+                    text = p.read_text(encoding="utf-8") if p.is_file() else ""
+                    if text and _SKIP_MARKER not in text and _has_symbol(text):
+                        sources.append(("file", str(p), interpreter))
+                except OSError:
+                    pass
+            i += 1
+    return sources
 
 
 def main() -> None:
@@ -168,17 +200,12 @@ def main() -> None:
         if ".py" not in command:
             _allow()
 
-    try:
-        tokens = shlex.split(command)
-    except ValueError:
-        _allow()  # unbalanced quotes / heredoc — cannot parse safely, fail open
-
-    interpreter, sources = _collect_sources(tokens, cwd)
+    sources = _collect_sources(command, cwd)
     if not sources:
-        _allow()
+        _allow()  # unparseable, or no python-executed PyAuto* source in any clause
 
     reports: list[str] = []
-    for kind, payload_str in sources:
+    for kind, payload_str, interpreter in sources:
         flag = "--code" if kind == "code" else "--file"
         try:
             proc = subprocess.run(
