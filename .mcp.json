@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "pyauto-results-inspector": {
+      "command": "python",
+      "args": ["-m", "autoassistant.mcp"]
+    }
+  }
+}

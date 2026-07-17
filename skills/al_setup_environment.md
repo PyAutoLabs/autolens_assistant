@@ -67,6 +67,7 @@ source .venv/bin/activate
 # Core stack + JAX-accelerated array ops + numba JIT
 pip install --upgrade pip
 pip install "autolens[jax]" numba
+# Optional — the results-inspector MCP server (al_inspect_results_mcp): pip install mcp
 ```
 
 Python ≥ 3.9 works in principle (all five repos declare `requires-python = ">=3.9"`)

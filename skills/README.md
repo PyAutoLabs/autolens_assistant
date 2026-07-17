@@ -121,6 +121,10 @@ to the assistant; the paired literature context is the dedicated
 
 - [`al_load_results.md`](./al_load_results.md) — load a completed fit's `Tracer`,
   `Samples`, dataset and FITS products from its output folder.
+- [`al_inspect_results_mcp.md`](./al_inspect_results_mcp.md) — the read-only
+  results-inspector MCP server: browse fits, summaries, result images and bulk
+  subplot/FITS extraction from chat harnesses without code execution (Claude
+  Desktop first).
 - [`al_plot_tracer.md`](./al_plot_tracer.md) — plot ray tracing, critical curves,
   caustics, magnification maps.
 - [`al_plot_fit_residuals.md`](./al_plot_fit_residuals.md) — plot model image,
