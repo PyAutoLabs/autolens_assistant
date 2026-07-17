@@ -1,0 +1,41 @@
+# Clone-boundary check — every tracked file must be framework or science.
+#
+# This repo is the reference cell future assistants are cloned from, and the
+# Clone Agent refuses to birth a newborn while any file here is unclassified
+# (see modes/maintainer.md "## Assistant-as-template", which owns the boundary).
+# That refusal is deliberate, but it only lands at birth time — which is rare,
+# and blocks whoever is giving birth rather than whoever added the file.
+#
+# So the same check runs here, on every PR: the author who adds a file decides
+# what it is while they still remember why. The euclid mode, the JOSS paper and
+# the results-inspector MCP wiring each landed unclassified and silently blocked
+# every future birth before this existed.
+#
+# The rules live in modes/maintainer.md (prose) and are implemented in
+# PyAutoBrain's clone profiles; this job runs Brain's checker against this
+# checkout, so the two cannot drift apart unnoticed.
+name: clone-boundary
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the assistant
+        uses: actions/checkout@v4
+        with:
+          path: autolens_assistant
+
+      - name: Check out PyAutoBrain (implements the boundary)
+        uses: actions/checkout@v4
+        with:
+          repository: PyAutoLabs/PyAutoBrain
+          path: PyAutoBrain
+
+      - name: Every tracked file falls on one side of the boundary
+        run: |
+          python3 PyAutoBrain/agents/conductors/clone/check_boundary.py \
+            autolens_assistant
