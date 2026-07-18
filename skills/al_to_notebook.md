@@ -13,7 +13,7 @@ block becomes a **markdown cell**; the Python between blocks becomes a **code ce
 ## Orient
 
 The converter is `autoassistant/to_notebook.py` — stdlib-only, no external tools. It adapts
-the converter the PyAuto workspaces use at build time (`PyAutoBuild:autobuild/build_util.py`
+the converter the PyAuto workspaces use at build time (`PyAutoHands:autobuild/build_util.py`
 `py_to_notebook` + `add_notebook_quotes.py`) and mirrors its cell-split semantics. In a
 science project, run it from the resolved assistant clone (refer-back).
 
@@ -44,4 +44,4 @@ identically.) The CLI prints the absolute output path — quote it and offer to 
   (`start-new-project.md` Collaborate/Publish): reviewers and collaborators often prefer
   opening a notebook to running a script.
 - For workspace-published notebooks (Colab setup cells, magic handling), the build pipeline
-  in PyAutoBuild remains authoritative — this skill is for assistant/project scripts.
+  in PyAutoHands remains authoritative — this skill is for assistant/project scripts.

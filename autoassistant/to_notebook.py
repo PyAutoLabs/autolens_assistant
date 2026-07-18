@@ -9,11 +9,11 @@ precisely because notebook conversion is mechanical:
 - the **code between** docstring blocks becomes a **code cell**.
 
 This module is a self-contained, stdlib-only adaptation of the converter the PyAuto
-workspaces already use at build time — ``PyAutoBuild:autobuild/build_util.py``
-(``py_to_notebook``) and ``PyAutoBuild:autobuild/add_notebook_quotes.py`` — which pipe
+workspaces already use at build time — ``PyAutoHands:autobuild/build_util.py``
+(``py_to_notebook``) and ``PyAutoHands:autobuild/add_notebook_quotes.py`` — which pipe
 through the external ``ipynb-py-convert`` tool. It mirrors their cell-split semantics
 (a line *starting* with triple quotes toggles docstring mode) but emits nbformat-v4 JSON
-directly, so an assistant clone or a science project needs neither PyAutoBuild nor an
+directly, so an assistant clone or a science project needs neither PyAutoHands nor an
 extra pip dependency.
 
 Usage:
