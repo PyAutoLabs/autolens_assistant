@@ -38,21 +38,21 @@ place**: [`.github/workflows/wiki-currency.yml`](../.github/workflows/wiki-curre
 this repo, driving `autoassistant/audit_skill_apis.py`. The check versions with the content
 it grades, so it must not be reimplemented anywhere else. Two triggers feed that one check:
 
-- **Release (workflow_call).** PyAutoBuild's `release.yml` — the same run that regenerates
+- **Release (workflow_call).** PyAutoHands's `release.yml` — the same run that regenerates
   the workspace/howtolens notebooks and the API baseline — invokes `wiki-currency.yml` via
   `uses:`, passing the new `stack_version` and `assistant_ref: main`. It installs that exact
-  stack and runs all four checks. On drift the reusable workflow fails; PyAutoBuild's
+  stack and runs all four checks. On drift the reusable workflow fails; PyAutoHands's
   dependent `if: failure()` job downloads the `wiki-drift-report` artifact and opens a "wiki
-  drift" issue against this repo. **PyAutoBuild only orchestrates and reports — it holds no
-  copy of the rules.** (If releases ever move off PyAutoBuild, the `repository_dispatch`/
+  drift" issue against this repo. **PyAutoHands only orchestrates and reports — it holds no
+  copy of the rules.** (If releases ever move off PyAutoHands, the `repository_dispatch`/
   `workflow_call` trigger moves to whatever cuts the release; this workflow is unchanged.)
 - **Assistant change (pull_request / schedule).** The same workflow runs on every PR and
   weekly against the *currently-released* stack, catching drift a wiki/skill edit introduces
   before it merges.
 
-Ordering matters at release: PyAutoBuild regenerates + commits the API baseline **before**
+Ordering matters at release: PyAutoHands regenerates + commits the API baseline **before**
 calling this workflow, so `--check-version` compares the new stack against an already-updated
-baseline. When you change the rules, edit them here only; never copy a rule into PyAutoBuild.
+baseline. When you change the rules, edit them here only; never copy a rule into PyAutoHands.
 
 ## Assistant-as-template: generic vs PyAutoLens-specific
 

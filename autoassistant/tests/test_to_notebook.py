@@ -2,7 +2,7 @@
 
 Fast and stdlib-only (json + tmp files): pins the cell-split semantics — docstring blocks
 become markdown cells, code between becomes code cells — including the back-to-back
-docstring case the PyAutoBuild reference pipeline mis-renders (two adjacent markdown
+docstring case the PyAutoHands reference pipeline mis-renders (two adjacent markdown
 cells, never a code cell containing literal `# %%`/`'''` markers).
 """
 

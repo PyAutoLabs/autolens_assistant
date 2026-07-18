@@ -4,8 +4,8 @@
 # provenance). It versions with the content it grades, which is why it lives in
 # autolens_assistant and not in the release hub. Two triggers feed it:
 #
-#   1. workflow_call  — invoked by PyAutoBuild at stack-release time with the new version,
-#      so a release that moves the API is graded against the wiki immediately. PyAutoBuild
+#   1. workflow_call  — invoked by PyAutoHands at stack-release time with the new version,
+#      so a release that moves the API is graded against the wiki immediately. PyAutoHands
 #      only calls and reports; it owns none of the rules below.
 #   2. pull_request / schedule / workflow_dispatch — runs in this repo against the
 #      currently-released stack, catching drift introduced by assistant changes themselves.
@@ -52,7 +52,7 @@ jobs:
       PYAUTO_SKIP_WORKSPACE_VERSION_CHECK: "1"
     steps:
       # Always check out autolens_assistant. On native triggers github.ref already points
-      # here; under workflow_call github.ref is the *caller's* ref, so PyAutoBuild passes
+      # here; under workflow_call github.ref is the *caller's* ref, so PyAutoHands passes
       # assistant_ref (e.g. main / the release tag) to pin the version of the rules used.
       - name: Check out autolens_assistant
         uses: actions/checkout@v4
