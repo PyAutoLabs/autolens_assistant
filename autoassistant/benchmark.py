@@ -18,7 +18,7 @@ PROMPTS_DIRNAME = "prompts"
 RUNS_DIRNAME = "runs"
 BENCHMARKS_DIRNAME = "benchmarks"
 
-STACK_PACKAGES = ("autolens", "autofit", "autoarray", "autoconf")
+STACK_PACKAGES = ("autolens", "autofit", "autoarray", "autonerves")
 
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
 RUBRIC_ROW = re.compile(r"^\|\s*(M\d+|J\d+)\s*\|\s*(.+?)\s*\|\s*(\d+)\s*\|\s*$")

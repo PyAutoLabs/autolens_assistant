@@ -24,7 +24,7 @@ __Contents__
 - **Plot:** Save the dataset inspection subplot.
 """
 
-from autoconf import jax_wrapper  # Sets JAX environment before other imports
+from autonerves import jax_wrapper  # Sets JAX environment before other imports
 
 from pathlib import Path
 import autolens as al

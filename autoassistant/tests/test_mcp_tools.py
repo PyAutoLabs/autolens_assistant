@@ -18,7 +18,7 @@ from PIL import Image
 
 import autofit as af
 import autolens as al
-from autoconf import conf
+from autonerves import conf
 from autofit.aggregator.summary.aggregate_images import subplot_filename
 
 from autoassistant.mcp import lens_tools, tools

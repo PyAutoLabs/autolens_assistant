@@ -42,7 +42,7 @@ from typing import Iterable, Optional
 
 try:
     import yaml
-except ImportError:  # pragma: no cover - yaml ships with the stack (autoconf dep)
+except ImportError:  # pragma: no cover - yaml ships with the stack (autonerves dep)
     yaml = None
 
 # ---------------------------------------------------------------------------
@@ -59,7 +59,7 @@ BASELINE_REL_PATH = Path("wiki") / "core" / "api_audit_baseline.json"
 # `__version__`; `autolens.plot` is hashed too (it is where the plot API lives)
 # but inherits the autolens version.
 BASELINE_MODULES: tuple[str, ...] = (
-    "autoconf",
+    "autonerves",
     "autoarray",
     "autofit",
     "autogalaxy",
@@ -67,7 +67,7 @@ BASELINE_MODULES: tuple[str, ...] = (
     "autolens.plot",
 )
 VERSIONED_MODULES: tuple[str, ...] = (
-    "autoconf",
+    "autonerves",
     "autoarray",
     "autofit",
     "autogalaxy",
@@ -88,7 +88,7 @@ ALIAS_TO_MODULE: dict[str, str] = {
     "af": "autofit",
     "ag": "autogalaxy",
     "aa": "autoarray",
-    "autoconf": "autoconf",
+    "autonerves": "autonerves",
     "autoarray": "autoarray",
     "autofit": "autofit",
     "autogalaxy": "autogalaxy",
@@ -388,7 +388,7 @@ def _cross_module_candidates(leaf: str) -> list[str]:
     if leaf in _cross_cache:
         return _cross_cache[leaf]
     hits: list[str] = []
-    for mod_name in ("autoconf", "autoarray", "autofit", "autogalaxy", "autolens"):
+    for mod_name in ("autonerves", "autoarray", "autofit", "autogalaxy", "autolens"):
         root = _module_cache.get(mod_name)
         if root is None:
             try:
@@ -594,7 +594,7 @@ def render_report(
 # ---------------------------------------------------------------------------
 def gather_versions() -> dict[str, str]:
     out: dict[str, str] = {}
-    for name in ("autoconf", "autoarray", "autofit", "autogalaxy", "autolens"):
+    for name in ("autonerves", "autoarray", "autofit", "autogalaxy", "autolens"):
         try:
             mod = importlib.import_module(name)
         except Exception as e:  # noqa: BLE001
@@ -883,7 +883,7 @@ def check_version(root: Path) -> int:
 # `main`-pinned pages that predate the discipline.
 # ---------------------------------------------------------------------------
 PROJECT_IMPORT: dict[str, str] = {
-    "PyAutoNerves": "autoconf",
+    "PyAutoNerves": "autonerves",
     "PyAutoArray": "autoarray",
     "PyAutoFit": "autofit",
     "PyAutoGalaxy": "autogalaxy",

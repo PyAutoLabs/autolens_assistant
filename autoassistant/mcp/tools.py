@@ -17,7 +17,7 @@ import json
 import sys
 from pathlib import Path
 
-from autoconf.dictable import to_dict
+from autonerves.dictable import to_dict
 
 import autofit as af
 

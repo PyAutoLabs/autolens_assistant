@@ -10,7 +10,7 @@
 
 projects:
   - name: PyAutoNerves
-    import: autoconf
+    import: autonerves
     role: config           # YAML config loading, prior resolution
     git: https://github.com/PyAutoLabs/PyAutoNerves
 

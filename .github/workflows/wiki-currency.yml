@@ -69,7 +69,7 @@ jobs:
           python -m pip install --upgrade pip
           VER="${{ inputs.stack_version }}"
           if [ -n "$VER" ]; then
-            echo "Installing autolens==$VER (pulls the pinned autoconf/autoarray/autofit/autogalaxy)."
+            echo "Installing autolens==$VER (pulls the pinned autonerves/autoarray/autofit/autogalaxy)."
             pip install "autolens==$VER"
           else
             echo "Installing the latest released autolens."

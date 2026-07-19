@@ -30,7 +30,7 @@ __Contents__
 - **Results:** Save the fit subplot, residual maps and source reconstruction.
 """
 
-from autoconf import jax_wrapper  # Sets JAX environment before other imports
+from autonerves import jax_wrapper  # Sets JAX environment before other imports
 
 from pathlib import Path
 import autofit as af
