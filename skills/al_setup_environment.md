@@ -5,7 +5,7 @@ description: Detect, install, and configure a Python environment for the PyAuto*
 
 # Setting up an environment for the PyAuto\* stack
 
-This skill installs the libraries the workspace targets — PyAutoConf, PyAutoArray, PyAutoFit,
+This skill installs the libraries the workspace targets — PyAutoNerves, PyAutoArray, PyAutoFit,
 PyAutoGalaxy, PyAutoLens — and prepares the sandbox so the rest of the skills will run.
 The user picks one of two install modes only if the active environment is not already usable:
 pip (fastest path to "import autolens works") or editable-clone (source-level access, slower
@@ -80,7 +80,7 @@ incompatibility.
 Verify:
 
 ```bash
-python -c "import autolens, autofit, autogalaxy, autoarray, autoconf; print(autolens.__version__)"
+python -c "import autolens, autofit, autogalaxy, autoarray, autonerves; print(autolens.__version__)"
 ```
 
 If that prints a version (no traceback), the install is good.
@@ -98,7 +98,7 @@ mkdir -p sources && cd sources
 # Order matters — install from the bottom of the dependency chain up.
 # URLs come from ../sources.yaml (the PyAutoLabs org is canonical; the old
 # rhayes777/Jammy2211 URLs still redirect but should not be written anew).
-git clone https://github.com/PyAutoLabs/PyAutoConf.git
+git clone https://github.com/PyAutoLabs/PyAutoNerves.git
 git clone https://github.com/PyAutoLabs/PyAutoArray.git
 git clone https://github.com/PyAutoLabs/PyAutoFit.git
 git clone https://github.com/PyAutoLabs/PyAutoGalaxy.git
@@ -110,7 +110,7 @@ python3.11 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
 
-for repo in PyAutoConf PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
+for repo in PyAutoNerves PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
     pip install -e "sources/$repo"
 done
 
@@ -125,7 +125,7 @@ than hand-editing this skill.
 Verify the same way as for pip:
 
 ```bash
-python -c "import autolens, autofit, autogalaxy, autoarray, autoconf; print(autolens.__version__)"
+python -c "import autolens, autofit, autogalaxy, autoarray, autonerves; print(autolens.__version__)"
 ```
 
 ## Sandbox / restricted-filesystem environments
@@ -147,14 +147,14 @@ vars (`PYAUTO_TEST_MODE`, `PYAUTO_SKIP_FIT_OUTPUT`, etc.) and when each one matt
 Save this to `scripts/verify_environment.py` and run it:
 
 ```python
-import autoconf
+import autonerves
 import autoarray
 import autofit as af
 import autogalaxy as ag
 import autolens as al
 import autolens.plot as aplt
 
-print("autoconf   :", autoconf.__version__)
+print("autonerves   :", autonerves.__version__)
 print("autoarray  :", autoarray.__version__)
 print("autofit    :", af.__version__)
 print("autogalaxy :", ag.__version__)

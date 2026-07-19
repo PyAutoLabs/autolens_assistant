@@ -49,7 +49,7 @@ Nautilus uses a single core and JAX handles parallelism.
 __Imports__
 
 Standard library helpers plus the PyAuto* stack: `autofit` for the model and search,
-`autolens` for lensing objects, and `autoconf` for configuration.
+`autolens` for lensing objects, and `autonerves` for configuration.
 """
 import json
 import argparse
@@ -57,7 +57,7 @@ from pathlib import Path
 
 import autofit as af
 import autolens as al
-from autoconf import conf
+from autonerves import conf
 
 
 def fit(
@@ -92,7 +92,7 @@ def fit(
     """
     __Configuration__
 
-    Point PyAutoConf at the project's `config/` YAML files and `output/` directory, so the
+    Point PyAutoNerves at the project's `config/` YAML files and `output/` directory, so the
     same paths resolve identically on a local machine and on the HPC.
     """
     project_root = Path(__file__).parent.parent

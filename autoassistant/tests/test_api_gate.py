@@ -29,7 +29,7 @@ HOOK = ROOT / ".claude" / "hooks" / "validate_pyauto_code.py"
 
 GOOD = "import autolens.plot as aplt; aplt.subplot_fit_imaging(fit=fit)"
 GOOD_SUBMODULE = "import autofit.jax.pytrees as pytrees"
-GOOD_AUTOCONF_SUBMODULE = "import autoconf.dictable"
+GOOD_AUTOCONF_SUBMODULE = "import autonerves.dictable"
 STALE_PLOTTER = "import autolens as al; al.FitImagingPlotter(fit=fit).subplot_fit()"
 STALE_KERNEL = "from autoarray.structures.arrays.kernel_2d import Kernel2D"
 
@@ -90,7 +90,7 @@ def test_validator_passes_current_submodule_import():
     assert _run_validator("--code", GOOD_SUBMODULE).returncode == 0
 
 
-def test_validator_passes_autoconf_submodule_import():
+def test_validator_passes_autonerves_submodule_import():
     assert _run_validator("--code", GOOD_AUTOCONF_SUBMODULE).returncode == 0
 
 

@@ -86,7 +86,7 @@ See [`api/configuration`](../api/configuration.md).
 
 ## Dependencies
 
-`autoconf`, `array_api_compat`, plus a deep scientific stack — `anesthetic`, `corner`,
+`autonerves`, `array_api_compat`, plus a deep scientific stack — `anesthetic`, `corner`,
 `dynesty`, `emcee`, `pyswarms`, `h5py`, `SQLAlchemy`, `scipy`, `networkx`, `pyvis`,
 `psutil`, `xxhash`. Optional: `astropy`, `getdist`, `Nautilus`, `UltraNest`, `Zeus`.
 

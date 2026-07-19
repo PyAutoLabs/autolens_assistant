@@ -45,7 +45,7 @@ from pathlib import Path
 # kernel_2d module path. Mirrors ALIAS_TO_MODULE in autoassistant/audit_skill_apis.py.
 _ALIASES = (
     "aplt",
-    "autoconf",
+    "autonerves",
     "autoarray",
     "autofit",
     "autogalaxy",

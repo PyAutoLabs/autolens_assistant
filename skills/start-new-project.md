@@ -98,7 +98,7 @@ Create `<NEW_PROJECT>/` and populate it. **Do not `rsync` the assistant.** Copy 
 reproducible-science subset; generate the thin assistant layer; refer back for everything else.
 
 **Copy from the assistant into the project** (the science needs these to run):
-- `config/` (PyAutoConf YAML — required: pipelines `conf.instance.push(config, output)`)
+- `config/` (PyAutoNerves YAML — required: pipelines `conf.instance.push(config, output)`)
 - `activate.sh` (sourced locally and by HPC batch scripts)
 - `scripts/` (the chosen pipeline(s), or empty + `/init-slam` later)
 - datasets (Step 3) into `dataset/<sample>/...` — **`dataset/`, not `data/`** (workspace

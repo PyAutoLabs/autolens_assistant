@@ -1,8 +1,8 @@
 ---
 title: Sandbox and restricted-environment configuration
 sources:
-  - project: PyAutoConf
-    paths: [autoconf/jax_wrapper.py]
+  - project: PyAutoNerves
+    paths: [autonerves/jax_wrapper.py]
     pinned_commit: main
   - project: autolens_workspace
     paths: [CLAUDE.md, README.md]

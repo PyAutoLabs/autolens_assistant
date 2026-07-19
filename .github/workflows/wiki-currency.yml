@@ -69,7 +69,7 @@ jobs:
           python -m pip install --upgrade pip
           VER="${{ inputs.stack_version }}"
           if [ -n "$VER" ]; then
-            echo "Installing autolens==$VER (pulls the pinned autoconf/autoarray/autofit/autogalaxy)."
+            echo "Installing autolens==$VER (pulls the pinned autonerves/autoarray/autofit/autogalaxy)."
             pip install "autolens==$VER"
           else
             echo "Installing the latest released autolens."
@@ -85,7 +85,7 @@ jobs:
       - name: Clone cited source trees (citation ground truth)
         run: |
           mkdir -p sources
-          for repo in PyAutoConf PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
+          for repo in PyAutoNerves PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
             git clone --quiet --depth 1 "https://github.com/PyAutoLabs/$repo" "sources/$repo"
           done
           git clone --quiet --depth 1 --filter=blob:none --sparse \

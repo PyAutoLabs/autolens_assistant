@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 MODULES = (
-    ("autoconf", "autoconf"),
+    ("autonerves", "autonerves"),
     ("autoarray", "autoarray"),
     ("autofit", "autofit"),
     ("autogalaxy", "autogalaxy"),

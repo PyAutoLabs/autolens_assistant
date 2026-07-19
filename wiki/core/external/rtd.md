@@ -55,7 +55,7 @@ docs and workspace examples.
 ### Configs — Configuration files
 
 How PyAutoLens uses config files to customize searches, visualization, system
-behavior. Covers default locations (workspace `config/`), PyAutoConf overrides,
+behavior. Covers default locations (workspace `config/`), PyAutoNerves overrides,
 output paths.
 
 - URL: https://pyautolens.readthedocs.io/en/latest/general/configs.html
@@ -110,7 +110,7 @@ searching for prior art.
 ### Overview
 
 High-level installation introduction. Python 3.12–3.13. ~50× GPU acceleration
-via JAX. Four foundational deps (PyAutoConf, PyAutoFit, PyAutoArray,
+via JAX. Four foundational deps (PyAutoNerves, PyAutoFit, PyAutoArray,
 PyAutoGalaxy).
 
 - URL: https://pyautolens.readthedocs.io/en/latest/installation/overview.html

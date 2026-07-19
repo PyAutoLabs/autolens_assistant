@@ -91,7 +91,7 @@ angular diameter distance, mass-to-light unit conversions, etc. See
 
 ## Configuration
 
-`autogalaxy/config/` adds priors-by-class entries to the autoconf system: when you
+`autogalaxy/config/` adds priors-by-class entries to the autonerves system: when you
 write `af.Model(al.lp.Sersic)`, the default prior for each Sersic parameter comes
 from `autogalaxy/config/priors/`. Also includes config for cosmology defaults,
 notation, plotting.

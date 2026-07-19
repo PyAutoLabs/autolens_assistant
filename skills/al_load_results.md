@@ -57,7 +57,7 @@ objects with their light, mass profiles and redshifts. Operationally, it knows h
 to compute deflections, convergence, magnification, critical curves, and ray-trace.
 
 ```python
-from autoconf.dictable import from_json
+from autonerves.dictable import from_json
 tracer = from_json(file_path=".../files/tracer.json")
 ```
 

@@ -1,7 +1,7 @@
 ---
 title: Installation
 sources:
-  - project: PyAutoConf
+  - project: PyAutoNerves
     paths: [pyproject.toml]
     pinned_commit: main
   - project: PyAutoArray
@@ -53,14 +53,14 @@ JIT-compiled geometry kernels in PyAutoArray.
 
 ```bash
 mkdir -p sources && cd sources
-git clone https://github.com/PyAutoLabs/PyAutoConf.git
+git clone https://github.com/PyAutoLabs/PyAutoNerves.git
 git clone https://github.com/PyAutoLabs/PyAutoArray.git
 git clone https://github.com/PyAutoLabs/PyAutoFit.git
 git clone https://github.com/PyAutoLabs/PyAutoGalaxy.git
 git clone https://github.com/PyAutoLabs/PyAutoLens.git
 cd ..
 
-for repo in PyAutoConf PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
+for repo in PyAutoNerves PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
     pip install -e "sources/$repo"
 done
 ```
@@ -76,7 +76,7 @@ hard-coded URLs above; the YAML is the source of truth and accommodates URL chan
 The PyAuto\* stack pins several deps strictly to keep numerical reproducibility. The
 ones that bite users most often:
 
-- `numpy >= 1.24.0, <= 2.0.1` — PyAutoConf
+- `numpy >= 1.24.0, <= 2.0.1` — PyAutoNerves
 - `scipy <= 1.14.0` — PyAutoArray + PyAutoFit
 - `scikit-image <= 0.24.0`, `scikit-learn <= 1.5.1` — PyAutoArray
 - `dynesty == 2.1.4`, `emcee >= 3.1.6`, `Nautilus == 1.0.5` — PyAutoFit + downstream
@@ -93,17 +93,17 @@ A few notes:
 
 - Importing JAX-using PyAuto\* code requires the JAX environment variables to be set
   *before* the import. Every workspace script begins with
-  `from autoconf import jax_wrapper` for exactly this reason — it sets the env then
+  `from autonerves import jax_wrapper` for exactly this reason — it sets the env then
   imports JAX in a fixed order.
 - For GPU support, install `jax[cuda12]` (or whatever your CUDA version requires)
   *instead of* the default CPU JAX. PyAutoLens picks it up automatically.
-- On Google Colab, the workspace scripts use `autoconf.setup_colab.for_autolens` to
-  configure the environment. See `PyAutoConf:autoconf/setup_colab.py`.
+- On Google Colab, the workspace scripts use `autonerves.setup_colab.for_autolens` to
+  configure the environment. See `PyAutoNerves:autonerves/setup_colab.py`.
 
 ## Verifying the install
 
 ```bash
-python -c "import autolens, autofit, autogalaxy, autoarray, autoconf; print(autolens.__version__)"
+python -c "import autolens, autofit, autogalaxy, autoarray, autonerves; print(autolens.__version__)"
 ```
 
 If this prints a version without a traceback, the install is ready. For a more

@@ -1,7 +1,7 @@
 ---
 title: The PyAuto* stack at a glance
 sources:
-  - project: PyAutoConf
+  - project: PyAutoNerves
     paths: [pyproject.toml]
     pinned_commit: main
   - project: PyAutoArray
@@ -26,7 +26,7 @@ user-facing library, and the layers below surface only when you need to understa
 something specific.
 
 ```
-autoconf       configuration: YAML loader, prior + class registry
+autonerves       configuration: YAML loader, prior + class registry
    ↓
 autoarray      data: arrays, grids, masks, geometry, structures
    ↓
@@ -39,7 +39,7 @@ autolens       lensing: Tracer (multi-plane ray tracing), lensing analysis
 
 ## Who does what
 
-- **autoconf** ([page](./autoconf.md)) — reads `<pkg>/config/*.yaml` files for
+- **autonerves** ([page](./autonerves.md)) — reads `<pkg>/config/*.yaml` files for
   default priors, plotting defaults, output paths. Every other library uses it.
 - **autoarray** ([page](./autoarray.md)) — defines `Array2D`, `Grid2D`, `Mask2D`,
   `Imaging`, `Interferometer`, plus the geometry / over-sampling / inversion
@@ -70,9 +70,9 @@ skills here.
 
 | Package | Depends on |
 |---|---|
-| autoconf | (none from this stack) |
-| autoarray | autoconf |
-| autofit | autoconf, array_api_compat |
+| autonerves | (none from this stack) |
+| autoarray | autonerves |
+| autofit | autonerves, array_api_compat |
 | autogalaxy | autofit, autoarray |
 | autolens | autogalaxy |
 
@@ -81,8 +81,8 @@ Installing PyAutoLens via pip pulls in the four below it automatically.
 ## When to look at which page
 
 - *"What is a `Mask2D`?"* → autoarray, [arrays page](./autoarray.md).
-- *"How do I configure default priors for my new profile?"* → autoconf,
-  [config page](./autoconf.md), and [api/configuration](../api/configuration.md).
+- *"How do I configure default priors for my new profile?"* → autonerves,
+  [config page](./autonerves.md), and [api/configuration](../api/configuration.md).
 - *"Which non-linear searches can I use?"* → autofit,
   [api/searches](../api/searches.md).
 - *"What light profiles ship out of the box?"* → autogalaxy,

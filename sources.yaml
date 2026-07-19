@@ -9,10 +9,10 @@
 # the reference branch.
 
 projects:
-  - name: PyAutoConf
-    import: autoconf
+  - name: PyAutoNerves
+    import: autonerves
     role: config           # YAML config loading, prior resolution
-    git: https://github.com/PyAutoLabs/PyAutoConf
+    git: https://github.com/PyAutoLabs/PyAutoNerves
 
   - name: PyAutoArray
     import: autoarray
@@ -57,7 +57,7 @@ projects:
 # Dependency chain (top-to-bottom). Skills target the top; lower layers
 # surface in the wiki when the user needs to understand them.
 dependency_chain:
-  - PyAutoConf
+  - PyAutoNerves
   - PyAutoArray
   - PyAutoFit
   - PyAutoGalaxy

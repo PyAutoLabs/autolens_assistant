@@ -40,8 +40,8 @@ Start from an environment where the PyAuto* stack imports cleanly:
 
 ```bash
 source activate.sh
-python -c "import autoconf, autoarray, autofit, autogalaxy, autolens; \
-print({m.__name__: getattr(m, '__version__', '?') for m in [autoconf, autoarray, autofit, autogalaxy, autolens]})"
+python -c "import autonerves, autoarray, autofit, autogalaxy, autolens; \
+print({m.__name__: getattr(m, '__version__', '?') for m in [autonerves, autoarray, autofit, autogalaxy, autolens]})"
 ```
 
 If those imports fail, stop and route the user to
