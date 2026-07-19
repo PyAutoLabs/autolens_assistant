@@ -85,7 +85,7 @@ jobs:
       - name: Clone cited source trees (citation ground truth)
         run: |
           mkdir -p sources
-          for repo in PyAutoConf PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
+          for repo in PyAutoNerves PyAutoArray PyAutoFit PyAutoGalaxy PyAutoLens; do
             git clone --quiet --depth 1 "https://github.com/PyAutoLabs/$repo" "sources/$repo"
           done
           git clone --quiet --depth 1 --filter=blob:none --sparse \

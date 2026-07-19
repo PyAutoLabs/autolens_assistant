@@ -100,7 +100,7 @@ software *package* itself; this 2018 paper is for the modelling
 **Summary (drafted):** The Journal of Open Source Software paper for
 PyAutoLens. Concise software-citation paper covering scope, features
 (automated modelling, imaging + interferometer support, simulators,
-HowToLens tutorials), and dependencies (the PyAuto\* stack — PyAutoConf,
+HowToLens tutorials), and dependencies (the PyAuto\* stack — PyAutoNerves,
 PyAutoArray, PyAutoFit, PyAutoGalaxy). Authors: Nightingale, Hayes,
 Kelly, Amvrosiadis, Etherington, He, Li, Cao, Frawley, Cole, Enia,
 Frenk, Harvey, Li, Massey, Negrello, Robertson.

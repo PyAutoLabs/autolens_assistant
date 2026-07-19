@@ -883,7 +883,7 @@ def check_version(root: Path) -> int:
 # `main`-pinned pages that predate the discipline.
 # ---------------------------------------------------------------------------
 PROJECT_IMPORT: dict[str, str] = {
-    "PyAutoConf": "autoconf",
+    "PyAutoNerves": "autoconf",
     "PyAutoArray": "autoarray",
     "PyAutoFit": "autofit",
     "PyAutoGalaxy": "autogalaxy",

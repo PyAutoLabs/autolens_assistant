@@ -45,7 +45,7 @@ touch. Common patterns:
 - New profile / model object → `PyAutoGalaxy` + `PyAutoLens`.
 - New non-linear search / inference feature → `PyAutoFit`.
 - New data structure (grid, mask, geometry) → `PyAutoArray`.
-- New configuration option → `PyAutoConf` + the package whose config you're touching.
+- New configuration option → `PyAutoNerves` + the package whose config you're touching.
 
 If the new skill needs a repo not in `sources.yaml`, add it there first (with a `name`,
 `import`, `role`, and `git` URL) and tell the user what you added.

@@ -92,7 +92,7 @@ def fit(
     """
     __Configuration__
 
-    Point PyAutoConf at the project's `config/` YAML files and `output/` directory, so the
+    Point PyAutoNerves at the project's `config/` YAML files and `output/` directory, so the
     same paths resolve identically on a local machine and on the HPC.
     """
     project_root = Path(__file__).parent.parent

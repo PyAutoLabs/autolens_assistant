@@ -1,7 +1,7 @@
 ---
 title: The PyAuto* stack at a glance
 sources:
-  - project: PyAutoConf
+  - project: PyAutoNerves
     paths: [pyproject.toml]
     pinned_commit: main
   - project: PyAutoArray

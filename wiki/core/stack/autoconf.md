@@ -1,7 +1,7 @@
 ---
-title: PyAutoConf (autoconf)
+title: PyAutoNerves (autoconf)
 sources:
-  - project: PyAutoConf
+  - project: PyAutoNerves
     paths:
       - autoconf/conf.py
       - autoconf/dictable.py
@@ -11,11 +11,11 @@ sources:
 last_updated: 2026-07-09
 ---
 
-# PyAutoConf — the configuration layer
+# PyAutoNerves — the configuration layer
 
-Project: [`PyAutoConf`](https://github.com/PyAutoLabs/PyAutoConf). Import: `autoconf`.
+Project: [`PyAutoNerves`](https://github.com/PyAutoLabs/PyAutoNerves). Import: `autoconf`.
 
-PyAutoConf is the configuration loader the rest of the stack reads from. Every
+PyAutoNerves is the configuration loader the rest of the stack reads from. Every
 PyAutoArray / PyAutoFit / PyAutoGalaxy / PyAutoLens package ships its own
 `<pkg>/config/` directory of YAML files; autoconf is the machinery that finds,
 merges, and queries them.
@@ -50,7 +50,7 @@ When a package looks up a config key, autoconf walks a search path:
 Later entries override earlier ones, so workspace-level config beats library
 defaults, and user-level config beats both.
 
-Source: `PyAutoConf:autoconf/conf.py`.
+Source: `PyAutoNerves:autoconf/conf.py`.
 
 ## Dictable — JSON serialisation
 

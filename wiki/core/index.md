@@ -13,7 +13,7 @@ here for the *what* / *which* / *why*.
 ## Stack
 
 - [The stack at a glance](./stack/overview.md) — dependency chain, who imports whom.
-- [PyAutoConf](./stack/autoconf.md) — YAML config loader.
+- [PyAutoNerves](./stack/autoconf.md) — YAML config loader.
 - [PyAutoArray](./stack/autoarray.md) — arrays, grids, masks, geometry.
 - [PyAutoFit](./stack/autofit.md) — model composition, non-linear search, samples.
 - [PyAutoGalaxy](./stack/autogalaxy.md) — light + mass profiles, galaxies.

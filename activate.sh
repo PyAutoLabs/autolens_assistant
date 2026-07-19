@@ -18,7 +18,7 @@ elif [ -n "${PYAUTO_HPC_BASE:-}" ] && [ -f "$PYAUTO_HPC_BASE/PyAuto/bin/activate
     BASE="$PYAUTO_HPC_BASE"
     source "$BASE/PyAuto/bin/activate"
     export PYTHONPATH=$BASE:\
-$BASE/PyAutoConf:\
+$BASE/PyAutoNerves:\
 $BASE/PyAutoFit:\
 $BASE/PyAutoArray:\
 $BASE/PyAutoGalaxy:\
@@ -33,7 +33,7 @@ fi
 #
 #   SRC=~/Code/PyAutoLabs
 #   export PYTHONPATH=$SRC:\
-#   $SRC/PyAutoConf:\
+#   $SRC/PyAutoNerves:\
 #   $SRC/PyAutoFit:\
 #   $SRC/PyAutoArray:\
 #   $SRC/PyAutoGalaxy:\

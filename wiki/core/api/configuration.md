@@ -1,7 +1,7 @@
 ---
 title: Configuration — config/*.yaml files
 sources:
-  - project: PyAutoConf
+  - project: PyAutoNerves
     paths: [autoconf/conf.py]
     pinned_commit: main
   - project: PyAutoArray
@@ -21,7 +21,7 @@ last_updated: 2026-07-09
 
 # Configuration files
 
-Every PyAuto\* package ships a `<pkg>/config/` directory of YAML files. PyAutoConf
+Every PyAuto\* package ships a `<pkg>/config/` directory of YAML files. PyAutoNerves
 loads them (with override layering); the other packages query them via
 `Conf.instance`.
 
