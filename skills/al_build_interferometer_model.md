@@ -30,7 +30,7 @@ Save to `scripts/build_interferometer_model.py`:
 
 ```python
 # scripts/build_interferometer_model.py
-from autoconf import jax_wrapper
+from autonerves import jax_wrapper
 from pathlib import Path
 import autofit as af
 import autolens as al

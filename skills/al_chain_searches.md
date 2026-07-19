@@ -49,7 +49,7 @@ __Setup__
 Assumes `dataset` is already loaded (see al_prepare_imaging_data). The `jax_wrapper` import
 must precede the other PyAuto* imports so the JAX environment is configured first.
 """
-from autoconf import jax_wrapper
+from autonerves import jax_wrapper
 import autofit as af
 import autolens as al
 

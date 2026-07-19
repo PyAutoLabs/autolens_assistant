@@ -93,17 +93,17 @@ A few notes:
 
 - Importing JAX-using PyAuto\* code requires the JAX environment variables to be set
   *before* the import. Every workspace script begins with
-  `from autoconf import jax_wrapper` for exactly this reason — it sets the env then
+  `from autonerves import jax_wrapper` for exactly this reason — it sets the env then
   imports JAX in a fixed order.
 - For GPU support, install `jax[cuda12]` (or whatever your CUDA version requires)
   *instead of* the default CPU JAX. PyAutoLens picks it up automatically.
-- On Google Colab, the workspace scripts use `autoconf.setup_colab.for_autolens` to
-  configure the environment. See `PyAutoNerves:autoconf/setup_colab.py`.
+- On Google Colab, the workspace scripts use `autonerves.setup_colab.for_autolens` to
+  configure the environment. See `PyAutoNerves:autonerves/setup_colab.py`.
 
 ## Verifying the install
 
 ```bash
-python -c "import autolens, autofit, autogalaxy, autoarray, autoconf; print(autolens.__version__)"
+python -c "import autolens, autofit, autogalaxy, autoarray, autonerves; print(autolens.__version__)"
 ```
 
 If this prints a version without a traceback, the install is ready. For a more

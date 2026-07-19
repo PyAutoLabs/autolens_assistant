@@ -80,7 +80,7 @@ incompatibility.
 Verify:
 
 ```bash
-python -c "import autolens, autofit, autogalaxy, autoarray, autoconf; print(autolens.__version__)"
+python -c "import autolens, autofit, autogalaxy, autoarray, autonerves; print(autolens.__version__)"
 ```
 
 If that prints a version (no traceback), the install is good.
@@ -125,7 +125,7 @@ than hand-editing this skill.
 Verify the same way as for pip:
 
 ```bash
-python -c "import autolens, autofit, autogalaxy, autoarray, autoconf; print(autolens.__version__)"
+python -c "import autolens, autofit, autogalaxy, autoarray, autonerves; print(autolens.__version__)"
 ```
 
 ## Sandbox / restricted-filesystem environments
@@ -147,14 +147,14 @@ vars (`PYAUTO_TEST_MODE`, `PYAUTO_SKIP_FIT_OUTPUT`, etc.) and when each one matt
 Save this to `scripts/verify_environment.py` and run it:
 
 ```python
-import autoconf
+import autonerves
 import autoarray
 import autofit as af
 import autogalaxy as ag
 import autolens as al
 import autolens.plot as aplt
 
-print("autoconf   :", autoconf.__version__)
+print("autonerves   :", autonerves.__version__)
 print("autoarray  :", autoarray.__version__)
 print("autofit    :", af.__version__)
 print("autogalaxy :", ag.__version__)

@@ -52,7 +52,7 @@ is often enough as a starting point:
 
 ```python
 # scripts/prepare_imaging.py
-from autoconf import jax_wrapper  # set JAX env before other PyAuto* imports
+from autonerves import jax_wrapper  # set JAX env before other PyAuto* imports
 from pathlib import Path
 import autolens as al
 import autolens.plot as aplt

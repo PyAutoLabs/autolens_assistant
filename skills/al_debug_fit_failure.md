@@ -41,7 +41,7 @@ JSON, reload the dataset, rebuild the fit):
 
 ```python
 from pathlib import Path
-from autoconf.dictable import from_json
+from autonerves.dictable import from_json
 import autolens as al
 import autolens.plot as aplt
 

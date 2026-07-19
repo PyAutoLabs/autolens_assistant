@@ -37,7 +37,7 @@ All share the same accessor API.
 ## Loading from a finished fit
 
 ```python
-from autoconf.dictable import from_json
+from autonerves.dictable import from_json
 import autofit as af
 
 model = from_json(file_path=".../files/model.json")

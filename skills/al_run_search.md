@@ -34,7 +34,7 @@ Assemble everything into one script (`scripts/run_fit.py`):
 
 ```python
 # scripts/run_fit.py
-from autoconf import jax_wrapper
+from autonerves import jax_wrapper
 from pathlib import Path
 import autofit as af
 import autolens as al

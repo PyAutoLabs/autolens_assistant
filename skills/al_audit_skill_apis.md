@@ -43,8 +43,8 @@ one with the PyAuto\* stack — source the project's `activate.sh` first.
 
 ```bash
 source activate.sh
-python -c "import autoconf, autoarray, autofit, autogalaxy, autolens; \
-print({m.__name__: getattr(m, '__version__', '?') for m in [autoconf, autoarray, autofit, autogalaxy, autolens]})"
+python -c "import autonerves, autoarray, autofit, autogalaxy, autolens; \
+print({m.__name__: getattr(m, '__version__', '?') for m in [autonerves, autoarray, autofit, autogalaxy, autolens]})"
 ```
 
 If any of those imports fail, stop and route the user to

@@ -27,7 +27,7 @@ skill produces the equivalent for your specific model.
 
 ```python
 # scripts/simulate_imaging.py
-from autoconf import jax_wrapper
+from autonerves import jax_wrapper
 from pathlib import Path
 import autolens as al
 import autolens.plot as aplt

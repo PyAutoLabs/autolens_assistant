@@ -45,7 +45,7 @@ The minimum viable model. Save to `scripts/build_model.py`:
 
 ```python
 # scripts/build_model.py
-from autoconf import jax_wrapper
+from autonerves import jax_wrapper
 import autofit as af
 import autolens as al
 

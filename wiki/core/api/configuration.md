@@ -2,7 +2,7 @@
 title: Configuration — config/*.yaml files
 sources:
   - project: PyAutoNerves
-    paths: [autoconf/conf.py]
+    paths: [autonerves/conf.py]
     pinned_commit: main
   - project: PyAutoArray
     paths: [autoarray/config/]
@@ -94,7 +94,7 @@ Edit these to change plotting defaults workspace-wide.
 
 1. `<pkg>/config/` (per-library defaults, the ones shipped in the source repo).
 2. The path in `WORKSPACE_CONFIG_PATH` if set.
-3. `~/.autoconf/` if present.
+3. `~/.autonerves/` if present.
 
 Later entries override earlier ones, so workspace-level config wins over library
 defaults, and user-level config wins over both.
@@ -116,6 +116,6 @@ defaults — extend or override entries there rather than editing the library YA
 
 ## See also
 
-- [`../stack/autoconf`](../stack/autoconf.md) — the loader.
+- [`../stack/autonerves`](../stack/autonerves.md) — the loader.
 - [`../../../skills/al_setup_environment.md`](../../../skills/al_setup_environment.md) —
   the env-var setup that includes `WORKSPACE_CONFIG_PATH`.

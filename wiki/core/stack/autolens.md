@@ -129,7 +129,7 @@ plot settings for `FitImaging`, and notation.
 
 ## Dependencies
 
-`autogalaxy` (which pulls in `autofit`, `autoarray`, `autoconf`), `nautilus-sampler`.
+`autogalaxy` (which pulls in `autofit`, `autoarray`, `autonerves`), `nautilus-sampler`.
 Optional: `numba`, `pynufft`, `UltraNest`, `Zeus`, `getdist`.
 
 ## See also
