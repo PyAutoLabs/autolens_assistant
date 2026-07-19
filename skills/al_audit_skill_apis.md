@@ -79,9 +79,13 @@ committed. Exit code is non-zero when the report contains misses; you can chain
 
 ### 3. Version baseline + drift-check
 
-This workspace is pinned to an autolens version via `wiki/core/api_audit_baseline.json`
-(per-module `__version__` + a hash of each module's public `dir()`). Two commands manage
-it:
+This workspace is pinned to an autolens API surface via `wiki/core/api_audit_baseline.json`
+(a hash of each module's public `dir()`, plus per-module `__version__` recorded for
+context). `--check-version` **gates on the API-surface hash only** — the version stamp is
+shown but no longer fails the check, because since PyAutoConf#119 / PyAutoBuild#121 a
+release does not commit the stamp back to library `main`, so a source checkout's frozen
+stamp vs the wheel-derived baseline is a structurally-permanent false positive that the
+hash already proves spurious. Two commands manage it:
 
 ```bash
 # Cheap drift-check — compares the installed stack to the committed baseline.
@@ -92,7 +96,8 @@ python autoassistant/audit_skill_apis.py --check-version
 python autoassistant/audit_skill_apis.py --write-baseline
 ```
 
-The workflow is: `--check-version` flags that the installed autolens moved → run the full
+The workflow is: `--check-version` flags that the installed autolens **public API surface**
+moved → run the full
 `--scope all` audit to find what broke → fix the references (per the Branch section below)
 → `--write-baseline` to re-pin once the audit is clean. **Only re-pin after fixing**, never
 to silence a red drift-check on a stack you haven't audited. Because a wiki refresh

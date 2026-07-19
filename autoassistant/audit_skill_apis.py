@@ -799,11 +799,20 @@ def write_baseline(root: Path) -> Path:
 
 
 def check_version(root: Path) -> int:
-    """Compare the installed stack against the committed baseline.
+    """Compare the installed stack's public API surface against the committed baseline.
 
-    Returns 0 when versions and API hashes match, 1 on any drift (or a missing
-    baseline). Prints a short human-readable summary. Intentionally cheap — no
-    Markdown scan — so it is safe to run at session start.
+    Returns 0 when the public-API-surface hashes match, 1 on any hash drift (or a
+    missing baseline). Prints a short human-readable summary. Intentionally cheap
+    — no Markdown scan — so it is safe to run at session start.
+
+    The per-module ``__version__`` equality this check used to *gate* on was
+    dropped (PyAutoMind build-chain #155 Phase 4 task 3). Since PyAutoConf#119 /
+    PyAutoBuild#121 a release no longer commits the ``__version__`` stamp back to
+    the library ``main``, so a source checkout reports a frozen stamp while the
+    baseline is wheel-derived — a structurally-permanent version mismatch,
+    independent of release cadence, that the API-surface hash already proves is
+    spurious (the public surface is byte-identical). Versions are still shown for
+    context; only the API-surface hash gates.
     """
     path = root / BASELINE_REL_PATH
     if not path.exists():
@@ -816,7 +825,10 @@ def check_version(root: Path) -> int:
     baseline = json.loads(path.read_text(encoding="utf-8"))
     current = compute_baseline()
 
-    version_drift = [
+    # Informational only — a version-stamp difference no longer gates (frozen
+    # source stamps vs a wheel-derived baseline false-positive; the API-surface
+    # hash is the real signal).
+    version_changes = [
         (m, baseline["versions"].get(m, "(absent)"), current["versions"][m])
         for m in VERSIONED_MODULES
         if baseline["versions"].get(m) != current["versions"][m]
@@ -828,10 +840,17 @@ def check_version(root: Path) -> int:
         != current["api_surface"][m]["hash"]
     ]
 
-    if not version_drift and not hash_drift:
+    if not hash_drift:
+        note = ""
+        if version_changes:
+            note = (
+                " (version stamp differs but public API surface is identical: "
+                + ", ".join(f"{m} {old}->{new}" for m, old, new in version_changes)
+                + ")"
+            )
         print(
-            f"[drift] clean — installed stack matches baseline "
-            f"(autolens {current['versions']['autolens']}, generated {baseline.get('generated')})."
+            f"[drift] clean — installed public API surface matches baseline "
+            f"(autolens {current['versions']['autolens']}, generated {baseline.get('generated')}){note}."
         )
         return 0
 
@@ -840,16 +859,12 @@ def check_version(root: Path) -> int:
         f"(baseline generated {baseline.get('generated')}):",
         file=sys.stderr,
     )
-    for m, old, new in version_drift:
-        print(f"  - {m}: {old} -> {new}", file=sys.stderr)
-    if hash_drift:
-        print(
-            f"  - public API surface changed: {', '.join(hash_drift)}", file=sys.stderr
-        )
+    print(f"  - public API surface changed: {', '.join(hash_drift)}", file=sys.stderr)
+    for m, old, new in version_changes:
+        print(f"  - {m} version: {old} -> {new} (informational)", file=sys.stderr)
     print(
-        "  The skills/wiki were validated against the baseline. Upgrade/downgrade to the "
-        "pinned version (`pip install -U autolens`), or run `--scope all` to audit drift "
-        "and `--write-baseline` to re-pin once fixed.",
+        "  The skills/wiki were validated against the baseline. Run `--scope all` to audit "
+        "drift and `--write-baseline` to re-pin once fixed.",
         file=sys.stderr,
     )
     return 1
