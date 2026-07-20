@@ -283,6 +283,7 @@ spotting when a result has caveats.
 
 ## License
 
-The assistant ships agent instructions and reference material derived from the public
-PyAuto\* repositories. The underlying libraries are released under their own licenses
-(see each repo).
+This repository is released under the [MIT License](LICENSE), consistent with the wider
+PyAuto\* ecosystem. The assistant ships agent instructions and reference material derived
+from the public PyAuto\* repositories; the underlying libraries are released under their
+own licenses (see each repo).
