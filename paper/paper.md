@@ -14,10 +14,12 @@ authors:
     affiliation: 1
     corresponding: true
   - name: Richard G. Hayes
-    affiliation: 1
+    affiliation: 2
 affiliations:
-  - name: Institute for Computational Cosmology, Durham University, United Kingdom # Update to My Newcastle affiliation
+  - name: School of Mathematics, Statistics and Physics, Newcastle University, Herschel Building, Newcastle upon Tyne, NE1 7RU, United Kingdom
     index: 1
+  - name: Institute for Computational Cosmology, Durham University, South Road, Durham DH1 3LE, United Kingdom
+    index: 2
 date: 15 July 2026
 bibliography: paper.bib
 ---
