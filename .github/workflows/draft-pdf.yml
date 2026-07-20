@@ -13,9 +13,9 @@ name: Draft JOSS PDF
 
 on:
   push:
+    branches: [main]
     paths:
       - 'paper/**'
-      - '.github/workflows/draft-pdf.yml'
   pull_request:
     paths:
       - 'paper/**'
