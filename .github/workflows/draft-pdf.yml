@@ -1,0 +1,42 @@
+# Build the JOSS paper with the official Inara toolchain.
+#
+# JOSS papers are compiled by `openjournals/inara` (the same tool the journal
+# runs at review time), which applies the branded JOSS template. Running it in
+# CI is the canonical way to preview the paper — it needs no local Docker/LaTeX.
+# The compiled PDF is uploaded as a workflow artifact ("paper-pdf"); download it
+# from the run's Summary page.
+#
+# NOTE: the build fails until every figure referenced by paper.md exists in the
+# repo (currently `paper/cosmos_web_ring.png`). Replace the placeholder with the
+# real figure and the artifact regenerates automatically.
+name: Draft JOSS PDF
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'paper/**'
+  pull_request:
+    paths:
+      - 'paper/**'
+  workflow_dispatch:
+
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    name: Build JOSS draft PDF
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build draft PDF (Inara)
+        uses: openjournals/openjournals-draft-action@master
+        with:
+          journal: joss
+          paper-path: paper/paper.md
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf
+          path: paper/paper.pdf
