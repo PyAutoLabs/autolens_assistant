@@ -156,6 +156,26 @@ also interface directly with HPC facilities through bidirectional synchronizatio
 monitoring. If the study leads to a paper, the completed repository can therefore serve as the paper’s open-source 
 companion, enabling readers to reproduce the study end to end or fork it as the starting point for further research.
 
+# Natural-language development ecosystem
+
+In March 2026, following more than a decade of exclusively human-led software development, PyAutoLens transitioned 
+to a fully natural-language, agentic-AI development ecosystem documented in 
+[PyAutoScientist](https://github.com/PyAutoLabs/PyAutoScientist). This ecosystem currently comprises seven 
+repositories, each named after a human organ and responsible for a distinct part of the development workflow. For 
+example, [PyAutoBrain](https://github.com/PyAutoLabs/PyAutoBrain) classifies, plans, and routes tasks through 
+specialist coding agents; [PyAutoMind](https://github.com/PyAutoLabs/PyAutoMind) records plain-English development 
+requirements and tracks them from initial ideas to completed implementations; and 
+[PyAutoMemory](https://github.com/PyAutoLabs/PyAutoMemory) maintains long-term scientific knowledge through 
+cross-linked literature wikis and verifiable citations. Throughout, humans continue to direct the scientific goals 
+and approve consequential decisions.
+
+This transition has retained a strong emphasis on documentation written for human readers. 
+[HowToLens](https://github.com/PyAutoLabs/HowToLens) teaches gravitational lensing and Bayesian modelling from first 
+principles, while [autolens_workspace](https://github.com/PyAutoLabs/autolens_workspace) provides extensively 
+documented, research-grade examples applying those concepts. These paired resources also directly support Teacher 
+Mode, grounding its explanations in the same tutorials and examples through which scientists can learn PyAutoLens 
+independently.
+
 # Similar software
 
 A mature ecosystem of open-source packages supports strong-lens modelling. `lenstronomy` 
