@@ -197,7 +197,7 @@ A mature ecosystem of open-source packages supports strong-lens modelling. `lens
 [@Birrer2018a] is a widely used, multi-purpose package for galaxy-scale lens modelling, while 
 `Herculens` [@Galan2022Herculens] provides differentiable, GPU-capable modelling built on `JAX`, 
 analogous to the autodifferentiable engine underlying PyAutoLens-JAX. Cluster-scale analyses are 
-commonly performed with `Lenstool` [@Jullo2007], and other established tools such as `GLEE` [@Suyu2010].
+commonly performed with `Lenstool` [@Jullo2007], and other established tools such as `GLEE` [@SuyuHalkola2010].
 These packages provide the numerical and statistical machinery for lens modelling, but the 
 scientist must still write and adapt code directly against each package's API in order to build 
 a bespoke analysis. None currently offer a natural-language or AI-agent 
