@@ -72,6 +72,27 @@ propagates. Anything the stack needs (`PYTHONPATH` for editable/source checkouts
 `NUMBA_CACHE_DIR`/`MPLCONFIGDIR` in restricted setups) must be declared in the
 config's `env` block.
 
+**Windows (Claude Desktop → WSL):** when the interpreter lives in WSL, launch it
+through `wsl.exe`. Nothing beyond `PYTHONPATH` is required — the server pins its own
+config directory and forces JAX onto CPU before importing autofit, so it does not
+depend on the launch directory or extra environment:
+
+```json
+{
+  "mcpServers": {
+    "pyauto-results-inspector": {
+      "command": "wsl.exe",
+      "args": ["-e", "bash", "-c",
+        "PYTHONPATH=/home/you/autolens_assistant /home/you/venv/bin/python -m autoassistant.mcp"]
+    }
+  }
+}
+```
+
+For the Microsoft Store build of Claude Desktop, the config and the failure log
+(`logs/mcp-server-pyauto-results-inspector.log`) live under
+`%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\`, not `%APPDATA%\Claude\`.
+
 **Claude Code**: the repo-root `.mcp.json` registers the same server automatically for
 sessions opened in this repo.
 
