@@ -29,7 +29,7 @@ bibliography: paper.bib
 Stage IV weak-lensing surveys, such as Euclid [@EuclidCollaboration2025] and the Vera C. Rubin 
 Observatory [@LSSTDarkEnergyScienceCollaboration2012], are mapping the distribution of mass across the Universe on 
 an unprecedented scale. They include strong-lens searches which are rapidly expanding samples of galaxy-, group-, and 
-cluster-scale lenses beyond hundreds of thousands [@Collett2015]. Lensing analyses draw on optical and infrared imaging, 
+cluster-scale lenses beyond hundreds of thousands [@Collett2015]. Lensing studies draw on optical and infrared imaging, 
 submm and radio interferometry, strongly lensed point sources and transients (e.g. quasars and supernovae), and 
 weak-lensing shear catalogues. Together, these datasets enable studies of cosmology, dark matter, galaxy formation, 
 star formation, and the early Universe. `PyAutoLens-JAX` [@NightingaleJAX2026] provides open-source software for GPU-native, 
@@ -54,8 +54,8 @@ strong-lensing scientist might examine multi-wavelength James Webb Space Telesco
 COSMOS-Web Ring [@Casey2023] and say:
 
 > I want to model the F115W, F150W, F277W, and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
-> my local folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion and its mass with a 
-> singular isothermal ellipsoid plus external shear, and reconstruct the source on an adaptive rectangular mesh. For 
+> my local folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion, its mass with a 
+> singular isothermal ellipsoid plus external shear, and model the source using a multi-Gaussian expansion. For 
 > speed, run the analysis on my laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. 
 > Plot the observed image at each wavelength in the top row, its lensed source model in the middle row, and its source 
 > reconstruction in the bottom row.[^web]
