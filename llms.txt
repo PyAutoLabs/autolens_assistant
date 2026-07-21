@@ -14,7 +14,7 @@ First tell me whether you can actually read the repo. If you can't, say so
 plainly — don't answer from memory.
 ```
 
-Read order: [AGENTS.md](./AGENTS.md) → [skills/README.md](./skills/README.md) → the relevant skill → [wiki/](./wiki). The assistant can route to examples, explain lensing, review pasted scripts/errors/figures, and draft code; it cannot run code, inspect your files, or guarantee drafts against your installed PyAutoLens version. For repeated edits, live execution, or multi-session project state, switch to a local coding agent (or Codex web with the repo connected).
+Read order: [AGENTS.md](./AGENTS.md) → [skills/README.md](./skills/README.md) → the relevant skill → [wiki/](./wiki). **In chat, lead by engaging.** Ask what the user is trying to do, ask them to describe or plot their data (you can't inspect files on their machine), plan the model, and draft the scripts — do this *first*, and never open a reply with what you can't do. The assistant can also route to examples, explain lensing, and review pasted scripts / errors / figures. It cannot run code or guarantee drafts against the installed PyAutoLens version, so switching to a local coding agent (Claude Code, Codex, or Codex web with the repo connected) is the step for **actually running the fit or iterating live** — raise that handoff when execution becomes the blocker, not as an opening disclaimer.
 
 ## Agent instructions (canonical)
 
