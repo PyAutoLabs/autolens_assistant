@@ -29,9 +29,9 @@ bibliography: paper.bib
 Stage IV weak-lensing surveys, such as Euclid [@EuclidCollaboration2025] and the Vera C. Rubin 
 Observatory [@LSSTDarkEnergyScienceCollaboration2012], are mapping the distribution of mass across the Universe on 
 an unprecedented scale. They include strong-lens searches which are rapidly expanding samples of galaxy-, group-, and 
-cluster-scale lenses beyond hundreds of thousands [@Collett2015]. Lensing studies draw on optical and infrared imaging, 
-submm and radio interferometry, strongly lensed point sources and transients (e.g. quasars and supernovae), and 
-weak-lensing shear catalogues. Together, these datasets enable studies of cosmology, dark matter, galaxy formation, 
+cluster-scale lenses beyond hundreds of thousands [@Collett2015]. Lensing studies draw on optical and infrared imaging [@Bolton2006; @Nightingale2025COWLS], 
+submm and radio interferometry [@Hezaveh2016; @Vegetti2012; @Rizzo2020], strongly lensed point sources and 
+transients (e.g. quasars and supernovae) [@Wong2019; @Grillo2018], and weak-lensing shear catalogues. Together, these datasets enable studies of cosmology, dark matter, galaxy formation, 
 star formation, and the early Universe. `PyAutoLens-JAX` [@NightingaleJAX2026] provides open-source software for GPU-native, 
 autodifferentiable joint lensing analyses across these datasets and scales. However, combining datasets and performing 
 inference across vastly different lensing scales is inherently complex, time consuming and error-prone, requiring 
@@ -60,16 +60,14 @@ COSMOS-Web Ring [@Casey2023] and say:
 > Plot the observed image at each wavelength in the top row, its lensed source model in the middle row, and its source 
 > reconstruction in the bottom row.[^web]
 
-When the prompt above is input into `PyAutoLens-Assistant` using Claude Code Opus 4.8, after the user answers the 
-clarifying questions asked by `PyAutoLens-Assistant`, the end-to-end analysis produces \autoref{fig:cosmos_web_ring}, 
+When the prompt above is input into `PyAutoLens-Assistant` using Claude Code Opus 4.8, after the user answers a couple of 
+clarifying questions, the end-to-end analysis produces \autoref{fig:cosmos_web_ring}, 
 successfully delivering the output requested in the prompt.
 
-[^web]: This prompt is run end-to-end by a local agentic tool (here Claude Code), which reads the local 
-`dataset/cosmos_web_ring` folder and executes the analysis on the user's GPU. To use the same prompt in a 
-browser-based assistant such as ChatGPT or Claude, the assistant must first be connected to the 
-`autolens_assistant` repository — via its `llms.txt` entry point and the provider's GitHub synchronisation app — 
-so it can read the instructions, skills, and reference wikis and return the corresponding scripts for the user 
-to run locally.
+[^web]: To use a prompt like this in a browser-based assistant such as ChatGPT or Claude, the assistant must first 
+be connected to the `autolens_assistant` repository. This requires you to ensure the assistant supports GitHub 
+synchronisation via an inbuilt app or plugin, and for you to include the `autolens_assistant` GitHub URL
+in the prompt. The `autolens_assistant` README and documentation explain this clearly.
 
 ![The end-to-end COSMOS-Web Ring analysis produced by `PyAutoLens-Assistant` from the natural-language prompt above. 
 Each column corresponds to one JWST band (F115W, F150W, F277W, F444W); the top row shows the observed image, the 
@@ -101,55 +99,58 @@ structured for rapid machine reading, allowing the assistant to ground its respo
 scientific literature, and established analysis workflows.
 
 The first layer is a reference wiki comprising core and literature pages. The core wiki provides an AI-readable 
-interface to the `PyAutoLens` API documentation, organizing key concepts, datasets, modelling methods, and software 
-functionality so that the assistant can identify and retrieve the information relevant to a user’s request. The 
+interface to the `PyAutoLens` API documentation, organizing key concepts, dataset types, light and mass profiles and other
+software functionality so that the assistant can identify and retrieve the information relevant to a user’s request. The 
 literature wiki is derived from more than 300 strong-lensing papers and connects scientific concepts, terminology, 
 surveys, and individual lens systems to the relevant publications. This allows the assistant to interpret a request 
-within its scientific context and relate it to the underlying literature. Users can also add papers relevant to their 
-own research, giving the assistant a bespoke knowledge base tailored to a particular study.
+within the wider scientific literature. Users can add papers relevant to their own research, giving the assistant a 
+bespoke knowledge base tailored to the particular study.
 
-The second layer is the skills library, which provides the procedural knowledge required to perform complete analyses. 
+The second layer is the skills library, which provides the procedural knowledge required to perform end-to-end analyses. 
 During more than a decade of `PyAutoLens` development, over 300 human-written examples have been created 
 in `autolens_workspace`, covering datasets such as CCD imaging and interferometric observations and tasks including 
 simulation, data reduction, and lens modelling. These examples are extensively documented, often containing 
 substantially more explanatory text than code, and therefore encode both the implementation and the scientific 
 reasoning behind each step. `PyAutoLens-Assistant` distils this material into concise skill files that describe how to 
-perform specific tasks and direct the assistant to the relevant workspace examples.
+perform specific tasks and direct the assistant to the full workspace examples if more context is required.
 
 Crucially, `PyAutoLens-Assistant` does not simply match a user’s prompt to a single existing example. The benchmark 
 prompts deliberately request analyses that no individual `autolens_workspace` example performs. Instead, the assistant 
 combines the relevant skills and reference material, generalizing across multiple examples to construct an end-to-end 
 workflow tailored to the user’s dataset and scientific aims. This design also makes the assistant straightforward to 
-maintain: as new `PyAutoLens` features and accompanying workspace examples are introduced, the corresponding skills can 
-be updated so that the assistant immediately supports the new functionality.
+maintain: as new `PyAutoLens` features and accompanying `autolens_workspace` examples are introduced, the corresponding 
+skills are updated so that the assistant immediately supports the new functionality.
 
-`PyAutoLens-Assistant` can be accessed through either a browser-based conversational assistant or a local agentic 
-coding tool. For browser-based systems such as ChatGPT or Claude, `llms.txt` provides a machine-readable entry point 
-that verifies repository access and defines the canonical reading order through the instructions, skills, reference 
-wikis, and runnable examples. Users can then ask questions, receive scientific explanations, interpret errors and 
-figures, locate relevant examples, and generate draft end-to-end scripts. Although this mode cannot normally inspect 
-local datasets or execute code, it supports the conversational AI workflow already familiar to many scientists and 
-makes `PyAutoLens-Assistant` accessible without requiring a local coding agent.
+`PyAutoLens-Assistant` can be used through browser-based conversational assistants such as ChatGPT or Claude. 
+The `llms.txt` file defines the canonical reading order through the wikis, skills, and runnable examples, enabling 
+the assistant to answer questions, explain scientific concepts, locate relevant documentation, and generate end-to-end 
+modelling scripts. This mode is necessarily manual and limited: the assistant cannot normally inspect local files or 
+execute code, so users must run scripts themselves and copy code, errors, figures, and other outputs between the 
+conversation and their working environment. Nevertheless, conversational AI is currently the interface most familiar 
+to astronomers, making this mode easy to integrate into existing workflows.
 
-Local agentic tools such as Claude Code and Codex provide the most complete workflow. In addition to reading the same 
-instructions, skills, and reference material, they can inspect the user’s data, write and execute scripts, evaluate 
-the resulting outputs, and iteratively refine an analysis through natural-language conversation. The same curated 
-knowledge base therefore supports both accessible question answering in a web browser and fully agentic, end-to-end scientific analysis.
+CLI coding agents such as Claude Code and Codex provide the complete `PyAutoLens-Assistant` workflow using the same 
+curated knowledge base with substantially fewer manual steps. They can inspect `.fits` datasets directly (e.g. reading
+their header information), write and execute end-to-end analysis scripts, read and then resolve Python exceptions
+if code runs incorrectly. `PyAutoLens` outputs lens modeling results into directories locally which include 
+structured `.json` files describing the model, sampler, results and other metadata which are specifically designed to 
+be read and interpreted by the agent. Agents can also use `PyAutoLens` database and aggregator tools to combine 
+large samples of analysis results into summary tables and figures. This ultimately enables users to analyse and 
+interpret modelling results for thousands of lenses entirely through natural language.
+
 
 # Benchmark
 
-The primary benchmark uses the COSMOS-Web Ring prompt presented above and evaluates whether `PyAutoLens-Assistant` 
-can translate the same scientific request into a complete four-band JWST analysis across different models and 
-interfaces. The frozen prompt is tested using Claude Code, Codex, OpenCode, and browser-based assistants such as 
-ChatGPT and Claude, including models available without a paid subscription. Each run begins from a clean session, 
-with the operator answering any clarifying questions minimally and without directing the assistant towards a particular implementation.
-
-Each run is assessed using a common rubric covering the scientific validity of the lens model, correctness of the 
-`PyAutoLens` implementation, successful construction of the requested workflow, and quality of the resulting figures and 
-explanations. Complete transcripts, generated scripts, output artifacts, execution metadata, and criterion-level 
-scores are recorded in the repository, making the comparison transparent and reproducible. Additional benchmarks 
-test a dark-matter subhalo analysis, joint imaging and interferometric modelling of a group-scale lens, and the 
-pedagogical performance of Teacher Mode.
+We benchmark `PyAutoLens-Assistant` using ChatGPT (GPT-5.6 Sol and **GPT-5.5**), Claude (Opus 4.8 and **Sonnet 5.0**), 
+Claude Code (Opus 4.8), Codex (GPT-5.6 Sol), and OpenCode (**[model]**), with bold models available without a paid 
+subscription at the time of writing. The primary benchmark uses the COSMOS-Web Ring prompt above, with success 
+determined by whether the generated script constructs the requested model and recovers the expected lens configuration. 
+All tested models pass, suggesting this task is accessible even to less capable models. Further benchmarks reproduce 
+the dark-matter subhalo detection in SDSS J0946+1006 [@Vegetti2010], assess Teacher Mode, and simulate and jointly 
+model CCD imaging and interferometric observations of a group-scale lens. The final benchmark intentionally combines 
+simulation, multiple data types, a multi-galaxy mass model, and joint inference, which are documented over many different 
+`autolens_workspace` examples. Thus it shows how the assistant can generalize across the wikis and skills to do complex
+tasks which are not documented individually.
 
 # Science projects and open science
 
@@ -163,6 +164,20 @@ understand how each analysis was performed, and provide suggestions or build on 
 also interface directly with HPC facilities through bidirectional synchronization, CPU and GPU job submission and 
 monitoring. If the study leads to a paper, the completed repository can therefore serve as the paper’s open-source 
 companion, enabling readers to reproduce the study end to end or fork it as the starting point for further research.
+
+# Model Context Protocol
+
+Consider a `PyAutoLens` analysis containing models for over 10,000 strong lenses, as anticipated for Euclid Data 
+Release 1. Rather than downloading the results, installing `PyAutoLens`, and learning its output structure, a 
+collaborator could interrogate the entire catalogue through natural language—for example, asking ChatGPT or 
+Claude to “show lenses with Einstein radii above $1.5^{\prime\prime}$” or “compare the magnification distributions 
+of two samples.” `PyAutoLens-Assistant` ships with its own Model Context Protocol (MCP) tools for this purpose. MCP 
+is an open standard that connects AI assistants to external tools and data; the read-only tools provided by 
+`PyAutoLens-Assistant` search, filter, and aggregate completed models before returning relevant parameters, summaries, 
+and figures directly within the conversation. CLI agents can use the same interface while retaining access to the 
+more flexible human-facing analysis tools documented in the wiki. MCP therefore transforms a large collection of 
+modelling outputs into an accessible, interactive scientific resource that collaborators can explore safely without 
+running the underlying analyses themselves.
 
 # Natural-language development ecosystem
 
@@ -183,20 +198,6 @@ principles, while [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_
 documented, research-grade examples applying those concepts. These paired resources also directly support Teacher 
 Mode, grounding its explanations in the same tutorials and examples through which scientists can learn `PyAutoLens` 
 independently.
-
-# Model Context Protocol
-
-Consider a `PyAutoLens` analysis containing models for over 10,000 strong lenses, as anticipated for Euclid Data 
-Release 1. Rather than downloading the results, installing `PyAutoLens`, and learning its output structure, a 
-collaborator could interrogate the entire catalogue through natural language—for example, asking ChatGPT or 
-Claude to “show lenses with Einstein radii above $1.5^{\prime\prime}$” or “compare the magnification distributions 
-of two samples.” `PyAutoLens-Assistant` ships with its own Model Context Protocol (MCP) tools for this purpose. MCP 
-is an open standard that connects AI assistants to external tools and data; the read-only tools provided by 
-`PyAutoLens-Assistant` search, filter, and aggregate completed models before returning relevant parameters, summaries, 
-and figures directly within the conversation. CLI agents can use the same interface while retaining access to the 
-more flexible human-facing analysis tools documented in the wiki. MCP therefore transforms a large collection of 
-modelling outputs into an accessible, interactive scientific resource that collaborators can explore safely without 
-running the underlying analyses themselves.
 
 
 # Similar software
