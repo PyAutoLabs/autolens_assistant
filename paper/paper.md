@@ -30,7 +30,7 @@ Stage IV weak-lensing surveys, such as Euclid [@EuclidCollaboration2025] and the
 Observatory [@LSSTDarkEnergyScienceCollaboration2012], are mapping the distribution of mass across the Universe on 
 an unprecedented scale. They include strong-lens searches which are rapidly expanding samples of galaxy-, group-, and 
 cluster-scale lenses beyond hundreds of thousands [@Collett2015]. Lensing studies draw on optical and infrared imaging [@Bolton2006; @Nightingale2025COWLS], 
-submm and radio interferometry [@Hezaveh2016; @Vegetti2012; @Rizzo2020], strongly lensed point sources and 
+submm and radio interferometry [@Hezaveh2016; @Vegetti2025; @Rizzo2020], strongly lensed point sources and 
 transients (e.g. quasars and supernovae) [@Wong2019; @Grillo2018], and weak-lensing shear catalogues. Together, these datasets enable studies of cosmology, dark matter, galaxy formation, 
 star formation, and the early Universe. `PyAutoLens-JAX` [@NightingaleJAX2026] provides open-source software for GPU-native, 
 autodifferentiable joint lensing analyses across these datasets and scales. However, combining datasets and performing 
