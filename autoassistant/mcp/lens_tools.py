@@ -14,7 +14,7 @@ from pathlib import Path
 import autofit as af
 import autolens as al
 
-from autoassistant.mcp.tools import DirectoryAggregator, _stdout_to_stderr
+from autofit.mcp.tools import DirectoryAggregator, _stdout_to_stderr
 
 
 def _enum_groups() -> dict:
