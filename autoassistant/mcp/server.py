@@ -11,13 +11,32 @@ Every tool is read-only against `output/`: nothing here composes models, runs
 fits, or writes into a search-output directory.
 """
 
+import contextlib
 import io
 import logging
+import os
 import sys
+from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP, Image
 
-from autoassistant.mcp import lens_tools, tools
+
+def _pin_config():
+    """
+    autonerves derives its config directory from the process working directory
+    (`conf.instance` defaults to `os.getcwd()/config`) and autofit reads config
+    at import time. A server launched from a foreign directory — e.g. a chat
+    client spawning `wsl.exe`, which lands in a Windows folder — would otherwise
+    scan unrelated files and crash on import (a `desktop.ini` trips configparser
+    interpolation). Pin the config to this assistant's own `config/` so the
+    server runs from any working directory.
+    """
+    from autonerves import conf
+
+    config_path = Path(__file__).resolve().parents[2] / "config"
+    conf.instance = conf.Config(
+        str(config_path), output_path=str(config_path.parent / "output")
+    )
 
 
 def _route_logging_to_stderr():
@@ -37,6 +56,17 @@ def _route_logging_to_stderr():
             ):
                 handler.setStream(sys.stderr)
 
+
+# Importing the tool modules imports autofit, which (a) reads autonerves config
+# at import and (b) lets jax's xla_bridge log its backend probe to stdout — both
+# fatal to the JSON-RPC channel. So, before that import: force CPU (skips the
+# jax backend probe), pin the config so it does not depend on the launch
+# directory, and redirect any residual import-time stdout to stderr. Rebind
+# logging handlers afterwards for anything attached during import.
+os.environ.setdefault("JAX_PLATFORMS", "cpu")
+_pin_config()
+with contextlib.redirect_stdout(sys.stderr):
+    from autoassistant.mcp import lens_tools, tools
 
 _route_logging_to_stderr()
 
