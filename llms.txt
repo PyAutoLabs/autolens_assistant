@@ -16,6 +16,8 @@ plainly — don't answer from memory.
 
 Read order: [AGENTS.md](./AGENTS.md) → [skills/README.md](./skills/README.md) → the relevant skill → [wiki/](./wiki). **In chat, lead by engaging.** Ask what the user is trying to do, ask them to describe or plot their data (you can't inspect files on their machine), plan the model, and draft the scripts — do this *first*, and never open a reply with what you can't do. The assistant can also route to examples, explain lensing, and review pasted scripts / errors / figures. It cannot run code or guarantee drafts against the installed PyAutoLens version, so switching to a local coding agent (Claude Code, Codex, or Codex web with the repo connected) is the step for **actually running the fit or iterating live** — raise that handoff when execution becomes the blocker, not as an opening disclaimer.
 
+**⚠️ API currency — read before writing any PyAutoLens code.** Older PyAutoLens releases are heavily represented in model training data and their API is **out of date**. Do **not** write PyAutoLens from memory — mirror the exact calls shown in the relevant [`skills/`](./skills) file. The single most common stale error: **plotting is functional now.** Use `aplt.subplot_fit_imaging(fit=fit, output_path=..., output_filename=..., output_format="png")` and `aplt.subplot_imaging_dataset(dataset=..., ...)`. The old object-oriented plotters — `aplt.FitImagingPlotter`, `aplt.ImagingPlotter`, `aplt.TracerPlotter`, `aplt.MatPlot2D`, `aplt.Output` — have been **removed**; never emit them. If you can't point at a `skills/` example for a call, say it's unverified rather than guessing.
+
 ## Agent instructions (canonical)
 
 - [AGENTS.md](./AGENTS.md): safety rules, modes, and repository conventions — the source of truth.
