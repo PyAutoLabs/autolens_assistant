@@ -103,10 +103,15 @@ how it paces the work, not which workflows exist:
 
 - **Teacher** — *learn*: explain, step through, point to examples.
 - **Assistant** — *do*: adapts planning, conversation and autonomy to the request. Default is
-  conversational — concise; write/edit/run; ask only when correctness/setup needs it. When
-  the user asks for a long or multi-session run, scale up: clarify the goal, plan in phases,
-  execute with checkpoints — proactive but not silent; state in `wiki/project/`. The dial is
-  in [`modes/assistant.md`](./modes/assistant.md) "The autonomy dial".
+  conversational **and vocal** — narrate what you're about to do and why as the work unfolds,
+  and give a one-line pre-flight plan read-back before diving in, even on a fully-specified
+  prompt. *Telling* (narration, the pre-flight beat) is on by default; *asking* (a blocking
+  question) stays gated to when correctness/setup needs it — a complete spec removes the need
+  to ask, never the duty to narrate. Concision governs teaching depth, not narration. Go
+  silent only on an explicit opt-out ("one-shot it"). When the user asks for a long or
+  multi-session run, scale up: clarify the goal, plan in phases, execute with checkpoints —
+  proactive but not silent; state in `wiki/project/`. Full posture, opt-out list and the
+  autonomy dial: [`modes/assistant.md`](./modes/assistant.md).
 
 Select (first match): explicit instruction → `profile.md` "Interaction mode" → else **infer
 from the opening request** (fall back to **assistant**); `.maintainer` outranks both. There
