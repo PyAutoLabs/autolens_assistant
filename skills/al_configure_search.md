@@ -1,6 +1,6 @@
 ---
 name: al_configure_search
-description: Pick and tune a non-linear search for a lens-modelling fit. Defaults to Nautilus (nested sampling, the recommended choice); covers Dynesty, Emcee, Zeus, and the gradient/optimizer options for completeness. Sets sampler-specific knobs (live points, walkers, tolerance) and the output `path_prefix` / `name` that determine where results land. Pairs with `al_run_search`, which actually calls `search.fit`.
+description: Pick and tune a non-linear search for a lens-modelling fit. Defaults to Nautilus (nested sampling, the recommended choice); covers Dynesty, Emcee, Zeus, and the JAX multi-start gradient optimizers (MultiStartProdigy recommended when a fast MAP point estimate on a parametric source is wanted — not pixelized). Sets sampler-specific knobs (live points, walkers, tolerance) and the output `path_prefix` / `name` that determine where results land. Pairs with `al_run_search`, which actually calls `search.fit`.
 ---
 
 # Configuring a non-linear search
@@ -125,6 +125,54 @@ operator is not applied at all.
 Source / worked example:
 `autolens_workspace:scripts/imaging/features/pixelization/cpu_fast_modeling.py`.
 
+## Branch — MultiStartProdigy (JAX gradient optimizer, parametric sources)
+
+When the user explicitly wants a **JAX gradient optimizer** — a fast maximum-a-posteriori (MAP)
+*point* estimate rather than a full posterior — the recommended default is `MultiStartProdigy`.
+Reach for it when the goal is speed to a best-fit model on a **parametric source** (MGE, Sersic)
+and errors are not yet needed; otherwise keep Nautilus.
+
+```python
+import autofit as af
+
+search = af.MultiStartProdigy(
+    path_prefix="imaging/<your_lens>",
+    name="modeling_sie_sersic",
+    unique_tag="<your_dataset>",
+    n_starts=50,   # broad starts run in parallel via jax.vmap
+    n_steps=500,
+)
+```
+
+Requires a JAX-traceable analysis: `al.AnalysisImaging(dataset=dataset, use_jax=True)` (the
+parametric-source regime of "Branch — CPU acceleration" above).
+
+Why Prodigy, and what the family is:
+
+- The **multi-start** approach — launch many broad starts in parallel and keep the best — was
+  introduced for strong-lens modelling by **GIGA-Lens** (Gu, Huang et al. 2022, arXiv:2202.07663;
+  GIGA-Lens 2.0, arXiv:2606.30633). It is what makes a gradient optimizer robust on the
+  multi-modal lens likelihood, where a single-start optimizer gets stuck.
+- **`MultiStartProdigy`** uses the *learning-rate free* Prodigy rule (Mishchenko & Defazio 2024,
+  arXiv:2306.06101): it tunes its own step size, so there is no `learning_rate` to set, and it
+  reaches the same maximum as a hand-tuned `MultiStartAdam`. Recommend it as the default.
+- **`MultiStartAdam`** is the GIGA-Lens original (needs a chosen `learning_rate`);
+  **`MultiStartADABelief`** is a drop-in Adam-variant alternative. (`MultiStartLion` is a further
+  sign-based option that prefers a ~10x smaller `learning_rate`.)
+
+**Parametric sources only, for now.** These optimizers are validated and recommended for
+parametric sources. For a **pixelised source** (any fit with a `Pixelization`) they do **not**
+yet reliably work: the pixelised likelihood has regions where the gradient becomes non-finite,
+so the optimizer stalls short of the best fit, and `Nautilus` is both more reliable and faster
+there. Making the JAX multi-start optimizers work on pixelised sources is ongoing work — so for
+any pixelised fit recommend Nautilus (with the sparse-operator CPU regime above), not a gradient
+optimizer.
+
+Like every optimizer it returns a single best-fit model, no errors — hand it to Nautilus / MCMC
+afterwards if a posterior is needed.
+
+Source: `PyAutoFit:autofit/non_linear/search/mle/multi_start_gradient/`.
+
 ## Branch — Dynesty
 
 Use Dynesty for problems where you specifically want its dynamic sampling features
@@ -160,8 +208,10 @@ Source: `PyAutoFit:autofit/non_linear/search/mcmc/emcee/`.
 ## Branch — Other searches
 
 Zeus (ensemble slice MCMC), DynestyDynamic (dynamic nested sampling), BFGS / LBFGS
-(gradient descent for MLE), Drawer (random prior draws — debugging only). See
-[`wiki/core/api/searches.md`](../wiki/core/api/searches.md) for the comparison table.
+(single-start gradient descent for MLE), Drawer (random prior draws — debugging only). See
+[`wiki/core/api/searches.md`](../wiki/core/api/searches.md) for the comparison table. For a
+*JAX* gradient optimizer, prefer the multi-start family (`MultiStartProdigy` and friends) in
+"Branch — MultiStartProdigy" above over single-start `BFGS`/`LBFGS`.
 
 ## Branch — Live visual updates
 

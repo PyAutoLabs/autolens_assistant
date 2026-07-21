@@ -8,7 +8,7 @@ sources:
       - autofit/non_linear/search/mcmc/
       - autofit/non_linear/search/mle/
     pinned_commit: main
-last_updated: 2026-05-22
+last_updated: 2026-07-21
 ---
 
 # Non-linear search
@@ -52,10 +52,23 @@ Finds the single max-likelihood point. No posterior; no errors. Used for
 exploration, gradient-based refinement, or producing a starting point for an MCMC
 chain.
 
-- **BFGS / LBFGS** — gradient descent (LBFGS = limited-memory variant).
+- **MultiStartProdigy** — the recommended JAX multi-start gradient optimizer
+  (learning-rate free). Launches many broad starts in parallel via `jax.vmap` and
+  keeps the best — the "multi-start" approach from GIGA-Lens (Gu, Huang et al. 2022)
+  that makes gradient descent robust on the multi-modal lens likelihood.
+  `MultiStartAdam` (the GIGA-Lens original) and `MultiStartADABelief` are alternatives.
+  **Works for parametric sources (MGE, Sersic) only; not yet pixelised sources — see
+  note below.**
+- **BFGS / LBFGS** — single-start gradient descent (LBFGS = limited-memory variant).
 - **Drawer** — random prior draws. Debugging only.
 
 (PySwarms is not currently exposed as a public `autofit` search class.)
+
+> **Parametric vs pixelised.** The JAX multi-start optimizers require a JAX-traceable
+> analysis (`use_jax=True`) and today are validated only on **parametric** sources. On a
+> **pixelised** source the likelihood has non-finite gradient regions where they stall
+> short of the best fit, so `Nautilus` stays both more reliable and faster there. Making
+> them work on pixelised sources is ongoing work.
 
 ## When to use which
 
@@ -66,6 +79,7 @@ chain.
 | Posterior refinement around a known mode | `Emcee` or `Zeus` |
 | Bayesian evidence comparison | `Nautilus` or `DynestyStatic` |
 | Very high-dim model (>50 free parameters) | `Nautilus` (n_live=400+) |
+| Fast JAX MAP point estimate, parametric source | `MultiStartProdigy` |
 | Fast exploration / sanity check | `BFGS` or `LBFGS` |
 | Confirming the prior gives reasonable models | `Drawer` |
 

@@ -9,8 +9,9 @@ sources:
       - autofit/non_linear/search/mcmc/zeus/
       - autofit/non_linear/search/mle/bfgs/
       - autofit/non_linear/search/mle/drawer/
+      - autofit/non_linear/search/mle/multi_start_gradient/
     pinned_commit: main
-last_updated: 2026-07-09
+last_updated: 2026-07-21
 ---
 
 # Non-linear search catalogue
@@ -104,6 +105,29 @@ Reference: Karamanis, Beutler & Peacock (2021), arXiv:2105.03468 — see
 
 ## Optimisation (no posterior)
 
+### `af.MultiStartProdigy` (recommended JAX gradient optimizer)
+
+The recommended JAX / `optax` multi-start gradient optimizer for a fast maximum-a-posteriori
+(MAP) *point* estimate. Launches `n_starts` broad starts in parallel via `jax.vmap` and returns
+the best — the **multi-start** approach from GIGA-Lens (Gu, Huang et al. 2022, arXiv:2202.07663;
+2.0 arXiv:2606.30633) that makes gradient descent robust where a single-start optimizer
+(`BFGS`/`LBFGS`) gets stuck. Prodigy is *learning-rate free* (Mishchenko & Defazio 2024,
+arXiv:2306.06101), so there is no `learning_rate` to set; it matches a hand-tuned `MultiStartAdam`.
+
+```python
+af.MultiStartProdigy(path_prefix=..., name=..., n_starts=50, n_steps=500)
+```
+
+`MultiStartAdam` (GIGA-Lens original; takes `learning_rate`) and `MultiStartADABelief` are drop-in
+alternatives; `MultiStartLion` is a further sign-based option (~10x smaller `learning_rate`).
+
+Requires a JAX-traceable analysis (`use_jax=True`). **Validated for parametric sources (MGE,
+Sersic) only — not pixelised sources**, where the likelihood has non-finite gradient regions that
+stall the optimizer; use `Nautilus` there. Making these work on pixelised sources is ongoing work.
+
+Source: `PyAutoFit:autofit/non_linear/search/mle/multi_start_gradient/`. Optional deps: `jax`,
+`optax` (>=0.2.5 for the Prodigy rule).
+
 ### `af.BFGS`
 
 Quasi-Newton gradient descent to the MLE. No posterior, no errors. Useful as a
@@ -147,6 +171,7 @@ Source: `PyAutoFit:autofit/non_linear/search/mle/drawer/`.
 | Bayesian evidence comparison | `Nautilus` or `DynestyStatic` |
 | Posterior refinement around known mode | `Emcee` or `Zeus` |
 | Very high-D (>50 params) | `Nautilus(n_live=400+)` |
+| Fast JAX MAP point estimate, parametric source | `MultiStartProdigy` |
 | Find a starting point fast | `BFGS` or `LBFGS` |
 | Check that the prior is sane | `Drawer` |
 
