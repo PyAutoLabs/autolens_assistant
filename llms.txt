@@ -4,14 +4,16 @@
 
 ## Using it in chat (start here)
 
-First make sure your browser chat (ChatGPT, Claude) has a **GitHub connector** enabled so it can read this repository — without one it can't, so use a local coding agent instead. Then open with:
+First make sure your browser chat (ChatGPT, Claude) has a **GitHub connector** enabled so it can read this repository — without one it can't, so use a local coding agent instead. Then open with the prompt below — it names this file explicitly, which **matters**: the connector does not reliably fetch `llms.txt` on its own, and results are markedly better when it is pointed here first.
 
 ```text
-Use the autolens_assistant repository to answer my PyAutoLens questions:
-https://github.com/PyAutoLabs/autolens_assistant
+Start by reading the front door of the autolens_assistant repository:
+https://github.com/PyAutoLabs/autolens_assistant/blob/main/llms.txt
 
-First tell me whether you can actually read the repo. If you can't, say so
-plainly — don't answer from memory.
+Follow its read order (AGENTS.md → the relevant skill → wiki) and its API rules,
+then use the repository to answer my PyAutoLens questions. First tell me whether
+you can actually read llms.txt — if you can't, say so plainly and don't answer
+from memory.
 ```
 
 Read order: [AGENTS.md](./AGENTS.md) → [skills/README.md](./skills/README.md) → the relevant skill → [wiki/](./wiki). **In chat, lead by engaging.** Ask what the user is trying to do, ask them to describe or plot their data (you can't inspect files on their machine), plan the model, and draft the scripts — do this *first*, and never open a reply with what you can't do. The assistant can also route to examples, explain lensing, and review pasted scripts / errors / figures. It cannot run code or guarantee drafts against the installed PyAutoLens version, so switching to a local coding agent (Claude Code, Codex, or Codex web with the repo connected) is the step for **actually running the fit or iterating live** — raise that handoff when execution becomes the blocker, not as an opening disclaimer.

@@ -22,14 +22,19 @@ depending on how hands-on you want the AI to be:
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
 in the browser. First make sure your assistant has a **GitHub connector** enabled
 so it can read this repository — without one it can't, and you should use a local
-coding agent (below) instead. Then paste this to get started:
+coding agent (below) instead. Then paste this to get started — it points the
+assistant explicitly at [`llms.txt`](llms.txt), the front door: **naming that file
+matters**, as the connector does not reliably read it on its own, and it holds the
+read order and API rules that keep answers current.
 
 ```
-Use the autolens_assistant repository to answer my PyAutoLens questions:
-https://github.com/PyAutoLabs/autolens_assistant
+Start by reading the front door of the autolens_assistant repository:
+https://github.com/PyAutoLabs/autolens_assistant/blob/main/llms.txt
 
-First tell me whether you can actually read the repo. If you can't, say so
-plainly — don't answer from memory.
+Follow its read order (AGENTS.md → the relevant skill → wiki) and its API rules,
+then use the repository to answer my PyAutoLens questions. First tell me whether
+you can actually read llms.txt — if you can't, say so plainly and don't answer
+from memory.
 
 How do I model a galaxy-scale strong lens observed with Hubble imaging?
 ```
