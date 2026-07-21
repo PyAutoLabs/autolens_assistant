@@ -191,6 +191,15 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
   import autolens as al
   import autolens.plot as aplt
   ```
+- **Mirror the skills' API — never reconstruct PyAutoLens from memory.** The `skills/*.md`
+  files contain the *current* API (they are kept in sync with the installed stack); the
+  examples they show are the source of truth for how to call any PyAuto* symbol. Before
+  writing model, fit, or plotting code, mirror the matching skill's calls rather than recalling
+  the API from training data — older PyAutoLens releases used a different API and are heavily
+  represented in model priors. On the Claude Code harness a code gate blocks stale symbols, but
+  a connector chat has no such gate, so this discipline is the only safeguard there: if you
+  can't point at a `skills/` (or `dir()`) example for a call, treat it as unverified and say so
+  rather than emitting it.
 - **Generated script style.** Every `.py` you save uses the PyAutoLens **workspace** style,
   not banner comments: an opening docstring (title underlined with `=`, short orientation,
   `__Contents__`), then each section introduced by a `"""__Section__"""` docstring carrying
