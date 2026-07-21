@@ -85,7 +85,7 @@ cluster-scale systems, and both strong and weak lensing. By reducing the need to
 PyAutoLens-Assistant allows users to learn by performing real analyses and focusing fully on the core scientific concepts
 they need to learn.
 
-# How It Works
+# How it works
 
 PyAutoLens-Assistant builds on the general knowledge and reasoning capabilities of its underlying foundation model by 
 adding two version-controlled layers of PyAutoLens-specific context. Both comprise libraries of Markdown files 
@@ -116,7 +116,7 @@ maintain: as new PyAutoLens features and accompanying workspace examples are int
 be updated so that the assistant immediately supports the new functionality.
 
 PyAutoLens-Assistant can be accessed through either a browser-based conversational assistant or a local agentic 
-coding tool. For browser-based systems such as ChatGPT or Claude, llms.txt provides a machine-readable entry point 
+coding tool. For browser-based systems such as ChatGPT or Claude, `llms.txt` provides a machine-readable entry point 
 that verifies repository access and defines the canonical reading order through the instructions, skills, reference 
 wikis, and runnable examples. Users can then ask questions, receive scientific explanations, interpret errors and 
 figures, locate relevant examples, and generate draft end-to-end scripts. Although this mode cannot normally inspect 
@@ -143,7 +143,7 @@ scores are recorded in the repository, making the comparison transparent and rep
 test a dark-matter subhalo analysis, joint imaging and interferometric modelling of a group-scale lens, and the 
 pedagogical performance of Teacher Mode.
 
-# Science Projects and Open Science
+# Science projects and open science
 
 When a user begins a specific scientific study, PyAutoLens-Assistant can create a dedicated science project: a 
 logically structured folder linked to a GitHub repository containing the datasets, configuration, analysis scripts, 
@@ -176,13 +176,28 @@ documented, research-grade examples applying those concepts. These paired resour
 Mode, grounding its explanations in the same tutorials and examples through which scientists can learn PyAutoLens 
 independently.
 
+# Model Context Protocol
+
+Consider a PyAutoLens analysis containing models for over 10,000 strong lenses, as anticipated for Euclid Data 
+Release 1. Rather than downloading the results, installing PyAutoLens, and learning its output structure, a 
+collaborator could interrogate the entire catalogue through natural language—for example, asking ChatGPT or 
+Claude to “show lenses with Einstein radii above $1.5^{\prime\prime}$” or “compare the magnification distributions 
+of two samples.” PyAutoLens-Assistant ships with its own Model Context Protocol (MCP) tools for this purpose. MCP 
+is an open standard that connects AI assistants to external tools and data; the read-only tools provided by 
+PyAutoLens-Assistant search, filter, and aggregate completed models before returning relevant parameters, summaries, 
+and figures directly within the conversation. CLI agents can use the same interface while retaining access to the 
+more flexible human-facing analysis tools documented in the wiki. MCP therefore transforms a large collection of 
+modelling outputs into an accessible, interactive scientific resource that collaborators can explore safely without 
+running the underlying analyses themselves.
+
+
 # Similar software
 
 A mature ecosystem of open-source packages supports strong-lens modelling. `lenstronomy` 
 [@Birrer2018a] is a widely used, multi-purpose package for galaxy-scale lens modelling, while 
-`Herculens` [@Galan2022Herculens] provides differentiable, GPU-capable modelling built on JAX, 
+`Herculens` [@Galan2022Herculens] provides differentiable, GPU-capable modelling built on `JAX`, 
 analogous to the autodifferentiable engine underlying PyAutoLens-JAX. Cluster-scale analyses are 
-commonly performed with `Lenstool` [@Jullo2007], and other established tools such as `GLEE`.
+commonly performed with `Lenstool` [@Jullo2007], and other established tools such as `GLEE` [@Suyu2010].
 These packages provide the numerical and statistical machinery for lens modelling, but the 
 scientist must still write and adapt code directly against each package's API in order to build 
 a bespoke analysis. None currently offer a natural-language or AI-agent 
@@ -198,6 +213,6 @@ JWN is supported by an STFC/UKRI Ernest Rutherford Fellowship, Project Reference
 RGH is supported by STFC Opportunities grant ST/T002565/1.
 
 PyAutoLens-Assistant builds on the open-source scientific Python ecosystem, in particular 
-NumPy [@Numpy2011], Astropy [@astropy:2013], and JAX [@jax2018github].
+`NumPy` [@Numpy2011], `Astropy` [@astropy:2013], and `JAX` [@jax2018github].
 
 # References
