@@ -229,12 +229,19 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
   Full spec + worked example in [`skills/_style.md`](./skills/_style.md) "Generated script style".
 - **Working directories.** Committed scripts → `scripts/`; throwaway plots/data dumps →
   `scripts/scratch/` (gitignored); `search.fit(...)` output → `./output/`.
-- **Plot path announcement.** The plot API is functional: pass
+- **Plot path announcement.** The plot API is **functional-only**: pass
   `output_path="scripts/scratch/<context>/"`, `output_filename=...`, `output_format="png"`
-  straight to the `aplt.*` plotting call (e.g. `aplt.subplot_imaging_dataset`,
-  `aplt.subplot_fit_imaging`) — there is no separate `aplt.Output`/`MatPlot2D` object.
-  Then `print(...)` the absolute path, and after running **quote that absolute path** and
-  offer to open it (platform opener: `open` on macOS, `xdg-open` on Linux,
+  straight to the `aplt.*` call (e.g. `aplt.subplot_imaging_dataset`, `aplt.subplot_fit_imaging`).
+  **The object-oriented plotters (`aplt.FitImagingPlotter`, `ImagingPlotter`, `TracerPlotter`,
+  …) and the `aplt.MatPlot2D` / `aplt.Output` objects have been removed — do not use them.
+  They are the #1 stale-from-memory API error, especially on a harness with no code gate (a
+  connector chat).** Wrong:
+  `aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(...)).subplot_fit_imaging()`.
+  Right:
+  `aplt.subplot_fit_imaging(fit=fit, output_path="scripts/scratch/ring/", output_filename="fit", output_format="png")`.
+  If unsure a PyAuto* symbol exists, ground it against `skills/` or `dir(aplt)` — never write it
+  from memory. Then `print(...)` the absolute path, and after running **quote that absolute path**
+  and offer to open it (platform opener: `open` on macOS, `xdg-open` on Linux,
   `explorer.exe`/`wslview` from WSL) — don't just say "plot saved". One offer per plot.
 
 ---
