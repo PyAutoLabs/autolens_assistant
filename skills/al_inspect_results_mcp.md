@@ -24,7 +24,8 @@ schema flattens the compositional API and is out of scope by design.
   — `diff` them when syncing; graduation to an `autofit[mcp]` extra is the recorded
   de-dup path). `lens_tools.py` and the lens registrations in `server.py` are this
   repo's own layer.
-- Requires the `mcp` package in the PyAutoLens environment: `pip install mcp`
+- The tool core ships as an optional PyAutoFit extra: `pip install autofit[mcp]`
+  (the lens image/FITS tools then layer on top, needing PyAutoLens installed)
   (assistant-environment dependency only — never a library requirement).
 - All tools are read-only against `output/`; `extract_lens_fits` writes only to an
   explicit destination outside it.

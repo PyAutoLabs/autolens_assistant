@@ -1,7 +1,7 @@
 """
-Tests for the results-inspector MCP tools: the mirrored core
-(`autoassistant/mcp/tools.py`, byte-identical to autofit_assistant's) and this
-repo's lens layer (`lens_tools.py`).
+Tests for the results-inspector MCP tools: the core
+(`autofit.mcp.tools`, the ``autofit[mcp]`` extra) and this repo's lens layer
+(`lens_tools.py`).
 
 The fixture runs a real (tiny) `af.LBFGS` fit of the `af.ex.Gaussian` toy so
 the output directory always matches the installed PyAutoFit's on-disk format,
@@ -21,7 +21,9 @@ import autolens as al
 from autonerves import conf
 from autofit.aggregator.summary.aggregate_images import subplot_filename
 
-from autoassistant.mcp import lens_tools, tools
+from autofit.mcp import tools
+
+from autoassistant.mcp import lens_tools
 
 ROOT = Path(__file__).resolve().parents[2]
 
