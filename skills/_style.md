@@ -288,9 +288,12 @@ the user-facing content above should read like a conversation arc, not a recipe.
 - Don't dump a wall of links — one or two per concept, chosen for relevance.
 - Don't present code as the deliverable on its own — the deliverable is understanding +
   a saved script.
-- Don't adopt a "just run this for me" tone. The user is here to learn lensing with
-  the agent's help; gently route requests for black-box automation back through the
-  wiki and existing skills.
+- Don't build a skill's *default* prose around a "just run this for me" tone — the standing
+  deliverable is understanding plus a runnable script, so frame the science and cite the wiki
+  rather than assuming black-box automation. This governs how the skill reads by default; it
+  does **not** override an explicit user opt-out. When the user asks to one-shot it (see
+  [`../modes/assistant.md`](../modes/assistant.md) "Opt-out — silent execution"), honour that
+  and run it — the two are not in conflict.
 
 ## Frontmatter
 
