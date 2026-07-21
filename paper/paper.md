@@ -39,7 +39,7 @@ substantial effort from the scientist to find and adapt the `PyAutoLens` API and
 analysis pipelines.
 
 `PyAutoLens-Assistant` allows scientists to use natural language to construct complex, bespoke scripts for 
-gravitational-lens analysis. With agentic coding tools such as Claude Code or Codex, users describe the desired 
+gravitational-lens analysis. With agentic AI coding tools such as Claude Code or Codex, users describe the desired 
 analysis and the agent collates the data, writes and executes Python scripts and brings together the results. The scientist 
 can then use natural language to visualize, investigate and interpret the results. Alternatively, through web-based 
 conversational AI assistants such as ChatGPT, users can ask `PyAutoLens-Assistant` questions and obtain fully documented 
@@ -58,11 +58,18 @@ COSMOS-Web Ring [@Casey2023] and say:
 > singular isothermal ellipsoid plus external shear, and reconstruct the source on an adaptive rectangular mesh. For 
 > speed, run the analysis on my laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. 
 > Plot the observed image at each wavelength in the top row, its lensed source model in the middle row, and its source 
-> reconstruction in the bottom row.
+> reconstruction in the bottom row.[^web]
 
 When the prompt above is input into `PyAutoLens-Assistant` using Claude Code Opus 4.8, after the user answers the 
 clarifying questions asked by `PyAutoLens-Assistant`, the end-to-end analysis produces \autoref{fig:cosmos_web_ring}, 
 successfully delivering the output requested in the prompt.
+
+[^web]: This prompt is run end-to-end by a local agentic tool (here Claude Code), which reads the local 
+`dataset/cosmos_web_ring` folder and executes the analysis on the user's GPU. To use the same prompt in a 
+browser-based assistant such as ChatGPT or Claude, the assistant must first be connected to the 
+`autolens_assistant` repository — via its `llms.txt` entry point and the provider's GitHub synchronisation app — 
+so it can read the instructions, skills, and reference wikis and return the corresponding scripts for the user 
+to run locally.
 
 ![The end-to-end COSMOS-Web Ring analysis produced by `PyAutoLens-Assistant` from the natural-language prompt above. 
 Each column corresponds to one JWST band (F115W, F150W, F277W, F444W); the top row shows the observed image, the 
