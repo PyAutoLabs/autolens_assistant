@@ -32,7 +32,11 @@ deliberate refactor). Two are NEVER overridden: the real-data gate and never-rew
 
 - **Real data → inspect before fitting.** Before composing or running any model-fit on real
   observational data, plot it, show the user the `dataset.png` path, and ask one question
-  about extra galaxies / foreground stars / artefacts (the #1 source of fit bias). Procedure,
+  about extra galaxies / foreground stars / artefacts (the #1 source of fit bias). **If you
+  can't plot it yourself — no code execution, e.g. a GitHub-connector chat — the gate is not
+  waived: ask the user to plot and inspect the data and confirm there are no extra galaxies /
+  foreground stars / artefacts before you compose the fit.** This is the one question every
+  real-data run must ask, on every harness. Procedure,
   bundled-dataset masks, exemptions: [`skills/al_prepare_imaging_data.md`](./skills/al_prepare_imaging_data.md). Simulated data is exempt.
 - **Code gate.** A PreToolUse hook validates PyAuto* symbols against the installed library
   and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
