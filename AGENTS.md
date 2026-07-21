@@ -194,8 +194,39 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
 - **Generated script style.** Every `.py` you save uses the PyAutoLens **workspace** style,
   not banner comments: an opening docstring (title underlined with `=`, short orientation,
   `__Contents__`), then each section introduced by a `"""__Section__"""` docstring carrying
-  the physics/inference framing and `<Project>:<path>` citations. Full spec + example in
-  [`skills/_style.md`](./skills/_style.md) "Generated script style".
+  the physics/inference framing and `<Project>:<path>` citations. **This is not optional —
+  reproduce this skeleton on every script you write:**
+
+  ```python
+  """
+  Lens Model: <title>
+  ===================
+
+  <two or three sentences of scientific + inference orientation.>
+
+  __Contents__
+
+  - **Dataset:** Load imaging, apply the mask and over-sampling.
+  - **Model:** Compose the lens (light + mass) and source galaxies.
+  - **Search:** Configure the non-linear search.
+  - **Fit:** Run the fit and inspect the result.
+  - **Plot:** Save the best-fit figures.
+  """
+  import autofit as af
+  import autolens as al
+  import autolens.plot as aplt
+
+  """
+  __Dataset__
+
+  <physics + inference framing, weaving in a `<Project>:<path>` citation, then the code.>
+  """
+  dataset = al.Imaging.from_fits(...)
+
+  # ...one `"""__Section__"""` docstring per __Contents__ bullet, code between them...
+  ```
+
+  Full spec + worked example in [`skills/_style.md`](./skills/_style.md) "Generated script style".
 - **Working directories.** Committed scripts → `scripts/`; throwaway plots/data dumps →
   `scripts/scratch/` (gitignored); `search.fit(...)` output → `./output/`.
 - **Plot path announcement.** The plot API is functional: pass
