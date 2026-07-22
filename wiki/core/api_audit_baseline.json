@@ -1,12 +1,12 @@
 {
   "_comment": "API baseline for autolens_assistant - see autoassistant/audit_skill_apis.py and skills/al_audit_skill_apis.md. Regenerate with --write-baseline.",
-  "generated": "2026-07-19",
+  "generated": "2026-07-22",
   "versions": {
-    "autonerves": "2026.7.19.1",
-    "autoarray": "2026.7.19.1",
-    "autofit": "2026.7.19.1",
-    "autogalaxy": "2026.7.19.1",
-    "autolens": "2026.7.19.1"
+    "autonerves": "2026.7.22.1",
+    "autoarray": "2026.7.22.1",
+    "autofit": "2026.7.22.1",
+    "autogalaxy": "2026.7.22.1",
+    "autolens": "2026.7.22.1"
   },
   "api_surface": {
     "autonerves": {
@@ -18,8 +18,8 @@
       "n_symbols": 121
     },
     "autofit": {
-      "hash": "1d9f01f2162cfd268d225f4e1caad80ab0c8d874036a401eba93fcffdee8a896",
-      "n_symbols": 147
+      "hash": "55e75550fb2bad3c365c7456fe81e1fffe4cbcad2c4f5d564679014348b36019",
+      "n_symbols": 149
     },
     "autogalaxy": {
       "hash": "ea553be753bb0492f8351cf200e4e96c44478fc9157bd061a14835cee250ea5b",
