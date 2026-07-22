@@ -43,7 +43,7 @@ If you copy and paste the prompt below into ChatGPT you'll get an end-to-end Pyt
 lens modeling of the COSMOS-Web Ring!
 
 ```
-GitHub Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
+Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
 first reading its llms.txt file for initial start up.
 
 I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
@@ -58,7 +58,7 @@ each wavelength in the top row, its lensed source model in the middle row, and i
 `autolens_assistant` has first-class support for AI coding agents such as **Claude Code** and **Codex**.
 
 A coding agent is a command-line (CLI) tool that runs locally in your terminal. It can inspect your `.fits` data, 
-write and execute Python scripts, perform end-to-end lens modelling, and loading existing results from your computer for 
+write and execute Python scripts, perform end-to-end lens modelling, and load existing results from your computer for 
 inspection. 
 
 To start, clone the `autolens_assistant` repo:
@@ -113,7 +113,7 @@ Teacher mode.
 
 I'm new to PyAutoLens and want to learn the basic workflow end-to-end. Can you
 walk me through a simple example where we: 1) simulate Euclid-like imaging of
-a simple strong lens; 2) sake some plots of the lens and investigate its properly and;
+a simple strong lens; 2) make some plots of the lens and investigate its properties and;
 3) fit the data and recover the lens model.
 ```
 
