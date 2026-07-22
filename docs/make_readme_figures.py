@@ -30,6 +30,7 @@ import matplotlib
 matplotlib.use("Agg")
 
 import matplotlib.image as mpimg
+import matplotlib.patheffects as path_effects
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from pathlib import Path
@@ -104,12 +105,50 @@ bands = {band: load_band(band) for band in BANDS}
 One row of three panels. The RGB keeps its native orientation (top-row-first),
 and the single-band panels are drawn with `origin="upper"` so north is up in all
 three. A 1" scale bar on the first panel sets the physical scale for the row.
+
+Panels are labelled *inside* their own frame rather than with axis titles, which
+lets the row butt right up against the figure edges — no band of white space
+above the images — and leaves room for the label to be set large enough to stay
+readable at the width the README displays it at.
 """
 
-figure, axes = plt.subplots(1, 3, figsize=(13.5, 4.9))
+"""The panels are square, so the figure height is derived rather than guessed:
+three panel widths plus the two hairline gaps must fill the figure width, and
+one panel width is then exactly the height. Guessing it leaves a strip of white
+along one edge."""
+
+FIGURE_WIDTH = 13.5
+PANEL_GAP = 0.012
+
+PANEL_WIDTH = FIGURE_WIDTH / (3.0 + 2.0 * PANEL_GAP)
+
+figure, axes = plt.subplots(1, 3, figsize=(FIGURE_WIDTH, PANEL_WIDTH))
+
+"""Amber reads clearly against both the near-black RGB sky and the magma colour
+map, and stays distinct from the two annotation colours already in play (white
+for the arrow and scale bar, cyan for the mask). The dark stroke keeps it legible
+where a label happens to fall over a bright source."""
+
+LABEL_COLOR = "#ffc400"
+LABEL_STROKE = [path_effects.withStroke(linewidth=3.0, foreground="black")]
+
+
+def panel_label(ax, text):
+    ax.text(
+        7,
+        11,
+        text,
+        color=LABEL_COLOR,
+        fontsize=17,
+        fontweight="bold",
+        ha="left",
+        va="top",
+        path_effects=LABEL_STROKE,
+    )
+
 
 axes[0].imshow(rgb, interpolation="bicubic")
-axes[0].set_title("RGB Composite (COSMOS-Web)", fontsize=12, pad=8)
+panel_label(axes[0], "RGB (COSMOS-Web)")
 
 """The arrow points in from open sky south-east of the ring, so it never crosses
 the lensed emission it is drawing attention to."""
@@ -119,22 +158,25 @@ axes[0].annotate(
     xy=(EXTRA_GALAXY_CENTRE[1] + 5, EXTRA_GALAXY_CENTRE[0] + 5),
     xytext=(133, 141),
     color="white",
-    fontsize=11.5,
+    fontsize=13,
     fontweight="bold",
     ha="center",
+    path_effects=LABEL_STROKE,
     arrowprops=dict(arrowstyle="-|>", color="white", lw=1.8, shrinkA=0, shrinkB=6),
 )
 
 scale_bar_pixels = 1.0 / PIXEL_SCALE
 axes[0].plot(
-    [12, 12 + scale_bar_pixels], [156, 156], color="white", lw=2.5, solid_capstyle="butt"
+    [12, 12 + scale_bar_pixels], [158, 158], color="white", lw=2.5, solid_capstyle="butt"
 )
-axes[0].text(12 + scale_bar_pixels / 2.0, 151, '1"', color="white", fontsize=10, ha="center")
+axes[0].text(
+    12 + scale_bar_pixels / 2.0, 152, '1"', color="white", fontsize=12, ha="center"
+)
 
 for ax, band in zip(axes[1:], BANDS):
 
     ax.imshow(bands[band], origin="upper", cmap="magma", interpolation="bicubic")
-    ax.set_title(f"JWST {band}", fontsize=12, pad=8)
+    panel_label(ax, f"JWST {band}")
 
     ax.add_patch(
         Circle(
@@ -152,8 +194,10 @@ for ax, band in zip(axes[1:], BANDS):
         LENS_CENTRE[0] - MASK_RADIUS_ARCSEC / PIXEL_SCALE - 6,
         f'{MASK_RADIUS_ARCSEC}" mask',
         color="cyan",
-        fontsize=10,
+        fontsize=13,
+        fontweight="bold",
         ha="center",
+        path_effects=LABEL_STROKE,
     )
 
 for ax in axes:
@@ -162,7 +206,11 @@ for ax in axes:
     for spine in ax.spines.values():
         spine.set_visible(False)
 
-figure.subplots_adjust(left=0.005, right=0.995, top=0.94, bottom=0.01, wspace=0.02)
+"""With the labels moved inside the panels there is nothing left to reserve
+margin for, so the axes run to the figure edge and only a hairline gap separates
+the three."""
+
+figure.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=PANEL_GAP)
 """110 dpi gives a ~1500 pixel wide figure — comfortably sharp at the 900 pixel
 width the README displays it at, without the noise-dominated panels bloating the
 committed PNG."""
