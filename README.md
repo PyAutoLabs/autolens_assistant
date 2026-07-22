@@ -257,6 +257,19 @@ The folder `wiki/core` provides it with a quick look-up mechanism of the PyAutoL
 receives your prompt, it scans these folders to give you the best possible answer
 you need. The JOSS paper located in the `paper` folder provides a more detailed description.
 
+## Natural-language development ecosystem
+
+In March 2026, following more than a decade of exclusively human-led software development, `PyAutoLens` transitioned
+to a fully natural-language, agentic-AI development ecosystem called
+[`PyAutoScientist`](https://github.com/PyAutoLabs/PyAutoScientist). The ecosystem is organised as a software organism
+whose core repositories mirror the roles of human organs:
+[`PyAutoBrain`](https://github.com/PyAutoLabs/PyAutoBrain) acts as the reasoning centre, classifying, planning, and
+routing tasks through specialist coding agents; [`PyAutoMind`](https://github.com/PyAutoLabs/PyAutoMind) captures
+intent by recording plain-English development requirements and tracking them from initial ideas to completed
+implementations; and [`PyAutoMemory`](https://github.com/PyAutoLabs/PyAutoMemory) provides long-term scientific memory
+through cross-linked literature wikis and verifiable citations. Humans remain firmly in the loop, defining the
+scientific objectives, supervising the development process, and approving consequential decisions.
+
 ## License
 
 This repository is released under the [MIT License](LICENSE), consistent with the wider
