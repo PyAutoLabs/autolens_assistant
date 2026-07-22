@@ -190,7 +190,6 @@ implementations; and [`PyAutoMemory`](https://github.com/PyAutoLabs/PyAutoMemory
 through cross-linked literature wikis and verifiable citations. Humans can therefore conduct software development
 entirely through natural language.
 
-
 # Similar software
 
 A mature ecosystem of open-source packages supports strong-lens modelling. `lenstronomy` 
