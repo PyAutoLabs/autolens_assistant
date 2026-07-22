@@ -1,5 +1,5 @@
 ---
-title: "PyAutoLens-Assistant: Using Natural Language and AI to Analyse Gravitational Lenses"
+title: "`PyAutoLens-Assistant`: Using Natural Language and AI to Analyse Gravitational Lenses"
 tags:
   - Python
   - astronomy
