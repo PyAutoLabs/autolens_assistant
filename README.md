@@ -10,6 +10,16 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 
 ## Getting Started
 
+The examples below all use the **COSMOS-Web Ring**, a bright JWST Einstein ring whose imaging ships
+with this repository in `dataset/imaging/cosmos_web_ring`:
+
+<img src="docs/images/cosmos_web_ring_dataset.png" width="900" />
+
+*Left:* the COSMOS-Web RGB composite. *Middle and right:* the JWST F277W and F444W imaging the
+examples fit, with the circular mask a fit applies drawn on. Note the **extra galaxy** just
+south-east of the ring — it falls inside the mask, so the assistant will raise it with you when
+you model this system.
+
 There are two ways to use `autolens_assistant`, choose whichever best suits how you work with AI:
 
 ### AI Chat Assistant
