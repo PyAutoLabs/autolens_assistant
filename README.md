@@ -10,19 +10,20 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 
 ## Getting Started
 
-There are two ways to use `autolens_assistant`, and you can start with either
-depending on how you are used to using AI:
+There are two ways to use `autolens_assistant`, choose whichever best suits how you work with AI:
 
 ### AI Chat Assistant
 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
-in a desktop browser or web. This requires you to do two things:
+in a desktop browser or web. 
+
+This requires you to do two things:
 
 - Make sure your assistant has a **GitHub connector** enabled so it can read this repository and in your initial prompt give it the URL to this repository (https://github.com/PyAutoLabs/autolens_assistant).
 - Make sure your initial prompt points the assistant explicitly at the file [`llms.txt`](llms.txt), which gives it the initial instructions on how `autolens_assistant` works.
 
 Here is a good initial prompt which you can copy and paste it ChatGPT or Claude to try it out, noting that
-data for the COSMOS-Web Ring is included in this workspace as an example:
+data for the COSMOS-Web Ring is included in this repository as an example:
 
 ```
 Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
@@ -36,7 +37,8 @@ The above prompt will give an overview of the PyAutoLens API for plotting, descr
 of the system, and ask you follow up questions which will get a discussion going so you can begin using PyAutoLens
 for a more specific task.
 
-The `autolens_assistant` can easily handle more complex tasks and produce end-to-end modeling scripts.
+The `autolens_assistant` can easily handle more complex tasks.
+
 If you copy and paste the prompt below into ChatGPT you'll get an end-to-end Python script for multi-wavelength
 lens modeling of the COSMOS-Web Ring!
 
@@ -53,11 +55,11 @@ each wavelength in the top row, its lensed source model in the middle row, and i
 
 ### AI Coding Agent (CLI)
 
-`autolens_assistant` has first class support for AI coding agents, such as **Claude Code** or **Codex**. A coding agent 
-is installed on your machine as a command-line (CLI) tool that run in your terminal. It can inspect your `.fits` image 
-data, write and run `PyAutoLens` analysis scripts in Python, and perform end-to-end lens modeling with the results output
-to your hard-disk for your inspection. If `PyAutoLens` is not installed on your computer yet, the `autolens_assistant` 
-will install it for you after you input your first prompt.
+`autolens_assistant` has first-class support for AI coding agents such as **Claude Code** and **Codex**.
+
+A coding agent is a command-line (CLI) tool that runs locally in your terminal. It can inspect your `.fits` data, 
+write and execute Python scripts, perform end-to-end lens modelling, and loading existing results from your computer for 
+inspection. 
 
 To start, clone the `autolens_assistant` repo:
 
@@ -67,6 +69,7 @@ cd autolens_assistant
 ```
 
 Next, open your AI coding agent in your terminal inside the `autolens_assistant` folder you just cloned. 
+If `PyAutoLens` is not already installed, the coding agent will use `autolens_assistant` to install it after you submit your first prompt.
 
 You can get started using the same COSMOS-Web ring examples above:
 
@@ -87,7 +90,8 @@ each wavelength in the top row, its lensed source model in the middle row, and i
 
 ## Customize Your Assistant
 
-The `autolens_assistant` adapts its behaviour to suit your prompt:
+The `autolens_assistant` adapts its behaviour to suit your prompt both when you are using a conversational assistant (e.g. ChatGPT)
+or coding agent (e.g. Claude):
 
 - Want to plan your lens modelling analysis and compare the available approaches? Simply say so in your initial prompt.
 
@@ -97,7 +101,6 @@ The `autolens_assistant` adapts its behaviour to suit your prompt:
 
 If you are new to gravitational lensing—particularly an undergraduate or early-stage PhD student—ask the assistant 
 to use **Teacher Mode**. It will explain the fundamentals of lensing and lens analysis in greater detail, while providing direct links to relevant, human-readable documentation so that you can understand what **PyAutoLens** is doing.
-
 
 ## Example Prompt 1 (Teacher Mode): Simulate, inspect and model a strong lens
 
