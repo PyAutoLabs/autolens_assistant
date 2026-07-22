@@ -53,30 +53,55 @@ each wavelength in the top row, its lensed source model in the middle row, and i
 
 ### AI Coding Agent (CLI)
 
-Use an AI coding agent such as **Claude Code** or **Codex** together with
-`autolens_assistant`. These are installed as command-line (CLI) tools that run in your
-terminal, so they can inspect your data, write and run scripts, and
-manage an end-to-end lens modeling project directly on your machine. See
-[Setting up an agentic assistant](#setting-up-an-agentic-assistant) below for setup.
+`autolens_assistant` has first class support for AI coding agents, such as **Claude Code** or **Codex**. A coding agent 
+is installed on your machine as a command-line (CLI) tool that run in your terminal. It can inspect your `.fits` image 
+data, write and run `PyAutoLens` analysis scripts in Python, and perform end-to-end lens modeling with the results output
+to your hard-disk for your inspection. If `PyAutoLens` is not installed on your computer yet, the `autolens_assistant` 
+will install it for you after you input your first prompt.
+
+To start, clone the `autolens_assistant` repo:
+
+```bash
+git clone https://github.com/PyAutoLabs/autolens_assistant.git
+cd autolens_assistant
+```
+
+Next, open your AI coding agent in your terminal inside the `autolens_assistant` folder you just cloned. 
+
+You can get started using the same COSMOS-Web ring examples above:
+
+```
+Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens and then given that I'm a 
+new user give me an overview of the different ways we can perform strong lens modeling of this system.
+```
+
+Or, if you want to see `autolens_assistant` perform end-to-end lens modeling:
+
+```
+I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
+the folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
+isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
+laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
+each wavelength in the top row, its lensed source model in the middle row, and its source on the bottom row.
+```
 
 ## Modes
 
-The assistant works in two modes, and you never have to choose one — it **infers the mode
-from your first message and tells you which it picked** (e.g. *"Mode: teacher — I'll explain
-as we go."*). If it guesses wrong, just say so. To set the mode yourself, start your message
-with it (the examples below do exactly that); to make a choice permanent, record it under
-"Interaction mode" in `wiki/project/profile.md`.
+The assistant works in two modes, depending on your lens of experience and expertise with gravitational lensing
+and **PyAutoLens**:
 
-- **Teacher** — *learn the workflow.* `Teacher mode: I'm new to PyAutoLens — how do I model this image?`
-- **Assistant** — *do the workflow.* `Assistant mode: set up a project for this dataset and write the first script.`
+- **Assistant Mode:** `An assistant to help you use PyAutoLens, which assumes you know the underlying lensing theory and scientific analysis.`
+- **Teacher Mode:** `Teaches you the fundamentals of lensing as you use the assistant, aimed at undergraduates and early PhD students.`
 
-Assistant mode adapts how much it plans, talks, and acts to your request. By default it works
-conversationally — doing each step with you and checking in before big decisions. Ask for
-autonomy (*"model this lens end-to-end and track progress across sessions"*) and it plans in
-phases and runs with checkpoints instead. There is no separate mode to manage: just say how
-hands-on you want to be.
+You do not need to choose which mode you use, `autolens_assistant` will infer it based on your input prompts and
+messages. However, if your prompt says to use a certain mode, it will.
 
-## Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
+`autolens_assistant` will also adopt its behaviour to your prompts. Want it to plan out lens modeling tasks,
+ask you lots of questions before performing them and explain every step of what its doing, then tell it!
+Want it to perform a task end-to-end without consulting you, then just tell it to "one-shot" the task! Just
+tell `autolens_assistant` what you want from it and it will adapt.
+
+## Example Prompt 1 (Teacher Mode): Simulate, inspect and model a strong lens
 
 A good first session if you're new to PyAutoLens and want to learn the modelling
 workflow end-to-end on data you generate yourself. Working from a simulation keeps
@@ -87,39 +112,19 @@ inspect, so the focus stays on understanding each step.
 Teacher mode.
 
 I'm new to PyAutoLens and want to learn the basic workflow end-to-end. Can you
-walk me through it on a simple simulated example: simulate Euclid-like imaging of
-a simple strong lens (an isothermal mass with a Sersic source), then fit that
-simulated data and recover the lens model.
-
-Explain what each step is doing and why as we go: composing the lens and source
-model, running the simulation, choosing the mask, the non-linear search, and how
-to read the result. So I come away understanding the workflow, not just the
-commands.
+walk me through a simple example where we: 1) simulate Euclid-like imaging of
+a simple strong lens; 2) sake some plots of the lens and investigate its properly and;
+3) fit the data and recover the lens model.
 ```
 
-## Example Prompt 2 using Assistant Mode: Model JWST Imaging of a Strong Lens
+## Example Prompt 2 (Assistant Mode): Detect a Dark Matter Subhalo in SLACS0946+1006
 
-For users comfortable with strong lensing who just want the modelling done. It points
-the assistant at the bundled JWST data and asks for a pixelized source reconstruction,
-with concise output rather than a step-by-step tutorial.
+This example shows how far the assistant can be pushed in terms of scientific analysis.
+The prompt aims to reproduce the famous subhalo detection in the strong lens SDSSJ0946+1006,
+and show that it density profile is unusually concentrated. It uses Bayesian
+model comparison to do this.
 
-```
-Assistant mode.
-
-Model the JWST imaging in dataset/imaging/cosmos_web_ring: perform data preparation steps, 
-set up a sensible lens light and mass model with a pixelized source reconstruction, run 
-the fit, and show me the reconstructed source and the fit residuals.
-```
-
-## Example Prompt 3 asking Assistant Mode for Autonomy: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
-
-For users already comfortable with strong lens modelling who want to see
-how far the assistant can be pushed when **asked to run autonomously**. SLACS0946+1006
-has a famous subhalo detection that is argued to be unusually concentrated; 
-this prompt asks the assistant to reproduce that detection and quantify the 
-concentration via Bayesian model comparison.
-
-Depending on your available hardware, this analysis may take hours. The
+The lens modeling required for this analysis may take hours or days. The 
 last sentence of the prompt asks the agent to estimate the run time and,
 if needed, walk you through setting the analysis up on a High Performance
 Computer (HPC) you have access to.
@@ -127,46 +132,28 @@ Computer (HPC) you have access to.
 ```
 Assistant mode.
 
-The strong lens SLACS0946+1006 famously has a dark matter subhalo
-detection that many argue is unusually concentrated. I'd like to analyse
+The strong lens SDSSJ0946+1006 famously has a dark matter subhalo
+detection that studies show is unusually concentrated. Analyse
 the HST imaging of this lens provided at
-dataset/imaging/slacs0946+1006/ and reproduce that detection.
+dataset/imaging/slacs0946+1006/ and reproduce the detection.
 
-Specifically, I want this analysis to perform Bayesian model comparison
-to (a) confirm a subhalo is preferred over a smooth-mass baseline by
-fitting a free-position, free-mass SIS perturber across the image plane
-and comparing the Bayesian evidence to the no-subhalo fit, and (b) test
-the "super-concentrated" claim by comparing the SIS subhalo
+Perform Bayesian model comparison to (a) confirm a subhalo is preferred 
+over a smooth-mass baseline which does not include a subhalos, and (b) test
+the "super-concentrated" claim by comparing an SIS subhalo model
 against a more shallow NFW mass profile at the recovered position.
 
-Set the pipeline up so the smooth lens light and mass model, the
-pixelized source reconstruction, and the subhalo results are all
-inspectable on my computer, and report the Bayesian evidence for each
-comparison.
+For the lens light use a Multi Gaussian Expansion, for its mass use a 
+Power Law plus shear and use a Delaunay mesh for the source reconstruction.
 
-Assess whether the analysis will run fast on my laptop / PC GPU,
+Assess whether the analysis will run fast on my laptop / PC CPU or GPU,
 and if not, set this up as a small project on the HPC I have access to.
 ```
 
-## Setting up an agentic assistant
+### Supported Coding Agents 
 
-The **AI Coding Agent (CLI)** option above needs a local clone and a CLI coding agent.
-Here is how it works.
-
-### Recommended: work inside the repository
-
-Clone the `autolens_assistant` repo:
-
-```bash
-git clone https://github.com/PyAutoLabs/autolens_assistant.git
-cd autolens_assistant
-```
-
-Open a CLI coding-agent session inside that directory. This is the primary and most capable way to
-use the assistant because the agent can read the full instructions, inspect data, write scripts,
-run checks, and keep project state with you. Coding agents often require a paid subscription or
-metered API account for sustained use, although limited free tiers and organization or student
-access may be available.
+CLI Coding agents like Claude and codex may require a paid subscription. The table below shows the 
+coding agents `autolens_assistant` has been tested using and whether they offer a free plan. However,
+pretty much any coding agent available should work with `autolens_assistant`
 
 | Interface | Support | Access and cost | Notes |
 |---|---|---|---|
@@ -174,72 +161,24 @@ access may be available.
 | **Codex CLI** | Primary; thoroughly tested | A [limited free plan](https://developers.openai.com/codex/pricing/) may be available; paid plans or API billing provide more usage. | Reads `AGENTS.md` directly and can edit and run the project locally. |
 | **Gemini CLI** | Supported | Offers [limited free quotas](https://github.com/google-gemini/gemini-cli/blob/main/docs/resources/quota-and-pricing.md); subscriptions or usage billing provide higher limits. | Loads the repository instructions through `.gemini/settings.json`. |
 | **OpenCode** | Supported | The client is open source; model-provider access may be free or paid. | Use it from the repository root so it can discover the project context. |
-| **GitHub Copilot CLI** | Compatible; verification pending | [Copilot Free](https://docs.github.com/copilot/get-started/plans-for-github-copilot) has limited usage; paid or organization plans are common. | GitHub documents direct support for root `AGENTS.md` instructions. |
-
-```bash
-claude        # alternatively: codex, gemini, opencode, or copilot
-```
-
-These agents load the project instructions automatically, so you do not need to paste a large
-system prompt. If PyAutoLens is not installed in the active environment, the assistant checks the
-setup and guides you through it. Then describe your science case or ask a question, see
-the example starting prompts above.
-
-### Browser and chat-only use
-
-If you are more familiar with conversation-based AI assistants such as ChatGPT or Claude on the
-web, you can still use `autolens_assistant`. The front-door [`llms.txt`](llms.txt) holds the
-bootstrap prompt and read-order: with a GitHub connector enabled, give the assistant this
-repository's URL and it reads the files itself.
-
-This is effective for learning PyAutoLens, asking how to perform lensing calculations or modelling
-tasks, interpreting and debugging errors, and getting draft code. However, it is not fully agentic:
-the assistant cannot inspect your local data, run the code, or maintain a science project unless
-you provide the relevant files and outputs.
 
 ## Science Project
 
-**`autolens_assistant` is the copilot; a science project is a separate repo.** This repo is
-the assistant you clone once — its skills, wiki, and tooling. Your actual science lives in a
-**science project**: a separate, self-contained git repo for one analysis or paper, created by
-`start-new-project`. The project holds your data, config, scripts, results, and a
-`wiki/project/` journal; for the assistant's *skills and reference wiki* it **refers back to
-this `autolens_assistant` clone** (cloning it on demand if absent), so there's one source of
-truth and no drift. Quick exploration can happen inside this clone (e.g. the bundled-dataset
-README examples); a real analysis headed for a paper gets its own project.
+When you begin a specific scientific study, `autolens-assistant` can create a dedicated science project: a 
+logically structured folder linked to a GitHub repository containing the datasets, configuration files, analysis scripts, 
+results, plotting scripts and a full transcript with the assistant for reproducibility. Every script generated by the 
+assistant is fully documented and can be converted automatically into a Jupyter notebook, with its 
+explanations becoming Markdown cells and its Python becoming executable code cells. The GitHub repository then 
+provides a straightforward way to share results with collaborators, so they can inspect the project’s current state,
+understand how each analysis was performed, and provide suggestions or build on the project. Projects can 
+also interface directly with HPC facilities through bidirectional synchronization, CPU and GPU job submission and 
+monitoring. If the study leads to a paper, the completed repository can therefore serve as the paper’s open-source 
+companion, enabling readers to reproduce the study end to end or fork it as the starting point for further research.
 
-Starting one — and its whole lifecycle (create → work → collaborate → publish) — is handled by
-the single `start-new-project` skill.
-
-**Built to be shared.** The project repo is the collaboration surface: push it to GitHub and a
-collaborator simply **forks or clones it and continues the work with their own assistant** —
-the project refers back to `autolens_assistant` automatically, so they inherit the same
-skills, reference wiki and safety rules it was built with, plus your full decision journal.
-And when the paper is ready, the same repo is its natural **open-source companion**: the data
-(or its availability statement), the results, and every python script that produced them, in
-one citable repo — hardened by a publish checklist and released with a Zenodo DOI and
-`CITATION.cff`. Anyone who reads the paper can reproduce the analysis, and fork it to build
-on your work.
-
-Example prompts:
+To start a science project, just add it to your input prompt:
 
 ```
-Start a science project for my SLACS0946 analysis.
-```
-
-```
-Share this project with my collaborator — private GitHub repo, and tell me what they need
-to do to continue the work with their own assistant.
-```
-
-```
-Give me a collaborator update: best model so far, key figures, open concerns, next run.
-```
-
-```
-Prepare this project for public release as the open-source repo that goes with the paper —
-keep the raw data private; make the code, figures, manifests, citation and DOI
-publication-ready.
+Start a science project for my SDSSJ0946+1006 analysis.
 ```
 
 ## Benchmarks
@@ -255,29 +194,18 @@ The protocol is in [`benchmarks/README.md`](benchmarks/README.md).
 
 ## Scientific Context
 
-The assistant doesn't just know the PyAutoLens API — it ships with a
-strong-lensing **literature wiki** at `wiki/literature/` covering the
-science the modelling is in service of. It has concept pages (mass-sheet
-degeneracy, dark-matter substructure, time-delay cosmography, multipoles,
-…), named-entity pages (SLACS, H0liCOW, TDCOSMO, Euclid Q1, Abell 1201,
-…), and per-topic bibliographies summarising the relevant published
-papers. When you ask a science question or start a modelling discussion,
-the assistant grounds itself in this material rather than guessing from
-general knowledge.
+The assistant doesn't just know how to use PyAutoLens API — it ships with a
+strong-lensing **literature wiki** at `wiki/literature/`. This provides
+contexrt on other 300 strong lensing papers, broken down into concept pages
+(e.g.mass-sheet degeneracy, dark-matter substructure, time-delay cosmography, 
+multipoles), surveys (e.g. SLACS, H0liCOW, TDCOSMO, Euclid Q1, Abell 1201,
+…), and other subject categories. This means that, for example, if your prompt
+mentions ALMA and submm galaxies, the assistant's response will consider
+the wider scientific literature and context.
 
-This is a **base** literature wiki — a self-contained starting point that ships with the
-assistant. It is intentionally **not** tied to any external paper archive: every page stands
-on its own and cites papers by arXiv/DOI link or author-year, so a fresh clone has full
-scientific context with nothing else to download. It is also deliberately **not exhaustive**.
-The wiki is yours to grow: as you work on a project, you add the papers, results and context
-*your* science needs, and from then on the assistant reasons and cites from them. (A future
-guided "new science project" workflow will walk you through this setup explicitly.)
-
-If a paper matters to your science case and isn't in the wiki yet, you
-can ask the assistant to ingest it. Give it either a local PDF or an
-arXiv URL and it adds a summary to the right topic bibliography, cross-
-links the relevant concepts and entities, and from then on can cite the
-paper in answers:
+This **base** literature wiki can and should be extended by you, with papers that are
+specifically relevant to your scientific study. Doing this is simply, simply
+point the assistant to the papers and it'll ingest them for you:
 
 ```
 Ingest the following paper into the literature wiki so you can use it
@@ -285,16 +213,25 @@ when we talk about subhalo detection:
 
   arXiv:2401.01234
 
-(Or, if you have the PDF locally:
-  /path/to/subhalo_paper.pdf)
+(Or, if you have the PDF locally: /path/to/subhalo_paper.pdf)
 
-Once it's ingested, summarise what it adds beyond what the wiki already
-covers on dark-matter substructure.
+Once it's ingested, summarise the paper and how it complements similar
+works in the literature wiki
 ```
 
 The more papers relevant to your science case you load in, the better
 the assistant will be at framing decisions, citing prior work, and
 spotting when a result has caveats.
+
+## How does PyAutoLens-Assistant actually work?
+
+The `autolens-assistant` starts with the general knowledge and reasoning capabilities of its 
+the underlying foundation model you call it with (e.g. ChatGPT's GPT5.6Sol model, Claude's Opus 4.8 model). 
+The `autolens-assistant` supplements this with the scientific wiki above and two more sets of AI-readable markdown. 
+The folder `wiki/core` provides it with a quick look-up mechanism of the PyAutoLens API documentation. The folder
+`skills` pairs it with the end-to-end analysis scripts found in the [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_workspace). When the `autolens-assistant` 
+receives your prompt, it scans these folders to give you the best possible answer
+you need. The JOSS paper located in the `paper` folder provides a more detailed description.
 
 ## License
 
