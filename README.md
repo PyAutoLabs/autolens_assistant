@@ -6,8 +6,7 @@ When two or more galaxies are aligned perfectly down our line-of-sight, the
 background galaxy appears multiple times. This is strong gravitational lensing,
 and **PyAutoLens** makes it simple to model strong gravitational lenses.
 
-This repository is the **PyAutoLens Assistant**: an AI assistant you talk to in
-natural language to do gravitational lensing science. 
+This repository is the **PyAutoLens Assistant**: an AI assistant which **lets you use natural language** to do gravitational lensing science. 
 
 ## Getting Started
 
@@ -26,17 +25,18 @@ Here is a good initial prompt which you can copy and paste it ChatGPT or Claude 
 data for the COSMOS-Web Ring is included in this workspace as an example:
 
 ```
-GitHub Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
+Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
 first reading its llms.txt file for initial start up.
 
 Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens and then given that I'm a 
 new user give me an overview of the different ways we can perform strong lens modeling of this system.
 ```
 
-The above prompt will give advise that is ideal for learning the PyAutoLens API, working out how to perform a 
-calculation, and via follow up questions will allow you to ask specific questions about how to do tasks in PyAutoLens.
+The above prompt will give an overview of the PyAutoLens API for plotting, describe how you can perform lens modeling 
+of the system, and ask you follow up questions which will get a discussion going so you can begin using PyAutoLens
+for a more specific task.
 
-However, the `autolens_assistant` can easily held you with complex tasks and produce end-to-end modeling scripts.
+The `autolens_assistant` can easily handle more complex tasks and produce end-to-end modeling scripts.
 If you copy and paste the prompt below into ChatGPT you'll get an end-to-end Python script for multi-wavelength
 lens modeling of the COSMOS-Web Ring!
 
@@ -85,28 +85,25 @@ laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solu
 each wavelength in the top row, its lensed source model in the middle row, and its source on the bottom row.
 ```
 
-## Modes
+## Customize Your Assistant
 
-The assistant works in two modes, depending on your lens of experience and expertise with gravitational lensing
-and **PyAutoLens**:
+The `autolens_assistant` adapts its behaviour to suit your prompt:
 
-- **Assistant Mode:** `An assistant to help you use PyAutoLens, which assumes you know the underlying lensing theory and scientific analysis.`
-- **Teacher Mode:** `Teaches you the fundamentals of lensing as you use the assistant, aimed at undergraduates and early PhD students.`
+- Want to plan your lens modelling analysis and compare the available approaches? Simply say so in your initial prompt.
 
-You do not need to choose which mode you use, `autolens_assistant` will infer it based on your input prompts and
-messages. However, if your prompt says to use a certain mode, it will.
+- Want the assistant to ask questions before performing a task, helping you understand the analysis and make informed choices? Ask it to guide you through the process.
 
-`autolens_assistant` will also adopt its behaviour to your prompts. Want it to plan out lens modeling tasks,
-ask you lots of questions before performing them and explain every step of what its doing, then tell it!
-Want it to perform a task end-to-end without consulting you, then just tell it to "one-shot" the task! Just
-tell `autolens_assistant` what you want from it and it will adapt.
+- Want it to complete a task end-to-end without consulting you? Tell it to **one-shot** the task.
+
+If you are new to gravitational lensing—particularly an undergraduate or early-stage PhD student—ask the assistant 
+to use **Teacher Mode**. It will explain the fundamentals of lensing and lens analysis in greater detail, while providing direct links to relevant, human-readable documentation so that you can understand what **PyAutoLens** is doing.
+
 
 ## Example Prompt 1 (Teacher Mode): Simulate, inspect and model a strong lens
 
-A good first session if you're new to PyAutoLens and want to learn the modelling
-workflow end-to-end on data you generate yourself. Working from a simulation keeps
-things simple, the data is clean, you know the true answer, and there's nothing to
-inspect, so the focus stays on understanding each step.
+A good first session if you are new to PyAutoLens and want to learn the modelling workflow end-to-end using data you 
+generate yourself. Starting with a simulation keeps things simple: the data are clean, the true model is known, and
+there are no observational complications, allowing you to focus on understanding each step.
 
 ```
 Teacher mode.
@@ -119,15 +116,13 @@ a simple strong lens; 2) sake some plots of the lens and investigate its properl
 
 ## Example Prompt 2 (Assistant Mode): Detect a Dark Matter Subhalo in SLACS0946+1006
 
-This example shows how far the assistant can be pushed in terms of scientific analysis.
-The prompt aims to reproduce the famous subhalo detection in the strong lens SDSSJ0946+1006,
-and show that it density profile is unusually concentrated. It uses Bayesian
-model comparison to do this.
+This example demonstrates how far the assistant can be pushed in performing a scientific analysis. The prompt 
+aims to reproduce the famous dark matter subhalo detection in the strong lens SDSSJ0946+1006 and investigate 
+evidence that its density profile is unusually concentrated. It does this through Bayesian model comparison.
 
-The lens modeling required for this analysis may take hours or days. The 
-last sentence of the prompt asks the agent to estimate the run time and,
-if needed, walk you through setting the analysis up on a High Performance
-Computer (HPC) you have access to.
+The lens modelling required for this analysis may take hours or days. The final sentence asks the assistant to 
+estimate the runtime and, if necessary, guide you through setting up and running the analysis on a High Performance 
+Computing (HPC) system to which you have access.
 
 ```
 Assistant mode.
@@ -151,12 +146,13 @@ and if not, set this up as a small project on the HPC I have access to.
 
 ## Example Prompt 3 (Assistant Mode): Complex tasks combining different data and lensing scales
 
-`PyAutoLens` has JAX support throughout, providing fast modeling via GPU acceleration and automatic differentiation. 
-Galaxy-, group-, and cluster-scale lens models can be constrained using CCD imaging, interferometer visibilities, 
-point-source observables, and weak-lensing catalogues fully in JAX. These are not isolated capabilities, you can 
-perform joint inference combining them all. With so more customization, the challenging part was combining the different
-APIs to produce a single Pythons script that could perform the modeling. With `autolens_assistant` this is no longer
-a problem, you just describe the task in natural language and you get the analysus you need:
+`PyAutoLens` provides comprehensive JAX support, enabling fast modelling through GPU acceleration and automatic 
+differentiation. Galaxy-, group-, and cluster-scale lens models can be constrained using CCD imaging, 
+interferometer visibilities, point-source observables, and weak-lensing catalogues entirely within JAX.
+
+These are not isolated capabilities: they can be combined in a single joint inference. Previously, the challenge 
+was navigating the different APIs and integrating them into a single Python script. With `autolens_assistant`, 
+you can instead describe the analysis in **natural language** and let the assistant construct the required workflow:
 
 ```
 Assistant mode.
