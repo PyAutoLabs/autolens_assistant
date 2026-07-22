@@ -150,19 +150,66 @@ def panel_label(ax, text):
 axes[0].imshow(rgb, interpolation="bicubic")
 panel_label(axes[0], "RGB (COSMOS-Web)")
 
-"""The arrow points in from open sky south-east of the ring, so it never crosses
-the lensed emission it is drawing attention to."""
+"""The RGB panel carries the newcomer's tour of the system: which blob is the
+lens, which light is the lensed source, and which galaxy is neither. The three
+labels are drawn in white to read as one annotation layer, distinct from the
+amber panel titles and the cyan mask.
+"""
 
-axes[0].annotate(
-    "extra galaxy",
-    xy=(EXTRA_GALAXY_CENTRE[1] + 5, EXTRA_GALAXY_CENTRE[0] + 5),
-    xytext=(133, 141),
-    color="white",
-    fontsize=13,
-    fontweight="bold",
-    ha="center",
-    path_effects=LABEL_STROKE,
-    arrowprops=dict(arrowstyle="-|>", color="white", lw=1.8, shrinkA=0, shrinkB=6),
+ARROW_STYLE = dict(arrowstyle="-|>", color="white", lw=1.8, shrinkA=0, shrinkB=3)
+
+
+def annotate_arrow(ax, text, tip, anchor, **kwargs):
+    ax.annotate(
+        text,
+        xy=tip,
+        xytext=anchor,
+        color="white",
+        fontsize=13,
+        fontweight="bold",
+        ha="center",
+        path_effects=LABEL_STROKE,
+        arrowprops=ARROW_STYLE,
+        **kwargs,
+    )
+
+
+def ring_point(angle_degrees, radius=18.0):
+    """A point on the Einstein ring, by angle anticlockwise from due east. The
+    sine is negated because the panel's y axis runs downwards."""
+    angle = np.radians(angle_degrees)
+    return (
+        LENS_CENTRE[1] + radius * np.cos(angle),
+        LENS_CENTRE[0] - radius * np.sin(angle),
+    )
+
+
+"""Two arrows onto opposite sides of the ring, sharing one label. This is the
+point of the figure for a newcomer: both arcs are the *same* background galaxy,
+seen twice. They target the upper-left and upper-right of the ring, keeping clear
+of the south-east arc where the extra galaxy sits blended with the emission —
+measuring mean flux around the annulus, that sector is the brightest, but the
+excess is the interloper rather than the source."""
+
+axes[0].annotate("", xy=ring_point(135.0), xytext=(82, 40), arrowprops=ARROW_STYLE)
+annotate_arrow(
+    axes[0], "Lensed Source Galaxy", tip=ring_point(45.0), anchor=(82, 34), va="top"
+)
+
+"""The lens arrow has to cross the ring to reach the galaxy inside it. It comes
+in from the south-west, the faintest sector of the annulus, so it cuts the ring
+where there is least emission to obscure."""
+
+annotate_arrow(axes[0], "Lens Galaxy", tip=LENS_CENTRE[::-1], anchor=(30, 122))
+
+"""The extra-galaxy arrow points in from open sky to the south-east, so it never
+crosses the lensed emission it is drawing attention to."""
+
+annotate_arrow(
+    axes[0],
+    "Extra Galaxy",
+    tip=(EXTRA_GALAXY_CENTRE[1] + 5, EXTRA_GALAXY_CENTRE[0] + 5),
+    anchor=(133, 141),
 )
 
 scale_bar_pixels = 1.0 / PIXEL_SCALE
