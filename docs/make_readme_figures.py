@@ -112,15 +112,15 @@ above the images — and leaves room for the label to be set large enough to sta
 readable at the width the README displays it at.
 """
 
-"""The panels are square, so the figure height is derived rather than guessed:
-three panel widths plus the two hairline gaps must fill the figure width, and
-one panel width is then exactly the height. Guessing it leaves a strip of white
-along one edge."""
+"""The panels abut with no gap at all — any spacing between them shows through as
+a white line, since the figure background is what sits behind the axes. The
+panels are square, so the figure height is then derived rather than guessed:
+three panel widths fill the figure width, and one panel width is exactly the
+height. Guessing it leaves a strip of white along an edge."""
 
 FIGURE_WIDTH = 13.5
-PANEL_GAP = 0.012
 
-PANEL_WIDTH = FIGURE_WIDTH / (3.0 + 2.0 * PANEL_GAP)
+PANEL_WIDTH = FIGURE_WIDTH / 3.0
 
 figure, axes = plt.subplots(1, 3, figsize=(FIGURE_WIDTH, PANEL_WIDTH))
 
@@ -207,10 +207,9 @@ for ax in axes:
         spine.set_visible(False)
 
 """With the labels moved inside the panels there is nothing left to reserve
-margin for, so the axes run to the figure edge and only a hairline gap separates
-the three."""
+margin for, so the axes run to the figure edge and butt against each other."""
 
-figure.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=PANEL_GAP)
+figure.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0, wspace=0.0)
 """110 dpi gives a ~1500 pixel wide figure — comfortably sharp at the 900 pixel
 width the README displays it at, without the noise-dominated panels bloating the
 committed PNG."""
