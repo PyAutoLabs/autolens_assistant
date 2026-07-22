@@ -39,10 +39,10 @@ substantial effort from the scientist to find and adapt the `PyAutoLens` API and
 analysis pipelines.
 
 `PyAutoLens-Assistant` allows scientists to use natural language to construct complex, bespoke scripts for 
-gravitational-lens analysis. With agentic AI coding tools such as Claude Code or Codex, users describe the desired 
+gravitational-lens analysis. With a command-line (CLI) AI coding agent such as Claude Code or Codex, users describe the desired 
 analysis and the agent collates the data, writes and executes Python scripts and brings together the results. The scientist 
-can then use natural language to visualize, investigate and interpret the results. Alternatively, through web-based 
-conversational AI assistants such as ChatGPT, users can ask `PyAutoLens-Assistant` questions and obtain fully documented 
+can then use natural language to visualize, investigate and interpret the results. Alternatively, through an AI chat 
+assistant such as ChatGPT or Claude, users can ask `PyAutoLens-Assistant` questions and obtain fully documented 
 code needed to perform lens analysis task, which they then execute themselves manually. `PyAutoLens-Assistant` also 
 includes a Teacher Mode for users new to the software or gravitational lensing, which can explain all the core domain specific 
 concepts whilest directing them to documentation and Jupyter Notebook guides to help them further build their understanding.
@@ -64,7 +64,7 @@ When the prompt above is input into `PyAutoLens-Assistant` using Claude Code Opu
 clarifying questions, the end-to-end analysis produces \autoref{fig:cosmos_web_ring}, 
 successfully delivering the output requested in the prompt.
 
-[^web]: To use a prompt like this in a browser-based assistant such as ChatGPT or Claude, the assistant must first 
+[^web]: To use a prompt like this in an AI chat assistant such as ChatGPT or Claude, the assistant must first 
 be connected to the `autolens_assistant` repository. This requires you to ensure the assistant supports GitHub 
 synchronisation via an inbuilt app or plugin, and for you to include the `autolens_assistant` GitHub URL
 in the prompt. The `autolens_assistant` README and documentation explain this clearly.
@@ -121,7 +121,7 @@ workflow tailored to the user’s dataset and scientific aims. This design also 
 maintain: as new `PyAutoLens` features and accompanying `autolens_workspace` examples are introduced, the corresponding 
 skills are updated so that the assistant immediately supports the new functionality.
 
-`PyAutoLens-Assistant` can be used through browser-based conversational assistants such as ChatGPT or Claude. 
+`PyAutoLens-Assistant` can be used through an AI chat assistant such as ChatGPT or Claude. 
 The `llms.txt` file defines the canonical reading order through the wikis, skills, and runnable examples, enabling 
 the assistant to answer questions, explain scientific concepts, locate relevant documentation, and generate end-to-end 
 modelling scripts. This mode is necessarily manual and limited: the assistant cannot normally inspect local files or 
@@ -129,7 +129,7 @@ execute code, so users must run scripts themselves and copy code, errors, figure
 conversation and their working environment. Nevertheless, conversational AI is currently the interface most familiar 
 to astronomers, making this mode easy to integrate into existing workflows.
 
-CLI coding agents such as Claude Code and Codex provide the complete `PyAutoLens-Assistant` workflow using the same 
+AI coding agents (CLI) such as Claude Code and Codex provide the complete `PyAutoLens-Assistant` workflow using the same 
 curated knowledge base with substantially fewer manual steps. They can inspect `.fits` datasets directly (e.g. reading
 their header information), write and execute end-to-end analysis scripts, read and then resolve Python exceptions
 if code runs incorrectly. `PyAutoLens` outputs lens modeling results into directories locally which include 
@@ -169,7 +169,7 @@ companion, enabling readers to reproduce the study end to end or fork it as the 
 
 Model Context Protocol (MCP) provides a standard way for an AI assistant to access external data and software, 
 rather than relying only on information copied into a conversation. `PyAutoLens-Assistant` ships with read-only MCP 
-tools that allow ChatGPT, Claude, or a CLI agent to search, filter and retrieve completed lens-modelling results 
+tools that allow an AI chat assistant or AI coding agent to search, filter and retrieve completed lens-modelling results 
 through natural language. For example, a Euclid lensing analysis may contain models for over 10,000 strong lenses. 
 Using MCP, a scientist can point `PyAutoLens-Assistant` to a result hosting server and ask the AI agent 
 to “show lenses with Einstein radii above $1.5^{\prime\prime}$” or “compare the magnification distributions of two samples,”. 

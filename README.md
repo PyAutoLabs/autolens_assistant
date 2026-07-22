@@ -7,49 +7,59 @@ background galaxy appears multiple times. This is strong gravitational lensing,
 and **PyAutoLens** makes it simple to model strong gravitational lenses.
 
 This repository is the **PyAutoLens Assistant**: an AI assistant you talk to in
-natural language to do gravitational lensing science. Describe your data,
-ask modelling questions, or discuss lensing theory — the assistant explains
-the science as it goes and writes runnable PyAutoLens Python workflows that
-stay in your repo.
+natural language to do gravitational lensing science. 
 
 ## Getting Started
 
 There are two ways to use `autolens_assistant`, and you can start with either
-depending on how hands-on you want the AI to be:
+depending on how you are used to using AI:
 
 ### AI Chat Assistant
 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
-in the browser. First make sure your assistant has a **GitHub connector** enabled
-so it can read this repository — without one it can't, and you should use a local
-coding agent (below) instead. Then paste this to get started — it points the
-assistant explicitly at [`llms.txt`](llms.txt), the front door: **naming that file
-matters**, as the connector does not reliably read it on its own, and it holds the
-read order and API rules that keep answers current.
+in a desktop browser or web. This requires you to do two things:
+
+- Make sure your assistant has a **GitHub connector** enabled so it can read this repository and in your initial prompt give it the URL to this repository (https://github.com/PyAutoLabs/autolens_assistant).
+- Make sure your initial prompt points the assistant explicitly at the file [`llms.txt`](llms.txt), which gives it the initial instructions on how `autolens_assistant` works.
+
+Here is a good initial prompt which you can copy and paste it ChatGPT or Claude to try it out, noting that
+data for the COSMOS-Web Ring is included in this workspace as an example:
 
 ```
-Start by reading the front door of the autolens_assistant repository:
-https://github.com/PyAutoLabs/autolens_assistant/blob/main/llms.txt
+GitHub Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
+first reading its llms.txt file for initial start up.
 
-Follow its read order (AGENTS.md → the relevant skill → wiki) and its API rules,
-then use the repository to answer my PyAutoLens questions. First tell me whether
-you can actually read llms.txt — if you can't, say so plainly and don't answer
-from memory.
-
-How do I model a galaxy-scale strong lens observed with Hubble imaging?
+Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens and then given that I'm a 
+new user give me an overview of the different ways we can perform strong lens modeling of this system.
 ```
 
-This is ideal for learning the API, working out how to perform a calculation,
-and creating end-to-end example Python scripts.
+The above prompt will give advise that is ideal for learning the PyAutoLens API, working out how to perform a 
+calculation, and via follow up questions will allow you to ask specific questions about how to do tasks in PyAutoLens.
 
-### Fully Agentic AI
+However, the `autolens_assistant` can easily held you with complex tasks and produce end-to-end modeling scripts.
+If you copy and paste the prompt below into ChatGPT you'll get an end-to-end Python script for multi-wavelength
+lens modeling of the COSMOS-Web Ring!
 
-Use an agentic coding tool such as **Claude Code** or **Codex** together with
-`autolens_assistant`. These can inspect your data, write and run scripts, and
+```
+GitHub Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
+first reading its llms.txt file for initial start up.
+
+I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
+the folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
+isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
+laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
+each wavelength in the top row, its lensed source model in the middle row, and its source on the bottom row.
+```
+
+### AI Coding Agent (CLI)
+
+Use an AI coding agent such as **Claude Code** or **Codex** together with
+`autolens_assistant`. These are installed as command-line (CLI) tools that run in your
+terminal, so they can inspect your data, write and run scripts, and
 manage an end-to-end lens modeling project directly on your machine. See
 [Setting up an agentic assistant](#setting-up-an-agentic-assistant) below for setup.
 
-## Fully Agentic Modes
+## Modes
 
 The assistant works in two modes, and you never have to choose one — it **infers the mode
 from your first message and tells you which it picked** (e.g. *"Mode: teacher — I'll explain
@@ -66,7 +76,7 @@ autonomy (*"model this lens end-to-end and track progress across sessions"*) and
 phases and runs with checkpoints instead. There is no separate mode to manage: just say how
 hands-on you want to be.
 
-## Fully Agentic Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
+## Example Prompt 1 using Teacher Mode: Simulate Euclid imaging of a simple strong lens, fit it and then model it
 
 A good first session if you're new to PyAutoLens and want to learn the modelling
 workflow end-to-end on data you generate yourself. Working from a simulation keeps
@@ -87,7 +97,7 @@ to read the result. So I come away understanding the workflow, not just the
 commands.
 ```
 
-## Fully Agentic Example Prompt 2 using Assistant Mode: Model JWST Imaging of a Strong Lens
+## Example Prompt 2 using Assistant Mode: Model JWST Imaging of a Strong Lens
 
 For users comfortable with strong lensing who just want the modelling done. It points
 the assistant at the bundled JWST data and asks for a pixelized source reconstruction,
@@ -101,7 +111,7 @@ set up a sensible lens light and mass model with a pixelized source reconstructi
 the fit, and show me the reconstructed source and the fit residuals.
 ```
 
-## Fully Agentic Example Prompt 3 asking Assistant Mode for Autonomy: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
+## Example Prompt 3 asking Assistant Mode for Autonomy: Detect a Dark Matter Subhalo in SLACS0946+1006 via Bayesian Model Comparison
 
 For users already comfortable with strong lens modelling who want to see
 how far the assistant can be pushed when **asked to run autonomously**. SLACS0946+1006
@@ -140,7 +150,7 @@ and if not, set this up as a small project on the HPC I have access to.
 
 ## Setting up an agentic assistant
 
-The **Fully Agentic AI** option above needs a local clone and a CLI coding agent.
+The **AI Coding Agent (CLI)** option above needs a local clone and a CLI coding agent.
 Here is how it works.
 
 ### Recommended: work inside the repository
