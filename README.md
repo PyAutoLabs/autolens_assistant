@@ -99,7 +99,7 @@ or coding agent (e.g. Claude):
 
 - Want it to complete a task end-to-end without consulting you? Tell it to **one-shot** the task.
 
-If you are new to gravitational lensing—particularly an undergraduate or early-stage PhD student—ask the assistant 
+If you are new to gravitational lensing, particularly an undergraduate or early-stage PhD student, ask the assistant 
 to use **Teacher Mode**. It will explain the fundamentals of lensing and lens analysis in greater detail, while providing direct links to relevant, human-readable documentation so that you can understand what **PyAutoLens** is doing.
 
 ## Example Prompt 1 (Teacher Mode): Simulate, inspect and model a strong lens
