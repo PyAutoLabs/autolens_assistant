@@ -29,17 +29,16 @@ Paste verbatim as the first message of a fresh session (see
 ```
 Assistant mode.
 
-First, I want to simulate imaging and interferometer data of a group-scale strong lens, which is composed of
-two SIE lens galaxies and a quadruply imaged Cored Sersic background source. 
+Simulate imaging and interferometer data of a group-scale strong lens, which is composed of
+two SIE lens galaxies and a quadruply imaged Cored Sersic background source. Include a weak lensing
+shear catalogue comprising 30 galaxies up to 20.0" away from the group centre.
 
-Then, I want to perform modeling of this dataset, simultaneously fitting the imaging and interferometer data.
-I want the foreground lens model to use multi gaussian Expansions for the lens light, SIE's for each lens
-and a multi Gaussian expansion for the background source. 
+Next, write a script which perform modeling of this dataset, simultaneously fitting the imaging data, 
+interferometer data and shear catalogue. Model the foreground lens using  multi gaussian Expansions for its 
+light, SIE's for each lenses mass and a multi Gaussian expansion for the background source. 
 
-After this fit has been judged successful, do a follow up lens model that uses a pixelized source reconstruction,
-but retains the MGE lens light and MGE source.
-
-Present me with results confirming the fit was a success. 
+After this fit has been judged successful, do a follow up lens model that uses a pixelized source 
+reconstruction.
 ```
 
 The prompt is frozen verbatim. The intended follow-up composition: the MGE

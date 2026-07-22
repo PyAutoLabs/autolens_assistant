@@ -149,6 +149,30 @@ Assess whether the analysis will run fast on my laptop / PC CPU or GPU,
 and if not, set this up as a small project on the HPC I have access to.
 ```
 
+## Example Prompt 3 (Assistant Mode): Complex tasks combining different data and lensing scales
+
+`PyAutoLens` has JAX support throughout, providing fast modeling via GPU acceleration and automatic differentiation. 
+Galaxy-, group-, and cluster-scale lens models can be constrained using CCD imaging, interferometer visibilities, 
+point-source observables, and weak-lensing catalogues fully in JAX. These are not isolated capabilities, you can 
+perform joint inference combining them all. With so more customization, the challenging part was combining the different
+APIs to produce a single Pythons script that could perform the modeling. With `autolens_assistant` this is no longer
+a problem, you just describe the task in natural language and you get the analysus you need:
+
+```
+Assistant mode.
+
+Simulate imaging and interferometer data of a group-scale strong lens, which is composed of
+two SIE lens galaxies and a quadruply imaged Cored Sersic background source. Include a weak lensing
+shear catalogue comprising 30 galaxies up to 20.0" away from the group centre.
+
+Next, write a script which perform modeling of this dataset, simultaneously fitting the imaging data, 
+interferometer data and shear catalogue. Model the foreground lens using  multi gaussian Expansions for its 
+light, SIE's for each lenses mass and a multi Gaussian expansion for the background source. 
+
+After this fit has been judged successful, do a follow up lens model that uses a pixelized source 
+reconstruction.
+```
+
 ### Supported Coding Agents 
 
 CLI Coding agents like Claude and codex may require a paid subscription. The table below shows the 
