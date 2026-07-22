@@ -16,8 +16,8 @@ ships with this repository in `dataset/imaging/cosmos_web_ring`:
 
 <img src="docs/images/cosmos_web_ring_dataset.png" width="900" />
 
-Take note of the **extra galaxy** and the 1.8" circular mask, your first interactions with 
-the `autolens_assistant` may ask you about how to handle these in your analysis!
+Take note of the **lens galaxy, lensed source galaxy, extra galaxy** and the **1.8" circular mask**, your first 
+interactions with the `autolens_assistant` may ask you about how to handle these in your analysis!
 
 There are two ways to use `autolens_assistant`, choose whichever best suits how you work with AI:
 
