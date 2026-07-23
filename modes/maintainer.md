@@ -83,7 +83,9 @@ easy/medium/hard assistant + teacher cards against its own bundled data), the
 **euclid mode** (`skills/euclid_*.md` + the `wiki/euclid/` sub-wiki — a
 survey-specific pipeline register that is lensing science throughout; a newborn
 grows whatever survey modes its own domain has, if any), `paper/` (this
-assistant's own JOSS paper — a newborn writes its own), and the bundled science
+assistant's own JOSS paper — a newborn writes its own), the README figure
+assets in `docs/` (COSMOS-Web Ring imagery + the `make_readme_figures.py`
+script that renders it — a newborn regrows its own), and the bundled science
 scripts in `scripts/` (`*_cosmos_web_ring.py`, tied to a named lens; only
 `scripts/`'s own AGENTS/CLAUDE/README docs are generic).
 
