@@ -13,7 +13,7 @@ block becomes a **markdown cell**; the Python between blocks becomes a **code ce
 ## Orient
 
 The converter is `autoassistant/to_notebook.py` — stdlib-only, no external tools. It adapts
-the converter the PyAuto workspaces use at build time (`PyAutoHands:autobuild/build_util.py`
+the converter the PyAuto workspaces use at build time (`PyAutoHands:autohands/build_util.py`
 `py_to_notebook` + `add_notebook_quotes.py`) and mirrors its cell-split semantics. In a
 science project, run it from the resolved assistant clone (refer-back).
 
