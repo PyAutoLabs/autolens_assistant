@@ -16,7 +16,7 @@ routing table. Per-skill pointers live in [`skill_citation_map.md`](./skill_cita
 |----------|----------|----------|-------|
 | **HowToLens** | Students new to strong lensing | "What is lensing? How does Bayesian fitting work?" — pedagogical tutorials from first principles | [howtolens.md](./howtolens.md) |
 | **PyAutoLens RTD** | All audiences | API reference + the canonical overview series. The "what features exist and how do I think about them" docs. | [rtd.md](./rtd.md) |
-| **autolens_workspace/lens** | Experienced lensing scientists / returning PyAutoLens users | Production-style example scripts and notebooks per science case (imaging, group, interferometer, point-source, cluster, multi-wavelength) | [workspace.md](./workspace.md) |
+| **autolens_workspace/lens** | Experienced lensing scientists / returning PyAutoLens users | Production-style example scripts and notebooks per science case (imaging, interferometer, point-source, multi-galaxy, group, cluster, multi-wavelength) | [workspace.md](./workspace.md) |
 
 ## Routing matrix
 

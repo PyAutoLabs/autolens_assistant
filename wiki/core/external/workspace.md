@@ -8,8 +8,8 @@ source: https://github.com/PyAutoLabs/autolens_workspace
 # autolens_workspace / lens
 
 `PyAutoLabs/autolens_workspace` is the production-style example library: example and
-tutorial scripts (with generated notebooks) organised by science case (imaging, group,
-interferometer, point-source, cluster, multi-wavelength, weak) and difficulty
+tutorial scripts (with generated notebooks) organised by science case (imaging,
+interferometer, point-source, multi-galaxy, group, cluster, multi-wavelength, weak) and difficulty
 (`start_here` → modeling → features → advanced → results → simulators). Audience:
 experienced lensing scientists and returning PyAutoLens users.
 
