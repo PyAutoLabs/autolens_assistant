@@ -27,7 +27,7 @@ model — don't compose a model over data with an unaddressed contaminant.
   mask extent, and handled any extra galaxies (noise-scaled a `mask_extra_galaxies.fits`,
   or shrunk the mask to exclude them)?"* — if not, stop and do that in
   [`al_prepare_imaging_data`](./al_prepare_imaging_data.md) first.
-- *"How many galaxies in the model — single galaxy-scale, group (2–4), cluster?"* —
+- *"How many galaxies in the model — single galaxy-scale, multi-galaxy (2+ co-dominant, no host halo), group (2–10, optional group halo), cluster?"* —
   this is the only structural choice. Skill below assumes galaxy-scale; bootstrap a
   variant for groups/clusters via `_bootstrap_skill` if needed.
 - *"What's the lens light parameterisation — a single Sersic, MGE (multi-Gaussian

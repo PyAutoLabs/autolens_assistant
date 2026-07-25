@@ -109,7 +109,9 @@ Source: `PyAutoGalaxy:autogalaxy/profiles/mass/point/`.
 | Total-mass-slope measurement | `PowerLaw` + `ExternalShear` |
 | Disentangle stellar vs dark | `Sersic` (stellar) + `NFW` (dark) + `ExternalShear` |
 | Substructure / subhalo detection | `Isothermal` + `ExternalShear` + subhalo as a free `NFWTruncated` |
-| Group / cluster lens | multi-galaxy `Isothermal` ± scaling relations |
+| Multi-galaxy lens (2+ co-dominant, no host halo) | one free `Isothermal` per deflector + shear (untruncated) |
+| Group lens | members ± optional group halo; scaling tier (`dPIEMass` truncated in the Lenstool-style workflow) |
+| Cluster lens | host halo(s) + `dPIEMass` members on scaling relations; point-source fit |
 
 For practical model composition, see
 [`../../../skills/al_build_imaging_model.md`](../../../skills/al_build_imaging_model.md).

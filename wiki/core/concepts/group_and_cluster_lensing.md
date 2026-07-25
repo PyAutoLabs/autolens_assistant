@@ -1,29 +1,49 @@
 ---
-title: Group- and cluster-scale strong lensing
+title: Multi-galaxy, group- and cluster-scale strong lensing
 sources:
   - project: PyAutoGalaxy
     paths:
       - autogalaxy/galaxy/galaxy.py
       - autogalaxy/galaxy/galaxy_model_csv.py
     pinned_commit: main
-last_updated: 2026-07-09
+last_updated: 2026-07-25
 ---
 
-# Group- and cluster-scale lensing
+# Multi-galaxy, group- and cluster-scale lensing
 
-Galaxy-scale lensing
-assumes a single dominant deflector. Group-scale and cluster-scale
-lensing don't: multiple lens galaxies (a primary + companions, or many
-cluster members) all contribute to the deflection. The modelling
-question changes from "what is this lens like?" to "how do I parameterise
-N deflectors without exploding the parameter space?"
+Galaxy-scale lensing assumes a single dominant deflector. Above that
+scale, PyAutoLens organises lenses into a **ladder of three regimes** —
+`multi_galaxy`, `group`, `cluster` — each with its own workspace package.
+Every group and cluster is a multi-galaxy system, but not vice versa;
+what changes as you climb is first the mass model, then the entire
+analysis strategy:
+
+- **Multi galaxy** (`autolens_workspace/*/multi_galaxy`): two or more
+  co-dominant galaxies, NO shared dark-matter halo. One free light and
+  mass model per deflector (untruncated isothermals — no host halo means
+  no tidal truncation), one extended source, the standard pixel-level
+  `AnalysisImaging` workflow.
+- **Group** (`autolens_workspace/*/group`): a dominant group-scale halo
+  (~10^13–10^14 M_sun) enters as an **explicit modelling choice** —
+  `group/features/group_halo` fits the same data with and without it —
+  and fainter members go on luminosity scaling relations (tidally
+  truncated dPIE members in the Lenstool-convention workflow). Still one
+  extended source, still `AnalysisImaging`.
+- **Cluster** (`autolens_workspace/*/cluster`): the same mass framework
+  as a group (host halo(s) + many truncated members on scaling
+  relations), but the **analysis itself changes**: many sources at many
+  redshifts are fitted as point-source multiple-image positions
+  (`AnalysisPoint` + factor graph, multi-plane), and the lens galaxies'
+  light is not modeled.
 
 ## The mass scale
 
-The jump from galaxy to group to cluster is mostly a jump in how much of
-the image-plane deflection field must be modeled at once.
+The jump up the ladder is mostly a jump in how much of the image-plane
+deflection field must be modeled at once.
 
 - galaxy-scale systems usually have Einstein radii of order 1 arcsec
+- multi-galaxy systems have comparable, overlapping deflectors whose
+  combined Einstein radius spans the pair/set (~1–3 arcsec)
 - group-scale systems are broader, often a few arcsec to around 10 arcsec
 - cluster-scale systems can extend to tens of arcsec
 
@@ -36,23 +56,30 @@ That change drives nearly every workflow choice:
 
 ## Three modelling strategies
 
-There are three stable regimes.
+The three strategies map onto the three regimes.
 
-1. **Free per-companion** for small `N`.
-   Each extra lens galaxy gets its own light and mass profile. This is
-   practical when only a few companions matter and you want each to have
-   independent parameters.
+1. **Free per-deflector** — the multi-galaxy regime's default.
+   Each co-dominant galaxy gets its own light and mass profile
+   (`lens_0`, `lens_1`, … in the list-based API). Practical for small
+   `N`, and the only strategy that measures each galaxy's mass centre
+   independently of its light (the mass/light-offset science of systems
+   like SDSS J1011+0143).
 
-2. **Scaling-relation members** for medium `N`.
-   Many companions are tied to a shared luminosity-to-mass relation so
-   that their observed photometry sets the relative scale while only a
-   small number of hyperparameters remain free.
+2. **Scaling-relation members** — the group regime's default for the
+   faint tier. Many members are tied to a shared luminosity relation so
+   photometry sets relative scale while one normalization stays free.
+   The modern convention (Bergamini et al. 2019) ties the truncation
+   exponent to the dispersion exponent via 2*alpha + beta_cut = 1 + gamma
+   (gamma = 0.2 fixed), with vanishing unscaled member cores. Whether a
+   separate group halo joins the members is an explicit, testable choice
+   — see `group/features/group_halo`.
 
-3. **CSV-driven composition** for large `N`.
-   Once the model contains tens to hundreds of member galaxies, inline
-   Python becomes error-prone. The CSV API moves the bookkeeping into
-   tabular files that still load into the standard `af.Model` machinery.
-   See [`../api/csv_api.md`](../api/csv_api.md).
+3. **CSV-driven composition + point-source constraints** — the cluster
+   regime. Tens to hundreds of members load from tabular files
+   (see [`../api/csv_api.md`](../api/csv_api.md)) and the fit switches
+   from pixel-level source reconstruction to multiple-image positions
+   with per-source redshifts (multi-plane). Extended-source
+   reconstruction becomes a specialised follow-up of individual systems.
 
 ## Source-side considerations
 
@@ -70,11 +97,14 @@ problem even when all observations come from one instrument.
 
 ## Member-galaxy mass profiles
 
-Cluster-lensing papers often use PIEMD-like families for member galaxies
-because they are compact, interpretable, and easy to scale with
-luminosity. In PyAutoLens / PyAutoGalaxy, the nearest out-of-the-box
-analogs are the isothermal family plus dark-halo components, with custom
-profiles available when a literal PIEMD parameterization is required.
+Cluster-lensing papers use the dPIE / PIEMD family for member galaxies
+because it is compact, interpretable, and easy to scale with luminosity.
+PyAutoLens now ships this natively: `al.mp.dPIEMass` / `dPIEMassSph`
+take Lenstool's own parameters (`sigma` = the fiducial v_disp, `r_core`,
+`r_cut`), so a fitted posterior reads like a Lenstool results table, and
+`r_core = 0` (the vanishing-core convention for BCGs and members) is
+analytic. Untruncated isothermals remain the right choice at
+multi-galaxy scale, where no host halo motivates truncation.
 
 The practical choice is usually driven by workflow compatibility rather
 than naming purity:
@@ -89,6 +119,8 @@ For the custom-profile route, see
 
 ## Related pages
 
+- `autolens_workspace/*/multi_galaxy`, `*/group` (incl.
+  `features/group_halo`) and `*/cluster` — the three regime packages.
 - [`api/csv_api.md`](../api/csv_api.md) — cluster-scale CSV composition.
 - [`api/mass_profile_catalog.md`](../api/mass_profile_catalog.md) — NFW
   / Isothermal rows used at cluster scale.
