@@ -42,6 +42,8 @@ from os import path
 
 # ── third-party ───────────────────────────────────────────────────────────────
 import numpy as np
+import matplotlib
+matplotlib.use("TkAgg")      # or "QtAgg"
 from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
 from scipy.ndimage import center_of_mass
@@ -63,13 +65,13 @@ except ImportError:
 # USER SETTINGS — edit these before running
 # ─────────────────────────────────────────────────────────────────────────────
 
-dataset_name = "Tile102029268RA0535908187946DECNEG0406175201805"
-dataset_path = path.join("..", "..", "..", "dataset", "sample_group", dataset_name)
+dataset_name = "Tile102163950RA2219367282481DEC0759815699321"
+dataset_path = path.join("..", "..", "..", "dataset", "euclid_dr1", dataset_name)
 
 pixel_scales = 0.1   # arcsec / pixel
 
 # Circular mask applied to the data before all GUI steps
-mask_radius = 7.0
+mask_radius = 15.0
 mask_centre = (0.0, 0.0)   # (y, x) arcsec — overridden by info.json if present
 
 # Search box (pixels) — area around each click searched for the brightest pixel
@@ -223,7 +225,7 @@ def _run_scribbler_gui(raw_data):
     scribbler = al.Scribbler(image=raw_data.native,
                              cmap="jet",
                              mask_overlay=scribbler_mask,
-                             brush_width=0.01)
+                             brush_width=0.04)
     painted_mask = scribbler.show_mask()
 
     # If nothing was painted, the mask will be all False (unmasked) or match

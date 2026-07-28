@@ -1,0 +1,8 @@
+{
+    "pixel_scale": 0.1,
+    "mask_radius": 3.5,
+    "mask_centre": [
+        1.25,
+        1.1
+    ]
+}

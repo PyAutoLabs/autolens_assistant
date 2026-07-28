@@ -692,6 +692,7 @@ def source_pix_1(
         **settings_search.search_dict,
         n_live=n_live,
         n_batch=n_batch,
+        n_like_max=400000,
     )
 
     result = search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
@@ -815,6 +816,7 @@ def source_pix_2(
         **settings_search.search_dict,
         n_live=75,
         n_batch=n_batch,
+        n_like_max=50000,
     )
 
     result = search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
@@ -1073,8 +1075,9 @@ __Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
-dataset_name = "Tile102022525RA0960657896028DECNEG0471616737541"
-dataset_path = Path("dataset") / "sample_group" / dataset_name
+
+dataset_name = "Tile102015155RA0474755357492DECNEG0551003452879"
+dataset_path = Path("dataset") / "euclid_dr1" / dataset_name
 
 """
 __Mask / Pixel-scale Parameters__

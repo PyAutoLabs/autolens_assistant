@@ -1,9 +1,9 @@
 """
 mgl_selection.py
 
-Select systems that the majority (>75%) of individual testers labelled as
+Select systems that the majority (>60%) of individual testers labelled as
 "Multi Galaxy Lens", then copy the corresponding dataset folders from
-dr1_prelim_grade_ab_v2 into euclid_dr1/.
+dr1_prelim_grade_ab_v2 into euclid_dr1/, alongside the modelling jpegs.
 
 Workflow
 --------
@@ -11,18 +11,22 @@ Workflow
    autolens_base_project/dataset/results/individual_results/
    (one .csv or .xlsx file per tester, each containing at least the
    columns "object_id" and "verdict").
-2. For every object_id, compute the fraction of annotators whose verdict
-   is "Multi Galaxy Lens". Keep object_ids where this fraction is > 0.75.
-3. For each selected object_id, locate the matching folder in
-   autolens_base_project/dataset/dr1_prelim_grade_ab_v2/dr1_prelim_grade_ab_v2/
-   and copy it (recursively) into autolens_base_project/dataset/euclid_dr1/.
-4. Safeguard: if a selected object_id has no matching source folder, it is
-   skipped with a warning and reported in a summary at the end, instead of
-   raising an error.
+2. For every object_id, compute the fraction of annotators *that reviewed
+   that system* who voted "Multi Galaxy Lens". Keep object_ids where this
+   fraction is > 0.60 (configurable via --threshold).
+3. For each selected object_id:
+   a. Locate the matching .fits file(s) in
+      autolens_base_project/dataset/dr1_prelim_grade_ab_v2/dr1_prelim_grade_ab_v2/
+      and copy them into autolens_base_project/dataset/euclid_dr1/<object_id>/.
+   b. Locate rgb_0 and rgb_1 in
+      autolens_base_project/dataset/modelling_jpegs-south-up/<object_id>/
+      and copy them into the same euclid_dr1/<object_id>/ folder.
+4. Safeguards: missing .fits files or missing jpeg folders are skipped with
+   a warning and reported in a summary at the end rather than aborting.
 
 Usage
 -----
-    python mgl_selection.py [--threshold 0.75] [--dry-run]
+    python mgl_selection.py [--threshold 0.60] [--dry-run]
 
 Run from anywhere; paths are resolved relative to the project root, which
 is auto-detected by walking up from this script's location looking for an
@@ -77,7 +81,8 @@ def load_result_file(path: Path) -> pd.DataFrame:
 
 def collect_mgl_fractions(individual_results_dir: Path) -> tuple[dict[str, float], int]:
     """Read every result file in `individual_results_dir` and compute, for
-    each object_id, the fraction of testers who voted "Multi Galaxy Lens".
+    each object_id, the fraction of testers who reviewed it and voted
+    "Multi Galaxy Lens".
 
     Returns (fractions_dict, n_files_used).
     """
@@ -123,13 +128,14 @@ def select_mgl_systems(fractions: dict[str, float], threshold: float) -> list[st
     return sorted(obj_id for obj_id, frac in fractions.items() if frac > threshold)
 
 
-def copy_selected_folders(
+def copy_fits_files(
     selected_ids: list[str],
     source_dir: Path,
     dest_dir: Path,
     dry_run: bool = False,
 ) -> tuple[list[str], list[str]]:
-    """Copy each selected system's folder from source_dir into dest_dir.
+    """For each selected system, find the .fits file(s) in source_dir whose
+    name starts with the object_id and copy them into dest_dir/<object_id>/.
 
     Returns (copied, missing) lists of object_ids.
     """
@@ -139,19 +145,65 @@ def copy_selected_folders(
     missing: list[str] = []
 
     for obj_id in selected_ids:
-        src = source_dir / obj_id
-        if not src.is_dir():
+        matches = sorted(source_dir.glob(f"{obj_id}*.fits"))
+        if not matches:
             missing.append(obj_id)
             continue
 
-        dst = dest_dir / obj_id
         if dry_run:
             copied.append(obj_id)
             continue
 
-        if dst.exists():
-            shutil.rmtree(dst)
-        shutil.copytree(src, dst)
+        dst = dest_dir / obj_id
+        dst.mkdir(parents=True, exist_ok=True)
+        for fits_file in matches:
+            shutil.copy2(fits_file, dst / fits_file.name)
+        copied.append(obj_id)
+
+    return copied, missing
+
+
+def copy_jpegs(
+    selected_ids: list[str],
+    jpeg_dir: Path,
+    dest_dir: Path,
+    dry_run: bool = False,
+) -> tuple[list[str], list[str]]:
+    """For each selected system, copy rgb_0 and rgb_1 (any extension, e.g.
+    .jpeg) from jpeg_dir/<object_id>/ into dest_dir/<object_id>/.
+
+    Systems whose jpeg folder or both rgb files are absent are reported as
+    missing but do not abort the run.
+
+    Returns (copied, missing) lists of object_ids.
+    """
+    copied: list[str] = []
+    missing: list[str] = []
+
+    for obj_id in selected_ids:
+        src_folder = jpeg_dir / obj_id
+        if not src_folder.is_dir():
+            missing.append(obj_id)
+            continue
+
+        # Match rgb_0 and rgb_1 with any extension (e.g. rgb_0.jpeg)
+        rgb_files = sorted(
+            f for stem in ("rgb_0", "rgb_1")
+            for f in src_folder.glob(f"{stem}*")
+            if f.is_file()
+        )
+        if not rgb_files:
+            missing.append(obj_id)
+            continue
+
+        if dry_run:
+            copied.append(obj_id)
+            continue
+
+        dst_folder = dest_dir / obj_id
+        dst_folder.mkdir(parents=True, exist_ok=True)
+        for f in rgb_files:
+            shutil.copy2(f, dst_folder / f.name)
         copied.append(obj_id)
 
     return copied, missing
@@ -168,8 +220,8 @@ def main() -> None:
     parser.add_argument(
         "--threshold",
         type=float,
-        default=0.75,
-        help="Fraction of testers required for a system to be selected (default 0.75, i.e. >75%%).",
+        default=0.60,
+        help="Fraction of testers required for a system to be selected (default 0.60, i.e. >60%%).",
     )
     parser.add_argument(
         "--dry-run",
@@ -190,11 +242,13 @@ def main() -> None:
         / "dr1_prelim_grade_ab_v2"
         / "dr1_prelim_grade_ab_v2"
     )
+    jpeg_dir = project_root / "dataset" / "modelling_jpegs-south-up"
     dest_dir = project_root / "dataset" / "euclid_dr1"
 
     print(f"Project root:            {project_root}")
     print(f"Individual results dir:  {individual_results_dir}")
     print(f"Source dataset dir:      {source_dir}")
+    print(f"Modelling jpegs dir:     {jpeg_dir}")
     print(f"Destination dir:         {dest_dir}")
     print(f"Threshold:               >{args.threshold:.0%}")
     if args.dry_run:
@@ -205,6 +259,8 @@ def main() -> None:
         sys.exit(f"ERROR: results folder not found: {individual_results_dir}")
     if not source_dir.is_dir():
         sys.exit(f"ERROR: source dataset folder not found: {source_dir}")
+    if not jpeg_dir.is_dir():
+        sys.exit(f"ERROR: modelling jpegs folder not found: {jpeg_dir}")
 
     fractions, n_used = collect_mgl_fractions(individual_results_dir)
     print(f"Loaded {n_used} annotator result file(s).")
@@ -214,21 +270,40 @@ def main() -> None:
     print(f"{len(selected)} system(s) classified as Multi Galaxy Lens "
           f"by more than {args.threshold:.0%} of testers.\n")
 
-    copied, missing = copy_selected_folders(
+    # --- Step 1: copy .fits files ---
+    verb = "Would copy" if args.dry_run else "Copied"
+    copied_fits, missing_fits = copy_fits_files(
         selected, source_dir, dest_dir, dry_run=args.dry_run
     )
 
-    verb = "Would copy" if args.dry_run else "Copied"
-    print(f"{verb} {len(copied)} folder(s) to {dest_dir}")
-    for obj_id in copied:
+    print(f"{verb} .fits files for {len(copied_fits)} system(s) to {dest_dir}")
+    for obj_id in copied_fits:
         print(f"  [ok]      {obj_id}")
 
-    if missing:
+    if missing_fits:
         print(
-            f"\nWARNING: {len(missing)} selected system(s) had no matching "
-            f"folder in {source_dir} and were skipped:"
+            f"\nWARNING: {len(missing_fits)} selected system(s) had no matching "
+            f".fits file in {source_dir} and were skipped:"
         )
-        for obj_id in missing:
+        for obj_id in missing_fits:
+            print(f"  [missing] {obj_id}")
+
+    # --- Step 2: copy rgb_0 / rgb_1 jpegs ---
+    print(f"\n{verb} modelling jpegs (rgb_0, rgb_1) for selected system(s)...")
+    copied_jpg, missing_jpg = copy_jpegs(
+        selected, jpeg_dir, dest_dir, dry_run=args.dry_run
+    )
+
+    print(f"{verb} jpegs for {len(copied_jpg)} system(s)")
+    for obj_id in copied_jpg:
+        print(f"  [ok]      {obj_id}")
+
+    if missing_jpg:
+        print(
+            f"\nWARNING: {len(missing_jpg)} selected system(s) had no jpeg folder "
+            f"(or missing rgb_0/rgb_1) in {jpeg_dir}:"
+        )
+        for obj_id in missing_jpg:
             print(f"  [missing] {obj_id}")
 
 
