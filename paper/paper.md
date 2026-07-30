@@ -20,7 +20,7 @@ affiliations:
     index: 1
   - name: Institute for Computational Cosmology, Durham University, South Road, Durham DH1 3LE, United Kingdom
     index: 2
-date: 15 July 2026
+date: 30 July 2026
 bibliography: paper.bib
 software_repository_url: https://github.com/PyAutoLabs/autolens_assistant
 ---
@@ -33,7 +33,7 @@ an unprecedented scale. They include strong-lens searches which are rapidly expa
 cluster-scale lenses beyond hundreds of thousands [@Collett2015]. Lensing studies draw on optical and infrared imaging [@Bolton2006; @Nightingale2025COWLS], 
 submm and radio interferometry [@Hezaveh2016; @Vegetti2025; @Rizzo2020], strongly lensed point sources and 
 transients such as quasars and supernovae [@Wong2019; @Grillo2018], and weak-lensing shear catalogues. Together, these datasets enable studies of cosmology, dark matter, galaxy formation, 
-star formation, and the early Universe. `PyAutoLens-JAX` [@Nightingale2021; @NightingaleJAX2026] provides open-source software for GPU-native, 
+star formation, and the early Universe. [`PyAutoLens-JAX`](https://github.com/PyAutoLabs/PyAutoLens) [@Nightingale2021; @NightingaleJAX2026] provides open-source software for GPU-native, 
 autodifferentiable joint lensing analyses across these datasets and scales. However, combining datasets and performing 
 inference across vastly different lensing scales is inherently complex, requiring 
 substantial effort from the scientist to find and adapt the `PyAutoLens-JAX` API and Python syntax to build their specific 
