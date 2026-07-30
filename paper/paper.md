@@ -21,6 +21,7 @@ affiliations:
   - name: Institute for Computational Cosmology, Durham University, South Road, Durham DH1 3LE, United Kingdom
     index: 2
 date: 30 July 2026
+submitted_at: 2026-07-30
 bibliography: paper.bib
 software_repository_url: https://github.com/PyAutoLabs/autolens_assistant
 ---
@@ -73,11 +74,6 @@ When the prompt above is input into `PyAutoLens-Assistant` using `Claude Code` O
 clarifying questions, the end-to-end analysis produces \autoref{fig:cosmos_web_ring}, successfully delivering the 
 output requested in the prompt.
 
-![The end-to-end COSMOS-Web Ring analysis produced by `PyAutoLens-Assistant` from the natural-language prompt above. 
-Each row corresponds to one JWST band (F277W and F444W); the left column shows the observed image, the 
-middle column the lensed source model, and the right column the source-plane reconstruction. 
-\label{fig:cosmos_web_ring}](model_fit.png)
-
 The example above is a **natural-language workflow**: the scientist specifies the analysis in scientific terms, and the 
 assistant translates it into executable code. Complex modelling concepts can therefore be expressed clearly even 
 when implementing them manually in code would require substantial effort. By handling the Python syntax and `PyAutoLens-JAX` API, 
@@ -95,6 +91,11 @@ analysis approaches step by step:
 
 > Find the data for the COSMOS-Web Ring, provide a short `PyAutoLens-JAX` script to plot it, and, given that I am a new 
 > user, explain the different ways in which we could model this strong-lensing system.
+
+![The end-to-end COSMOS-Web Ring analysis produced by `PyAutoLens-Assistant` from the natural-language prompt above. 
+Each row corresponds to one JWST band (F277W and F444W); the left column shows the observed image, the 
+middle column the lensed source model, and the right column the source-plane reconstruction. 
+\label{fig:cosmos_web_ring}](model_fit.png)
 
 The above prompt will activate `PyAutoLens-Assistant`'s Teacher Mode, which explains scientific concepts in context and directs users to relevant 
 documentation, tutorials, and open-source lectures. It can introduce undergraduate and early-stage PhD researchers 
