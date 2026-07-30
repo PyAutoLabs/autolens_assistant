@@ -171,7 +171,7 @@ companion, enabling readers to reproduce the study end to end or fork it as the 
 # Benchmark
 
 We benchmark `PyAutoLens-Assistant` using `ChatGPT` (GPT-5.6 Sol and **GPT-5.5**), `Claude` (Opus 5.0 and **Sonnet 5.0**), 
-`Claude Code` (Opus 4.8), `Codex` (GPT-5.6 Sol), `Gemini CLI` (**Gemini 3.1 Pro**), and `OpenCode` (**DeepSeek V4 Flash Free**), 
+`Claude Code` (Opus 4.8), `Codex` (GPT-5.6 Sol), `Gemini CLI` (Gemini 3.1 Pro), and `OpenCode` (**DeepSeek V4 Flash Free**), 
 with bold models available without a paid 
 subscription at the time of writing. The primary benchmark uses the COSMOS-Web Ring prompt above, with success 
 determined by whether the generated script constructs the requested model and recovers the expected lens configuration. 
