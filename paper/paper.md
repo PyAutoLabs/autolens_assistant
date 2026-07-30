@@ -240,7 +240,4 @@ citations, and prose are reviewed and verified by the authors.
 JWN is supported by an STFC/UKRI Ernest Rutherford Fellowship, Project Reference: ST/X003086/1. 
 RGH is supported by STFC Opportunities grant ST/T002565/1.
 
-The full set of packages the underlying `PyAutoLens-JAX` software builds on is catalogued 
-in its [citation file](https://github.com/PyAutoLabs/PyAutoLens/blob/main/files/citations.bib).
-
 # References
