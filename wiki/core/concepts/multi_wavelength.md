@@ -13,7 +13,7 @@ sources:
       - autolens/interferometer/model/analysis.py
     pinned_commit: ae4a27afc0fe7ad712777807d4269759c1a2b6ed
 last_updated: 2026-06-22
-content_sha256: 25f7d5e33b3d36167be1f86470e01897707307ccc0960a4edd6c550dd2afbea9
+content_sha256: d825df0212490484bcce5fc439cc0a9d4e2ed707a4552669f7ab37fb25c436de
 ---
 
 # Multi-wavelength / multi-dataset modelling
