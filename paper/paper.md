@@ -121,7 +121,7 @@ their own research, giving the assistant a bespoke knowledge base tailored to th
 The second package is the skills library, which provides the procedural knowledge required to perform end-to-end analyses. 
 A skill is a structured instruction file used by AI coding agents to complete a specific task. During more than a 
 decade of `PyAutoLens-JAX` development, over 300 human-written examples have been created 
-in the `autolens_workspace`, covering datasets such as CCD imaging and interferometric observations and tasks including 
+in the [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_workspace), covering datasets such as CCD imaging and interferometric observations and tasks including 
 simulation, lens modelling and result analysis. These examples are extensively documented, containing 
 substantially more explanatory text than code, and therefore describing both the implementation and the scientific 
 reasoning behind each step. `PyAutoLens-Assistant` distils this material into concise skill files that describe how to 
@@ -136,7 +136,7 @@ skills are updated so that the assistant immediately supports the new functional
 across all other functionality.
 
 `PyAutoLens-Assistant` can be used through an AI chat assistant such as `ChatGPT` or `Claude`. 
-The `llms.txt` file defines the canonical reading order through the wikis, skills, and runnable examples, enabling 
+The [`llms.txt`](https://github.com/PyAutoLabs/autolens_assistant/blob/main/llms.txt) file defines the canonical reading order through the wikis, skills, and runnable examples, enabling 
 the assistant to answer questions, explain scientific concepts, locate relevant documentation, and generate end-to-end 
 modelling scripts. This mode is necessarily manual and limited: the assistant cannot normally inspect local files or 
 execute code, so users must run scripts themselves and copy code, errors, figures, and other outputs between the 
