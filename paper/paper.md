@@ -51,14 +51,17 @@ concepts whilest directing them to documentation and Jupyter Notebook guides to 
 # Statement of need
 
 Scientists can often inspect a dataset and know exactly which analysis they want to perform. For example, 
-when shown the following multi-wavelength James Webb Space Telescope (JWST) observations of the 
-COSMOS-Web Ring [@Casey2023; @Mercier2024]:
+when shown the multi-wavelength James Webb Space Telescope (JWST) observations of the 
+COSMOS-Web Ring [@Casey2023; @Mercier2024] in \autoref{fig:cosmos_web_ring_dataset}:
 
-AI: - Put docs/imaging/![cosmos_web_ring_dataset.png](../docs/images/cosmos_web_ring_dataset.png) here.
+![The COSMOS-Web Ring dataset. The left panel is an RGB colour composite from COSMOS-Web, annotated with the 
+lens galaxy, the lensed source galaxy and a nearby extra galaxy. The middle and right panels show the JWST 
+F277W and F444W imaging, with the dashed circle marking the $1.8''$ mask applied in the analysis. 
+\label{fig:cosmos_web_ring_dataset}](cosmos_web_ring_dataset.png)
 
 An experienced strong-lensing scientist might examine this data and say:
 
-> I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
+> I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring independently, which are in 
 > my local folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion, its mass with a 
 > singular isothermal ellipsoid plus external shear, and model the source using a multi-Gaussian expansion. For 
 > speed, run the analysis on the laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. 
@@ -76,7 +79,7 @@ how to include this in the input prompt.
 ![The end-to-end COSMOS-Web Ring analysis produced by `PyAutoLens-Assistant` from the natural-language prompt above. 
 Each row corresponds to one JWST band (F277W and F444W); the left column shows the observed image, the 
 middle column the lensed source model, and the right column the source-plane reconstruction. 
-\label{fig:cosmos_web_ring}](cosmos_web_ring.png)
+\label{fig:cosmos_web_ring}](model_fit.png)
 
 The example above is a **natural-language workflow**: the scientist specifies the analysis in scientific terms, and the 
 assistant translates it into executable code. Complex modelling concepts can therefore be expressed clearly even 
@@ -88,7 +91,7 @@ another simulates CCD imaging, interferometric and weak lensing observations of 
 performs joint inference of all datasets.
 
 As lens analysis becomes more complex, it is equally important that performing it becomes **more accessible**.
-With `PyAutoLens-Assistant`, a A user does not need prior expertise in gravitational lensing to use it.
+With `PyAutoLens-Assistant`, a user does not need prior expertise in gravitational lensing to use it.
 For example, the following prompt initiates a guided conversation in which the assistant explains the available 
 analysis approaches step by step:
 
@@ -187,10 +190,10 @@ rather than relying only on information copied into a conversation. `PyAutoLens-
 tools that allow an AI chat assistant or AI coding agent to search, filter and retrieve completed lens-modelling results 
 through natural language. For example, a Euclid lensing analysis may contain models for over 10,000 strong lenses. 
 Using MCP, a scientist can point `PyAutoLens-Assistant` to a result hosting server and ask the AI agent 
-to “show lenses with Einstein radii above $1.5^{\prime\prime}$” or “compare the magnification distributions of two samples,”. 
+to “show lenses with Einstein radii above $1.5''$” or “compare the magnification distributions of two samples”. 
 They would then receive the relevant parameters and figures without directly interfacing with the `PyAutoLens-JAX` API at all. 
 MCP therefore turns a large collection of modelling outputs into an accessible, interactive scientific resource 
-that scientists can explore thruogh solely via natural language.
+that scientists can explore solely via natural language.
 
 # Natural-language development ecosystem
 
@@ -239,8 +242,8 @@ JWN is supported by an STFC/UKRI Ernest Rutherford Fellowship, Project Reference
 RGH is supported by STFC Opportunities grant ST/T002565/1.
 
 `PyAutoLens-Assistant` builds on the open-source scientific Python ecosystem, in particular 
-`NumPy` [@Numpy2011], `SciPy` [@scipy], `Astropy` [@astropy:2013], `matplotlib` [@matplotlib], `Numba` [@numba] 
-and `JAX` [@jax2018github], together with the non-linear search libraries `dynesty` [@dynesty], `emcee` [@emcee] 
+`NumPy` [@numpy], `SciPy` [@scipy], `Astropy` [@astropy1], `matplotlib` [@matplotlib], `Numba` [@numba] 
+and `JAX` [@jax], together with the non-linear search libraries `dynesty` [@dynesty], `emcee` [@emcee] 
 and `nautilus` [@nautilus]. The full set of packages the underlying `PyAutoLens-JAX` software builds on is catalogued 
 in its [citation file](https://github.com/PyAutoLabs/PyAutoLens/blob/main/files/citations.bib).
 
