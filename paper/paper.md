@@ -51,7 +51,7 @@ concepts whilest directing them to documentation and Jupyter Notebook guides to 
 
 # Statement of need
 
-Scientists can often inspect a dataset and know exactly which analysis they want to perform. For example, 
+Scientists can often inspect a dataset and know exactly the analysis they want to perform. For example, 
 when shown the multi-wavelength James Webb Space Telescope (JWST) observations of the 
 COSMOS-Web Ring [@Casey2023; @Mercier2024] in \autoref{fig:cosmos_web_ring_dataset}:
 
@@ -67,15 +67,11 @@ An experienced strong-lensing scientist might examine this data and say:
 > singular isothermal ellipsoid plus external shear, and model the source using a multi-Gaussian expansion. For 
 > speed, run the analysis on the laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. 
 > Plot the observed image at each wavelength in the left column, its lensed source model in the middle column, and its source 
-> reconstruction in the right column.[^web]
+> reconstruction in the right column.
 
 When the prompt above is input into `PyAutoLens-Assistant` using `Claude Code` Opus 5.0, after answering a couple of 
 clarifying questions, the end-to-end analysis produces \autoref{fig:cosmos_web_ring}, successfully delivering the 
 output requested in the prompt.
-
-[^web]: To use a prompt like this in an AI chat assistant such as `ChatGPT` or `Claude`, the assistant must first 
-be connected to the `autolens_assistant` repository. The `autolens_assistant` README and documentation explain clearly
-how to include this in the input prompt.
 
 ![The end-to-end COSMOS-Web Ring analysis produced by `PyAutoLens-Assistant` from the natural-language prompt above. 
 Each row corresponds to one JWST band (F277W and F444W); the left column shows the observed image, the 
@@ -92,7 +88,7 @@ another simulates CCD imaging, interferometric and weak lensing observations of 
 performs joint inference of all datasets.
 
 As lens analysis becomes more complex, it is equally important that performing it becomes **more accessible**.
-With `PyAutoLens-Assistant`, a user does not need prior expertise in gravitational lensing to use it.
+With `PyAutoLens-Assistant`, a user does not need prior expertise in gravitational lensing.
 For example, the following prompt initiates a guided conversation in which the assistant explains the available 
 analysis approaches step by step:
 
