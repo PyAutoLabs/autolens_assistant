@@ -58,3 +58,26 @@ one. The layout is otherwise identical, so read the publishing build.
 The `Draft JOSS PDF` GitHub Actions workflow builds both on every change under
 `paper/`, as the `paper-pdf` and `paper-pdf-draft` artifacts, so no local Docker
 or LaTeX install is needed.
+
+## Submit to arXiv
+
+`paper.md` stays the single canonical manuscript — do not maintain a second
+arXiv version. JOSS's intended route is EditorialBot's
+`@editorialbot generate preprint`, which needs a submission issue; before that
+exists, `./make_arxiv.sh` produces the same thing from Inara's `preprint`
+target and writes `arxiv/arxiv-submission.tar.gz` for upload.
+
+The bundle is just `paper.tex` plus the figures. No `.bib` or `.bbl` is needed:
+citeproc bakes the reference list into the `.tex` as a `CSLReferences`
+environment, so arXiv's `pdflatex` resolves every citation in two passes.
+
+One patch is applied on the way. Inara's `preprint.latex` template omits
+pandoc's `common.latex` partial, which is where `\pandocbounded` is defined —
+and since pandoc 3.5 every figure is wrapped in that macro. The generated
+`.tex` therefore calls a command its own preamble never defines, and the build
+dies with `Undefined control sequence` at the first `\includegraphics`. This
+affects the plain `docker run ... -o preprint` invocation too, so the patch is
+not optional. The JOSS PDF is unaffected, since its template does include the
+partial. `make_arxiv.sh` injects the definition and then test-compiles with
+`pdflatex` exactly as arXiv will, failing loudly rather than handing you a
+tarball that breaks on upload. Drop the patch step if Inara fixes the template.
