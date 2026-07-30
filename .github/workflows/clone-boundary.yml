@@ -29,10 +29,28 @@ jobs:
         with:
           path: autolens_assistant
 
+      # Declared-dependency escape hatch (PyAutoBrain#186): a PR paired with a
+      # not-yet-merged Brain change may declare `Brain-ref: <branch-or-sha>`
+      # on its own line in the PR body; the boundary then runs against that
+      # ref instead of main, so the paired PRs can both be green before the
+      # ordered merge. No declaration (or push events) -> main, as before.
+      # checkout constrains the ref to PyAutoLabs/PyAutoBrain; this gate is
+      # hygiene, not a security boundary.
+      - name: Resolve the Brain ref
+        id: brainref
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          ref="$(printf '%s' "$PR_BODY" | tr -d '\r' \
+            | sed -n 's|^Brain-ref:[[:space:]]*\([A-Za-z0-9._/-]*\).*|\1|p' | head -1)"
+          echo "ref=${ref:-main}" >> "$GITHUB_OUTPUT"
+          if [ -n "$ref" ]; then echo "Using declared PyAutoBrain ref: $ref"; fi
+
       - name: Check out PyAutoBrain (implements the boundary)
         uses: actions/checkout@v4
         with:
           repository: PyAutoLabs/PyAutoBrain
+          ref: ${{ steps.brainref.outputs.ref }}
           path: PyAutoBrain
 
       - name: Every tracked file falls on one side of the boundary
