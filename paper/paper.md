@@ -13,6 +13,7 @@ authors:
     orcid: 0000-0002-8987-7401
     affiliation: 1
     corresponding: true
+    email: James.Nightingale@Newcastle.ac.uk
   - name: Richard G. Hayes
     affiliation: 2
 affiliations:
