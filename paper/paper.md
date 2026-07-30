@@ -171,7 +171,8 @@ companion, enabling readers to reproduce the study end to end or fork it as the 
 # Benchmark
 
 We benchmark `PyAutoLens-Assistant` using `ChatGPT` (GPT-5.6 Sol and **GPT-5.5**), `Claude` (Opus 5.0 and **Sonnet 5.0**), 
-`Claude Code` (Opus 4.8), `Codex` (GPT-5.6 Sol), and `OpenCode` (**[model]**), with bold models available without a paid 
+`Claude Code` (Opus 4.8), `Codex` (GPT-5.6 Sol), `Gemini CLI` (**[model]**), and `OpenCode` (**DeepSeek V4 Flash Free**), 
+with bold models available without a paid 
 subscription at the time of writing. The primary benchmark uses the COSMOS-Web Ring prompt above, with success 
 determined by whether the generated script constructs the requested model and recovers the expected lens configuration. 
 All tested models pass, suggesting this task is accessible even to less capable models. Further benchmarks reproduce 
@@ -203,7 +204,7 @@ whose core repositories mirror the roles of human organs:
 routing tasks through specialist coding agents; [`PyAutoMind`](https://github.com/PyAutoLabs/PyAutoMind) captures
 intent by recording plain-English development requirements and tracking them from initial ideas to completed
 implementations; and [`PyAutoMemory`](https://github.com/PyAutoLabs/PyAutoMemory) provides long-term scientific memory
-through cross-linked literature wikis and verifiable citations. Humans can therefore conduct software development
+through cross-linked literature wikis and verifiable citations. One can therefore conduct software development
 entirely through natural language.
 
 # Related software
