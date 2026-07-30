@@ -57,6 +57,7 @@ Pick notebook vs script per audience (default `.ipynb` for student-leaning users
 | al_time_delay_cosmography | _ | overview/overview_3_features | point_source/features/time_delays.py |
 | al_subhalo_detect | chapter_4_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/advanced/subhalo/detect/start_here.py |
 | al_sensitivity_mapping | _ | overview/overview_3_features | imaging/features/advanced/subhalo/sensitivity/start_here.py |
+| al_potential_correction | chapter_4_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/advanced/potential_correction/start_here.py |
 | al_group_lensing | _ | overview/overview_3_features | group/start_here.py |
 | (multi-galaxy requests: 2+ co-dominant deflectors, no host halo) | _ | overview/overview_2_new_user_guide | multi_galaxy/start_here.py |
 | al_cluster_csv_api | _ | overview/overview_3_features | cluster/csv_api.py |
