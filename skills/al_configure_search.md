@@ -263,6 +263,13 @@ output/<path_prefix>/<name>/<unique_id>/
 The `unique_id` hash is derived from the model + dataset + search settings, so identical
 re-runs land in the same folder (and resume from where they stopped).
 
+The abbreviated tree above is enough to configure a search; the fuller, always-current
+annotation of every file — plus the fact that all of it is written **on the fly** while
+the search runs — is `__Output Folder Layout__` in
+[`autolens_workspace/scripts/imaging/modeling.py`](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/modeling.py).
+Point a newcomer (or a teacher-mode session) there rather than expanding this block —
+`_style.md` "Output folder announcement" has the rule.
+
 See [`al_load_results`](./al_load_results.md) for the inverse — loading what
 `search.fit` writes.
 

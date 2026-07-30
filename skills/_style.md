@@ -349,6 +349,33 @@ The full convention — committed Python lives in `scripts/`; throwaway plots an
 dumps go to the gitignored `scripts/scratch/` — is in `AGENTS.md`
 "Conventions". Skills here are the application of that rule.
 
+## Output folder announcement
+
+A running fit is not a black box. `search.fit(...)` writes to
+`output/<path_prefix>/<name>/<unique_id>/` **on the fly**, using the highest-likelihood
+model found so far, so the folder is worth opening the moment the search starts — not
+when it terminates hours later. Users new to the stack rarely know this and sit watching
+a silent terminal. Three rules:
+
+1. **Announce the folder at launch, not at the end.** Quote the absolute path once the
+   fit is running, and say `model.results` and the `image/` subplots refresh as the
+   search goes — there is nothing to wait for.
+2. **Point at the workspace's own layout prose; don't restate it.** The annotated tree of
+   `files/`, `image/`, `model.info`, `model.results`, `search.summary` and the
+   `<unique_hash>` resume behaviour is `__Output Folder Layout__` in
+   [`autolens_workspace/scripts/imaging/modeling.py`](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/modeling.py)
+   (the same section is in the `interferometer`, `point_source`, `group`, `cluster` and
+   `weak` `modeling.py` scripts). Link it once per fit; never copy the tree into a skill,
+   where it would rot.
+3. **Name what to open first.** `model.results` for the human-readable fit summary and
+   `image/fit.png` for data / model image / residuals — then
+   [`al_load_results`](./al_load_results.md) for the programmatic read.
+
+Depth follows "Adaptive depth" above. For either **newcomer** audience, and whenever
+[`modes/teacher.md`](../modes/teacher.md) is active, walk all three rules — reading the
+output folder *is* part of the workflow being taught. For a returning user, rule 1 alone
+(one line quoting the path) is enough.
+
 ## External resource citation
 
 Every `al_*` skill ends with a single `## Further reading` block above the agent

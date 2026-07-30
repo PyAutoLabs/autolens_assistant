@@ -4,7 +4,7 @@ sources:
   - project: autolens_workspace
     paths:
       - scripts/guides/hpc/README.md
-      - scripts/guides/hpc/example_cpu.py
+      - scripts/guides/hpc/example_cpu_and_gpu.py
       - scripts/imaging/features/pixelization/cpu_fast_modeling.py
     pinned_commit: main
 last_updated: 2026-07-15
@@ -18,8 +18,8 @@ runtimes are hours to days. Running on a cluster shortens that and lets you batc
 lenses in parallel.
 
 This page is the high-level guide. The canonical worked example is
-`autolens_workspace:scripts/guides/hpc/example_cpu.py` and the `batch/` subfolder
-beside it.
+`autolens_workspace:scripts/guides/hpc/example_cpu_and_gpu.py` and the `batch_cpu/` /
+`batch_gpu/` subfolders beside it.
 
 ## CPU acceleration — two regimes
 
@@ -102,7 +102,8 @@ For per-lens batches:
 python scripts/run_fit.py --lens-index=$SLURM_ARRAY_TASK_ID
 ```
 
-The workspace `scripts/guides/hpc/batch/` folder has fuller templates.
+The workspace `scripts/guides/hpc/batch_cpu/` and `scripts/guides/hpc/batch_gpu/` folders
+have fuller templates.
 
 ## Persisting outputs
 
