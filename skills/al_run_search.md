@@ -121,6 +121,14 @@ The fit writes to `output/<path_prefix>/<name>/<unique_id>/` (see
 tail -f output/imaging/<your_lens>/sie_sersic/*/search.log
 ```
 
+Say this out loud the moment a production fit starts: results are written **on the fly**
+from the best model so far, so `model.results` and `image/fit.png` are already worth
+opening — no need to wait for the search to terminate. For a newcomer, or in teacher
+mode, tour the folder per `_style.md` "Output folder announcement" and point at
+`__Output Folder Layout__` in
+[`autolens_workspace/scripts/imaging/modeling.py`](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/modeling.py),
+which annotates every file the fit writes.
+
 ## Combine
 
 - [`al_load_results`](./al_load_results.md) — once the fit completes (or even mid-run),
