@@ -10,7 +10,8 @@ data. The residual = data − model_image. The chi-squared map = residual² / no
 A good fit has residuals that look like the noise; a bad fit has structured
 residuals (arcs, double images, lens-light leakage).
 
-Canonical reference: `autolens_workspace:scripts/guides/plot/examples/plotters.py`.
+Canonical reference: `autolens_workspace:scripts/imaging/plot.py` (fit figures +
+the `Visualizer` that outputs them during a model-fit).
 
 ## Ask
 
