@@ -240,10 +240,7 @@ citations, and prose are reviewed and verified by the authors.
 JWN is supported by an STFC/UKRI Ernest Rutherford Fellowship, Project Reference: ST/X003086/1. 
 RGH is supported by STFC Opportunities grant ST/T002565/1.
 
-`PyAutoLens-Assistant` builds on the open-source scientific Python ecosystem, in particular 
-`NumPy` [@numpy], `SciPy` [@scipy], `Astropy` [@astropy1], `matplotlib` [@matplotlib], `Numba` [@numba] 
-and `JAX` [@jax], together with the non-linear search libraries `dynesty` [@dynesty], `emcee` [@emcee] 
-and `nautilus` [@nautilus]. The full set of packages the underlying `PyAutoLens-JAX` software builds on is catalogued 
+The full set of packages the underlying `PyAutoLens-JAX` software builds on is catalogued 
 in its [citation file](https://github.com/PyAutoLabs/PyAutoLens/blob/main/files/citations.bib).
 
 # References
