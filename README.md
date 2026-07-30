@@ -59,7 +59,7 @@ I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultan
 the folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
 laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
-each wavelength in the top row, its lensed source model in the middle row, and its source on the bottom row.
+each wavelength in the left column, its lensed source model in the middle column, and its source on the right column.
 ```
 
 ### AI Coding Agent (CLI)
@@ -94,7 +94,7 @@ I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultan
 the folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
 laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
-each wavelength in the top row, its lensed source model in the middle row, and its source on the bottom row.
+each wavelength in the left column, its lensed source model in the middle column, and its source on the right column.
 ```
 
 ## Customize Your Assistant

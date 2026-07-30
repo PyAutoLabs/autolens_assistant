@@ -62,8 +62,8 @@ An experienced strong-lensing scientist might examine this data and say:
 > my local folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion, its mass with a 
 > singular isothermal ellipsoid plus external shear, and model the source using a multi-Gaussian expansion. For 
 > speed, run the analysis on the laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. 
-> Plot the observed image at each wavelength in the top row, its lensed source model in the middle row, and its source 
-> reconstruction in the bottom row.[^web]
+> Plot the observed image at each wavelength in the left column, its lensed source model in the middle column, and its source 
+> reconstruction in the right column.[^web]
 
 When the prompt above is input into `PyAutoLens-Assistant` using `Claude Code` Opus 5.0, after answering a couple of 
 clarifying questions, the end-to-end analysis produces \autoref{fig:cosmos_web_ring}, successfully delivering the 
@@ -74,8 +74,8 @@ be connected to the `autolens_assistant` repository. The `autolens_assistant` RE
 how to include this in the input prompt.
 
 ![The end-to-end COSMOS-Web Ring analysis produced by `PyAutoLens-Assistant` from the natural-language prompt above. 
-Each column corresponds to one JWST band (F277W and F444W); the top row shows the observed image, the 
-middle row the lensed source model, and the bottom row the source-plane reconstruction. 
+Each row corresponds to one JWST band (F277W and F444W); the left column shows the observed image, the 
+middle column the lensed source model, and the right column the source-plane reconstruction. 
 \label{fig:cosmos_web_ring}](cosmos_web_ring.png)
 
 The example above is a **natural-language workflow**: the scientist specifies the analysis in scientific terms, and the 
