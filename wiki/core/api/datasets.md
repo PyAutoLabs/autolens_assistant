@@ -11,7 +11,7 @@ sources:
       - autolens/point/dataset.py
     pinned_commit: ae4a27afc0fe7ad712777807d4269759c1a2b6ed
 last_updated: 2026-06-22
-content_sha256: c4f11bede2be7c49f280ae7ce8f2062c41301eff95c44f4957ac389aa3c09598
+content_sha256: daee19ccb1311a51cb6b5121e4f276971dc67361b8649b173aeda0ab85aa9b26
 ---
 
 # Datasets
@@ -116,7 +116,7 @@ and flux ratios — common for time-delay cosmography (H₀ measurements).
 | HST, JWST, Euclid CCD imaging | `Imaging` |
 | Ground-based CCD imaging | `Imaging` |
 | ALMA, JVLA, NOEMA visibilities | `Interferometer` |
-| Multi-wavelength CCD | one `Imaging` per band; combine via a factor graph (see [`analysis_objects`](./analysis_objects.md) and `autolens_workspace:scripts/multi/start_here.py`) |
+| Multi-wavelength CCD | one `Imaging` per band; combine via a factor graph (see [`analysis_objects`](./analysis_objects.md) and `autolens_workspace:scripts/multi_dataset/start_here.py`) |
 | Quasar / AGN image positions | `PointDataset` |
 | Mixed (point + extended) | one `Analysis` per dataset, combined via a factor graph |
 

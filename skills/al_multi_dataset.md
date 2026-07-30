@@ -12,9 +12,9 @@ constrains stellar populations, joint imaging+visibility breaks degeneracies
 the visibilities alone leave, and dataset-level nuisance parameters
 (astrometric offsets, PSF errors) become marginalisable.
 
-Workspace path: `autolens_workspace:scripts/multi/start_here.py`,
-`scripts/multi/features/wavelength_dependence/modeling.py`,
-`scripts/multi/features/imaging_and_interferometer/modeling.py`.
+Workspace path: `autolens_workspace:scripts/multi_dataset/start_here.py`,
+`scripts/multi_dataset/features/wavelength_dependence/modeling.py`,
+`scripts/multi_dataset/features/imaging_and_interferometer/modeling.py`.
 
 ## Ask
 
@@ -74,14 +74,14 @@ for analysis in analysis_list:
 
 factor_graph = af.FactorGraphModel(*analysis_factor_list)
 
-search = af.Nautilus(path_prefix="multi", name="multiband")
+search = af.Nautilus(path_prefix="multi_dataset", name="multiband")
 result_list = search.fit(
     model=factor_graph.global_prior_model, analysis=factor_graph
 )
 ```
 
-Canonical: `autolens_workspace:scripts/multi/start_here.py` (and
-`scripts/multi/features/wavelength_dependence/modeling.py` for the relation form).
+Canonical: `autolens_workspace:scripts/multi_dataset/start_here.py` (and
+`scripts/multi_dataset/features/wavelength_dependence/modeling.py` for the relation form).
 
 ## Branch — imaging + interferometer joint
 
@@ -106,7 +106,7 @@ result_list = search.fit(
 )
 ```
 
-Canonical: `autolens_workspace:scripts/multi/features/imaging_and_interferometer/modeling.py`.
+Canonical: `autolens_workspace:scripts/multi_dataset/features/imaging_and_interferometer/modeling.py`.
 
 ## Branch — wavelength-dependent source
 
@@ -116,7 +116,7 @@ star formation from old stellar populations. The mechanism is identical: build
 the per-band `model.copy()`, but instead of an independent free prior per band,
 set the wavelength-varying parameter from a shared relation (e.g. a linear
 `y = m * wavelength + c` whose `m`, `c` priors are shared across factors). See
-`autolens_workspace:scripts/multi/features/wavelength_dependence/modeling.py`.
+`autolens_workspace:scripts/multi_dataset/features/wavelength_dependence/modeling.py`.
 
 ## Combine
 
@@ -132,7 +132,7 @@ set the wavelength-varying parameter from a shared relation (e.g. a linear
 - **Student / new to lensing** — _ (no direct HowToLens chapter).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   multi-dataset section.
-- **Experienced PyAutoLens user** — [workspace/lens: multi/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/multi/start_here.py):
+- **Experienced PyAutoLens user** — [workspace/lens: multi/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/multi_dataset/start_here.py):
   the canonical multi-dataset walkthrough; features/ folder has
   per-scenario examples.
 

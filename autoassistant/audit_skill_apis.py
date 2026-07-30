@@ -171,7 +171,7 @@ DENY_LIST: tuple[IdiomRule, ...] = (
         ),
         citation=(
             "PyAutoFit:autofit/graphical/declarative/factor/analysis.py; "
-            "autolens_workspace:scripts/multi/start_here.py"
+            "autolens_workspace:scripts/multi_dataset/start_here.py"
         ),
     ),
     IdiomRule(
@@ -189,7 +189,7 @@ DENY_LIST: tuple[IdiomRule, ...] = (
         ),
         citation=(
             "PyAutoFit:autofit/graphical/declarative/collection.py; "
-            "autolens_workspace:scripts/multi/start_here.py"
+            "autolens_workspace:scripts/multi_dataset/start_here.py"
         ),
     ),
 )
