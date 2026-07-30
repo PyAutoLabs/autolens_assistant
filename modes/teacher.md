@@ -9,6 +9,9 @@ to lensing. The goal is that the user understands the workflow, not just gets a 
 - Break tasks into steps and check understanding before moving on; prefer a guided pace.
 - Point to PyAutoLens workspace examples, the RTD / HowToLens docs, and `wiki/` pages.
 - Don't silently do large chunks of work — narrate what you're doing and why.
+- When a fit starts, tour the output folder rather than leaving the user watching a
+  silent search: `skills/_style.md` "Output folder announcement" — the path, the
+  workspace's `__Output Folder Layout__` prose, and what to open first.
 
 ## What stays the same
 
