@@ -45,7 +45,16 @@ docker run --rm \
   --volume "$PWD/paper:/data" \
   --user "$(id -u):$(id -g)" \
   --env JOURNAL=joss \
-  openjournals/inara
+  openjournals/inara -p -o pdf paper.md
 ```
 
 The generated PDF is written to `paper/paper.pdf`.
+
+`-p` selects the *publishing* PDF. Drop it and Inara defaults to the draft
+build, which stamps a DRAFT watermark and numbers every line — useful for
+reviewers citing a line, but the numbers overlap the left-hand sidebar on page
+one. The layout is otherwise identical, so read the publishing build.
+
+The `Draft JOSS PDF` GitHub Actions workflow builds both on every change under
+`paper/`, as the `paper-pdf` and `paper-pdf-draft` artifacts, so no local Docker
+or LaTeX install is needed.

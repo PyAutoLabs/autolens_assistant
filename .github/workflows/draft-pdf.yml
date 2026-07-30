@@ -3,14 +3,21 @@
 # JOSS papers are compiled by `openjournals/inara` (the same tool the journal
 # runs at review time), which applies the branded JOSS template. Running it in
 # CI is the canonical way to preview the paper — it needs no local Docker/LaTeX.
-# The compiled PDF is uploaded as a workflow artifact ("paper-pdf"); download it
-# from the run's Summary page.
 #
-# NOTE: this is the *draft* preview, so the PDF carries a DRAFT watermark and
-# line numbers. The layout is otherwise identical to the accepted-paper build —
-# if something looks wrong here, it is wrong in paper.md, not in the toolchain.
-# Every figure referenced by paper.md must live under `paper/`; Inara mounts
-# only that directory, so `../docs/...` paths do not resolve.
+# Two artifacts are produced, both downloadable from the run's Summary page:
+#
+#   paper-pdf        the reading copy — Inara's `-p` ("publishing") mode, which
+#                    is what the accepted paper looks like.
+#   paper-pdf-draft  the review copy — adds a DRAFT watermark and line numbers
+#                    so reviewers can cite a line. The line numbers overlap the
+#                    left-hand sidebar on page 1; that is a known cosmetic quirk
+#                    of draft mode, not a fault in paper.md.
+#
+# Apart from the watermark and line numbers the two are laid out identically, so
+# if something looks wrong in either, it is wrong in paper.md, not the toolchain.
+#
+# Every figure referenced by paper.md must live under `paper/`; Inara mounts only
+# that directory, so `../docs/...` paths do not resolve.
 name: Draft JOSS PDF
 
 on:
@@ -37,7 +44,25 @@ jobs:
           journal: joss
           paper-path: paper/paper.md
 
-      - name: Upload PDF
+      - name: Upload draft PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf-draft
+          path: paper/paper.pdf
+
+      # `-p` forces the publishing PDF: no DRAFT watermark, no line numbers, and
+      # so no collision with the sidebar. The draft action offers no switch for
+      # this, so call the image directly the way paper/README.md documents.
+      - name: Build publishing PDF (Inara)
+        run: |
+          sudo rm -f paper/paper.pdf
+          docker run --rm \
+            --volume "${{ github.workspace }}/paper:/data" \
+            --env JOURNAL=joss \
+            openjournals/inara -p -o pdf paper.md
+          sudo chown "$(id -u):$(id -g)" paper/paper.pdf
+
+      - name: Upload publishing PDF
         uses: actions/upload-artifact@v4
         with:
           name: paper-pdf
