@@ -84,15 +84,15 @@ The relative angular-diameter distances `D_ij` between every pair of planes are
 computed from a cosmology (default Planck 2018; set explicitly on the tracer if you
 need otherwise).
 
-The showcase multi-plane application is the **double Einstein ring** — two
-sources at different redshifts behind one lens, where the inner source is
-itself a deflector of the outer one. Because the ring radii depend on distance
-ratios between *three* planes, these systems constrain cosmological parameters
-in a way single-ring lenses cannot. Fitting them is a hard initialisation
-problem (the tutorial `modeling.py` only converges by starting at the truth):
-the practical recipe is the chained two-search script, and SLaM for production.
-Workspace:
-`autolens_workspace:scripts/imaging/features/advanced/double_einstein_ring/`
+The showcase multi-plane application is the **double source-plane lens (DSPL)**
+— two sources at different redshifts behind one lens, where the inner source is
+itself a deflector of the outer one, appearing as two Einstein rings. Because
+the ring radii depend on distance ratios between *three* planes, these systems
+constrain cosmological parameters in a way single-ring lenses cannot. Fitting
+them is a hard initialisation problem (the tutorial `modeling.py` only converges
+by starting at the truth): the practical recipe is the chained two-search
+script, and SLaM for production. Workspace:
+`autolens_workspace:scripts/imaging/features/advanced/double_source_plane_lens/`
 (`modeling.py` → `chaining.py` → `slam.py`). LOS-halo populations (see
 [`substructure_and_subhalos`](./substructure_and_subhalos.md)) are the other
 routine multi-plane use.

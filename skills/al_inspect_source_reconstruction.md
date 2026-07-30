@@ -107,11 +107,11 @@ print(f"Saved to: {PLOT_DIR.resolve()}")
 The mesh-triangulation and regularisation-neighbour graphs no longer have
 direct plot helpers; build them with NumPy and `aplt.plot_grid` if needed.
 
-## Branch — double Einstein ring / multi-plane pixelisations
+## Branch — double source-plane lens (DSPL) / multi-plane pixelisations
 
 For systems with two source planes (each pixelised independently), the
 `pixelization_index` argument indexes into the planes. See
-`autolens_workspace:scripts/guides/plot/advanced/plotters_double_einstein_ring.py`.
+`autolens_workspace:scripts/guides/plot/advanced/plotters_double_source_plane_lens.py`.
 
 ## Quality checks
 
