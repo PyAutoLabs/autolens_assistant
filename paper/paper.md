@@ -22,6 +22,7 @@ affiliations:
     index: 2
 date: 15 July 2026
 bibliography: paper.bib
+software_repository_url: https://github.com/PyAutoLabs/autolens_assistant
 ---
 
 # Summary
@@ -38,7 +39,7 @@ inference across vastly different lensing scales is inherently complex, requirin
 substantial effort from the scientist to find and adapt the `PyAutoLens-JAX` API and Python syntax to build their specific 
 analysis pipelines.
 
-`PyAutoLens-Assistant` allows scientists to use natural language to learn and perform
+[`PyAutoLens-Assistant`](https://github.com/PyAutoLabs/autolens_assistant) allows scientists to use natural language to learn and perform
 gravitational lens analysis. Through an AI chat assistant such as `ChatGPT` or `Claude`, users can 
 ask `PyAutoLens-Assistant` questions about the lensing analysis works and obtain fully documented code needed to 
 perform the lens analysis task, which they then execute themselves manually. With a command-line interface (CLI) AI 

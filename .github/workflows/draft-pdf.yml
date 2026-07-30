@@ -6,9 +6,11 @@
 # The compiled PDF is uploaded as a workflow artifact ("paper-pdf"); download it
 # from the run's Summary page.
 #
-# NOTE: the build fails until every figure referenced by paper.md exists in the
-# repo (currently `paper/cosmos_web_ring.png`). Replace the placeholder with the
-# real figure and the artifact regenerates automatically.
+# NOTE: this is the *draft* preview, so the PDF carries a DRAFT watermark and
+# line numbers. The layout is otherwise identical to the accepted-paper build —
+# if something looks wrong here, it is wrong in paper.md, not in the toolchain.
+# Every figure referenced by paper.md must live under `paper/`; Inara mounts
+# only that directory, so `../docs/...` paths do not resolve.
 name: Draft JOSS PDF
 
 on:
