@@ -200,7 +200,7 @@ that scientists can explore solely via natural language.
 
 # Natural-language development ecosystem
 
-In March 2026, following more than a decade of exclusively human-led software development, `PyAutoLens-JAX` transitioned
+In March 2026, following more than a decade of hand-written software development, `PyAutoLens-JAX` transitioned
 to a fully natural-language, agentic-AI development ecosystem called
 [`PyAutoScientist`](https://github.com/PyAutoLabs/PyAutoScientist). The ecosystem is organised as a software organism
 whose core repositories mirror the roles of human organs:
