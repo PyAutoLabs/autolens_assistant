@@ -83,7 +83,7 @@ assistant translates it into executable code. Complex modelling concepts can the
 when implementing them manually in code would require substantial effort. By handling the Python syntax and `PyAutoLens-JAX` API, 
 the assistant allows scientists to focus on what the analysis should do and why, rather than facing the implementation burden of 
 how to implement it in code. `PyAutoLens-Assistant` includes several benchmarks that illustrate this further. One uses a 
-three-paragraph prompt to reproduce the well-known detection of a dark matter subhalo in the strong lens SDSS J0946+1006 [@Vegetti2010]; 
+three-paragraph prompt to reproduce the well-known detection of a dark matter subhalo in the strong lens SDSS J0946+1006 [@Vegetti2010; @Minor2021]; 
 another simulates CCD imaging, interferometric and weak lensing observations of a multi-galaxy strong lens and then 
 performs joint inference of all datasets.
 
@@ -174,7 +174,7 @@ We benchmark `PyAutoLens-Assistant` using `ChatGPT` (GPT-5.6 Sol and **GPT-5.5**
 subscription at the time of writing. The primary benchmark uses the COSMOS-Web Ring prompt above, with success 
 determined by whether the generated script constructs the requested model and recovers the expected lens configuration. 
 All tested models pass, suggesting this task is accessible even to less capable models. Further benchmarks reproduce 
-the dark-matter subhalo detection in SDSS J0946+1006 [@Vegetti2010], assess Teacher Mode, and simulate and jointly 
+the dark-matter subhalo detection in SDSS J0946+1006 [@Vegetti2010; @Minor2021], assess Teacher Mode, and simulate and jointly 
 model CCD imaging, interferometric and weak lensing observations of a group-scale lens. The final benchmark intentionally combines 
 simulation, multiple data types, a multi-galaxy mass model, and joint inference, which are documented over many different 
 `autolens_workspace` examples. Thus it shows how the assistant can generalize across the wikis and skills to do complex
