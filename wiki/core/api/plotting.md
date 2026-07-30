@@ -98,3 +98,7 @@ aplt.fits_interferometer(dataset=dataset, file_path="dataset.fits", overwrite=Tr
 - [`../../../skills/al_plot_fit_residuals.md`](../../../skills/al_plot_fit_residuals.md).
 - [`../../../skills/al_inspect_source_reconstruction.md`](../../../skills/al_inspect_source_reconstruction.md).
 - [`configuration`](./configuration.md) — plot-styling YAMLs.
+- Workspace examples: `autolens_workspace:scripts/guides/plot/start_here.py` (API introduction)
+  and the per-dataset `plot.py` in each dataset package (`scripts/imaging/plot.py`,
+  `scripts/interferometer/plot.py`, `scripts/point_source/plot.py`, …), each ending with a
+  `__Visualizer__` section on automatic visualization during a model-fit.

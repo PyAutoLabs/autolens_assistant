@@ -14,7 +14,7 @@ This skill produces those plots for the user's tracer. For fit-vs-data diagnosti
 that depend on the dataset (residuals, normalised residuals, chi-squared), use
 [`al_plot_fit_residuals`](./al_plot_fit_residuals.md) instead.
 
-Canonical references: `autolens_workspace:scripts/guides/plot/examples/plotters.py`
+Canonical references: `autolens_workspace:scripts/guides/plot/plotters.py`
 and `visuals.py`.
 
 ## Ask

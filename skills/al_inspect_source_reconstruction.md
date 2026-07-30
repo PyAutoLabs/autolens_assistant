@@ -16,7 +16,7 @@ fixed, why the inversion can demagnify pathologically without a positions penalt
 read [`wiki/core/concepts/inversions_and_pixelizations.md`](../wiki/core/concepts/inversions_and_pixelizations.md).
 
 Canonical reference:
-`autolens_workspace:scripts/guides/plot/advanced/plotters_pixelization.py`.
+`autolens_workspace:scripts/imaging/features/pixelization/plot.py`.
 
 ## Ask
 
@@ -111,7 +111,7 @@ direct plot helpers; build them with NumPy and `aplt.plot_grid` if needed.
 
 For systems with two source planes (each pixelised independently), the
 `pixelization_index` argument indexes into the planes. See
-`autolens_workspace:scripts/guides/plot/advanced/plotters_double_source_plane_lens.py`.
+`autolens_workspace:scripts/imaging/features/advanced/double_source_plane_lens/plot.py`.
 
 ## Quality checks
 
