@@ -127,7 +127,7 @@ overrides, every prior is *identified* across factors — the graph deduplicates
 the global model has the same dimensionality as the single-dataset model (everything
 shared). To free a parameter per dataset (e.g. a per-band source `intensity`, or a
 per-dataset astrometric offset), override that prior on the `model.copy()` *before*
-wrapping it in its `AnalysisFactor`. See `autolens_workspace:scripts/multi/start_here.py`
+wrapping it in its `AnalysisFactor`. See `autolens_workspace:scripts/multi_dataset/start_here.py`
 for the canonical walkthrough, and [`../concepts/multi_wavelength.md`](../concepts/multi_wavelength.md)
 for the shared-vs-free design.
 

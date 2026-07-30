@@ -109,7 +109,7 @@ whole model is shared. Free a parameter per dataset — a per-band source
 the `model.copy()` before wrapping it in its `AnalysisFactor`. The same
 machinery scales smoothly to genuinely hierarchical graphs (population
 priors over many lenses) via `af.HierarchicalFactor`, without changing the
-composition pattern. See `autolens_workspace:scripts/multi/start_here.py`
+composition pattern. See `autolens_workspace:scripts/multi_dataset/start_here.py`
 and [`api/analysis_objects.md`](../api/analysis_objects.md).
 
 ## Astrometric offset nuisance parameters

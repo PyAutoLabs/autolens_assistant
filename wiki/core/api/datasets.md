@@ -116,7 +116,7 @@ and flux ratios — common for time-delay cosmography (H₀ measurements).
 | HST, JWST, Euclid CCD imaging | `Imaging` |
 | Ground-based CCD imaging | `Imaging` |
 | ALMA, JVLA, NOEMA visibilities | `Interferometer` |
-| Multi-wavelength CCD | one `Imaging` per band; combine via a factor graph (see [`analysis_objects`](./analysis_objects.md) and `autolens_workspace:scripts/multi/start_here.py`) |
+| Multi-wavelength CCD | one `Imaging` per band; combine via a factor graph (see [`analysis_objects`](./analysis_objects.md) and `autolens_workspace:scripts/multi_dataset/start_here.py`) |
 | Quasar / AGN image positions | `PointDataset` |
 | Mixed (point + extended) | one `Analysis` per dataset, combined via a factor graph |
 

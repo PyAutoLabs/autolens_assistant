@@ -6,7 +6,7 @@ difficulty: hard
 datasets: []          # fully simulated — the agent creates both datasets
 workspace_packages:
   - group
-  - multi
+  - multi_dataset
   - imaging
   - interferometer
 added: 2026-07-10
