@@ -41,7 +41,7 @@ substantial effort from the scientist to find and adapt the `PyAutoLens-JAX` API
 analysis pipelines.
 
 [`PyAutoLens-Assistant`](https://github.com/PyAutoLabs/autolens_assistant) allows scientists to use natural language to learn and perform
-gravitational lens analysis. Through an AI chat assistant such as `ChatGPT` or `Claude`, users can 
+strong- and weak-lensing analyses across galaxy, group, and cluster scales. Through an AI chat assistant such as `ChatGPT` or `Claude`, users can 
 ask `PyAutoLens-Assistant` questions about the lensing analysis works and obtain fully documented code needed to 
 perform the lens analysis task, which they then execute themselves manually. With a command-line interface (CLI) AI 
 coding agent such as `Claude Code` or `Codex`, users describe the desired analysis and the agent collates the data, 
