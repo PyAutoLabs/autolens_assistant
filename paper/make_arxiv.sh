@@ -71,6 +71,31 @@ open(path, 'w').write(src.replace('\\begin{document}', DEF + '\\begin{document}'
 print("    patched")
 PY
 
+echo "==> Adding the repository link under the title"
+# The JOSS PDF shows the repository in its left-hand sidebar; the preprint
+# template has no sidebar, so the URL would otherwise appear only as an inline
+# link buried in the Summary. Restore it directly under the title block. This
+# repairs something the preprint template drops — it does not change paper.md,
+# which stays the single canonical manuscript.
+python3 - "$OUT/paper.tex" <<'PY'
+import sys
+path = sys.argv[1]
+src = open(path).read()
+LINK = r"""
+\begin{center}
+\normalsize Software: \url{https://github.com/PyAutoLabs/autolens_assistant}
+\end{center}
+\medskip
+"""
+if 'PyAutoLabs/autolens_assistant}' in src.split(r'\section{Summary}')[0]:
+    print("    already present, nothing to do")
+elif '\\maketitle' in src:
+    open(path, 'w').write(src.replace('\\maketitle', '\\maketitle\n' + LINK, 1))
+    print("    added")
+else:
+    raise SystemExit("!!! no \\maketitle found — cannot place the link")
+PY
+
 echo "==> Collecting figures"
 # Every image paper.md references, resolved relative to paper/.
 grep -oE '\]\([^)]+\.(png|jpg|pdf)\)' paper.md | sed 's/^](//;s/)$//' | sort -u | while read -r fig; do
