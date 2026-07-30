@@ -51,6 +51,13 @@ local grid + a free-mass fit to pin down the subhalo's parameters.
   base fit this skill assumes.
 - [`al_inspect_source_reconstruction`](./al_inspect_source_reconstruction.md) —
   inspect pixelised-source residuals before launching the grid.
+- [`al_potential_correction`](./al_potential_correction.md) — the
+  assumption-free counterpart. This skill asks "does an NFW subhalo at
+  (y, x, mass) improve the evidence?"; gravitational imaging instead
+  reconstructs free-form corrections to the lensing potential and reads the
+  missing mass off a `dkappa` map. Use it when you do not want to pre-specify
+  the perturber's form, or to locate a candidate before centring this grid
+  search on it.
 
 ## Further reading
 

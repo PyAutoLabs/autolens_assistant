@@ -166,6 +166,9 @@ one at a time, paired with their companion wiki/core stub.
   grid search for perturbing subhaloes.
 - [`al_sensitivity_mapping.md`](./al_sensitivity_mapping.md) (stub) — quantitative
   detectability calibration.
+- [`al_potential_correction.md`](./al_potential_correction.md) — gravitational
+  imaging: pixelized corrections to the lensing potential (`al.pc`), reconstructed
+  jointly with the source, for substructure whose form you do not want to assume.
 
 **Advanced techniques**
 
