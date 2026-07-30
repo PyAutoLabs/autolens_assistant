@@ -94,6 +94,25 @@ jobs:
           # workspace_index.json) are always included automatically.
           git -C sources/autolens_workspace sparse-checkout set scripts
 
+      # Paired-PR support (same trade-off as the Brain-ref hatch, PyAutoBrain#186):
+      # on PR events, any cited source repo with a branch matching this PR's head
+      # branch is checked out at that branch, so an assistant PR citing a paired
+      # not-yet-merged change can be green before the ordered merge. Release-time
+      # invocations (workflow_call / dispatch) never enter this step and keep
+      # grading against main/tags; merge-order discipline stays human.
+      - name: Match cited sources to the PR branch
+        if: github.event_name == 'pull_request'
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          [ -n "$BRANCH" ] || exit 0
+          for d in sources/*/; do
+            if git -C "$d" ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+              echo "Branch $BRANCH exists in $d — checking it out"
+              git -C "$d" fetch --quiet --depth 1 origin "$BRANCH"
+              git -C "$d" checkout --quiet FETCH_HEAD
+            fi
+          done
+
       - name: Run wiki-currency checks
         id: checks
         run: |
