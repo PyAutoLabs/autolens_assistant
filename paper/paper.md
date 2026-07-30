@@ -96,7 +96,7 @@ analysis approaches step by step:
 > Find the data for the COSMOS-Web Ring, provide a short `PyAutoLens-JAX` script to plot it, and, given that I am a new 
 > user, explain the different ways in which we could model this strong-lensing system.
 
-Through Teacher Mode, `PyAutoLens-Assistant` explains scientific concepts in context and directs users to relevant 
+The above prompt will activate `PyAutoLens-Assistant`'s Teacher Mode, which explains scientific concepts in context and directs users to relevant 
 documentation, tutorials, and open-source lectures. It can introduce undergraduate and early-stage PhD researchers 
 to scientific data analysis and Bayesian inference, while helping experienced lensing scientists who are new 
 to `PyAutoLens-JAX` navigate its API and workflows. This support is increasingly valuable as lensing datasets span 
