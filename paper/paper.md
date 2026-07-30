@@ -128,8 +128,8 @@ substantially more explanatory text than code, and therefore describing both the
 reasoning behind each step. `PyAutoLens-Assistant` distils this material into concise skill files that describe how to 
 perform specific tasks, which direct the assistant to the full workspace examples if more context is required.
 
-`PyAutoLens-Assistant` does not simply match a user’s prompt to a single workspace example. The benchmark 
-prompts deliberately request analyses that no individual `autolens_workspace` example performs. Instead, the assistant 
+`PyAutoLens-Assistant` does not simply match a user’s prompt to a single workspace example. The example prompts on the 
+`PyAutoLens-Assistant` GitHub page deliberately request analyses that no individual `autolens_workspace` example performs. Instead, the assistant 
 combines the relevant skills and reference material, generalizing across multiple examples to construct an end-to-end 
 workflow tailored to the user’s dataset and scientific aims. This design also makes the assistant straightforward to 
 maintain: as new `PyAutoLens-JAX` features and accompanying `autolens_workspace` examples are introduced, the corresponding 
