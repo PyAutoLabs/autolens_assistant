@@ -223,7 +223,7 @@ entirely through natural language.
 
 - Core scientific computing: `Python` [@python], `NumPy` [@numpy], `SciPy` [@scipy], `Astropy` [@astropy1; @astropy2], `matplotlib` [@matplotlib], and `Numba` [@numba].
 - Scientific utilities: `scikit-image` [@scikit-image], `scikit-learn` [@scikit-learn], `Colossus` [@colossus], `NetworkX` [@networkx], and `SQLite` [@sqlite].
-- JAX and GPU computing: `JAX` [@jax], `Optax` [@optax], `BlackJAX` [@blackjax], and `TensorFlow Probability` [@tfp].
+- JAX and GPU computing: `JAX` [@jax], `Optax` [@optax], `Prodigy` [@prodigy], `BlackJAX` [@blackjax], and `TensorFlow Probability` [@tfp].
 - Interferometric calculations: `nufftax` [@nufftax], its underlying `FINUFFT` algorithm [@finufft], and the legacy `PyNUFFT` implementation [@pynufft].
 - Critical-curve and caustic calculations: `Jax-Zero-Contour` [@jax_zero_contour].
 - Non-linear inference: `dynesty` [@dynesty], `emcee` [@emcee], `nautilus` [@nautilus], and `zeus` [@zeus1; @zeus2].
