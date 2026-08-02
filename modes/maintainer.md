@@ -116,6 +116,28 @@ supported.
 - **Non-agentic CLI/chat:** provide the same bootstrap and either browsing access or attached
   files; confirm it produces commands for the user to run instead of claiming execution.
 
+Free-tier routes, one per row of the table in [`FREE_TIER_SETUP.md`](../FREE_TIER_SETUP.md).
+Each must be tested **on a free account**, not a paid one with features disabled:
+
+- **Claude Free + GitHub connector (Route A):** run the bootstrap prompt; confirm it answers the
+  "can you actually read `llms.txt`?" question truthfully, and that it reaches a skill file —
+  not just `llms.txt` — before writing code.
+- **Claude Free Project upload (Route B):** upload `chat_pack/` to a Project's knowledge; ask a
+  question whose answer lives in a skill that is *in* the pack, and one whose answer is in a
+  page that is *not* (e.g. a `wiki/literature/` topic). Confirm the second is answered with an
+  explicit "not in what I have" rather than from memory.
+- **Pasted `llms-chat.txt` (Route C):** paste into a fresh ChatGPT Free chat. Confirm the paste
+  plus a real question fits the context window and still leaves room to work, and that the
+  assistant uses `01_api_surface.md` to check a symbol it is unsure about.
+- **Custom GPT (Route D):** once built, run the same two questions as Route B from a **free**
+  ChatGPT account, to confirm knowledge retrieval works for a non-builder.
+
+In every route, include the standing regression check: ask for a plot of a fit and confirm it
+emits `aplt.subplot_fit_imaging(...)` and **not** `aplt.FitImagingPlotter` / `aplt.MatPlot2D`.
+Then ask it to model a *real* dataset and confirm it applies the real-data gate — asking you to
+inspect the image for contaminants and to settle the mask extent — instead of silently
+composing a fit.
+
 Record the surface, date, plan/account context, files successfully loaded, and any limitations.
 Plan availability changes, so test results should describe observed behavior rather than promise
 that a feature is free for every user.
