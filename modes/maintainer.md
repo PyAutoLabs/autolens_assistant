@@ -73,7 +73,10 @@ registry pattern, the API gate (`autoassistant/audit_skill_apis.py` + wiki-curre
 workflow), the profile template, the benchmark machinery (the
 `benchmarks/AGENTS.md` contract + the `autoassistant/benchmark.py` harness), and
 `.mcp.json` (it wires the results-inspector MCP, which *is* `autoassistant.mcp` —
-generic tooling, so the wiring carries no domain either).
+generic tooling, so the wiring carries no domain either), `AGENTS_CHAT.md` (the chat-mode
+counterpart of `AGENTS.md` — the same skeleton with the shell-dependent rules removed),
+and the free-tier chat-bundle generator (`autoassistant/chat_bundle.py` + its
+`make chat-bundle{,-check}` targets).
 
 **PyAutoLens-specific content** (regenerated per domain, never copied blind): every
 `al_*` skill body, `wiki/core/` reference pages, the entire `wiki/literature/` sub-wiki,
@@ -88,11 +91,16 @@ assistant's own JOSS paper — a newborn writes its own), the README figure
 assets in `docs/` (COSMOS-Web Ring imagery + the `make_readme_figures.py`
 script that renders it — a newborn regrows its own), and the bundled science
 scripts in `scripts/` (`*_cosmos_web_ring.py`, tied to a named lens; only
-`scripts/`'s own AGENTS/CLAUDE/README docs are generic).
+`scripts/`'s own AGENTS/CLAUDE/README docs are generic), and the generated
+`chat_pack/` knowledge bundle (concatenated `al_*` skill bodies + `wiki/core/` pages
++ a snapshot of the lensing stack's API surface — a newborn regenerates it from its
+own content with `make chat-bundle`, never copies this one).
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
 `config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
-maintainer smoke tests below.
+maintainer smoke tests below, and the free-tier chat surface — `FREE_TIER_SETUP.md`
+and the generated `llms-chat.txt` (the per-platform setup mechanics clone verbatim;
+the worked prompts, dataset names and API rules are domain).
 
 **Per-clone data** (never copied to a newborn — each clone accumulates its own):
 `benchmarks/runs/` and the regenerated `benchmarks/RESULTS.md`. A newborn starts with
@@ -115,6 +123,28 @@ supported.
   plan in the relevant skill and does not make an unrequested edit or pull request.
 - **Non-agentic CLI/chat:** provide the same bootstrap and either browsing access or attached
   files; confirm it produces commands for the user to run instead of claiming execution.
+
+Free-tier routes, one per row of the table in [`FREE_TIER_SETUP.md`](../FREE_TIER_SETUP.md).
+Each must be tested **on a free account**, not a paid one with features disabled:
+
+- **Claude Free + GitHub connector (Route A):** run the bootstrap prompt; confirm it answers the
+  "can you actually read `llms.txt`?" question truthfully, and that it reaches a skill file —
+  not just `llms.txt` — before writing code.
+- **Claude Free Project upload (Route B):** upload `chat_pack/` to a Project's knowledge; ask a
+  question whose answer lives in a skill that is *in* the pack, and one whose answer is in a
+  page that is *not* (e.g. a `wiki/literature/` topic). Confirm the second is answered with an
+  explicit "not in what I have" rather than from memory.
+- **Pasted `llms-chat.txt` (Route C):** paste into a fresh ChatGPT Free chat. Confirm the paste
+  plus a real question fits the context window and still leaves room to work, and that the
+  assistant uses `01_api_surface.md` to check a symbol it is unsure about.
+- **Custom GPT (Route D):** once built, run the same two questions as Route B from a **free**
+  ChatGPT account, to confirm knowledge retrieval works for a non-builder.
+
+In every route, include the standing regression check: ask for a plot of a fit and confirm it
+emits `aplt.subplot_fit_imaging(...)` and **not** `aplt.FitImagingPlotter` / `aplt.MatPlot2D`.
+Then ask it to model a *real* dataset and confirm it applies the real-data gate — asking you to
+inspect the image for contaminants and to settle the mask extent — instead of silently
+composing a fit.
 
 Record the surface, date, plan/account context, files successfully loaded, and any limitations.
 Plan availability changes, so test results should describe observed behavior rather than promise

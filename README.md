@@ -26,10 +26,25 @@ There are two ways to use `autolens_assistant`, choose whichever best suits how 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
 in a desktop browser or web. 
 
-This requires you to do two things:
+**This works on free plans.** The best setup is to give the assistant the repository through a
+**GitHub connector** — available on every Claude plan including Free — and to point your first
+prompt explicitly at [`llms.txt`](llms.txt), which tells the assistant how `autolens_assistant`
+works. Naming that file matters: assistants do not reliably find it on their own.
 
-- Make sure your assistant has a **GitHub connector** enabled so it can read this repository and in your initial prompt give it the URL to this repository (https://github.com/PyAutoLabs/autolens_assistant).
-- Make sure your initial prompt points the assistant explicitly at the file [`llms.txt`](llms.txt), which gives it the initial instructions on how `autolens_assistant` works.
+No connector (ChatGPT Free, where connectors are paid-only)? Paste
+[`llms-chat.txt`](llms-chat.txt) — a self-contained ~6k-token bundle carrying the rules and the
+current API surface — as your first message instead.
+
+Step-by-step instructions for each platform, plus troubleshooting for when an assistant answers
+from memory or can't read the repo: **[`FREE_TIER_SETUP.md`](FREE_TIER_SETUP.md)**.
+
+| Interface | Repo access | Setup |
+|---|---|---|
+| **Claude** (incl. Free) | GitHub connector, all plans | Enable the connector, use the prompt below |
+| **Claude** (incl. Free), no connector | Project knowledge | Upload [`chat_pack/`](chat_pack/) to a Project |
+| **ChatGPT Free** | Connectors are paid-only | Paste [`llms-chat.txt`](llms-chat.txt) |
+| **ChatGPT Plus/Pro** | Connectors, or a custom GPT | Connector, or build a GPT from `chat_pack/` |
+| **Anything else** | Browsing, or nothing | Paste [`llms-chat.txt`](llms-chat.txt) |
 
 Here is a good initial prompt which you can copy and paste it ChatGPT or Claude to try it out, noting that
 data for the COSMOS-Web Ring is included in this repository as an example:
@@ -56,7 +71,7 @@ Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with th
 first reading its llms.txt file for initial start up.
 
 I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
-the folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
+the folder dataset/imaging/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
 laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
 each wavelength in the left column, its lensed source model in the middle column, and its source on the right column.
@@ -91,7 +106,7 @@ Or, if you want to see `autolens_assistant` perform end-to-end lens modeling:
 
 ```
 I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
-the folder dataset/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
+the folder dataset/imaging/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
 laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
 each wavelength in the left column, its lensed source model in the middle column, and its source on the right column.
