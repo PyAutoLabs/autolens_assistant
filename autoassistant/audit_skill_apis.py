@@ -829,7 +829,11 @@ def render_symbol_dump() -> str:
         "the assistant content was validated against — use it to check whether a symbol",
         "you are about to write actually exists.",
         "",
-        f"- Generated: {dt.date.today().isoformat()}",
+        # Deliberately no generation date: this page is committed and compared
+        # byte-for-byte by `chat_bundle.py --check`, so a rendered-on date would
+        # make the check fail every day after it was written. The stack version
+        # below is the provenance that actually matters — it changes when the
+        # surface changes, and not otherwise.
         "- Stack versions: "
         + ", ".join(f"`{k}` {v}" for k, v in sorted(versions.items())),
         "",

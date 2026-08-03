@@ -111,6 +111,27 @@ def test_paste_tier_carries_the_removed_plotter_warning():
     assert "subplot_fit_imaging" in text
 
 
+def test_generated_artifacts_are_date_independent():
+    """A build must not embed 'today', or `--check` fails every following day.
+
+    Regression: the first version stamped `date.today()` into every header, so CI
+    went red one day after the bundles were committed even though nothing had
+    changed. Provenance is the pinned stack version, which moves only when the
+    content does.
+    """
+    import datetime as real_datetime
+
+    texts = [(REPO_ROOT / cb.PASTE_REL).read_text(encoding="utf-8")]
+    texts += [
+        p.read_text(encoding="utf-8") for p in (REPO_ROOT / cb.PACK_REL).glob("*.md")
+    ]
+    today = real_datetime.date.today().isoformat()
+    for text in texts:
+        assert today not in text, "a generation date leaked into a committed artifact"
+
+    assert cb.pinned_stack(REPO_ROOT) != "unknown"
+
+
 def test_no_role_excluded_skill_leaks_into_the_pack():
     """Shell-dependent workflows must not be shipped to a no-execution harness."""
     names = set(cb.selected_skills(REPO_ROOT))

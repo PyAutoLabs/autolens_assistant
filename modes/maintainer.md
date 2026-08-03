@@ -73,7 +73,10 @@ registry pattern, the API gate (`autoassistant/audit_skill_apis.py` + wiki-curre
 workflow), the profile template, the benchmark machinery (the
 `benchmarks/AGENTS.md` contract + the `autoassistant/benchmark.py` harness), and
 `.mcp.json` (it wires the results-inspector MCP, which *is* `autoassistant.mcp` —
-generic tooling, so the wiring carries no domain either).
+generic tooling, so the wiring carries no domain either), `AGENTS_CHAT.md` (the chat-mode
+counterpart of `AGENTS.md` — the same skeleton with the shell-dependent rules removed),
+and the free-tier chat-bundle generator (`autoassistant/chat_bundle.py` + its
+`make chat-bundle{,-check}` targets).
 
 **PyAutoLens-specific content** (regenerated per domain, never copied blind): every
 `al_*` skill body, `wiki/core/` reference pages, the entire `wiki/literature/` sub-wiki,
@@ -88,11 +91,16 @@ assistant's own JOSS paper — a newborn writes its own), the README figure
 assets in `docs/` (COSMOS-Web Ring imagery + the `make_readme_figures.py`
 script that renders it — a newborn regrows its own), and the bundled science
 scripts in `scripts/` (`*_cosmos_web_ring.py`, tied to a named lens; only
-`scripts/`'s own AGENTS/CLAUDE/README docs are generic).
+`scripts/`'s own AGENTS/CLAUDE/README docs are generic), and the generated
+`chat_pack/` knowledge bundle (concatenated `al_*` skill bodies + `wiki/core/` pages
++ a snapshot of the lensing stack's API surface — a newborn regenerates it from its
+own content with `make chat-bundle`, never copies this one).
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
 `config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
-maintainer smoke tests below.
+maintainer smoke tests below, and the free-tier chat surface — `FREE_TIER_SETUP.md`
+and the generated `llms-chat.txt` (the per-platform setup mechanics clone verbatim;
+the worked prompts, dataset names and API rules are domain).
 
 **Per-clone data** (never copied to a newborn — each clone accumulates its own):
 `benchmarks/runs/` and the regenerated `benchmarks/RESULTS.md`. A newborn starts with
