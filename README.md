@@ -70,7 +70,7 @@ lens modeling of the COSMOS-Web Ring!
 Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
 first reading its llms.txt file for initial start up.
 
-I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
+I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring independently, which are in 
 the folder dataset/imaging/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
 laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
@@ -105,7 +105,7 @@ new user give me an overview of the different ways we can perform strong lens mo
 Or, if you want to see `autolens_assistant` perform end-to-end lens modeling:
 
 ```
-I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring simultaneously, which are in 
+I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring independently, which are in 
 the folder dataset/imaging/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
 laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
