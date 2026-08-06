@@ -50,7 +50,7 @@ pages only.
 Free plans have usage limits that are unpublished and vary with load — in the region of a
 few dozen messages per 5 hours on Claude, and a smaller number of flagship-model turns on
 ChatGPT before it falls back to a lighter model. Long modelling sessions are where a paid
-plan or a local [coding agent](gemini_cli.md) genuinely pays for itself.
+plan or a local [coding agent](antigravity_cli.md) genuinely pays for itself.
 
 **A generated script fails on an API error anyway.**
 The bundle pins one specific stack version (stated at the top of `01_api_surface.md`). If

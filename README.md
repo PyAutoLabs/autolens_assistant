@@ -11,7 +11,7 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 ## Getting Started
 
 The best way to use the assistant depends on which conversational AI assistants (ChatGPT, Claude, Gemini, …) or
-CLI coding agents (Gemini CLI, Claude Code, Codex, OpenCode) you have available, and whether you are on a free or
+CLI coding agents (Antigravity, Claude Code, Codex, OpenCode) you have available, and whether you are on a free or
 paid plan. The AI landscape changes fast, so the best advice does too — our frequently updated guide to every
 option, free and paid, is here: **[Using the Assistant — every AI option](FREE_TIER_SETUP.md)**.
 
@@ -67,7 +67,7 @@ each wavelength in the left column, its lensed source model in the middle column
 ### AI Coding Agent (CLI)
 
 `autolens_assistant` has first-class support for AI coding agents such as **Claude Code**, **Codex**,
-**Gemini CLI** and **OpenCode** — see [Supported Coding Agents](#supported-coding-agents) below, and the
+**Antigravity** and **OpenCode** — see [Supported Coding Agents](#supported-coding-agents) below, and the
 [setup guide](FREE_TIER_SETUP.md) for which is currently the best free option.
 
 A coding agent is a command-line (CLI) tool that runs locally in your terminal. It can inspect your `.fits` data, 
@@ -195,8 +195,9 @@ pretty much any coding agent available should work with `autolens_assistant`
 |---|---|---|---|
 | **Claude Code** | Primary; thoroughly tested | Normally a [paid Claude subscription or metered API usage](https://code.claude.com/docs/en/costs). | Loads the canonical instructions through `CLAUDE.md`. |
 | **Codex CLI** | Primary; thoroughly tested | A [limited free plan](https://developers.openai.com/codex/pricing/) may be available; paid plans or API billing provide more usage. | Reads `AGENTS.md` directly and can edit and run the project locally. |
-| **Gemini CLI** | Supported | Offers [limited free quotas](https://github.com/google-gemini/gemini-cli/blob/main/docs/resources/quota-and-pricing.md); subscriptions or usage billing provide higher limits. | Loads the repository instructions through `.gemini/settings.json`. |
+| **Antigravity CLI** | Supported; **best free option** | [Free tier](https://antigravity.google/docs/cli/getting-started) with no credit card; paid plans raise limits. | Reads `AGENTS.md` directly. Replaced Gemini CLI for free Google accounts (June 2026). |
 | **OpenCode** | Supported | The client is open source; model-provider access may be free or paid. | Use it from the repository root so it can discover the project context. |
+| **Gemini CLI** | Retired for free accounts (June 2026) | Enterprise Gemini Code Assist or paid API keys only. | Loads the repository instructions through `.gemini/settings.json`. |
 
 ## Science Project
 

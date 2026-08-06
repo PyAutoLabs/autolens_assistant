@@ -2,7 +2,7 @@
 
 The best way to use the **PyAutoLens Assistant** depends on which AI tools you have access
 to: a conversational assistant in the browser (ChatGPT, Claude, Gemini, …), a command-line
-coding agent (Gemini CLI, Claude Code, Codex, OpenCode), a free plan or a paid one. The AI
+coding agent (Antigravity, Claude Code, Codex, OpenCode), a free plan or a paid one. The AI
 landscape changes fast — features appear, quotas move, bugs come and go — so this page is
 **updated frequently** with the current best advice, and each option below links to its own
 short, step-by-step setup page.
@@ -22,13 +22,16 @@ promise about what any plan includes today.
 
 ---
 
-## Currently recommended best free option: Gemini CLI
+## Currently recommended best free option: Antigravity CLI
 
-**[Gemini CLI](docs/setup/gemini_cli.md)** — Google's coding agent, with a generous free
-tier. Note that this is a **command-line coding agent**: it runs in a terminal, which many
-people won't be familiar with. The payoff is the best free performance available — unlike a
-browser chat, it can install PyAutoLens, read your `.fits` files, **actually run the fits it
-writes**, and iterate on the results.
+**[Antigravity CLI](docs/setup/antigravity_cli.md)** — Google's coding agent (it replaced
+Gemini CLI for free accounts in June 2026), with a free tier that needs no credit card. Note
+that this is a **command-line coding agent**: it runs in a terminal, which many people won't
+be familiar with. The payoff is the best free performance available — unlike a browser chat,
+it can install PyAutoLens, read your `.fits` files, **actually run the fits it writes**, and
+iterate on the results. Performance is excellent for a free model, though below Claude Code /
+Codex on a paid subscription; the free limits are generous but can be reached relatively
+quickly in a single long session.
 
 ---
 
@@ -36,10 +39,11 @@ writes**, and iterate on the results.
 
 | Option | Type | Cost | How well it works |
 |---|---|---|---|
-| **[Gemini CLI](docs/setup/gemini_cli.md)** | Coding agent (CLI) | Free tier (paid raises limits) | **Best free performance** — runs fits end-to-end; requires the command line |
+| **[Antigravity CLI](docs/setup/antigravity_cli.md)** | Coding agent (CLI) | Free tier (paid raises limits) | **Best free performance** — excellent for free, below Claude Code / Codex on paid; generous limits, but reachable in one long session |
 | **[Claude Code](docs/setup/claude_code.md)** | Coding agent (CLI) | Paid | Works brilliantly — the primary, most thoroughly tested harness |
 | **[Codex CLI](docs/setup/codex_cli.md)** | Coding agent (CLI) | Limited free / paid | Works brilliantly — primary, thoroughly tested |
 | **[OpenCode](docs/setup/opencode_cli.md)** | Coding agent (CLI) | Free client; model access free or paid | Supported — performance depends on the model you connect |
+| **[Gemini CLI](docs/setup/gemini_cli.md)** | Coding agent (CLI) | Enterprise / paid API only | Retired for free accounts June 2026 — use Antigravity instead |
 | **[Claude chat — paid](docs/setup/claude_chat_paid.md)** | Conversational AI | Paid | Works brilliantly via repo input (Project knowledge) |
 | **[ChatGPT — paid](docs/setup/chatgpt_paid_connector.md)** | Conversational AI | Paid | Works brilliantly via GitHub sync (different from the custom GPT) |
 | **[Claude chat — free](docs/setup/claude_chat_free.md)** | Conversational AI | Free | Works, but goes through the free tokens quickly |

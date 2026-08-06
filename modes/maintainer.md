@@ -146,7 +146,7 @@ disabled:
 - **Custom GPT (`docs/setup/chatgpt_custom_gpt.md`):** run the same two questions as the
   Project-upload check from a **free** ChatGPT account, to confirm knowledge retrieval works
   for a non-builder.
-- **Free coding agents (`docs/setup/gemini_cli.md`, `docs/setup/opencode_cli.md`):** on a
+- **Free coding agents (`docs/setup/antigravity_cli.md`, `docs/setup/opencode_cli.md`):** on a
   free-tier account/model, clone the repo, launch the agent inside it, and confirm it reads
   `AGENTS.md`, runs the session-start drift check, and completes the first
   plot-the-COSMOS-Web-Ring prompt end-to-end.
