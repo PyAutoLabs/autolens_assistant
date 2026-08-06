@@ -12,15 +12,16 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 
 ### Choosing Your AI Tool
 
-The best way to use the assistant depends on which conversational AI assistants (ChatGPT, Claude, Gemini) or
-CLI coding agents (AntiGravity, OpenCode, Claude Code, Codex) you have available, and whether you are on a free or
-paid plan.
+First, you need to decide how you will use the assistant:
 
 - **Conversational AI Assistant**: the familiar option, where you ask questions to an AI such as ChatGPT or Claude
   in a browser chat, and it plans your analysis and writes scripts for you to run yourself.
 - **CLI Coding Agent**: a newer kind of AI tool that you type to in a terminal (command line) window instead of a
   browser; because it works directly on your computer, it can not only write your analysis but actually run it,
   inspecting your `.fits` data, executing the lens fits and loading the results for inspection.
+
+A CLI coding agent is recommended and offers the best performance, but may be less familiar to you if you have
+only used a conversational assistant.
 
 The AI landscape changes fast, so you should first consult **[this guide](FREE_TIER_SETUP.md)**, which
 is updated frequently, to work out the best AI tool to get started with the `autolens_assistant`.
