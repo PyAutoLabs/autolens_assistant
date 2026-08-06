@@ -75,8 +75,8 @@ each wavelength in the left column, its lensed source model in the middle column
 #### AI Coding Agent (CLI)
 
 `autolens_assistant` has first-class support for AI coding agents such as **Claude Code**, **Codex**,
-**Antigravity** and **OpenCode** — see [Supported Coding Agents](#supported-coding-agents) below, and the
-[setup guide](FREE_TIER_SETUP.md) for which is currently the best free option.
+**Antigravity** and **OpenCode** — the [setup guide](FREE_TIER_SETUP.md) covers each one, including which is
+currently the best free option.
 
 To start, clone the `autolens_assistant` repo:
 
@@ -188,20 +188,6 @@ light, SIE's for each lenses mass and a multi Gaussian expansion for the backgro
 After this fit has been judged successful, do a follow up lens model that uses a pixelized source 
 reconstruction.
 ```
-
-#### Supported Coding Agents 
-
-CLI Coding agents like Claude and codex may require a paid subscription. The table below shows the 
-coding agents `autolens_assistant` has been tested using and whether they offer a free plan. However,
-pretty much any coding agent available should work with `autolens_assistant`
-
-| Interface | Support | Access and cost | Notes |
-|---|---|---|---|
-| **Claude Code** | Primary; thoroughly tested | Normally a [paid Claude subscription or metered API usage](https://code.claude.com/docs/en/costs). | Loads the canonical instructions through `CLAUDE.md`. |
-| **Codex CLI** | Primary; thoroughly tested | A [limited free plan](https://developers.openai.com/codex/pricing/) may be available; paid plans or API billing provide more usage. | Reads `AGENTS.md` directly and can edit and run the project locally. |
-| **Antigravity CLI** | Supported; **best free option** | [Free tier](https://antigravity.google/docs/cli/getting-started) with no credit card; paid plans raise limits. | Reads `AGENTS.md` directly. Replaced Gemini CLI for free Google accounts (June 2026). |
-| **OpenCode** | Supported | The client is open source; model-provider access may be free or paid. | Use it from the repository root so it can discover the project context. |
-| **Gemini CLI** | Retired for free accounts (June 2026) | Enterprise Gemini Code Assist or paid API keys only. | Loads the repository instructions through `.gemini/settings.json`. |
 
 ## Science Project
 
