@@ -16,6 +16,12 @@ The best way to use the assistant depends on which conversational AI assistants 
 CLI coding agents (AntiGravity, OpenCode, Claude Code, Codex) you have available, and whether you are on a free or
 paid plan.
 
+- **Conversational AI Assistant**: the familiar option, where you ask questions to an AI such as ChatGPT or Claude
+  in a browser chat, and it plans your analysis and writes scripts for you to run yourself.
+- **CLI Coding Agent**: a newer kind of AI tool that you type to in a terminal (command line) window instead of a
+  browser; because it works directly on your computer, it can not only write your analysis but actually run it,
+  inspecting your `.fits` data, executing the lens fits and loading the results for inspection.
+
 The AI landscape changes fast, so you should first consult **[this guide](FREE_TIER_SETUP.md)**, which
 is updated frequently, to work out the best AI tool to get started with the `autolens_assistant`.
 
@@ -34,9 +40,6 @@ As discussed in the **[guide](FREE_TIER_SETUP.md)**, there are two ways to use `
 whichever best suits how you work with AI:
 
 #### AI Chat Assistant
-
-Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
-in a desktop browser or web. 
 
 Depending on which assistant you chose in the guide, your first message may need to open with its setup
 instructions (for example the GitHub sync bootstrap prompt). With that in place, here is a good initial prompt
@@ -73,10 +76,6 @@ each wavelength in the left column, its lensed source model in the middle column
 `autolens_assistant` has first-class support for AI coding agents such as **Claude Code**, **Codex**,
 **Antigravity** and **OpenCode** — see [Supported Coding Agents](#supported-coding-agents) below, and the
 [setup guide](FREE_TIER_SETUP.md) for which is currently the best free option.
-
-A coding agent is a command-line (CLI) tool that runs locally in your terminal. It can inspect your `.fits` data, 
-write and execute Python scripts, perform end-to-end lens modelling, and load existing results from your computer for 
-inspection. 
 
 To start, clone the `autolens_assistant` repo:
 
