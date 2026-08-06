@@ -317,7 +317,7 @@ inferred and under which regularization, and the configuration choices that matt
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: chapter_4_pixelizations/tutorial_3_inversions](https://pyautolens.readthedocs.io/en/latest/howtolens/chapter_4_pixelizations/tutorial_3_inversions.html):
+- **Student / new to lensing** — [HowToLens: chapter_3_pixelizations/tutorial_3_inversions](https://pyautolens.readthedocs.io/en/latest/howtolens/chapter_3_pixelizations/tutorial_3_inversions.html):
   the linear inversion and its evidence, which the corrections extend to the potential.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   where potential corrections sit among the advanced features.

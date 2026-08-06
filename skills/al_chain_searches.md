@@ -142,9 +142,9 @@ doesn't match your problem.
 ## Further reading
 
 - **Student / new to lensing** — [HowToLens: Breaking modeling into sequential
-  searches](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_search_chaining/tutorial_1_search_chaining.ipynb):
+  searches](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_9_search_chaining.ipynb):
   introduces chaining — why a sequence of fits beats a single high-dimensional one.
-  Chapter 3 as a whole develops the pattern.
+  The end of chapter 2 (tutorials 9-11) develops the pattern.
 - **General reference** — [RTD: Model cookbook](https://pyautolens.readthedocs.io/en/latest/general/model_cookbook.html):
   systematic reference for inheriting and adjusting priors between models, the
   mechanical core of chaining.

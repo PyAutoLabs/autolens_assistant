@@ -42,22 +42,22 @@ Pick notebook vs script per audience (default `.ipynb` for student-leaning users
 | al_custom_profile | chapter_1_introduction/tutorial_1_grids_and_galaxies | general/model_cookbook | guides/profiles/light.py |
 | al_configure_search | chapter_optional/tutorial_searches | overview/overview_3_features | guides/modeling/slam_start_here.py |
 | al_run_search | chapter_2_lens_modeling/tutorial_2_practicalities | overview/overview_2_new_user_guide | imaging/start_here.py |
-| al_chain_searches | chapter_3_search_chaining/tutorial_1_search_chaining | general/model_cookbook | guides/modeling/slam_start_here.py |
-| al_run_slam_pipeline | chapter_3_search_chaining/tutorial_6_slam | overview/overview_3_features | guides/modeling/slam_start_here.py |
+| al_chain_searches | chapter_2_lens_modeling/tutorial_9_search_chaining | general/model_cookbook | guides/modeling/slam_start_here.py |
+| al_run_slam_pipeline | chapter_2_lens_modeling/tutorial_11_slam | overview/overview_3_features | guides/modeling/slam_start_here.py |
 | al_debug_fit_failure | chapter_2_lens_modeling/tutorial_4_dealing_with_failure | general/demagnified_solutions | guides/tracer.py |
 | al_load_results | chapter_2_lens_modeling/tutorial_7_results | general/likelihood_function | guides/results/start_here.py |
 | al_plot_tracer | chapter_1_introduction/tutorial_2_ray_tracing | overview/overview_1_start_here | guides/tracer.py |
 | al_plot_fit_residuals | chapter_1_introduction/tutorial_7_fitting | general/likelihood_function | imaging/results/start_here.py |
-| al_inspect_source_reconstruction | chapter_4_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/pixelization/modeling.py |
+| al_inspect_source_reconstruction | chapter_3_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/pixelization/modeling.py |
 | al_update_wiki | _ | _ | _ |
 | al_audit_skill_apis | _ | _ | _ |
 | al_refresh_api_docs | _ | _ | _ |
 | al_ingest_paper | _ | _ | _ |
-| al_point_source | chapter_2_lens_modeling/tutorial_3_positions | overview/overview_3_features | point_source/start_here.py |
+| al_point_source | chapter_1_introduction/tutorial_4_point_sources | overview/overview_3_features | point_source/start_here.py |
 | al_time_delay_cosmography | _ | overview/overview_3_features | point_source/features/time_delays.py |
-| al_subhalo_detect | chapter_4_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/advanced/subhalo/detect/start_here.py |
+| al_subhalo_detect | chapter_3_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/advanced/subhalo/detect/start_here.py |
 | al_sensitivity_mapping | _ | overview/overview_3_features | imaging/features/advanced/subhalo/sensitivity/start_here.py |
-| al_potential_correction | chapter_4_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/advanced/potential_correction/start_here.py |
+| al_potential_correction | chapter_3_pixelizations/tutorial_3_inversions | overview/overview_3_features | imaging/features/advanced/potential_correction/start_here.py |
 | al_group_lensing | _ | overview/overview_3_features | group/start_here.py |
 | (multi-galaxy requests: 2+ co-dominant deflectors, no host halo) | _ | overview/overview_2_new_user_guide | multi_galaxy/start_here.py |
 | al_cluster_csv_api | _ | overview/overview_3_features | cluster/csv_api.py |
@@ -65,7 +65,7 @@ Pick notebook vs script per audience (default `.ipynb` for student-leaning users
 | al_weak_lensing | _ | overview/overview_3_features | weak/fit.py |
 | al_hierarchical_inference | _ | overview/overview_3_features | guides/modeling/advanced/hierarchical.py |
 | al_aggregator_bulk_analysis | _ | overview/overview_3_features | guides/results/start_here.py |
-| al_adaptive_pixelization | chapter_4_pixelizations/tutorial_5_adaptive_pixelization | overview/overview_3_features | imaging/features/pixelization/adaptive.py |
+| al_adaptive_pixelization | chapter_3_pixelizations/tutorial_8_adaptive_pixelization | overview/overview_3_features | imaging/features/pixelization/adaptive.py |
 | al_mge_decomposition | _ | overview/overview_3_features | imaging/features/multi_gaussian_expansion/modeling.py |
 | al_datacube_modeling | _ | overview/overview_3_features | interferometer/features/datacube/start_here.py |
 | al_custom_analysis | _ | overview/overview_3_features | guides/advanced/custom_analysis.py |

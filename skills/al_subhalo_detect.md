@@ -61,7 +61,7 @@ local grid + a free-mass fit to pin down the subhalo's parameters.
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: chapter_4_pixelizations](https://github.com/PyAutoLabs/HowToLens/tree/main/notebooks/chapter_4_pixelizations):
+- **Student / new to lensing** — [HowToLens: chapter_3_pixelizations](https://github.com/PyAutoLabs/HowToLens/tree/main/notebooks/chapter_3_pixelizations):
   pixelised sources are the foundation for substructure detection.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   subhalo detection in the feature tour.
