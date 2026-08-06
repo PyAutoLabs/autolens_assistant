@@ -14,7 +14,9 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 
 The best way to use the assistant depends on which conversational AI assistants (ChatGPT, Claude, Gemini) or
 CLI coding agents (AntiGravity, OpenCode, Claude Code, Codex) you have available, and whether you are on a free or
-paid plan. The AI landscape changes fast, so you should first consult **[this guide](FREE_TIER_SETUP.md)**, which
+paid plan.
+
+The AI landscape changes fast, so you should first consult **[this guide](FREE_TIER_SETUP.md)**, which
 is updated frequently, to work out the best AI tool to get started with the `autolens_assistant`.
 
 ### Using PyAutoLens Assistant
