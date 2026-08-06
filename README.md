@@ -10,10 +10,14 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 
 ## Getting Started
 
-The best way to use the assistant depends on which conversational AI assistants (ChatGPT, Claude, Gemini, …) or
-CLI coding agents (Antigravity, Claude Code, Codex, OpenCode) you have available, and whether you are on a free or
-paid plan. The AI landscape changes fast, so the best advice does too — our frequently updated guide to every
-option, free and paid, is here: **[Using the Assistant — every AI option](FREE_TIER_SETUP.md)**.
+### Choosing Your AI Tool
+
+The best way to use the assistant depends on which conversational AI assistants (ChatGPT, Claude, Gemini) or
+CLI coding agents (AntiGravity, OpenCode, Claude Code, Codex) you have available, and whether you are on a free or
+paid plan. The AI landscape changes fast, so you should first consult **[this guide](FREE_TIER_SETUP.md)**, which
+is updated frequently, to work out the best AI tool to get started with the `autolens_assistant`.
+
+### Using PyAutoLens Assistant
 
 To illustrate the `autolens_assistant` we will use James Webb Space Telescope imaging data of the 
 [**COSMOS-Web Ring**](https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract), whose imaging
@@ -26,7 +30,7 @@ interactions with the `autolens_assistant` may ask you about how to handle these
 
 There are two ways to use `autolens_assistant`, choose whichever best suits how you work with AI:
 
-### AI Chat Assistant
+#### AI Chat Assistant
 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
 in a desktop browser or web. 
@@ -64,7 +68,7 @@ laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solu
 each wavelength in the left column, its lensed source model in the middle column, and its source on the right column.
 ```
 
-### AI Coding Agent (CLI)
+#### AI Coding Agent (CLI)
 
 `autolens_assistant` has first-class support for AI coding agents such as **Claude Code**, **Codex**,
 **Antigravity** and **OpenCode** — see [Supported Coding Agents](#supported-coding-agents) below, and the
@@ -185,7 +189,7 @@ After this fit has been judged successful, do a follow up lens model that uses a
 reconstruction.
 ```
 
-### Supported Coding Agents 
+#### Supported Coding Agents 
 
 CLI Coding agents like Claude and codex may require a paid subscription. The table below shows the 
 coding agents `autolens_assistant` has been tested using and whether they offer a free plan. However,
