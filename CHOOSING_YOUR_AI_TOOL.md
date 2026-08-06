@@ -61,11 +61,11 @@ Once set up: [first prompts to try](docs/setup/first_prompts.md) · something mi
 The table below gives a run through of free and paid for CLI coding Assistant options, click each option
 to get a full setup guide.
 
-| Option | Cost                                   | How well it works                                                                                              |
-|---|----------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| **[Antigravity CLI](docs/setup/antigravity_cli.md)** | Free                                   | **Best free performance** setup easy with generous limits, less capable at complex tasks than paid for options |
-| **[Claude Code](docs/setup/claude_code.md)** | Paid                                   | Works brilliantly                                                                                              |
-| **[Codex CLI](docs/setup/codex_cli.md)** | Paid                                   | Works brilliantly                                                                                              |
-| **[OpenCode](docs/setup/opencode_cli.md)** | Free| Great free performance, but can be slow                                                                        |
+| Option | Cost                                   | How well it works                                                                                             |
+|---|----------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| **[Antigravity CLI](docs/setup/antigravity_cli.md)** | Free                                   | **Best free performance** setup easy with generous limits, less capable than paid for options |
+| **[Claude Code](docs/setup/claude_code.md)** | Paid                                   | Works brilliantly                                                                                             |
+| **[Codex CLI](docs/setup/codex_cli.md)** | Paid                                   | Works brilliantly                                                                                             |
+| **[OpenCode](docs/setup/opencode_cli.md)** | Free| Great free performance, but can be slow                                                                       |
 
 
