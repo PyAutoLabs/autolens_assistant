@@ -26,12 +26,19 @@ There are two ways to use `autolens_assistant`, choose whichever best suits how 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
 in a desktop browser or web. 
 
-**This works on free plans.** The best setup is to give the assistant the repository through a
-**GitHub connector** — available on every Claude plan including Free — and to point your first
-prompt explicitly at [`llms.txt`](llms.txt), which tells the assistant how `autolens_assistant`
-works. Naming that file matters: assistants do not reliably find it on their own.
+**This works on free plans.** On Claude (any plan, including Free), the reliable setup is a
+**Project with the [`chat_pack/`](chat_pack/) knowledge pack** uploaded into its knowledge —
+about five minutes, no connector needed, and the assistant sees the whole curated pack from
+the first message. (The GitHub connector would normally be the best route, since it reads the
+repository live — but it is broken as of August 2026; the
+[setup guide](FREE_TIER_SETUP.md) tracks the bug and how to tell when it recovers.)
 
-No connector (ChatGPT Free, where connectors are paid-only)? Paste
+On ChatGPT (any plan, including Free), the zero-setup route is the published
+**[PyAutoLens AI Assistant](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant)**
+custom GPT — open the link and start chatting. It is **experimental**: good for planning,
+concepts and reviewing your scripts, but its knowledge retrieval is not yet reliable, so it
+may honestly decline to write full scripts (the
+[setup guide](FREE_TIER_SETUP.md) has details). When that happens (or on any other chat), paste
 [`llms-chat.txt`](llms-chat.txt) — a self-contained ~6k-token bundle carrying the rules and the
 current API surface — as your first message instead.
 
@@ -40,10 +47,10 @@ from memory or can't read the repo: **[`FREE_TIER_SETUP.md`](FREE_TIER_SETUP.md)
 
 | Interface | Repo access | Setup |
 |---|---|---|
-| **Claude** (incl. Free) | GitHub connector, all plans | Enable the connector, use the prompt below |
-| **Claude** (incl. Free), no connector | Project knowledge | Upload [`chat_pack/`](chat_pack/) to a Project |
-| **ChatGPT Free** | Connectors are paid-only | Paste [`llms-chat.txt`](llms-chat.txt) |
-| **ChatGPT Plus/Pro** | Connectors, or a custom GPT | Connector, or build a GPT from `chat_pack/` |
+| **Claude** (incl. Free) | Project knowledge | Upload [`chat_pack/`](chat_pack/) to a Project — see the [setup guide](FREE_TIER_SETUP.md) |
+| **Claude**, once the connector bug is fixed | GitHub connector, all plans | Enable the connector, use the prompt below |
+| **ChatGPT** (incl. Free) | Custom GPT knowledge + browsing | Open the [PyAutoLens AI Assistant](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant) GPT (experimental) |
+| **ChatGPT**, for verified scripts | Connectors are paid-only | Paste [`llms-chat.txt`](llms-chat.txt) |
 | **Anything else** | Browsing, or nothing | Paste [`llms-chat.txt`](llms-chat.txt) |
 
 Here is a good initial prompt which you can copy and paste it ChatGPT or Claude to try it out, noting that

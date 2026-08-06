@@ -137,7 +137,7 @@ Each must be tested **on a free account**, not a paid one with features disabled
 - **Pasted `llms-chat.txt` (Route C):** paste into a fresh ChatGPT Free chat. Confirm the paste
   plus a real question fits the context window and still leaves room to work, and that the
   assistant uses `01_api_surface.md` to check a symbol it is unsure about.
-- **Custom GPT (Route D):** once built, run the same two questions as Route B from a **free**
+- **Custom GPT (Route D):** run the same two questions as Route B from a **free**
   ChatGPT account, to confirm knowledge retrieval works for a non-builder.
 
 In every route, include the standing regression check: ask for a plot of a fit and confirm it
