@@ -1,6 +1,6 @@
 # First prompts to try
 
-Once any option from the [setup guide](../../FREE_TIER_SETUP.md) is configured, these all
+Once any option from the [setup guide](../../CHOOSING_YOUR_AI_TOOL.md) is configured, these all
 work immediately — the COSMOS-Web Ring data ships with the repository:
 
 ```text

@@ -21,7 +21,7 @@ reliably fail there — `blob/` returns a JavaScript shell, not the file.)
 | **A Claude Project, or a custom GPT** | Upload the files in [`chat_pack/`](https://github.com/PyAutoLabs/autolens_assistant/tree/main/chat_pack) as knowledge. |
 
 Step-by-step setup for each platform, free and paid options:
-**[`FREE_TIER_SETUP.md`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/FREE_TIER_SETUP.md)**
+**[`CHOOSING_YOUR_AI_TOOL.md`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/CHOOSING_YOUR_AI_TOOL.md)**
 
 ## Bootstrap prompt
 

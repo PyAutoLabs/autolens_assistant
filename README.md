@@ -23,7 +23,7 @@ First, you need to decide how you will use the assistant:
 A CLI coding agent is recommended and offers the best performance, but may be less familiar to you if you have
 only used a conversational assistant.
 
-The AI landscape changes fast, so you should first consult **[this guide](FREE_TIER_SETUP.md)**, which
+The AI landscape changes fast, so you should first consult **[this guide](CHOOSING_YOUR_AI_TOOL.md)**, which
 is updated frequently, to work out the best AI tool to get started with the `autolens_assistant`.
 
 ### Using PyAutoLens Assistant
@@ -37,7 +37,7 @@ ships with this repository in `dataset/imaging/cosmos_web_ring`:
 Take note of the **lens galaxy, lensed source galaxy, extra galaxy** and the **1.8" circular mask**, your first 
 interactions with the `autolens_assistant` may ask you about how to handle these in your analysis!
 
-As discussed in the **[guide](FREE_TIER_SETUP.md)**, there are two ways to use `autolens_assistant`, choose
+As discussed in the **[guide](CHOOSING_YOUR_AI_TOOL.md)**, there are two ways to use `autolens_assistant`, choose
 whichever best suits how you work with AI:
 
 #### AI Chat Assistant
@@ -75,7 +75,7 @@ each wavelength in the left column, its lensed source model in the middle column
 #### AI Coding Agent (CLI)
 
 `autolens_assistant` has first-class support for AI coding agents such as **Claude Code**, **Codex**,
-**Antigravity** and **OpenCode** — the [setup guide](FREE_TIER_SETUP.md) covers each one, including which is
+**Antigravity** and **OpenCode** — the [setup guide](CHOOSING_YOUR_AI_TOOL.md) covers each one, including which is
 currently the best free option.
 
 To start, clone the `autolens_assistant` repo:

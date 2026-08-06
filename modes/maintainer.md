@@ -98,7 +98,7 @@ own content with `make chat-bundle`, never copies this one).
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
 `config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
-maintainer smoke tests below, and the free-tier chat surface — `FREE_TIER_SETUP.md`
+maintainer smoke tests below, and the free-tier chat surface — `CHOOSING_YOUR_AI_TOOL.md`
 and the generated `llms-chat.txt` (the per-platform setup mechanics clone verbatim;
 the worked prompts, dataset names and API rules are domain).
 
@@ -125,7 +125,7 @@ supported.
   files; confirm it produces commands for the user to run instead of claiming execution.
 
 Free-tier options, one per row of the options table in
-[`FREE_TIER_SETUP.md`](../FREE_TIER_SETUP.md) (each option's setup page lives under
+[`CHOOSING_YOUR_AI_TOOL.md`](../CHOOSING_YOUR_AI_TOOL.md) (each option's setup page lives under
 `docs/setup/`). Each must be tested **on a free account**, not a paid one with features
 disabled:
 
