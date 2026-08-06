@@ -10,6 +10,11 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 
 ## Getting Started
 
+The best way to use the assistant depends on which conversational AI assistants (ChatGPT, Claude, Gemini, …) or
+CLI coding agents (Gemini CLI, Claude Code, Codex, OpenCode) you have available, and whether you are on a free or
+paid plan. The AI landscape changes fast, so the best advice does too — our frequently updated guide to every
+option, free and paid, is here: **[Using the Assistant — every AI option](FREE_TIER_SETUP.md)**.
+
 To illustrate the `autolens_assistant` we will use James Webb Space Telescope imaging data of the 
 [**COSMOS-Web Ring**](https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract), whose imaging
 ships with this repository in `dataset/imaging/cosmos_web_ring`:
@@ -26,28 +31,12 @@ There are two ways to use `autolens_assistant`, choose whichever best suits how 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
 in a desktop browser or web. 
 
-**This works on free plans.** On Claude (any plan, including Free), the setup is a
-**Project with the [`chat_pack/`](chat_pack/) knowledge pack** uploaded into its knowledge —
-about five minutes, and the assistant sees the whole curated pack from the first message.
-
-On ChatGPT (any plan, including Free), the zero-setup route is the published
+**This works on free plans** — for example the published
 **[PyAutoLens AI Assistant](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant)**
-custom GPT — open the link and start chatting. It is **experimental**: good for planning,
-concepts and reviewing your scripts, but its knowledge retrieval is not yet reliable, so it
-may honestly decline to write full scripts (the
-[setup guide](FREE_TIER_SETUP.md) has details). When that happens (or on any other chat), paste
-[`llms-chat.txt`](llms-chat.txt) — a self-contained ~6k-token bundle carrying the rules and the
-current API surface — as your first message instead.
-
-Step-by-step instructions for each platform, plus troubleshooting for when an assistant answers
-from memory or can't read the repo: **[`FREE_TIER_SETUP.md`](FREE_TIER_SETUP.md)**.
-
-| Interface | Repo access | Setup |
-|---|---|---|
-| **Claude** (incl. Free) | Project knowledge | Upload [`chat_pack/`](chat_pack/) to a Project — see the [setup guide](FREE_TIER_SETUP.md) |
-| **ChatGPT** (incl. Free) | Custom GPT knowledge + browsing | Open the [PyAutoLens AI Assistant](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant) GPT (experimental) |
-| **ChatGPT**, for verified scripts | Connectors are paid-only | Paste [`llms-chat.txt`](llms-chat.txt) |
-| **Anything else** | Browsing, or nothing | Paste [`llms-chat.txt`](llms-chat.txt) |
+custom GPT on ChatGPT (experimental), or a Claude Project loaded with the
+[`chat_pack/`](chat_pack/) knowledge pack. Which setup is best for you, per platform and
+plan, lives in the **[setup guide](FREE_TIER_SETUP.md)** — it is kept current as these
+surfaces change.
 
 Here is a good initial prompt which you can copy and paste into the custom GPT or your Claude
 Project to try it out, noting that data for the COSMOS-Web Ring is included in this repository
@@ -77,7 +66,9 @@ each wavelength in the left column, its lensed source model in the middle column
 
 ### AI Coding Agent (CLI)
 
-`autolens_assistant` has first-class support for AI coding agents such as **Claude Code** and **Codex**.
+`autolens_assistant` has first-class support for AI coding agents such as **Claude Code**, **Codex**,
+**Gemini CLI** and **OpenCode** — see [Supported Coding Agents](#supported-coding-agents) below, and the
+[setup guide](FREE_TIER_SETUP.md) for which is currently the best free option.
 
 A coding agent is a command-line (CLI) tool that runs locally in your terminal. It can inspect your `.fits` data, 
 write and execute Python scripts, perform end-to-end lens modelling, and load existing results from your computer for 

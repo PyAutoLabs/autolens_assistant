@@ -124,24 +124,32 @@ supported.
 - **Non-agentic CLI/chat:** provide the same bootstrap and either browsing access or attached
   files; confirm it produces commands for the user to run instead of claiming execution.
 
-Free-tier routes, one per row of the table in [`FREE_TIER_SETUP.md`](../FREE_TIER_SETUP.md).
-Each must be tested **on a free account**, not a paid one with features disabled:
+Free-tier options, one per row of the options table in
+[`FREE_TIER_SETUP.md`](../FREE_TIER_SETUP.md) (each option's setup page lives under
+`docs/setup/`). Each must be tested **on a free account**, not a paid one with features
+disabled:
 
-- **Claude Free + GitHub connector (Route A — retired 2026-08-06 while
+- **Claude + GitHub connector (retired 2026-08-06 while
   [claude-code#71542](https://github.com/anthropics/claude-code/issues/71542) is open):** when
   re-testing for recovery, attach the repo via the connector and run a bootstrap prompt that
   asks "can you actually read `llms.txt`, and did you read it through the connector or by
-  fetching the URL?"; the route returns to `FREE_TIER_SETUP.md` only if it answers truthfully
+  fetching the URL?"; the connector returns to the setup pages only if it answers truthfully
   via the connector and reaches a skill file — not just `llms.txt` — before writing code.
-- **Claude Free Project upload (Route B):** upload `chat_pack/` to a Project's knowledge; ask a
-  question whose answer lives in a skill that is *in* the pack, and one whose answer is in a
-  page that is *not* (e.g. a `wiki/literature/` topic). Confirm the second is answered with an
-  explicit "not in what I have" rather than from memory.
-- **Pasted `llms-chat.txt` (Route C):** paste into a fresh ChatGPT Free chat. Confirm the paste
-  plus a real question fits the context window and still leaves room to work, and that the
-  assistant uses `01_api_surface.md` to check a symbol it is unsure about.
-- **Custom GPT (Route D):** run the same two questions as Route B from a **free**
-  ChatGPT account, to confirm knowledge retrieval works for a non-builder.
+- **Claude Free Project upload (`docs/setup/claude_chat_free.md`):** upload `chat_pack/` to a
+  Project's knowledge; ask a question whose answer lives in a skill that is *in* the pack, and
+  one whose answer is in a page that is *not* (e.g. a `wiki/literature/` topic). Confirm the
+  second is answered with an explicit "not in what I have" rather than from memory.
+- **Pasted `llms-chat.txt` (`docs/setup/paste_bundle.md`):** paste into a fresh ChatGPT Free
+  chat. Confirm the paste plus a real question fits the context window and still leaves room
+  to work, and that the assistant uses `01_api_surface.md` to check a symbol it is unsure
+  about.
+- **Custom GPT (`docs/setup/chatgpt_custom_gpt.md`):** run the same two questions as the
+  Project-upload check from a **free** ChatGPT account, to confirm knowledge retrieval works
+  for a non-builder.
+- **Free coding agents (`docs/setup/gemini_cli.md`, `docs/setup/opencode_cli.md`):** on a
+  free-tier account/model, clone the repo, launch the agent inside it, and confirm it reads
+  `AGENTS.md`, runs the session-start drift check, and completes the first
+  plot-the-COSMOS-Web-Ring prompt end-to-end.
 
 In every route, include the standing regression check: ask for a plot of a fit and confirm it
 emits `aplt.subplot_fit_imaging(...)` and **not** `aplt.FitImagingPlotter` / `aplt.MatPlot2D`.
@@ -152,3 +160,36 @@ composing a fit.
 Record the surface, date, plan/account context, files successfully loaded, and any limitations.
 Plan availability changes, so test results should describe observed behavior rather than promise
 that a feature is free for every user.
+
+## Maintaining the chat bundles
+
+`llms-chat.txt` and `chat_pack/` are **generated** — do not hand-edit them.
+
+```bash
+make chat-bundle          # regenerate both artifacts
+make chat-bundle-check    # verify the committed copies are current (CI-friendly)
+```
+
+Regenerate on a machine with the PyAuto\* stack installed, so the API surface is refreshed
+from a live `dir()` rather than reused from the committed copy (the script warns loudly when
+it falls back). Note that source installs from library `main` report the *previous* release
+in `__version__`, so a `chat-bundle-check` FAIL whose only diff is the version-stamp line is
+an environment artifact, not real drift — diff the surface before regenerating.
+
+The generator (`autoassistant/chat_bundle.py`) enforces four things, each of which fails the
+build or the check:
+
+- **Verbatim-anchor drift** — the rules `AGENTS_CHAT.md` shares with `AGENTS.md` must stay
+  word-identical. Reword one in `AGENTS.md` and the check fails until both are updated.
+- **Dead links** — every rewritten raw URL must resolve to a real path in the repository.
+- **Staleness** — the committed artifacts must match a fresh build.
+- **Budgets** — the paste tier stays under its token budget, and the pack under the 20-file
+  GPT knowledge limit.
+
+It also *warns* when a complete skill belongs to no group in `SKILL_GROUPS`, so newly
+written skills don't silently fail to ship.
+
+After a regeneration, downstream copies must be refreshed too: the custom GPT's instructions
+and knowledge (build recipe in
+[`docs/setup/chatgpt_custom_gpt.md`](../docs/setup/chatgpt_custom_gpt.md)), and users'
+Claude Projects pick up the new pack only when they re-upload it.

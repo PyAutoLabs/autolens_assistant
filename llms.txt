@@ -20,7 +20,7 @@ reliably fail there — `blob/` returns a JavaScript shell, not the file.)
 | **Chat with neither** (incl. ChatGPT Free) | Paste [`llms-chat.txt`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/llms-chat.txt) — a self-contained ~6k-token bundle carrying the rules and the current API surface. |
 | **A Claude Project, or a custom GPT** | Upload the files in [`chat_pack/`](https://github.com/PyAutoLabs/autolens_assistant/tree/main/chat_pack) as knowledge. |
 
-Step-by-step setup for each platform, including the free tiers:
+Step-by-step setup for each platform, free and paid options:
 **[`FREE_TIER_SETUP.md`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/FREE_TIER_SETUP.md)**
 
 ## Bootstrap prompt
