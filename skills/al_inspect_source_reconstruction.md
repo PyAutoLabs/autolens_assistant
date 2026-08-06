@@ -148,9 +148,9 @@ appear.
 ## Further reading
 
 - **Student / new to lensing** — [HowToLens: Reconstructing source light via
-  least-squares](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_4_pixelizations/tutorial_3_inversions.ipynb):
+  least-squares](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_pixelizations/tutorial_3_inversions.ipynb):
   the inversion at its heart — least-squares solution for source-plane pixel
-  intensities. Chapter 4 as a whole covers mappers, regularization, adaptive grids.
+  intensities. Chapter 3 as a whole covers mappers, regularization, adaptive grids.
 - **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   the pixelization feature sits here alongside MGE / interferometry / shapelets —
   links into deeper docs.

@@ -56,7 +56,7 @@ image as the adapt source.
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: chapter_4 tutorial_5 adaptive](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_4_pixelizations/tutorial_5_adaptive_pixelization.ipynb):
+- **Student / new to lensing** — [HowToLens: chapter_3 tutorial_8 adaptive](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_pixelizations/tutorial_8_adaptive_pixelization.ipynb):
   pedagogical adaptive-pixelisation walkthrough.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   pixelisation feature section.

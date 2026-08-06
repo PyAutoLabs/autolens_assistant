@@ -603,9 +603,9 @@ doesn't match your problem.
 ## Further reading
 
 - **Student / new to lensing** — [HowToLens: Breaking modeling into sequential
-  searches](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_search_chaining/tutorial_1_search_chaining.ipynb):
+  searches](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_9_search_chaining.ipynb):
   introduces chaining — why a sequence of fits beats a single high-dimensional one.
-  Chapter 3 as a whole develops the pattern.
+  The end of chapter 2 (tutorials 9-11) develops the pattern.
 - **General reference** — [RTD: Model cookbook](https://pyautolens.readthedocs.io/en/latest/general/model_cookbook.html):
   systematic reference for inheriting and adjusting priors between models, the
   mechanical core of chaining.
@@ -742,7 +742,7 @@ all 4+ phases will short-circuit, but you'll catch import / config errors fast.
 ## Further reading
 
 - **Student / new to lensing** — [HowToLens: Standard Lens Analysis Method
-  (SLaM)](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_search_chaining/tutorial_6_slam.ipynb):
+  (SLaM)](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_11_slam.ipynb):
   what SLaM is and why it works — best-practice multi-stage chaining encoded as a
   ready-made pipeline.
 - **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):

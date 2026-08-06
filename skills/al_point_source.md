@@ -64,9 +64,11 @@ H0-inference workflow built on top of this.
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: chapter_2 tutorial_3 positions](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_3_positions.ipynb):
-  why positions help even when you have extended imaging — and what
-  positions-only fitting looks like in isolation.
+- **Student / new to lensing** — [HowToLens: chapter_1 tutorial_4 point sources](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_4_point_sources.ipynb):
+  what point-source lensing is, solving the lens equation for image
+  positions, and why position fitting differs from extended-source
+  fitting (positions within extended-imaging fits: chapter_2
+  tutorial_6_masking_and_positions).
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   short PointDataset / AnalysisPoint section in the feature tour.
 - **Experienced PyAutoLens user** — [workspace/lens: point_source/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/point_source/start_here.py):
