@@ -38,18 +38,13 @@ whichever best suits how you work with AI:
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
 in a desktop browser or web. 
 
-**This works on free plans** — for example the published
-**[PyAutoLens AI Assistant](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant)**
-custom GPT on ChatGPT (experimental), or a Claude Project loaded with the
-[`chat_pack/`](chat_pack/) knowledge pack. Which setup is best for you, per platform and
-plan, lives in the **[setup guide](FREE_TIER_SETUP.md)** — it is kept current as these
-surfaces change.
-
-Here is a good initial prompt which you can copy and paste into the custom GPT or your Claude
-Project to try it out, noting that data for the COSMOS-Web Ring is included in this repository
-as an example:
+Depending on which assistant you chose in the guide, your first message may need to open with its setup
+instructions (for example the GitHub sync bootstrap prompt). With that in place, here is a good initial prompt
+to try it out, noting that data for the COSMOS-Web Ring is included in this repository as an example:
 
 ```
+[Setup instructions for your chosen assistant, if its guide page says you need them]
+
 Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens and then given that I'm a 
 new user give me an overview of the different ways we can perform strong lens modeling of this system.
 ```
@@ -64,6 +59,8 @@ If you copy and paste the prompt below into ChatGPT you'll get an end-to-end Pyt
 lens modeling of the COSMOS-Web Ring!
 
 ```
+[Setup instructions for your chosen assistant, if its guide page says you need them]
+
 I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring independently, which are in 
 the folder dataset/imaging/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
