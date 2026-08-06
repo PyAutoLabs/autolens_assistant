@@ -37,7 +37,25 @@ for you to run, explaining concepts, reviewing errors and figures. It **cannot**
 read your `.fits` files; for that, use a coding agent such as [Codex CLI](codex_cli.md),
 which shares your ChatGPT subscription.
 
-## First prompts
+## Your first prompt
 
-See [First prompts to try](first_prompts.md). If anything misbehaves:
+You're set up — copy and paste this to start (the COSMOS-Web Ring data ships with the
+repository, so it works immediately):
+
+```text
+Use the autolens_assistant repository: https://github.com/PyAutoLabs/autolens_assistant
+
+Start by reading its front door:
+https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/llms.txt
+
+Follow its read order (AGENTS_CHAT.md → the relevant skill → wiki) and its API rules.
+First tell me whether you can actually read llms.txt — if you can't, say so plainly
+and don't answer from memory.
+
+Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens
+and then given that I'm a new user give me an overview of the different ways we can
+perform strong lens modeling of this system.
+```
+
+More examples: [First prompts to try](first_prompts.md). If anything misbehaves:
 [Troubleshooting](troubleshooting.md).

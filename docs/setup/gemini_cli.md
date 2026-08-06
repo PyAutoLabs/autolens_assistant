@@ -19,6 +19,16 @@ gemini
 The repository ships `.gemini/settings.json`, which points Gemini CLI at the assistant's
 canonical instructions (`AGENTS.md`); the assistant configures itself on your first prompt.
 
-## First prompts
+## Your first prompt
 
-See [First prompts to try](first_prompts.md).
+You're set up — copy and paste this to start (the COSMOS-Web Ring data ships with the
+repository, so it works immediately):
+
+```text
+Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens
+and then given that I'm a new user give me an overview of the different ways we can
+perform strong lens modeling of this system.
+```
+
+More examples: [First prompts to try](first_prompts.md). If anything misbehaves:
+[Troubleshooting](troubleshooting.md).

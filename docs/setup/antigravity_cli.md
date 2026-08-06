@@ -36,10 +36,19 @@ That's it. Antigravity reads the assistant's canonical instructions (`AGENTS.md`
 repository root automatically — the assistant configures itself on your first prompt, and
 will install PyAutoLens for you if it isn't already installed.
 
-## First prompts
+## Your first prompt
 
-See [First prompts to try](first_prompts.md) — the COSMOS-Web Ring data ships with the
-repository, so every example works immediately.
+You're set up — copy and paste this to start (the COSMOS-Web Ring data ships with the
+repository, so it works immediately):
+
+```text
+Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens
+and then given that I'm a new user give me an overview of the different ways we can
+perform strong lens modeling of this system.
+```
+
+More examples: [First prompts to try](first_prompts.md). If anything misbehaves:
+[Troubleshooting](troubleshooting.md).
 
 ## Limits
 

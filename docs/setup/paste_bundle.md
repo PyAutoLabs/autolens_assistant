@@ -23,7 +23,18 @@ Two things to know:
   message that is only context sometimes gets a "what would you like to do?" reply that
   wastes one of your limited flagship-model turns.
 
-## First prompts
+## Your first prompt
 
-See [First prompts to try](first_prompts.md). If anything misbehaves:
+You're set up — copy and paste this to start (the COSMOS-Web Ring data ships with the
+repository, so it works immediately):
+
+```text
+[paste the full contents of llms-chat.txt here]
+
+Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens
+and then given that I'm a new user give me an overview of the different ways we can
+perform strong lens modeling of this system.
+```
+
+More examples: [First prompts to try](first_prompts.md). If anything misbehaves:
 [Troubleshooting](troubleshooting.md).
