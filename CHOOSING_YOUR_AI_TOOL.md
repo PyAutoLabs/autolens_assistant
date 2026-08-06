@@ -65,9 +65,9 @@ agent.
 
 | Option | Cost | How well it works |
 |---|---|---|
-| **[Claude chat — paid](docs/setup/claude_chat_paid.md)** | Paid | Works brilliantly via repo input (Project knowledge) |
-| **[ChatGPT — paid](docs/setup/chatgpt_paid_connector.md)** | Paid | Works brilliantly via GitHub sync (different from the custom GPT) |
-| **[Claude chat — free](docs/setup/claude_chat_free.md)** | Free | Works, but goes through the free tokens quickly |
+| **[Claude chat](docs/setup/claude_chat_paid.md)** | Paid | Works brilliantly via repo input (Project knowledge) |
+| **[ChatGPT](docs/setup/chatgpt_paid_connector.md)** | Paid | Works brilliantly via GitHub sync (different from the custom GPT) |
+| **[Claude chat](docs/setup/claude_chat_free.md)** | Free | Works, but goes through the free tokens quickly |
 | **[ChatGPT custom GPT](docs/setup/chatgpt_custom_gpt.md)** | Free (any plan) | Works, but not yet able to do all tasks (experimental) |
 | **[Paste the bundle](docs/setup/paste_bundle.md)** | Free (any chat) | Reliable fallback anywhere — compact, so best for shorter sessions |
 
