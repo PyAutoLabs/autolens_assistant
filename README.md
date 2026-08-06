@@ -30,7 +30,8 @@ ships with this repository in `dataset/imaging/cosmos_web_ring`:
 Take note of the **lens galaxy, lensed source galaxy, extra galaxy** and the **1.8" circular mask**, your first 
 interactions with the `autolens_assistant` may ask you about how to handle these in your analysis!
 
-There are two ways to use `autolens_assistant`, choose whichever best suits how you work with AI:
+As discussed in the **[guide](FREE_TIER_SETUP.md)**, there are two ways to use `autolens_assistant`, choose
+whichever best suits how you work with AI:
 
 #### AI Chat Assistant
 
