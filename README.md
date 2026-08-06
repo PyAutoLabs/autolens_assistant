@@ -26,12 +26,9 @@ There are two ways to use `autolens_assistant`, choose whichever best suits how 
 Ask questions to a conversational AI assistant such as **ChatGPT** or **Claude**
 in a desktop browser or web. 
 
-**This works on free plans.** On Claude (any plan, including Free), the reliable setup is a
+**This works on free plans.** On Claude (any plan, including Free), the setup is a
 **Project with the [`chat_pack/`](chat_pack/) knowledge pack** uploaded into its knowledge —
-about five minutes, no connector needed, and the assistant sees the whole curated pack from
-the first message. (The GitHub connector would normally be the best route, since it reads the
-repository live — but it is broken as of August 2026; the
-[setup guide](FREE_TIER_SETUP.md) tracks the bug and how to tell when it recovers.)
+about five minutes, and the assistant sees the whole curated pack from the first message.
 
 On ChatGPT (any plan, including Free), the zero-setup route is the published
 **[PyAutoLens AI Assistant](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant)**
@@ -48,18 +45,15 @@ from memory or can't read the repo: **[`FREE_TIER_SETUP.md`](FREE_TIER_SETUP.md)
 | Interface | Repo access | Setup |
 |---|---|---|
 | **Claude** (incl. Free) | Project knowledge | Upload [`chat_pack/`](chat_pack/) to a Project — see the [setup guide](FREE_TIER_SETUP.md) |
-| **Claude**, once the connector bug is fixed | GitHub connector, all plans | Enable the connector, use the prompt below |
 | **ChatGPT** (incl. Free) | Custom GPT knowledge + browsing | Open the [PyAutoLens AI Assistant](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant) GPT (experimental) |
 | **ChatGPT**, for verified scripts | Connectors are paid-only | Paste [`llms-chat.txt`](llms-chat.txt) |
 | **Anything else** | Browsing, or nothing | Paste [`llms-chat.txt`](llms-chat.txt) |
 
-Here is a good initial prompt which you can copy and paste it ChatGPT or Claude to try it out, noting that
-data for the COSMOS-Web Ring is included in this repository as an example:
+Here is a good initial prompt which you can copy and paste into the custom GPT or your Claude
+Project to try it out, noting that data for the COSMOS-Web Ring is included in this repository
+as an example:
 
 ```
-Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
-first reading its llms.txt file for initial start up.
-
 Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens and then given that I'm a 
 new user give me an overview of the different ways we can perform strong lens modeling of this system.
 ```
@@ -74,9 +68,6 @@ If you copy and paste the prompt below into ChatGPT you'll get an end-to-end Pyt
 lens modeling of the COSMOS-Web Ring!
 
 ```
-Use the autolens_assistant (www.github.com/PyAutoLabs/autolens_assistant with the GitHub synchronization, 
-first reading its llms.txt file for initial start up.
-
 I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring independently, which are in 
 the folder dataset/imaging/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 

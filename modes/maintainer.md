@@ -127,9 +127,12 @@ supported.
 Free-tier routes, one per row of the table in [`FREE_TIER_SETUP.md`](../FREE_TIER_SETUP.md).
 Each must be tested **on a free account**, not a paid one with features disabled:
 
-- **Claude Free + GitHub connector (Route A):** run the bootstrap prompt; confirm it answers the
-  "can you actually read `llms.txt`?" question truthfully, and that it reaches a skill file —
-  not just `llms.txt` — before writing code.
+- **Claude Free + GitHub connector (Route A — retired 2026-08-06 while
+  [claude-code#71542](https://github.com/anthropics/claude-code/issues/71542) is open):** when
+  re-testing for recovery, attach the repo via the connector and run a bootstrap prompt that
+  asks "can you actually read `llms.txt`, and did you read it through the connector or by
+  fetching the URL?"; the route returns to `FREE_TIER_SETUP.md` only if it answers truthfully
+  via the connector and reaches a skill file — not just `llms.txt` — before writing code.
 - **Claude Free Project upload (Route B):** upload `chat_pack/` to a Project's knowledge; ask a
   question whose answer lives in a skill that is *in* the pack, and one whose answer is in a
   page that is *not* (e.g. a `wiki/literature/` topic). Confirm the second is answered with an

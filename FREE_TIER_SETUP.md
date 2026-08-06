@@ -40,26 +40,27 @@ so and tell you what to switch to.
 
 | Your situation | Route | Setup effort |
 |---|---|---|
-| Claude, any plan (incl. Free) | **B — Project + knowledge pack** | ~5 min, most reliable |
-| Claude, once the connector bug is fixed | **A — GitHub connector** (currently broken — see below) | ~2 min when it works |
+| Claude, any plan (incl. Free) | **B — Project + knowledge pack** | ~5 min |
 | ChatGPT, any plan (incl. Free) | **D — the published custom GPT** (experimental) | none — open the link |
 | ChatGPT, when the GPT can't answer or you need a verified script | **C — paste the bundle** (connectors are paid-only) | ~30 s per chat |
 | Any other chat (Gemini, Copilot, …) | **C — paste the bundle** | ~30 s per chat |
 
-Routes A and B give the assistant the whole repository (A live from GitHub, B as an uploaded
-pack). Route C gives it a curated ~6k-token core. All of them enforce the API-currency rule.
+Route B gives the assistant the whole repository as a curated uploaded pack. Route C gives it
+a ~6k-token core. All routes enforce the API-currency rule.
 
-> **Why B before A** (as of 2026-08-06): the connector currently attaches a repo without
-> making its content readable (an open bug, details under Route A), and Claude's web-fetch
-> fallback can only retrieve URLs *you paste* — so every page the assistant needs costs you a
-> message. Route B avoids both problems: everything is already in the project's knowledge,
-> and nothing needs fetching mid-conversation.
+> **Where is Route A?** There used to be a connector route: Claude's GitHub connector reading
+> this repository live. It is retired from this page while an open bug
+> ([claude-code#71542](https://github.com/anthropics/claude-code/issues/71542)) leaves the
+> connector attaching repositories without making their content readable — and Claude's
+> web-fetch fallback only retrieves URLs *you* paste, so that path degrades into pasting a
+> raw URL for every page the assistant needs (verified on a live Free account, 2026-08-06).
+> If the connector recovers, the route comes back; nothing else on this page depends on it.
 
 ---
 
-## Route B — Claude Project with the knowledge pack (recommended)
+## Route B — Claude Project with the knowledge pack
 
-This is the reliable Claude route: no connector, and nothing to fetch mid-conversation. A
+This is the Claude route: no connector, and nothing to fetch mid-conversation. A
 curated pack of the repository is uploaded straight into a Project's knowledge. On Free,
 project knowledge is put in **full context** (~200K tokens) rather than retrieved in
 fragments, so the assistant sees all of it from the first message.
@@ -84,53 +85,6 @@ the same project knowledge.
 
 > **Note.** Claude Projects can't be shared on Free or Pro (sharing is a Team/Enterprise
 > feature), so each person does this once for themselves. It takes about five minutes.
-
----
-
-## Route A — Claude with the GitHub connector (currently broken)
-
-The connector lets the assistant read this repository directly, so it always sees current
-content — when it works, it beats Route B, whose pack is a snapshot. It is listed on **all
-Claude plans, including Free** (setup reference:
-[Anthropic's docs](https://support.claude.com/en/articles/10167454-use-the-github-integration)).
-
-> **Broken as of 2026-08-06, verified on a live Free account.** An open bug
-> ([claude-code#71542](https://github.com/anthropics/claude-code/issues/71542)) means
-> attaching the repo just inserts a `github.com/.../tree/main` link into the message — the
-> assistant gets no readable content from it. Claude's web-fetch fallback doesn't rescue it:
-> it can only retrieve URLs *you* pasted, so even links the assistant discovers inside a page
-> it fetched stay blocked, and the session degrades into you pasting a raw URL for every page
-> it needs. **Use Route B until the bug is fixed.** The steps below are kept for when it
-> recovers; the honesty check in step 3 tells you whether it has.
-
-1. In Claude, open **Settings → Connectors** and enable **GitHub**. Authorise it and grant
-   access to public repositories (this repo is public — you don't need to grant anything of
-   your own).
-2. Create a **Project** — Claude Free allows up to 5 — and connect
-   `PyAutoLabs/autolens_assistant` to it. Put the prompt from step 3 in the project's custom
-   instructions, so every chat in the project starts configured.
-3. Start a chat with this prompt:
-
-```text
-Use the autolens_assistant repository: https://github.com/PyAutoLabs/autolens_assistant
-
-Start by reading its front door:
-https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/llms.txt
-
-Follow its read order (AGENTS_CHAT.md → the relevant skill → wiki) and its API rules.
-First tell me whether you can actually read llms.txt — and whether you read it through
-the GitHub connector or by fetching the URL. If you can't read it, say so plainly and
-don't answer from memory.
-```
-
-Two details in that prompt matter:
-
-- **Naming `llms.txt` explicitly.** The connector does not reliably find it on its own, and
-  answers are markedly better when it is pointed there first.
-- **The honesty check** (the final sentences). If the assistant can't read the file, you want
-  to know immediately — not after it writes you a script from a 2023 API. Asking *how* it
-  read the file tells you whether the connector is actually working or it silently fell back
-  to web fetch (the degraded, paste-every-URL mode described above).
 
 ---
 
@@ -227,9 +181,9 @@ working, not the assistant being unhelpful.
 
 ## Troubleshooting
 
-**Connecting the repo just inserts a `github.com/.../tree/main` link into the message — or
-the honesty check fails.**
-This is the known connector bug
+**You tried the GitHub connector anyway, and connecting the repo just inserts a
+`github.com/.../tree/main` link into the message.**
+This is the connector bug that retired Route A
 ([claude-code#71542](https://github.com/anthropics/claude-code/issues/71542)), which we
 reproduced on our own Free-account test (2026-08-06). Some accounts have recovered by
 connecting the repo inside a **brand-new Project**, or by disconnecting the connector fully
