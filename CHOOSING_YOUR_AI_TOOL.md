@@ -35,26 +35,41 @@ quickly in a single long session.
 
 ---
 
-## All options
+## CLI Coding Agents
 
-| Option | Type | Cost | How well it works |
-|---|---|---|---|
-| **[Antigravity CLI](docs/setup/antigravity_cli.md)** | Coding agent (CLI) | Free tier (paid raises limits) | **Best free performance** — excellent for free, below Claude Code / Codex on paid; generous limits, but reachable in one long session |
-| **[Claude Code](docs/setup/claude_code.md)** | Coding agent (CLI) | Paid | Works brilliantly — the primary, most thoroughly tested harness |
-| **[Codex CLI](docs/setup/codex_cli.md)** | Coding agent (CLI) | Limited free / paid | Works brilliantly — primary, thoroughly tested |
-| **[OpenCode](docs/setup/opencode_cli.md)** | Coding agent (CLI) | Free client; model access free or paid | Supported — performance depends on the model you connect |
-| **[Gemini CLI](docs/setup/gemini_cli.md)** | Coding agent (CLI) | Enterprise / paid API only | Retired for free accounts June 2026 — use Antigravity instead |
-| **[Claude chat — paid](docs/setup/claude_chat_paid.md)** | Conversational AI | Paid | Works brilliantly via repo input (Project knowledge) |
-| **[ChatGPT — paid](docs/setup/chatgpt_paid_connector.md)** | Conversational AI | Paid | Works brilliantly via GitHub sync (different from the custom GPT) |
-| **[Claude chat — free](docs/setup/claude_chat_free.md)** | Conversational AI | Free | Works, but goes through the free tokens quickly |
-| **[ChatGPT custom GPT](docs/setup/chatgpt_custom_gpt.md)** | Conversational AI | Free (any plan) | Works, but not yet able to do all tasks (experimental) |
-| **[Paste the bundle](docs/setup/paste_bundle.md)** | Conversational AI | Free (any chat) | Reliable fallback anywhere — compact, so best for shorter sessions |
+A coding agent is an AI you type to in a **terminal** (command line) window rather than a
+browser. Because it runs directly on your computer, it goes far beyond conversation: it can
+install PyAutoLens for you, inspect your `.fits` data, write Python scripts **and actually
+execute them**, watch the fit run, load the results and iterate — end-to-end lens modelling
+from a single prompt. If you have never used a terminal there is a small learning curve, but
+this is the recommended, best-performing way to use the assistant, and each setup page below
+walks you through it from a fresh install.
 
-**The one distinction that matters most:** a *conversational AI* does the thinking work —
-planning models, writing scripts for you to run, explaining concepts, reviewing errors — but
-cannot run fits or read your `.fits` files. A *coding agent* does all of that **and**
-executes the analysis end-to-end. If you can use a terminal, a coding agent is strictly more
-capable.
+| Option | Cost | How well it works |
+|---|---|---|
+| **[Antigravity CLI](docs/setup/antigravity_cli.md)** | Free tier (paid raises limits) | **Best free performance** — excellent for free, below Claude Code / Codex on paid; generous limits, but reachable in one long session |
+| **[Claude Code](docs/setup/claude_code.md)** | Paid | Works brilliantly — the primary, most thoroughly tested harness |
+| **[Codex CLI](docs/setup/codex_cli.md)** | Limited free / paid | Works brilliantly — primary, thoroughly tested |
+| **[OpenCode](docs/setup/opencode_cli.md)** | Free client; model access free or paid | Supported — performance depends on the model you connect |
+| **[Gemini CLI](docs/setup/gemini_cli.md)** | Enterprise / paid API only | Retired for free accounts June 2026 — use Antigravity instead |
+
+## Conversational AI Assistants
+
+A conversational assistant is the familiar browser chat (ChatGPT, Claude, Gemini, …). Once
+loaded with this repository it does the thinking half of the work well: it plans your lens
+model and explains the trade-offs, writes complete current-API PyAutoLens scripts for you to
+run yourself, teaches strong-lensing concepts, and reviews any script, error or figure you
+paste in. What it **cannot** do is run the fit, read your `.fits` files or inspect your
+results folder — when that becomes the blocker, it will say so and point you to a coding
+agent.
+
+| Option | Cost | How well it works |
+|---|---|---|
+| **[Claude chat — paid](docs/setup/claude_chat_paid.md)** | Paid | Works brilliantly via repo input (Project knowledge) |
+| **[ChatGPT — paid](docs/setup/chatgpt_paid_connector.md)** | Paid | Works brilliantly via GitHub sync (different from the custom GPT) |
+| **[Claude chat — free](docs/setup/claude_chat_free.md)** | Free | Works, but goes through the free tokens quickly |
+| **[ChatGPT custom GPT](docs/setup/chatgpt_custom_gpt.md)** | Free (any plan) | Works, but not yet able to do all tasks (experimental) |
+| **[Paste the bundle](docs/setup/paste_bundle.md)** | Free (any chat) | Reliable fallback anywhere — compact, so best for shorter sessions |
 
 Once set up: [first prompts to try](docs/setup/first_prompts.md) · something misbehaving?
 [troubleshooting](docs/setup/troubleshooting.md).
