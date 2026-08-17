@@ -102,8 +102,18 @@ EXCLUDES=(
 # ---------------------------------------------------------------------------
 push() {
     local dryrun="${1:-}"
+    local failed=0
+
+    # On a first push the remote project directory does not exist yet. rsync
+    # only creates the last path level, so every CODE_DIRS transfer below would
+    # fail with "mkdir failed: No such file or directory" — and because they run
+    # in parallel, the failures are invisible unless collected (see wait loop).
+    if [[ -z "$dryrun" ]]; then
+        ssh "${HPC_HOST}" "mkdir -p '${HPC_BASE}/${PROJECT_NAME}'"
+    fi
 
     echo "==> [push] code/config  →  ${REMOTE}"
+    local pids=() names=()
     for dir in "${CODE_DIRS[@]}"; do
         local src="${PROJECT_ROOT}/${dir}/"
         if [[ ! -d "$src" ]]; then
@@ -113,8 +123,19 @@ push() {
         echo "    ${dir}/"
         "${RSYNC[@]}" "${EXCLUDES[@]}" ${dryrun} \
             "${src}" "${REMOTE}/${dir}/" &
+        pids+=("$!")
+        names+=("${dir}")
     done
-    wait
+    # Plain `wait` reports only its own status, so a backgrounded rsync that
+    # failed would be swallowed even under `set -e`. Wait on each PID instead.
+    if (( ${#pids[@]} > 0 )); then
+        for i in "${!pids[@]}"; do
+            if ! wait "${pids[$i]}"; then
+                echo "    ERROR: rsync of ${names[$i]}/ failed" >&2
+                failed=1
+            fi
+        done
+    fi
 
     echo "    [root files]"
     local existing_root_files=()
@@ -129,6 +150,7 @@ push() {
     if [[ -z "${SKIP_DATA:-}" ]]; then
         echo ""
         echo "==> [push] data  →  ${REMOTE}  (--ignore-existing: skips files already on HPC)"
+        local data_pids=() data_names=()
         for dir in "${DATA_DIRS[@]}"; do
             local src="${PROJECT_ROOT}/${dir}/"
             if [[ ! -d "$src" ]]; then
@@ -138,11 +160,29 @@ push() {
             echo "    ${dir}/"
             "${RSYNC[@]}" "${EXCLUDES[@]}" --ignore-existing ${dryrun} \
                 "${src}" "${REMOTE}/${dir}/" &
+            data_pids+=("$!")
+            data_names+=("${dir}")
         done
-        wait
+        if (( ${#data_pids[@]} > 0 )); then
+            for i in "${!data_pids[@]}"; do
+                if ! wait "${data_pids[$i]}"; then
+                    echo "    ERROR: rsync of ${data_names[$i]}/ failed" >&2
+                    failed=1
+                fi
+            done
+        fi
     else
         echo ""
         echo "    [data skipped — --no-data]"
+    fi
+
+    # Fail loudly rather than letting push-submit sbatch against a remote that
+    # is missing hpc/batch_gpu (job 330464 postmortem, 2026-07-16).
+    if (( failed )); then
+        echo "" >&2
+        echo "==> [push] FAILED — one or more transfers did not complete." >&2
+        echo "    The remote project tree is incomplete; do not submit jobs." >&2
+        return 1
     fi
 }
 
