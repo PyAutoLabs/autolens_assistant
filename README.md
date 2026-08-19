@@ -1,7 +1,5 @@
 # PyAutoLens Assistant
 
-<sub><i>if you don't know, don't worry</i></sub>
-
 <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" width="900" />
 
 When two or more galaxies are aligned perfectly down our line-of-sight, the
