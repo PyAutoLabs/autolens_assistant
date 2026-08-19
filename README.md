@@ -2,7 +2,7 @@
 
 <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" width="900" />
 
-<p align="center"><sub><i><a href="https://fredagain.lnk.to/clara">if you don't know, don't worry</a></i></sub></p>
+<p align="center"><sub><i>if you don't know, don't worry</i></sub></p>
 
 When two or more galaxies are aligned perfectly down our line-of-sight, the
 background galaxy appears multiple times. This is strong gravitational lensing,
@@ -252,7 +252,7 @@ The `autolens-assistant` starts with the general knowledge and reasoning capabil
 the underlying foundation model you call it with (e.g. ChatGPT's GPT5.6Sol model, Claude's Opus 4.8 model). 
 The `autolens-assistant` supplements this with the scientific wiki above and two more sets of AI-readable markdown. 
 The folder `wiki/core` provides it with a quick look-up mechanism of the PyAutoLens API documentation. The folder
-`skills` pairs it with the end-to-end analysis scripts found in the [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_workspace). When the `autolens-assistant` 
+`skills` pairs it with the end-to-end analysis scripts found in the [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_workspace). When the `autolens_assistant` 
 receives your prompt, it scans these folders to give you the best possible answer
 you need. The JOSS paper located in the `paper` folder provides a more detailed description.
 
@@ -275,3 +275,5 @@ This repository is released under the [MIT License](LICENSE), consistent with th
 PyAuto\* ecosystem. The assistant ships agent instructions and reference material derived
 from the public PyAuto\* repositories; the underlying libraries are released under their
 own licenses (see each repo).
+
+<p align="center"><sub><i><a href="https://open.spotify.com/track/6LeTQu4NvTnLRRiB8GVFQe">if you don't know, don't worry</a></i></sub></p>
