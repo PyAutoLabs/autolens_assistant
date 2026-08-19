@@ -273,3 +273,5 @@ This repository is released under the [MIT License](LICENSE), consistent with th
 PyAuto\* ecosystem. The assistant ships agent instructions and reference material derived
 from the public PyAuto\* repositories; the underlying libraries are released under their
 own licenses (see each repo).
+
+<sub><i><a href="https://open.spotify.com/track/6LeTQu4NvTnLRRiB8GVFQe">if you don't know, don't worry</a></i></sub>
