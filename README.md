@@ -1,8 +1,8 @@
 # PyAutoLens Assistant
 
-<img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" width="900" />
+<sub><i>if you don't know, don't worry</i></sub>
 
-<p align="center"><sub><i>if you don't know, don't worry</i></sub></p>
+<img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" width="900" />
 
 When two or more galaxies are aligned perfectly down our line-of-sight, the
 background galaxy appears multiple times. This is strong gravitational lensing,
@@ -276,4 +276,4 @@ PyAuto\* ecosystem. The assistant ships agent instructions and reference materia
 from the public PyAuto\* repositories; the underlying libraries are released under their
 own licenses (see each repo).
 
-<p align="center"><sub><i><a href="https://open.spotify.com/track/6LeTQu4NvTnLRRiB8GVFQe">if you don't know, don't worry</a></i></sub></p>
+<sub><i><a href="https://open.spotify.com/track/6LeTQu4NvTnLRRiB8GVFQe">if you don't know, don't worry</a></i></sub>
