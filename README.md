@@ -250,7 +250,7 @@ The `autolens-assistant` starts with the general knowledge and reasoning capabil
 the underlying foundation model you call it with (e.g. ChatGPT's GPT5.6Sol model, Claude's Opus 4.8 model). 
 The `autolens-assistant` supplements this with the scientific wiki above and two more sets of AI-readable markdown. 
 The folder `wiki/core` provides it with a quick look-up mechanism of the PyAutoLens API documentation. The folder
-`skills` pairs it with the end-to-end analysis scripts found in the [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_workspace). When the `autolens_assistant` 
+`skills` pairs it with the end-to-end analysis scripts found in the [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_workspace). When the `autolens-assistant` 
 receives your prompt, it scans these folders to give you the best possible answer
 you need. The JOSS paper located in the `paper` folder provides a more detailed description.
 
