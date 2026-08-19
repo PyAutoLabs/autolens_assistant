@@ -2,6 +2,8 @@
 
 <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" width="900" />
 
+<p align="center"><sub><i><a href="https://fredagain.lnk.to/clara">if you don't know, don't worry</a></i></sub></p>
+
 When two or more galaxies are aligned perfectly down our line-of-sight, the
 background galaxy appears multiple times. This is strong gravitational lensing,
 and **PyAutoLens** makes it simple to model strong gravitational lenses.
