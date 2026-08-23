@@ -119,7 +119,7 @@ PyAutoGalaxy).
 ### Conda
 
 Step-by-step conda environment setup. Python 3.12, pip-into-conda install,
-workspace clone, optional Numba/pynufft.
+workspace clone, optional Numba/nufftax.
 
 - URL: https://pyautolens.readthedocs.io/en/latest/installation/conda.html
 - Audience: newcomer

@@ -99,7 +99,7 @@ notation, plotting.
 ## Dependencies
 
 `autofit`, `autoarray`, `colossus` (cosmology helpers for dark matter halo
-relations), `astropy`, `nautilus-sampler`. Optional: `numba`, `pynufft`.
+relations), `astropy`, `nautilus-sampler`. Optional: `numba`.
 
 ## See also
 
