@@ -14,7 +14,7 @@ sources:
       - autofit/graphical/declarative/abstract.py
     pinned_commit: ce2baa2b6611de99922e04d44b272de1be3ceb8e
 last_updated: 2026-07-09
-content_sha256: a6b81e37e9ea66228eda39f5ada50f50f671dfc4e8a2fcff9e31a12a6ff10716
+content_sha256: 992c21b9e92abc30405376e7d9f21ec13849e96ff82636bc7d6428f68c684a77
 ---
 
 # Analysis objects
@@ -68,9 +68,9 @@ analysis = al.AnalysisInterferometer(dataset=dataset)
 Same option surface as `AnalysisImaging`, plus:
 
 - **`transformer_class`** — NUFFT implementation for real-space → visibility
-  transforms on the dataset side. The default is `al.TransformerNUFFT`; the
-  legacy `al.TransformerNUFFTPyNUFFT` backend is still available when explicitly
-  requested.
+  transforms on the dataset side. The default is `al.TransformerNUFFT`
+  (nufftax-backed); use `al.TransformerDFT` where JAX is unavailable (notably
+  Intel macOS, for which JAX ships no wheels).
 
 ## AnalysisPoint
 

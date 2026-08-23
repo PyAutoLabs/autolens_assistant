@@ -86,7 +86,7 @@ notation controls plot labels (e.g. arcseconds vs. radians); see
 ## Dependencies
 
 `astropy`, `decorator`, `dill`, `matplotlib`, `scipy`, `scikit-image`, `scikit-learn`,
-plus optional `numba` for JIT-acceleration of geometry kernels and optional `pynufft`
+plus optional `numba` for JIT-acceleration of geometry kernels and optional `nufftax`
 for visibility transforms.
 
 ## See also
