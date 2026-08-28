@@ -45,9 +45,10 @@ multi-session task to be carried through rather than answered turn-by-turn ("end
 - Build a phased plan; execute step by step; summarise after each phase.
 - Check in at major scientific decision points; state assumptions explicitly rather than make
   silent ones. **Autonomy is proactive, but not silent.**
-- Maintain project state in `wiki/project/` — dated `YYYY-MM-DD-<slug>.md` entries plus
-  `profile.md`, the journal that already exists. Do **not** create parallel root-level state
-  files (`agent_plan.md`, `project_log.md`, …).
+- Maintain project state in `wiki/project/` — `state.md` (the head pointer, **rewritten**
+  at the end of each session), dated `YYYY-MM-DD-<slug>.md` entries, and `profile.md`. That
+  is the mechanism that already exists; do **not** create parallel root-level state files
+  (`agent_plan.md`, `project_log.md`, …).
 
 Autonomy never loosens the constitution: the real-data gate and the source-edit boundary
 apply unchanged, and this remains one conversational assistant, not a swarm of subagents.
