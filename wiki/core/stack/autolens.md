@@ -9,7 +9,7 @@ sources:
       - autolens/point/
       - README.md
     pinned_commit: main
-last_updated: 2026-07-09
+last_updated: 2026-08-28
 ---
 
 # PyAutoLens — strong lensing umbrella
@@ -73,9 +73,13 @@ objects:
 
 - `al.Pixelization(mesh=..., regularization=...)` — wraps a source-plane mesh + a
   regularisation scheme. Lives inside a `Galaxy`.
-- `al.mesh.Delaunay` / `al.mesh.RectangularUniform` / `al.mesh.RectangularAdaptImage`
-  / `al.mesh.KNearestNeighbor` — mesh choices; inspect `dir(al.mesh)` for the
-  complete set. `Voronoi` and `Rectangular` have been replaced.
+- `al.mesh.Delaunay` / `al.mesh.RectangularUniform` /
+  `al.mesh.RectangularBilinearAdaptImage` / `al.mesh.KNearestNeighbor` — mesh
+  choices; inspect `dir(al.mesh)` for the complete set. `Voronoi` and
+  `Rectangular` have been replaced, and the rectangular adaptive meshes have split
+  into a `Bilinear` (rank-CDF, the workspace default) and an `RTU` (kernel-CDF,
+  the gradient-capable variant) family — the unqualified `RectangularAdaptImage`
+  / `RectangularAdaptDensity` names no longer exist.
 - `al.reg.Constant` / `al.reg.ConstantSplit` / `al.reg.Adapt` / `al.reg.AdaptSplit` —
   regularisation schemes (the older `AdaptiveBrightness` has been split into the
   `Adapt*` family).
