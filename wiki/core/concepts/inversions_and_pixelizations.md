@@ -12,7 +12,7 @@ sources:
       - autolens/lens/to_inversion.py
       - autolens/analysis/positions.py
     pinned_commit: a91febcb1aa12797f9d5ece54c1cbbac528cd087
-last_updated: 2026-07-09
+last_updated: 2026-08-28
 ---
 
 # Inversions and pixelisations
@@ -56,8 +56,9 @@ Source: `PyAutoArray:autoarray/inversion/pixelization.py` and
 | `al.mesh.RectangularUniform(shape=(N, N))` | Uniform, simplest, debug |
 | `al.mesh.Delaunay(pixels=N)` | Adaptive Delaunay triangulation in the source plane |
 | `al.mesh.KNNBarycentric(pixels=N)` | k-nearest-neighbour barycentric interpolant in the source plane |
-| `al.mesh.RectangularAdaptImage(shape=(N, N), weight_power=…, weight_floor=…)` | Adaptive — denser mesh where the unlensed source image is bright |
-| `al.mesh.RectangularAdaptDensity` / `RectangularRotatedAdaptImage` / `RectangularSplineAdapt*` | Other adaptive families |
+| `al.mesh.RectangularBilinearAdaptImage(shape=(N, N), weight_power=…, weight_floor=…)` | Adaptive — denser mesh where the unlensed source image is bright. Rank-CDF transform; the fast CPU default the workspace scripts use |
+| `al.mesh.RectangularRTUAdaptImage(shape=(N, N), weight_power=…, weight_floor=…)` | The same brightness adaptation through a kernel CDF — the rectangular adaptive mesh with usable JAX gradients (GPU, gradient samplers, the interferometer sparse path) |
+| `al.mesh.RectangularBilinearAdaptDensity(shape=(N, N))` / `al.mesh.RectangularRTUAdaptDensity(shape=(N, N))` | Adapt to the density of image pixels mapping into the source plane rather than to brightness |
 
 The API is one mesh class per (image-plane mesh + source-plane mesh)
 combination; mesh selection is done entirely by choosing the `mesh` class —
@@ -66,7 +67,7 @@ there is no separate `image_mesh=` kwarg on `Pixelization`.
 > ⚠️ **Known regression in `2026.5.21.1`.** `Delaunay` and `KNNBarycentric`
 > currently crash inside `FitImaging` with
 > `AttributeError: 'NoneType' object has no attribute 'array'`. Use
-> `RectangularUniform` (or one of the `RectangularAdapt*` variants) until the
+> `RectangularUniform` (or one of the `Rectangular…Adapt…` variants above) until the
 > upstream fix lands. Tracking issue:
 > <https://github.com/PyAutoLabs/PyAutoArray/issues/332>.
 
