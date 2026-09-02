@@ -11,6 +11,8 @@ chains four or more searches:
 1. **SOURCE LP** — fit a parametric (light-profile) source with a simple lens mass to
    initialise.
 2. **SOURCE PIX** — switch the source to a pixelised inversion, refining everything.
+   The adapt image driving the mesh and regularisation is capped at S/N 3.0 (see
+   "Branch — galaxy-scale imaging SLaM" below).
 3. **LIGHT LP** — fit a complex lens-light model (e.g. MGE) on top, holding mass + source
    close to the SOURCE PIX result.
 4. **MASS TOTAL** — fit a more complex mass model (PowerLaw, MGE, multipole) with
@@ -82,6 +84,13 @@ source_pix_result_2 = source_pix_2(analysis, source_lp_result, source_pix_result
 light_result = light_lp(analysis, source_pix_result_1, source_pix_result_2)
 mass_result = mass_total(analysis, source_pix_result_1, source_pix_result_2, light_result)
 ```
+
+Each stage function that builds `al.AdaptImages` from
+`al.galaxy_name_image_dict_via_result_from` caps the source entry at S/N 3.0 on an
+explicit copy first — the copied template already does this at every stage, so keep the
+cap block when you adapt a stage and add it to any stage you write yourself. The rule,
+the copy requirement and the interferometer variant are in
+[`al_adaptive_pixelization`](./al_adaptive_pixelization.md) — "Adapt image S/N cap".
 
 Image positions (recommended for pixelised sources, to penalise unphysical
 demagnified solutions) load from JSON and wire into the stage functions via
