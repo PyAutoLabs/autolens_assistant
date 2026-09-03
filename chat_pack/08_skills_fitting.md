@@ -628,8 +628,9 @@ chains four or more searches:
 1. **SOURCE LP** — fit a parametric (light-profile) source with a simple lens mass to
    initialise.
 2. **SOURCE PIX** — switch the source to a pixelised inversion, refining everything.
-   The adapt image driving the mesh and regularisation is capped at S/N 3.0 (see
-   "Branch — galaxy-scale imaging SLaM" below).
+   The adapt image driving the mesh and regularisation is capped at S/N 3.0, and from
+   `source_pix_2` the dataset is re-applied with an adaptive pixelization over-sampling
+   map (see "Branch — galaxy-scale imaging SLaM" below).
 3. **LIGHT LP** — fit a complex lens-light model (e.g. MGE) on top, holding mass + source
    close to the SOURCE PIX result.
 4. **MASS TOTAL** — fit a more complex mass model (PowerLaw, MGE, multipole) with
@@ -708,6 +709,15 @@ explicit copy first — the copied template already does this at every stage, so
 cap block when you adapt a stage and add it to any stage you write yourself. The rule,
 the copy requirement and the interferometer variant are in
 [`al_adaptive_pixelization`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/skills/al_adaptive_pixelization.md) — "Adapt image S/N cap".
+
+From `source_pix_2` onwards the dataset is re-applied once with an adaptive
+pixelization over-sampling map — sub-size 4 where the *raw* (pre-cap) source S/N image
+exceeds 3.0, 2 elsewhere — before the fit is composed, and `light_lp`, `mass_total` and
+every later stage inherit that dataset. `source_pix_1` does not: its adapt image comes from
+the parametric SOURCE LP fit, so it keeps the default uniform sub-size. The idiom, and the
+`over_sample_size_via_adapt_from` helper it must never be fed to, are in
+[`al_adaptive_pixelization`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/skills/al_adaptive_pixelization.md) — "Adaptive pixelization
+over-sampling".
 
 Image positions (recommended for pixelised sources, to penalise unphysical
 demagnified solutions) load from JSON and wire into the stage functions via
