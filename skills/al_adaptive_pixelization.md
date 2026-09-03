@@ -56,8 +56,9 @@ Rules:
 
 - **Cap a copy, never the dict entry in place.** `.copy()` keeps the class and mask; an
   in-place cap would silently truncate the raw image every later consumer shares.
-- **Anything that needs the raw image binds it before the cap.** The group-scale adaptive
-  over-sampling map (`np.where(source_image_raw > 3.0, 4, 2)`) reads a
+- **Anything that needs the raw image binds it before the cap.** The adaptive
+  over-sampling map (`np.where(source_image_raw > 3.0, 4, 2)`, see "Adaptive pixelization
+  over-sampling" below) reads a
   `source_image_raw = galaxy_image_name_dict["('galaxies', 'source')"]` bound above the cap
   block, because the capped image never exceeds the threshold.
 - **Every stage that builds `AdaptImages` from a source image gets the cap** — `source_lp`,
@@ -104,6 +105,46 @@ Worked sites to copy from:
   a Hilbert image mesh.
 - `autolens_workspace:scripts/interferometer/features/pixelization/slam.py` — the
   interferometer form above.
+
+## Adaptive pixelization over-sampling (from `source_pix_2`)
+
+Every SLaM pipeline — imaging, group, multi-galaxy, multi-dataset — over-samples the
+pixelization grid adaptively from `source_pix_2` onwards: sub-size 4 where the source is
+detected, 2 elsewhere. Build the map from the *raw* (pre-cap) source entry and re-apply the
+dataset before the fit is composed; `source_pix_2` and every later stage receive that
+dataset.
+
+```python
+signal_to_noise_threshold = 3.0
+
+source_image_raw = al.galaxy_name_image_dict_via_result_from(result=source_pix_result_1)[
+    "('galaxies', 'source')"
+]
+
+over_sample_size_pixelization = al.Array2D(
+    values=np.where(source_image_raw > signal_to_noise_threshold, 4, 2), mask=dataset.mask
+)
+
+dataset = dataset.apply_over_sampling(
+    over_sample_size_pixelization=over_sample_size_pixelization
+)
+```
+
+- **The dict entry is already a signal-to-noise map**, so it is thresholded directly.
+  `al.galaxy_name_image_dict_via_result_from` with its default `use_model_images=False`
+  returns `subtracted_image / noise_map` (its on-disk cache is literally
+  `galaxy_images_snr.fits`); only `use_model_images=True` returns flux-unit model images.
+  The function's docstring says "model-image" and is misleading.
+- **Never do this:** `al.util.over_sample.over_sample_size_via_adapt_from(data=<S/N map>,
+  noise_map=...)`. That helper divides by the noise itself, so feeding it an S/N map divides
+  twice (~18x inflation on HST-depth data — ~90 % of the mask at sub-size 4 instead of
+  ~30 %), and its `signal_to_noise_cut` defaults to 5.0 and silently drops to `max / 2` when
+  the map's maximum is below `2 * cut`. The workspace no longer calls it anywhere.
+- **`source_pix_1` is exempt** — it keeps the library default uniform sub-size (4), because
+  its adapt image comes from the parametric SOURCE LP fit and is not yet reliable enough to
+  steer over-sampling.
+- **Interferometer SLaM does not do this** — a pixelization fit to visibilities cannot be
+  over-sampled.
 
 ## Branch — Delaunay mesh + adaptive brightness regularisation
 

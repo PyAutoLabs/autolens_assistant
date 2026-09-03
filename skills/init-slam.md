@@ -93,9 +93,11 @@ K: group/slam.py
 If a destination file already exists, ask before overwriting.
 
 Every copied pipeline caps its source adapt image at S/N 3.0 on an explicit copy before
-building `al.AdaptImages` — keep that block when adapting a stage, and add it to any stage
-you write yourself ([`al_adaptive_pixelization`](./al_adaptive_pixelization.md), "Adapt
-image S/N cap").
+building `al.AdaptImages`, and (except for the interferometer pipelines) re-applies the
+dataset with an adaptive pixelization over-sampling map from `source_pix_2` onwards — keep
+both blocks when adapting a stage, and add them to any stage you write yourself
+([`al_adaptive_pixelization`](./al_adaptive_pixelization.md), "Adapt image S/N cap" and
+"Adaptive pixelization over-sampling").
 
 After copying, add this banner comment at the very top of each script, before the existing docstring:
 
