@@ -98,7 +98,7 @@ own content with `make chat-bundle`, never copies this one).
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
 `config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
-maintainer smoke tests below, and the free-tier chat surface — `CHOOSING_YOUR_AI_TOOL.md`
+maintainer smoke tests below, and the free-tier chat surface — `docs/archive/CHOOSING_YOUR_AI_TOOL.md`
 and the generated `llms-chat.txt` (the per-platform setup mechanics clone verbatim;
 the worked prompts, dataset names and API rules are domain).
 
@@ -125,7 +125,7 @@ supported.
   files; confirm it produces commands for the user to run instead of claiming execution.
 
 Free-tier options, one per row of the options table in
-[`CHOOSING_YOUR_AI_TOOL.md`](../CHOOSING_YOUR_AI_TOOL.md) (each option's setup page lives under
+[`docs/archive/CHOOSING_YOUR_AI_TOOL.md`](../docs/archive/CHOOSING_YOUR_AI_TOOL.md) (each option's setup page lives under
 `docs/setup/`). Each must be tested **on a free account**, not a paid one with features
 disabled:
 
@@ -146,7 +146,7 @@ disabled:
 - **Custom GPT (`docs/setup/chatgpt_custom_gpt.md`):** run the same two questions as the
   Project-upload check from a **free** ChatGPT account, to confirm knowledge retrieval works
   for a non-builder.
-- **Free coding agents (`docs/setup/antigravity_cli.md`, `docs/setup/opencode_cli.md`):** on a
+- **Free coding agents (`docs/setup/opencode_cli.md`):** on a
   free-tier account/model, clone the repo, launch the agent inside it, and confirm it reads
   `AGENTS.md`, runs the session-start drift check, and completes the first
   plot-the-COSMOS-Web-Ring prompt end-to-end.

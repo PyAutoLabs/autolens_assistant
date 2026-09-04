@@ -10,7 +10,7 @@ teaches concepts faithfully — **but it goes through the free token allowance q
 usage limits are unpublished and vary with load (in the region of a few dozen messages per 5
 hours), and every message carries the pack. Fine for planning sessions and short questions;
 long modelling conversations will hit the ceiling — that is where a
-[paid plan](claude_chat_paid.md) or a [coding agent](antigravity_cli.md) pays for itself.
+[paid plan](claude_chat_paid.md) or a free coding agent such as [OpenCode](opencode_cli.md) pays for itself.
 
 ## Setup (~5 minutes, once)
 

@@ -12,15 +12,12 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 
 ### Choosing Your AI Tool
 
-First, choose how you want to use the assistant:
+There are two kinds of AI tool you could use the assistant with:
 
 * **Conversational AI assistant:** Use a browser-based tool such as **ChatGPT** or **Claude** to ask questions, plan analyses, and generate scripts that you transfer to your computer and run manually.
 * **CLI coding agent:** Use a terminal-based agent such as **Claude Code** or **Codex**. It can work directly on your computer to inspect `.fits` data, write and execute scripts, diagnose errors, run lens models, and inspect their results.
 
-A CLI coding agent provides the most complete `autolens_assistant` experience and is recommended, although a browser-based assistant may feel more familiar and allow you to get started more quickly.
-
-Because AI tools change rapidly, consult **[Choosing Your AI Tool](CHOOSING_YOUR_AI_TOOL.md)** for the latest supported options, including both free and paid services.
-
+**Only CLI coding agents are currently supported**, and the assistant is built for the two paid-subscription coding agents **Claude Code** and **Codex** — these are the simple choices we support and recommend. The free coding agent **OpenCode** shows encouraging early results but does not yet have first-class support (see [Free AI tools](#free-ai-tools) at the bottom of this README). Support for conversational assistants such as ChatGPT is in progress (see [Conversation Assistants](#conversation-assistants)).
 
 ### Using PyAutoLens Assistant
 
@@ -33,44 +30,11 @@ ships with this repository in `dataset/imaging/cosmos_web_ring`:
 Take note of the **lens galaxy, lensed source galaxy, extra galaxy** and the **1.8" circular mask**, your first 
 interactions with the `autolens_assistant` may ask you about how to handle these in your analysis!
 
-As discussed in the **[guide](CHOOSING_YOUR_AI_TOOL.md)**, there are two ways to use `autolens_assistant`, choose
-whichever best suits how you work with AI:
+You will use `autolens_assistant` through a CLI coding agent, as described below.
 
-#### AI Chat Assistant
+### AI Coding Agent (CLI)
 
-Depending on which assistant you chose in the guide, your first message may need to open with its setup
-instructions (for example the GitHub sync bootstrap prompt). 
-
-With that in place, here is a good initial prompt to try it out, noting that data for the COSMOS-Web Ring is included in this repository as an example:
-
-```
-[Setup instructions for your chosen assistant, if its guide page says you need them]
-
-Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens and then given that I'm a 
-new user give me an overview of the different ways we can perform strong lens modeling of this system.
-```
-
-The above prompt will give an overview of the PyAutoLens API for plotting, describe how you can perform lens modeling 
-of the system, and ask you follow up questions which will get a discussion going so you can begin using PyAutoLens
-for a more specific task.
-
-The `autolens_assistant` can easily handle more complex tasks: using the prompt below you'll get an end-to-end Python script for multi-wavelength lens modeling of the COSMOS-Web Ring!
-
-```
-[Setup instructions for your chosen assistant, if its guide page says you need them]
-
-I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring independently, which are in 
-the folder dataset/imaging/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
-isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
-laptop GPU using a JAX optimizer that estimates only the maximum-likelihood solution. Plot the observed image at 
-each wavelength in the left column, its lensed source model in the middle column, and its source on the right column.
-```
-
-#### AI Coding Agent (CLI)
-
-`autolens_assistant` has first-class support for AI coding agents such as **Claude Code**, **Codex**,
-**Antigravity** and **OpenCode**. The [setup guide](CHOOSING_YOUR_AI_TOOL.md) covers each one, including which is
-currently the best free option.
+`autolens_assistant` supports the **Claude Code** and **Codex** coding agents.
 
 Once you have your coding agent setup, clone the `autolens_assistant` repo:
 
@@ -101,8 +65,7 @@ each wavelength in the left column, its lensed source model in the middle column
 
 ## Customize Your Assistant
 
-The `autolens_assistant` adapts its behaviour to suit your prompt both when you are using a conversational assistant (e.g. ChatGPT)
-or coding agent (e.g. Claude):
+The `autolens_assistant` adapts its behaviour to suit your prompt:
 
 - Want to plan your lens modelling analysis and compare the available approaches? Simply say so in your initial prompt.
 
@@ -246,13 +209,27 @@ spotting when a result has caveats.
 
 ## How does PyAutoLens-Assistant actually work?
 
-The `autolens-assistant` starts with the general knowledge and reasoning capabilities of its 
+The `autolens-assistant` starts with the general knowledge and reasoning capabilities of 
 the underlying foundation model you call it with (e.g. ChatGPT's GPT5.6Sol model, Claude's Opus 4.8 model). 
 The `autolens-assistant` supplements this with the scientific wiki above and two more sets of AI-readable markdown. 
 The folder `wiki/core` provides it with a quick look-up mechanism of the PyAutoLens API documentation. The folder
 `skills` pairs it with the end-to-end analysis scripts found in the [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_workspace). When the `autolens-assistant` 
 receives your prompt, it scans these folders to give you the best possible answer
 you need. The JOSS paper located in the `paper` folder provides a more detailed description.
+
+## Conversation Assistants
+
+Conversation assistants such as **ChatGPT** and **Claude** used in the browser are not currently supported. We are
+working on getting them to work with `autolens_assistant` and will reinstate their setup instructions once they do.
+An experimental **[PyAutoLens AI Assistant custom GPT](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant)**
+prototype is available to try, but be warned that its performance is currently not great and it cannot yet do
+everything the coding agents can.
+
+## Free AI tools
+
+We are actively testing free AI tools, but cannot yet provide first-class support for any of them. The free coding
+agent **[OpenCode](docs/setup/opencode_cli.md)** is the most promising option so far, with preliminary testing showing
+encouraging results — if you do not have a paid Claude Code or Codex subscription it is the one to try.
 
 ## Natural-language development ecosystem
 
