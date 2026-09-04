@@ -17,7 +17,9 @@ There are two kinds of AI tool you could use the assistant with:
 * **Conversational AI assistant:** Use a browser-based tool such as **ChatGPT** or **Claude** to ask questions, plan analyses, and generate scripts that you transfer to your computer and run manually.
 * **CLI coding agent:** Use a terminal-based agent such as **Claude Code** or **Codex**. It can work directly on your computer to inspect `.fits` data, write and execute scripts, diagnose errors, run lens models, and inspect their results.
 
-**Both kinds are supported, and both currently require a paid plan.** The recommended route is a CLI coding agent: the paid-subscription agents **[Claude Code](docs/setup/claude_code.md)** and **[Codex](docs/setup/codex_cli.md)**, which install **PyAutoLens**, run fits and inspect their results directly on your computer. Conversation assistants work too: **ChatGPT** on a paid plan (Plus/Pro/Team) reads this repository through its [GitHub connector](docs/setup/chatgpt_paid_connector.md), and **Claude** chat on a paid plan (Pro/Max/Team) reads it as [Project knowledge](docs/setup/claude_chat_paid.md) — the paid plan is about usage limits, not a paid GitHub integration. Free options are being tested but do not yet have first-class support: the free coding agent **OpenCode** is the most promising (see [Free AI tools](#free-ai-tools) at the bottom of this README), and the free chat routes are listed under [Conversation Assistants](#conversation-assistants).
+**Both kinds are supported, and both currently require a paid plan.** The recommended route is a CLI coding agent: the paid-subscription agents **[Claude Code](docs/setup/claude_code.md)** and **[Codex](docs/setup/codex_cli.md)**, which install **PyAutoLens**, run fits and inspect their results directly on your computer. Conversation assistants work too: **ChatGPT** on a paid plan (Plus/Pro/Team) reads this repository through its [GitHub connector](docs/setup/chatgpt_paid_connector.md), and **Claude** chat on a paid plan (Pro/Max/Team) reads it live through its [GitHub connector](docs/setup/claude_chat_paid.md).
+
+**Free options are being tested** but do not yet have first-class support: the free coding agent **OpenCode** is the most promising (see [Free AI tools](#free-ai-tools) at the bottom of this README), and the free chat routes are listed under [Conversation Assistants](#conversation-assistants).
 
 ### Using PyAutoLens Assistant
 
@@ -227,14 +229,13 @@ that, pair it with a coding agent, which shares the same subscription.
 | Option | Cost | How well it works |
 |---|---|---|
 | **[ChatGPT](docs/setup/chatgpt_paid_connector.md)** | Paid (Plus/Pro/Team) | Works brilliantly via GitHub sync (different from the custom GPT) |
-| **[Claude chat](docs/setup/claude_chat_paid.md)** | Paid (Pro/Max/Team) | Works brilliantly via repo input (Project knowledge) |
-| **[Claude chat](docs/setup/claude_chat_free.md)** | Free | Works, but requires project setup and goes through the free tokens quickly |
+| **[Claude chat](docs/setup/claude_chat_paid.md)** | Paid (Pro/Max/Team) | Works brilliantly via its GitHub connector |
+| **[Claude chat](docs/setup/claude_chat_free.md)** | Free | Works via project setup, but the free tier's GitHub connector is missing features that hurt performance, and it goes through the free tokens quickly |
 | **[ChatGPT custom GPT](docs/setup/chatgpt_custom_gpt.md)** | Free | Works, but not yet able to do all tasks (experimental) |
 | **[Paste the bundle](docs/setup/paste_bundle.md)** | Free | Reliable fallback for any AI chat |
 
-Claude's own GitHub connector would be the neater route, but an open bug currently leaves it attaching repositories
-without making their content readable, so Project knowledge is the route for now — a paid plan buys usage limits, not
-a paid GitHub integration.
+On paid plans both ChatGPT and Claude read this repository live through their GitHub connectors; on free plans use the
+routes in the table.
 
 The free routes are worth knowing about but are degraded: the experimental
 **[PyAutoLens AI Assistant custom GPT](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant)**

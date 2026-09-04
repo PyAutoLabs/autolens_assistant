@@ -33,9 +33,10 @@ Every chat in that project is now configured. You can add your own papers or dat
 the same project knowledge.
 
 > **Notes.** Claude Projects can't be shared on Free or Pro (sharing is a Team/Enterprise
-> feature), so each person does this once for themselves. Don't bother with the GitHub
-> connector for now — an open bug leaves it attaching repositories without making their
-> content readable (see [Troubleshooting](troubleshooting.md)).
+> feature), so each person does this once for themselves. The Free tier's GitHub connector is
+> missing features which hurt performance, so use the Project + knowledge pack here (see
+> [Troubleshooting](troubleshooting.md)); on a paid plan the connector works excellently —
+> see [Claude chat — paid plans](claude_chat_paid.md).
 
 ## What it can and can't do
 
