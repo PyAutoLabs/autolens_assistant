@@ -3,8 +3,8 @@
 > **Retired for free and individual Google accounts on June 18, 2026.** Gemini CLI and the
 > Gemini Code Assist IDE extensions stopped serving requests for free, Google AI Pro and
 > Google AI Ultra individual tiers on that date, replaced by
-> **[Antigravity CLI](antigravity_cli.md)** — which is now our recommended best free option.
-> If you're setting up fresh, use that page instead.
+> a free coding agent such as **[OpenCode](opencode_cli.md)**. If you're setting up fresh, use a paid
+> **Claude Code** or **Codex** subscription — the two supported options — or that page instead.
 
 Gemini CLI still works for **enterprise** users (Gemini Code Assist Standard/Enterprise,
 Google Cloud access) and for anyone calling it with a **paid Gemini API key**. In that case
