@@ -15,7 +15,7 @@ reliably fail there — `blob/` returns a JavaScript shell, not the file.)
 | You are using | Do this |
 |---|---|
 | **A coding agent** (Claude Code, Codex, OpenCode) | Clone the repo and open the agent inside it. `AGENTS.md` loads automatically; nothing below is needed. |
-| **Chat with a GitHub connector** (ChatGPT paid; Claude's connector is currently unreliable — see the setup guide) | Enable the connector, then use the bootstrap prompt below. |
+| **Chat with a GitHub connector** (ChatGPT or Claude on a paid plan) | Enable the connector, then use the bootstrap prompt below. |
 | **Chat with browsing but no connector** | Use the bootstrap prompt below — it points at raw URLs, which fetch fine. |
 | **Chat with neither** (incl. ChatGPT Free) | Paste [`llms-chat.txt`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/llms-chat.txt) — a self-contained ~6k-token bundle carrying the rules and the current API surface. |
 | **A Claude Project, or a custom GPT** | Upload the files in [`chat_pack/`](https://github.com/PyAutoLabs/autolens_assistant/tree/main/chat_pack) as knowledge. |

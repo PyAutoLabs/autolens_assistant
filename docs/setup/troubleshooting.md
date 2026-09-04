@@ -4,15 +4,14 @@ Failure modes we know about across the conversational-AI options. If you hit som
 listed here, [open a GitHub issue](https://github.com/PyAutoLabs/autolens_assistant/issues)
 — these surfaces change fast and user reports are how the guide stays current.
 
-**Claude's GitHub connector attaches the repo but just inserts a `github.com/.../tree/main`
-link into the message.**
-This is the open connector bug
-([claude-code#71542](https://github.com/anthropics/claude-code/issues/71542)), which we
-reproduced on our own Free-account test (2026-08-06). Some accounts have recovered by
-connecting the repo inside a **brand-new Project**, or by disconnecting the connector fully
-(also revoke Claude under GitHub → Settings → Applications) and reconnecting — but don't
-sink time into it: the [Project + knowledge pack](claude_chat_free.md) needs no connector
-at all and works today.
+**Claude attaches the repo but just inserts a `github.com/.../tree/main` link into the
+message, and can't read the files.**
+This is the Free tier's connector lacking features the paid connector has; we reproduced it
+on our own Free-account test (2026-08-06). On a **paid plan** (Pro/Max/Team) the connector
+works excellently — connect it and use the bootstrap prompt on
+[Claude chat — paid plans](claude_chat_paid.md). On the **Free plan**, don't sink time into
+the connector: use the [Project + knowledge pack](claude_chat_free.md), which needs no
+connector at all.
 
 **"I can't access that repository" / it answers from memory anyway.**
 The most common cause is a `blob/` URL — `github.com/.../blob/main/llms.txt` is an HTML page

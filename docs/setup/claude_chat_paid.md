@@ -1,22 +1,42 @@
-# Claude chat — paid plans (repo input via Project knowledge)
+# Claude chat — paid plans (GitHub connector)
 
-Run the assistant inside claude.ai on a **paid plan** (Pro/Max/Team) by giving it the
-repository as Project knowledge. **This works brilliantly:** the higher usage limits remove
-the token squeeze that constrains the [Free-plan route](claude_chat_free.md), so long
-modelling conversations, deep concept dives and multi-script planning sessions all run
-without hitting the ceiling.
+Run the assistant inside claude.ai on a **paid plan** (Pro/Max/Team) by connecting this
+repository through Claude's GitHub connector. **It works excellently:** the assistant reads
+the repository directly, always sees current content, and grounds every PyAutoLens symbol in
+the live API surface. The higher usage limits also remove the token squeeze that constrains
+the [Free-plan route](claude_chat_free.md), so long modelling conversations, deep concept
+dives and multi-script planning sessions all run without hitting the ceiling.
 
-## Setup (~5 minutes, once)
+On Claude's Free plan the connector is missing features which hurt performance, which is why
+that route uses a Project + knowledge pack instead.
 
-The setup is the same Project + knowledge-pack recipe as the Free route — follow
-[Claude chat — Free plan](claude_chat_free.md) steps 1–3. On paid plans you additionally
-have room to drop your own papers, data notes and analysis logs into the same project
-knowledge without crowding anything out.
+## Setup (~2 minutes)
 
-> **GitHub connector.** Reading the repository live via the GitHub connector would be even
-> better, but an open bug currently leaves the connector attaching repositories without
-> making their content readable (see [Troubleshooting](troubleshooting.md)). When it
-> recovers, this page will switch to recommending it.
+1. In Claude, open **Settings → Connectors** and connect **GitHub**. Authorise access to
+   public repositories (this repo is public — you don't need to grant anything of your own),
+   then attach `https://github.com/PyAutoLabs/autolens_assistant`.
+2. Start a chat with this bootstrap prompt:
+
+```text
+Use the autolens_assistant repository: https://github.com/PyAutoLabs/autolens_assistant
+
+Start by reading its front door:
+https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/llms.txt
+
+Follow its read order (AGENTS_CHAT.md → the relevant skill → wiki) and its API rules.
+First tell me whether you can actually read llms.txt — if you can't, say so plainly
+and don't answer from memory.
+```
+
+**Naming `llms.txt` explicitly matters** — connectors do not reliably find it on their own,
+and answers are markedly better when it is pointed there first. The final sentence is a
+deliberate honesty check: if the assistant can't read the file, you want to know immediately,
+not after it writes you a script from a 2023 API.
+
+**Prefer uploading to connecting?** Project knowledge remains a fine alternative: follow
+[Claude chat — Free plan](claude_chat_free.md) steps 1–3. On a paid plan the higher limits
+leave room for your own papers, data notes and analysis logs in the same project knowledge
+too.
 
 ## What it can and can't do
 
@@ -31,6 +51,15 @@ You're set up — copy and paste this to start (the COSMOS-Web Ring data ships w
 repository, so it works immediately):
 
 ```text
+Use the autolens_assistant repository: https://github.com/PyAutoLabs/autolens_assistant
+
+Start by reading its front door:
+https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/llms.txt
+
+Follow its read order (AGENTS_CHAT.md → the relevant skill → wiki) and its API rules.
+First tell me whether you can actually read llms.txt — if you can't, say so plainly
+and don't answer from memory.
+
 Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens
 and then given that I'm a new user give me an overview of the different ways we can
 perform strong lens modeling of this system.
