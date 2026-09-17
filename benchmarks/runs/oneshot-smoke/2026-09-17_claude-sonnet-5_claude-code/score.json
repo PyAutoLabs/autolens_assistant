@@ -1,0 +1,54 @@
+{
+  "card": "oneshot-smoke",
+  "version": 1,
+  "prompt_sha256": "a8b88b8dbe674653ea0385b8f795d2afd89709089401a6f5d6b6cc2cca108089",
+  "model": "claude-sonnet-5",
+  "harness": "claude-code",
+  "date": "2026-09-17",
+  "gates": [
+    {
+      "name": "finished",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "schema",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "compute_budget",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "run_budget",
+      "passed": true,
+      "reason": null
+    }
+  ],
+  "metrics": [
+    {
+      "name": "files_exist",
+      "value": 1.0,
+      "detail": "2/2 listed path(s) exist"
+    },
+    {
+      "name": "files_document_search",
+      "value": 1.0,
+      "detail": "skills/al_configure_search.md"
+    },
+    {
+      "name": "search_is_recommended",
+      "value": 1.0,
+      "detail": "search='Nautilus' (expected 'Nautilus')"
+    },
+    {
+      "name": "summary_length",
+      "value": 1.0,
+      "detail": "2 sentence(s)"
+    }
+  ],
+  "score": 100.0,
+  "reason": null
+}

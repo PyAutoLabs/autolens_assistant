@@ -71,7 +71,10 @@ sentinel), the skills framework
 lifecycle (`start-new-project`, `contribute-upstream`), `sources.yaml` + the source
 registry pattern, the API gate (`autoassistant/audit_skill_apis.py` + wiki-currency
 workflow), the profile template, the benchmark machinery (the
-`benchmarks/AGENTS.md` contract + the `autoassistant/benchmark.py` harness), and
+`benchmarks/AGENTS.md` contract + the `autoassistant/benchmark.py` harness, with
+`benchmarks/harnesses.yaml` — the headless command templates per agent runtime —
+and `benchmarks/VERSIONS.lock`, whose *shape* is generic while its entries are
+regenerated per reference), and
 `.mcp.json` (it wires the results-inspector MCP, which *is* `autoassistant.mcp` —
 generic tooling, so the wiring carries no domain either), and the harness adapters
 (`.claude/`, `.gemini/settings.json`) that point each coding agent at `AGENTS.md`.
@@ -80,8 +83,10 @@ generic tooling, so the wiring carries no domain either), and the harness adapte
 `al_*` skill body, `wiki/core/` reference pages, the entire `wiki/literature/` sub-wiki,
 bundled `dataset/` examples, the README's science framing and three example prompts, the
 standard-imports convention, `hpc/` templates tuned to lensing runtimes, the
-benchmark prompt cards (`benchmarks/prompts/` — a new domain writes its own
-easy/medium/hard assistant + teacher cards against its own bundled data), the
+benchmark prompt cards (`benchmarks/prompts/` — the cards *and* each one-shot
+card's own `score.py`, since what an answer is worth is domain knowledge; a new
+domain writes its own cards against its own bundled data) and the hidden
+reference values behind them (`benchmarks/truth/`), the
 **euclid mode** (`skills/euclid_*.md` + the `wiki/euclid/` sub-wiki — a
 survey-specific pipeline register that is lensing science throughout; a newborn
 grows whatever survey modes its own domain has, if any), `paper/` (this
@@ -115,6 +120,11 @@ and the frozen card is `benchmarks/prompts/harness_smoke.md`: grounded answering
 whose figure the agent must actually look at, and recovery from a planted stale-API error.
 Scaffold, score and report it exactly like a science benchmark
 (`python autoassistant/benchmark.py new-run harness-smoke --model <m> --harness <h>`).
+Before spending an operator's half hour on it, run the cheap headless check —
+`python autoassistant/benchmark.py run oneshot-smoke --model <m> --harness <h>` — which drives
+the harness one-shot with no operator and computes its own score: it is the first thing to run
+on a newborn clone or a new agent runtime, and a zero there (a question asked, no `result.json`,
+a blown budget) disqualifies the configuration before the rubric card is worth starting.
 
 Run it after documentation changes are on the public repository, and:
 
