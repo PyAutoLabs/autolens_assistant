@@ -62,13 +62,18 @@ def _run_validator(*args: str) -> subprocess.CompletedProcess:
 
 
 def _run_hook(command: str, *, env_extra: dict | None = None) -> subprocess.CompletedProcess:
-    payload = json.dumps(
-        {"tool_name": "Bash", "cwd": str(ROOT), "hook_event_name": "PreToolUse",
-         "tool_input": {"command": command}}
-    )
+    payload = {"tool_name": "Bash", "cwd": str(ROOT),
+               "hook_event_name": "PreToolUse",
+               "turn_id": "codex-turn", "tool_use_id": "codex-call",
+               "tool_input": {"command": command}}
+    return _run_hook_payload(payload, env_extra=env_extra)
+
+
+def _run_hook_payload(payload, *, env_extra=None) -> subprocess.CompletedProcess:
+    body = payload if isinstance(payload, str) else json.dumps(payload)
     return subprocess.run(
         [sys.executable, str(HOOK)],
-        input=payload, capture_output=True, text=True,
+        input=body, capture_output=True, text=True,
         env={**ENV, **(env_extra or {})}, timeout=180,
     )
 
@@ -137,6 +142,23 @@ def test_hook_allows_non_python_command_without_import():
     # Pre-screen must short-circuit (no autolens import) — assert both allow and speed.
     proc = _run_hook("ls -la /tmp")
     assert _decision(proc) is None
+
+
+@pytest.mark.parametrize("payload", ["not-json", "[]", '{"tool_input":7}'])
+def test_codex_malformed_payload_fails_open_without_crashing(payload):
+    proc = _run_hook_payload(payload)
+    assert proc.returncode == 0
+    assert proc.stdout == ""
+    assert proc.stderr == ""
+
+
+def test_codex_project_config_registers_the_shared_api_gate():
+    config = json.loads((ROOT / ".codex" / "hooks.json").read_text())
+    groups = config["hooks"]["PreToolUse"]
+    bash = next(group for group in groups if group["matcher"] == "Bash")
+    command = bash["hooks"][0]["command"]
+    assert "git rev-parse --show-toplevel" in command
+    assert ".claude/hooks/validate_pyauto_code.py" in command
 
 
 def test_hook_allows_non_python_command_that_mentions_py_file(tmp_path):
