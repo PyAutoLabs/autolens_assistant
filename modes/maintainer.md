@@ -77,7 +77,8 @@ and `benchmarks/VERSIONS.lock`, whose *shape* is generic while its entries are
 regenerated per reference), and
 `.mcp.json` (it wires the results-inspector MCP, which *is* `autoassistant.mcp` —
 generic tooling, so the wiring carries no domain either), and the harness adapters
-(`.claude/`, `.gemini/settings.json`) that point each coding agent at `AGENTS.md`.
+(`.claude/`, `.codex/hooks.json`, `.gemini/settings.json`) that load the canonical
+instructions or register the shared assistant safety gates.
 
 **PyAutoLens-specific content** (regenerated per domain, never copied blind): every
 `al_*` skill body, `wiki/core/` reference pages, the entire `wiki/literature/` sub-wiki,
