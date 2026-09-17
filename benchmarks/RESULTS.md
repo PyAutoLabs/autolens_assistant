@@ -12,7 +12,13 @@ Headless runs, computed scores: every gate must pass, each metric reads 0–1, a
 
 ### oneshot-smoke
 
-_No runs recorded yet._
+| Prompt v | Model | Harness | Runs | Median | Min–max | Median wall s | Median compute s |
+|----------|-------|---------|------|--------|---------|---------------|------------------|
+| 1 | claude-sonnet-5 | claude-code | 1 | 75 | 75–75 | 23.7 | 0.3 |
+
+| Date | Model | Harness | Score | Gate failure | Wall s | Run |
+|------|-------|---------|-------|--------------|--------|-----|
+| 2026-09-17 | claude-sonnet-5 | claude-code | 75 | — | 23.7 | `runs/oneshot-smoke/2026-09-17_claude-sonnet-5_claude-code` |
 
 ## harness-smoke
 

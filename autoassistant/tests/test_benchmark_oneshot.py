@@ -246,7 +246,8 @@ def test_run_end_to_end_scores_100(root):
     assert (run_dir / "transcript.jsonl").read_text().strip() == "done."
     assert (run_dir / "stderr.log").exists()
     assert json.loads((run_dir / "result.json").read_text()) == {"answer": 42}
-    assert not (run_dir / "workdir").exists()  # deleted by default
+    assert not (run_dir / "workdir").exists()  # scaffolding, deleted by default
+    assert not (run_dir / "bin").exists()  # ditto the shims (compute.log stays)
 
     meta = yaml.safe_load((run_dir / "meta.yaml").read_text())
     assert meta["benchmark"] == "fake-card" and meta["kind"] == "oneshot"
@@ -277,6 +278,7 @@ def test_run_keeps_workdir_on_request_without_the_hidden_dirs(root):
     assert (workdir / "benchmarks" / "harnesses.yaml").is_file()
     assert not (workdir / "benchmarks" / "truth").exists()
     assert not (workdir / "benchmarks" / "runs").exists()
+    assert (run_dir / "bin" / "python").is_file()
 
 
 def test_question_run_fails_the_finished_gate(root):

@@ -1,0 +1,28 @@
+benchmark: oneshot-smoke
+kind: oneshot
+prompt_version: 1
+prompt_sha256: a8b88b8dbe674653ea0385b8f795d2afd89709089401a6f5d6b6cc2cca108089
+date: '2026-09-17'
+model: claude-sonnet-5
+harness: claude-code
+assistant_sha: da943d6
+stack:
+  autolens: not-installed
+  autofit: not-installed
+  autoarray: not-installed
+  autonerves: not-installed
+hardware:
+  system: Linux
+  machine: x86_64
+  cpu_count: 4
+  python: 3.12.3
+run:
+  wall_seconds: 23.7
+  compute_seconds: 0.3
+  tokens_in: 384788
+  tokens_out: 2298
+  cost_usd: 0.21959660000000003
+  turns: 10
+  exit_code: 0
+status: complete
+score: 75.0

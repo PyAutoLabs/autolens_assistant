@@ -1,0 +1,8 @@
+{
+  "search": "Nautilus",
+  "files": [
+    "skills/al_configure_search.md",
+    "wiki/core/api/searches.md"
+  ],
+  "summary": "The assistant recommends af.Nautilus (nested sampling) as the default non-linear search, including for a first exploratory fit, and no dataset-specific override exists for the COSMOS-Web Ring in its wiki entity page. skills/al_configure_search.md states Nautilus is 'the right first pick' for most lens models, and wiki/core/api/searches.md's 'Picking a search at a glance' table lists Nautilus for 'First-fit, model under ~30 free params'."
+}

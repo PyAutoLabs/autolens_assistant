@@ -91,9 +91,13 @@ What `run` does, in order:
    `transcript.jsonl`, stderr → `stderr.log`, killed at the card's
    `run_seconds` budget + 60 s (recorded as `exit_code: timeout`).
 5. **Scores** (see below), writes `score.json` and `meta.yaml`, copies the PNGs
-   `result.json` named into `artifacts/` (≤ 500 KB), and deletes `workdir/`
-   unless `--keep-workdir` was passed. `result.json` lives in the *run dir*, not
-   the workdir, so it survives.
+   `result.json` named into `artifacts/` (≤ 500 KB), and deletes `workdir/` and
+   the shim `bin/` unless `--keep-workdir` was passed. `result.json` lives in the
+   *run dir*, not the workdir, so it survives — and so does `compute.log`.
+   A session's own hooks can leave a file or two beside the workdir (the
+   assistant's session-start hook writes a `.claude/` there, because the workdir's
+   parent looks like a workspace root); that is debris, not record — delete it
+   before committing the run.
 
 Re-score a recorded run without re-running the agent:
 
@@ -129,6 +133,12 @@ claude-code:
 A new runtime needs a headless, non-interactive mode that exits by itself, and
 its transcript format needs a parser in `benchmark.py` (`plain` — the whole file
 as the final text — always works, at the price of token/cost columns).
+
+The templates carry no environment, so an environment quirk is the operator's to
+pass in. One worth knowing: `claude`'s `--permission-mode bypassPermissions`
+refuses to run as root, so inside a root container the run needs
+`IS_SANDBOX=1 python autoassistant/benchmark.py run …` — without it every run
+fails with an empty transcript and `no_result_json`.
 
 ## The score contract
 

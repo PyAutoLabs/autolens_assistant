@@ -1000,7 +1000,9 @@ def _execute_oneshot(
     result, _error = read_result(run_dir)
     collect_artifacts(run_dir, result, workdir)
     if not keep_workdir:
+        # The workdir and the shims are scaffolding; compute.log is the record.
         shutil.rmtree(workdir, ignore_errors=True)
+        shutil.rmtree(bin_dir, ignore_errors=True)
     return run_dir
 
 
