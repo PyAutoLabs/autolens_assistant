@@ -93,11 +93,11 @@ def score(ctx):
 
     metrics = [
         Metric(
+            # The detail names no directory: `score-oneshot` must reproduce this
+            # byte for byte after the workdir has been deleted.
             "files_exist",
             fraction,
-            f"{len(existing)}/{len(listed)} listed path(s) exist under {base.name}"
-            if listed
-            else "no files listed",
+            f"{len(existing)}/{len(listed)} listed path(s) exist" if listed else "no files listed",
         ),
         Metric("files_document_search", documents, citation),
         Metric(

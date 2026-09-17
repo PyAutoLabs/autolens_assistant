@@ -502,11 +502,11 @@ def test_repo_versions_lock_matches_the_committed_cards():
 # --- the committed oneshot-smoke card ------------------------------------
 
 
-def _smoke_ctx(tmp_path, result):
+def _smoke_ctx(tmp_path, result, workdir=None):
     card = benchmark.load_oneshot_cards(REPO_ROOT)["oneshot-smoke"]
     return benchmark.RunContext(
         run_dir=tmp_path,
-        workdir=None,
+        workdir=workdir,
         result=result,
         truth_dir=benchmark.benchmarks_dir(REPO_ROOT) / "truth",
         card=card,
@@ -572,3 +572,21 @@ def test_smoke_card_copes_with_no_result(tmp_path):
     )
     card_score = scorer.score(_smoke_ctx(tmp_path, None))
     assert [m.value for m in card_score.metrics] == [0.0, 0.0, 0.0, 0.0]
+
+
+def test_smoke_card_scores_the_same_with_and_without_a_workdir(tmp_path):
+    """`score-oneshot` runs after the workdir is gone, so it must not read differently."""
+    scorer = benchmark.load_card_scorer(
+        benchmark.load_oneshot_cards(REPO_ROOT)["oneshot-smoke"]
+    )
+    result = {
+        "search": "Nautilus",
+        "files": ["skills/al_configure_search.md"],
+        "summary": "Nautilus, per the search skill.",
+    }
+
+    def readings(workdir):
+        card_score = scorer.score(_smoke_ctx(tmp_path, result, workdir=workdir))
+        return [(m.name, m.value, m.detail) for m in card_score.metrics]
+
+    assert readings(REPO_ROOT) == readings(None)

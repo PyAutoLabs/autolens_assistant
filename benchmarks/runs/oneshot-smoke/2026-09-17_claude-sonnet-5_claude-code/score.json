@@ -31,7 +31,7 @@
     {
       "name": "files_exist",
       "value": 1.0,
-      "detail": "2/2 listed path(s) exist under workdir"
+      "detail": "2/2 listed path(s) exist"
     },
     {
       "name": "files_document_search",
