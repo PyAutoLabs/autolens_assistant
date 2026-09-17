@@ -7,6 +7,8 @@ validate-literature-citations:
 audit:
 	python autoassistant/audit_skill_apis.py
 
-# Assistant tooling test suite (slow: the gate tests import autolens per case).
+# Assistant tooling test suite (slow: the gate tests import autolens per case),
+# plus the one-shot prompt freeze (card hashes vs benchmarks/VERSIONS.lock).
 test:
 	python -m pytest autoassistant/tests -q
+	python autoassistant/benchmark.py freeze-check

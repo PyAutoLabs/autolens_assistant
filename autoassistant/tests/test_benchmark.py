@@ -146,32 +146,25 @@ def test_report_builds_leaderboard_and_pending(root):
 
 
 def test_repo_prompt_cards_parse():
-    """Every committed prompt card must load: unique ids, frontmatter, rubric."""
+    """Every committed rubric card must load: unique ids, frontmatter, rubric."""
     cards = benchmark.load_cards(REPO_ROOT)
-    assert set(cards) == {
-        "assistant-easy-cosmos-web-ring",
-        "assistant-medium-slacs0946-subhalo",
-        "assistant-hard-group-multi",
-        "teacher-basic-workflow",
-        "harness-smoke",
-    }
+    assert set(cards) == {"harness-smoke"}
     for card in cards.values():
         machine = sum(r.max_points for r in card.rubric if r.machine)
         judged = sum(r.max_points for r in card.rubric if not r.machine)
         assert machine + judged == 100, f"{card.id}: rubric totals {machine + judged}"
 
 
+def test_repo_oneshot_cards_parse():
+    """Every committed one-shot card must load with a unique id."""
+    cards = benchmark.load_oneshot_cards(REPO_ROOT)
+    assert set(cards) == {"oneshot-smoke"}
+
+
 def test_repo_card_datasets_exist():
     """Bundled datasets a card declares must exist — a missing one is a stale card."""
-    for card in benchmark.load_cards(REPO_ROOT).values():
+    cards = list(benchmark.load_cards(REPO_ROOT).values())
+    cards += list(benchmark.load_oneshot_cards(REPO_ROOT).values())
+    for card in cards:
         for dataset in card.meta.get("datasets", []):
             assert (REPO_ROOT / dataset).is_dir(), f"{card.id}: missing {dataset}"
-
-
-def test_repo_readme_prompts_match_cards():
-    """Cards that mirror README example prompts must stay textually identical."""
-    readme = (REPO_ROOT / "README.md").read_text()
-    for name in ("easy_cosmos_web_ring", "medium_slacs0946_subhalo", "teacher_workflow"):
-        card_text = (REPO_ROOT / "benchmarks" / "prompts" / f"{name}.md").read_text()
-        prompt = card_text.split("```\n", 1)[1].split("```", 1)[0]
-        assert prompt.strip() in readme, f"{name}: prompt text diverges from README.md"

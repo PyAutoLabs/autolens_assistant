@@ -1,0 +1,8 @@
+# Prompt freeze, append-only. One entry per published version of a one-shot
+# card's prompt: `benchmark.py freeze-check` (and the test suite) require a
+# card's frontmatter `prompt_sha256` to equal the sha256 of its stripped prompt
+# text and to match the LAST entry here. Editing a published prompt therefore
+# means bumping `version:` and appending a new entry — never rewriting one.
+oneshot-smoke:
+  - version: 1
+    prompt_sha256: a8b88b8dbe674653ea0385b8f795d2afd89709089401a6f5d6b6cc2cca108089

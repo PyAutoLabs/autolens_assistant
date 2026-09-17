@@ -1,0 +1,7 @@
+# Headless command templates for `benchmark.py run`. Placeholders: {prompt}, {workdir}, {model}, {run_dir}.
+claude-code:
+  command: ["claude", "-p", "{prompt}", "--output-format", "stream-json", "--verbose", "--model", "{model}", "--permission-mode", "bypassPermissions", "--max-turns", "150"]
+  transcript: claude-stream-json
+codex:
+  command: ["codex", "exec", "--json", "--full-auto", "--model", "{model}", "{prompt}"]
+  transcript: codex-jsonl
