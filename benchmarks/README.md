@@ -94,10 +94,10 @@ What `run` does, in order:
    `result.json` named into `artifacts/` (≤ 500 KB), and deletes `workdir/` and
    the shim `bin/` unless `--keep-workdir` was passed. `result.json` lives in the
    *run dir*, not the workdir, so it survives — and so does `compute.log`.
-   A session's own hooks can leave a file or two beside the workdir (the
+   A session's own hooks can leave a dot-entry beside the workdir (the
    assistant's session-start hook writes a `.claude/` there, because the workdir's
-   parent looks like a workspace root); that is debris, not record — delete it
-   before committing the run.
+   parent looks like a workspace root); the runner deletes any dot-entry that
+   appeared during the run — debris, not record.
 
 Re-score a recorded run without re-running the agent:
 

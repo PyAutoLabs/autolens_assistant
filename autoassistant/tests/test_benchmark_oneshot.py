@@ -92,6 +92,18 @@ QUESTION_AGENT = """\
 print("Which dataset do you mean?")
 """
 
+DEBRIS_AGENT = """\
+import json, os, sys
+run_dir = sys.argv[1]
+# A session-start hook that mistakes the workdir's parent for a workspace root.
+os.makedirs(run_dir + "/.claude", exist_ok=True)
+with open(run_dir + "/.claude/settings.local.json", "w") as f:
+    f.write("{}")
+with open(run_dir + "/result.json", "w") as f:
+    json.dump({"answer": 42}, f)
+print("done.")
+"""
+
 SLOW_AGENT = """\
 import json, subprocess, sys
 run_dir = sys.argv[1]
@@ -118,6 +130,7 @@ def root(tmp_path):
     (agents / "fake_agent.py").write_text(FAKE_AGENT)
     (agents / "question_agent.py").write_text(QUESTION_AGENT)
     (agents / "slow_agent.py").write_text(SLOW_AGENT)
+    (agents / "debris_agent.py").write_text(DEBRIS_AGENT)
 
     card_dir = repo / "benchmarks" / "prompts" / "oneshot" / "fake-card"
     card_dir.mkdir(parents=True)
@@ -140,6 +153,7 @@ def root(tmp_path):
                 "fake": harness("fake_agent.py"),
                 "fake-question": harness("question_agent.py"),
                 "fake-slow": harness("slow_agent.py"),
+                "fake-debris": harness("debris_agent.py"),
             },
             sort_keys=False,
         )
@@ -269,6 +283,24 @@ def test_run_end_to_end_scores_100(root):
     ]
     assert all(g["passed"] for g in payload["gates"])
     assert [m["name"] for m in payload["metrics"]] == ["answer"]
+
+
+def test_run_removes_hook_debris_beside_the_workdir(root):
+    run_dir = _run(root, harness="fake-debris")
+    assert not (run_dir / ".claude").exists()
+    assert json.loads((run_dir / "result.json").read_text()) == {"answer": 42}
+    assert json.loads((run_dir / "score.json").read_text())["score"] == 100
+
+
+def test_score_oneshot_refreshes_meta_score(root):
+    run_dir = _run(root)
+    meta_path = run_dir / "meta.yaml"
+    meta = yaml.safe_load(meta_path.read_text())
+    meta["score"] = 12.5  # a stale number from an older score.py
+    meta_path.write_text(yaml.safe_dump(meta, sort_keys=False))
+    benchmark.score_oneshot(root, run_dir)
+    assert yaml.safe_load(meta_path.read_text())["score"] == 100
+    assert yaml.safe_load(meta_path.read_text())["status"] == "complete"
 
 
 def test_run_keeps_workdir_on_request_without_the_hidden_dirs(root):
@@ -532,6 +564,27 @@ def test_smoke_card_scores_a_correct_answer(tmp_path):
         "search_is_recommended": 1.0,
         "summary_length": 1.0,
     }
+
+
+def test_smoke_card_sentence_count_ignores_dots_inside_paths(tmp_path):
+    """The first real run wrote two sentences citing `skills/al_configure_search.md`
+    and `af.Nautilus`; a naive split on '.' read that as five and scored 0."""
+    card = benchmark.load_oneshot_cards(REPO_ROOT)["oneshot-smoke"]
+    scorer = benchmark.load_card_scorer(card)
+    result = {
+        "search": "Nautilus",
+        "files": ["skills/al_configure_search.md"],
+        "summary": (
+            "The assistant recommends af.Nautilus (nested sampling) as the default, "
+            "including for a first exploratory fit. skills/al_configure_search.md states it "
+            "is 'the right first pick' and wiki/core/api/searches.md's table agrees."
+        ),
+    }
+    metrics = {m.name: m for m in scorer.score(_smoke_ctx(tmp_path, result)).metrics}
+    assert metrics["summary_length"].value == 1.0
+    assert metrics["summary_length"].detail == "2 sentence(s)"
+    assert scorer._sentences("No terminal punctuation at all") == 1
+    assert scorer._sentences("") == 0
 
 
 def test_smoke_card_penalises_a_wrong_or_ungrounded_answer(tmp_path):

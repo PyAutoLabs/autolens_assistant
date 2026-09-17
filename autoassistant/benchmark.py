@@ -706,6 +706,7 @@ def score_oneshot(
 ) -> dict:
     """Compute (or recompute) a one-shot run's score.json from its run dir."""
     run_dir = Path(run_dir).resolve()
+    write_meta = meta is None
     if meta is None:
         meta_path = run_dir / "meta.yaml"
         if not meta_path.exists():
@@ -764,6 +765,12 @@ def score_oneshot(
         "reason": first_failure(gates),
     }
     (run_dir / "score.json").write_text(json.dumps(payload, indent=2) + "\n")
+    if write_meta:
+        # A re-score (`score-oneshot`) must also refresh what RESULTS.md reads.
+        finished = next((g for g in gates if g.name == "finished"), None)
+        meta["status"] = "complete" if finished and finished.passed else "failed"
+        meta["score"] = payload["score"]
+        (run_dir / "meta.yaml").write_text(yaml.safe_dump(meta, sort_keys=False))
     return payload
 
 
@@ -885,6 +892,27 @@ def collect_artifacts(
     return copied
 
 
+def remove_hook_debris(run_dir: Path, before: set[str]) -> list[str]:
+    """Delete dot-entries the session's own hooks dropped beside the workdir.
+
+    The benchmarked session runs with `cwd=workdir`, whose parent is the run
+    dir, and a harness hook that looks for a workspace root can leave e.g. a
+    `.claude/` there. Only entries that did not exist before the run and whose
+    name starts with a dot are removed — nothing the agent was asked to write
+    is hidden, so the record is untouched.
+    """
+    removed = []
+    for entry in Path(run_dir).iterdir():
+        if entry.name in before or not entry.name.startswith("."):
+            continue
+        if entry.is_dir() and not entry.is_symlink():
+            shutil.rmtree(entry, ignore_errors=True)
+        else:
+            entry.unlink(missing_ok=True)
+        removed.append(entry.name)
+    return removed
+
+
 def oneshot_meta_dict(
     card: OneShotCard,
     model: str,
@@ -949,6 +977,7 @@ def _execute_oneshot(
     env = dict(os.environ)
     env["PATH"] = f"{bin_dir}{os.pathsep}{env.get('PATH', '')}"
     env["PYAUTO_BENCHMARK_RUN_DIR"] = str(run_dir)
+    before = {entry.name for entry in run_dir.iterdir()}
 
     timeout = card.run_seconds + RUN_TIMEOUT_GRACE
     exit_code: int | str
@@ -999,6 +1028,7 @@ def _execute_oneshot(
 
     result, _error = read_result(run_dir)
     collect_artifacts(run_dir, result, workdir)
+    remove_hook_debris(run_dir, before)
     if not keep_workdir:
         # The workdir and the shims are scaffolding; compute.log is the record.
         shutil.rmtree(workdir, ignore_errors=True)

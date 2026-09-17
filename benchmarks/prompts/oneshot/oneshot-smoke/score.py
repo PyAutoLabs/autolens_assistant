@@ -14,7 +14,12 @@ import sys
 from pathlib import Path
 
 RECOMMENDED_SEARCH = "Nautilus"
-SENTENCE_SPLIT = re.compile(r"[.!?]+")
+# A sentence ends at terminal punctuation followed by whitespace or the end of
+# the text (closing quotes allowed in between) — so the dots inside
+# `skills/al_configure_search.md` or `af.Nautilus` do not count. (An
+# abbreviation followed by a space, "e.g. this", still does; the card asks for
+# at most three sentences, which leaves room for one.)
+SENTENCE_END = re.compile(r"[.!?]+[\"')\]]*(?=\s|$)")
 
 
 def _harness():
@@ -58,7 +63,10 @@ def _base_dir(ctx) -> Path:
 
 
 def _sentences(text: str) -> int:
-    return len([part for part in SENTENCE_SPLIT.split(text or "") if part.strip()])
+    text = (text or "").strip()
+    if not text:
+        return 0
+    return len(SENTENCE_END.findall(text)) or 1
 
 
 def score(ctx):

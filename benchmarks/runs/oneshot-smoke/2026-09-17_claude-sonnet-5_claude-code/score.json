@@ -45,10 +45,10 @@
     },
     {
       "name": "summary_length",
-      "value": 0.0,
-      "detail": "5 sentence(s)"
+      "value": 1.0,
+      "detail": "2 sentence(s)"
     }
   ],
-  "score": 75.0,
+  "score": 100.0,
   "reason": null
 }
