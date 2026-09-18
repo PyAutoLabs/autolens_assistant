@@ -3,9 +3,11 @@
 OpenAI's coding agent (CLI, IDE extension and cloud), and one of the two **recommended,
 thoroughly exercised** harnesses for the assistant (alongside [Claude Code](claude_code.md)).
 It reads the assistant's canonical instructions (`AGENTS.md`) directly, and can install
-PyAutoLens, run fits end-to-end and inspect results. Codex has no hook mechanism, so the
-assistant self-enforces its API gate there by running the audit script on generated code before
-executing it (see `AGENTS.md` "Code gate").
+PyAutoLens, run fits end-to-end and inspect results. The tracked `.codex/hooks.json` registers
+the assistant's API gate and end-at-deliverable guard. Open `/hooks` after cloning (and after
+that file changes) to review and trust its exact current hash; Codex skips untrusted project
+hooks. The separate Claude remote-session Python bootstrap is intentionally not registered for
+Codex, so continue to use `source activate.sh` for local development setup.
 
 **Access.** Codex is included with paid ChatGPT plans (Plus, Pro, Business, Edu and Enterprise —
 the last three are the usual institutional routes) and can also be used with an OpenAI API key on
