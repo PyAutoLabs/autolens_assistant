@@ -104,10 +104,12 @@ worked prompts and dataset names are domain).
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
 `config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
-maintainer smoke tests below. Generated `.codex/skills/*/SKILL.md` wrappers are
-also mixed: their format is generic, but their namespace and targets belong to
-this assistant. Regenerate them from the newborn's adapted skill inventory with
-Brain's project-discovery installer; do not retain parent-domain targets. (`docs/archive/` is retired chat-era material and is not
+maintainer smoke tests below.
+
+Generated `.codex/skills/*/SKILL.md` wrappers are **domain** for cloning: their
+namespace and targets belong to this assistant, so they must never be copied
+blind. Regenerate them from the newborn's adapted skill inventory with Brain's
+project-discovery installer. (`docs/archive/` is retired chat-era material and is not
 cloned at all.)
 
 **Per-clone data** (never copied to a newborn — each clone accumulates its own):
