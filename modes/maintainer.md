@@ -21,7 +21,8 @@ skills, wiki schema, hooks, or infrastructure — not user lensing science. `AGE
 - Every safety invariant in `AGENTS.md` still applies — in particular the two hard-absolutes
   (the real-data inspection gate and never-rewrite-history), plus bulk-edit safety and the
   `output/` write-ban.
-- Commits still end with the `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer.
+- Commits follow the actual-harness attribution rule in `AGENTS.md`; never
+  fabricate a provider identity or model.
 
 ## Maintainer procedures
 

@@ -17,12 +17,12 @@ analysis, discussing a paper or learning in Teacher Mode all happen inside the s
 
 Three steps:
 
-1. **Choose Claude Code or Codex.** These are the two recommended agents and the ones the assistant is developed
-   and tested against — see the setup pages for [Claude Code](docs/setup/claude_code.md) and
+1. **Choose Claude Code or Codex.** These are the two recommended agents. Codex discovery and safety adapters have
+   focused validation; full science fits depend on the local environment — see the setup pages for [Claude Code](docs/setup/claude_code.md) and
    [Codex](docs/setup/codex_cli.md). For sustained scientific work you should expect to pay for one of them, but how
    depends on your situation: a personal subscription, access through your institution or team, or usage-based API
-   billing. Check the provider's current plans rather than assuming a subscription is the only route. Desktop and
-   IDE versions of either agent are fine, provided they can read this repository and execute code.
+   billing. Check the provider's current plans rather than assuming a subscription is the only route. The setup below uses the CLI; the linked smoke record describes
+   its tested coverage.
 2. **Open the assistant workspace.** Clone this repository and start the agent inside it:
 
    ```bash
@@ -194,8 +194,8 @@ you an evidence-backed comparison of how well each setup drives the assistant.
 The protocol is in [`benchmarks/README.md`](benchmarks/README.md). **No run has
 been scored yet**, so nothing in this repository should be read as a measured
 performance claim for any agent or model; the support statements above describe
-which agents the assistant is developed and tested against day to day, not
-benchmark results.
+which agents have documented setup and focused adapter checks, not
+benchmark results or full science-fit coverage.
 
 ## Scientific Context
 
