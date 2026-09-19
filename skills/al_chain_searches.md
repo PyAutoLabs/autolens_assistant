@@ -64,10 +64,10 @@ lens_1 = af.Model(
     al.Galaxy,
     redshift=0.5,
     mass=af.Model(al.mp.Isothermal),
-    shear=af.Model(al.mp.ExternalShear),
 )
+field_1 = af.Model(al.MassField, redshift=0.5, shear=af.Model(al.mp.ExternalShear))
 source_1 = af.Model(al.Galaxy, redshift=1.0, bulge=af.Model(al.lp.SersicCore))
-model_1 = af.Collection(galaxies=af.Collection(lens=lens_1, source=source_1))
+model_1 = af.Collection(galaxies=af.Collection(lens=lens_1, source=source_1), fields=field_1)
 
 analysis = al.AnalysisImaging(dataset=dataset)
 search_1 = af.Nautilus(path_prefix="chain_demo", name="phase_1_parametric", n_live=100)
@@ -87,8 +87,8 @@ lens_2 = af.Model(
     al.Galaxy,
     redshift=0.5,
     mass=result_1.model.galaxies.lens.mass,   # inherits the posterior as prior
-    shear=result_1.model.galaxies.lens.shear,
 )
+field_2 = result_1.model.fields
 
 source_2 = af.Model(
     al.Galaxy,
@@ -103,13 +103,14 @@ source_2 = af.Model(
         regularization=al.reg.Constant,
     ),
 )
-model_2 = af.Collection(galaxies=af.Collection(lens=lens_2, source=source_2))
+model_2 = af.Collection(galaxies=af.Collection(lens=lens_2, source=source_2), fields=field_2)
 
 search_2 = af.Nautilus(path_prefix="chain_demo", name="phase_2_pixelized", n_live=150)
 result_2 = search_2.fit(model=model_2, analysis=analysis)
 ```
 
-The key line is `mass=result_1.model.galaxies.lens.mass`. `result_1.model` returns a
+The key lines carry both `mass=result_1.model.galaxies.lens.mass` and
+`field_2 = result_1.model.fields`. `result_1.model` returns a
 new `af.Model` whose priors are the previous search's posterior — Gaussian-bounded
 around the maximum likelihood, with widths from the posterior. To use the
 *instance* values (locked) instead of the model: `result_1.instance.galaxies.lens.mass`.

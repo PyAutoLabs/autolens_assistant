@@ -10,7 +10,12 @@ sources:
       - autogalaxy/profiles/mass/point/
       - autogalaxy/profiles/mass/abstract/abstract.py
     pinned_commit: 2547ca175a82f365a64af261923e0ac7232655ac
-last_updated: 2026-05-22
+  - project: PyAutoGalaxy
+    paths:
+      - autogalaxy/galaxy/mass_field.py
+    pinned_commit: dfb04cc6cc51fecbe5cdeadd584a9de0d1b561de
+last_updated: 2026-09-19
+content_sha256: 4505a762650d2c524ea68b94497e07ee2ef3e39ae4451027d1f9be7f178ab13e
 ---
 
 # Mass profiles
@@ -84,6 +89,10 @@ mass-to-light ratio.
 ## Sheets
 
 Background line-of-sight effects.
+
+Use a separate `al.MassField(redshift=..., shear=...)` for these external
+effects. A single field goes in the model's bare `fields=field` slot; the
+corresponding tracer accepts `fields=[field]`.
 
 - **`al.mp.ExternalShear`** — constant shear from line-of-sight structure. Two free
   parameters (`gamma_1`, `gamma_2`).
