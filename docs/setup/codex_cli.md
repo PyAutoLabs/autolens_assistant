@@ -1,21 +1,21 @@
 # Codex (coding agent — recommended)
 
-OpenAI's coding agent (CLI, IDE extension and cloud), and one of the two **recommended,
-thoroughly exercised** harnesses for the assistant (alongside [Claude Code](claude_code.md)).
-It reads the assistant's canonical instructions (`AGENTS.md`) directly, and can install
-PyAutoLens, run fits end-to-end and inspect results. The tracked `.codex/hooks.json` registers
-the assistant's API gate and end-at-deliverable guard. Open `/hooks` after cloning (and after
-that file changes) to review and trust its exact current hash; Codex skips untrusted project
-hooks. The separate Claude remote-session Python bootstrap is intentionally not registered for
-Codex, so continue to use `source activate.sh` for local development setup.
+OpenAI's coding agent (CLI, IDE extension and cloud). It reads the shared
+`AGENTS.md` instructions, and this repository exposes its canonical `skills/*.md`
+through generated, project-level `.codex/skills/` adapters. Discovery was checked
+with an installed Codex CLI; adapter validation and fixture guard tests cover the
+setup, while scientific fits still need to be exercised in the user's environment.
+See the [harness smoke record](https://github.com/PyAutoLabs/PyAutoBrain/blob/main/docs/agent_harness_smoke.md)
+for the measured scope.
 
-**Access.** Codex is included with paid ChatGPT plans (Plus, Pro, Business, Edu and Enterprise —
-the last three are the usual institutional routes) and can also be used with an OpenAI API key on
-usage-based billing. Whether a Free-plan allowance exists has changed over time and could not be
-re-verified against the official pricing page when this page was last revised (2026-09-10);
-check [OpenAI's Codex pricing page](https://developers.openai.com/codex/pricing/) for the
-current position rather than relying on this page. Sustained scientific use should be budgeted
-as paid access.
+The tracked `.codex/hooks.json` registers the API and end-at-deliverable guards.
+Review and trust its current hash in `/hooks` after cloning and after changes;
+Codex skips project hooks until that hash is trusted. The separate Claude
+remote-session Python bootstrap is not registered for Codex, so use
+`source activate.sh` for local development setup.
+
+**Access.** Check [OpenAI's Codex pricing page](https://developers.openai.com/codex/pricing/)
+for current plans and API billing.
 
 ## Setup
 

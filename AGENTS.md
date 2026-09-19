@@ -186,10 +186,11 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
 - **One checkpoint = one commit.** **Stage explicitly by filename** — never `git add -A`.
 - **Never push** (always an explicit user action). **Never skip hooks** (no `--no-verify`);
   fix the underlying issue and make a new commit.
-- **Co-author trailer.** End every agent commit with a
-  `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer naming the current
-  session's model (e.g. `Claude Opus 4.8 (1M context)`) — this marks the commit as
-  agent-authored.
+- **Agent attribution.** Name the actual harness and model in the commit body
+  when known (for example, `Agent: Codex; model: <actual model>`). Use a
+  `Co-Authored-By` trailer only when the active harness supplies a valid identity;
+  never invent a provider email, model name, or Claude attribution. If the model
+  is unavailable, record the known harness and say the model is unavailable.
 - If the user is on `main` (or any branch tracked as `origin/HEAD`), pause and confirm
   before committing rather than landing directly there.
 
@@ -208,7 +209,7 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
   examples they show are the source of truth for how to call any PyAuto* symbol. Before
   writing model, fit, or plotting code, mirror the matching skill's calls rather than recalling
   the API from training data — older PyAutoLens releases used a different API and are heavily
-  represented in model priors. On the Claude Code harness a code gate blocks stale symbols; on
+  represented in model priors. Claude Code and trusted Codex hooks run a code gate against stale symbols; on
   a harness without the hook this discipline plus the manual audit command is the only
   safeguard: if you can't point at a `skills/` (or `dir()`) example for a call, treat it as
   unverified and say so rather than emitting it.
