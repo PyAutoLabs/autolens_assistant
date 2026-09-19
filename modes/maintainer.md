@@ -78,7 +78,9 @@ regenerated per reference), and
 `.mcp.json` (it wires the results-inspector MCP, which *is* `autoassistant.mcp` —
 generic tooling, so the wiring carries no domain either), and the harness adapters
 (`.claude/`, `.codex/hooks.json`, `.gemini/settings.json`) that load the canonical
-instructions or register the shared assistant safety gates.
+instructions or register the shared assistant safety gates. Claude command links
+for generic skills share their canonical skill classification; command links for
+`al_*`, `euclid_*` and `init-slam` are domain content.
 
 **PyAutoLens-specific content** (regenerated per domain, never copied blind): every
 `al_*` skill body, `wiki/core/` reference pages, the entire `wiki/literature/` sub-wiki,
@@ -101,7 +103,12 @@ worked prompts and dataset names are domain).
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
 `config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
-maintainer smoke tests below. (`docs/archive/` is retired chat-era material and is not
+maintainer smoke tests below.
+
+Generated `.codex/skills/*/SKILL.md` wrappers are **domain** for cloning: their
+namespace and targets belong to this assistant, so they must never be copied
+blind. Regenerate them from the newborn's adapted skill inventory with Brain's
+project-discovery installer. (`docs/archive/` is retired chat-era material and is not
 cloned at all.)
 
 **Per-clone data** (never copied to a newborn — each clone accumulates its own):

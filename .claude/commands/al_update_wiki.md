@@ -1,0 +1,1 @@
+../../skills/al_update_wiki.md

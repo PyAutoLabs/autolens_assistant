@@ -1,0 +1,1 @@
+../../skills/al_configure_search.md

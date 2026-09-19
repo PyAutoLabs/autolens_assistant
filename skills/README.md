@@ -4,8 +4,23 @@ Procedural how-to-do-X skills for the PyAuto\* lensing stack. Each skill is a si
 Markdown file with YAML frontmatter; the body teaches an agent (and through them, the
 user) how to write Python that accomplishes one lensing task.
 
-Skills are also exposed at `.claude/skills/` (Claude Code) and `~/.codex/skills/` (when
-configured) via symlinks; the canonical files live here.
+Public skills are exposed through `.claude/skills/` symlinks and generated
+`.codex/skills/<repo>-<skill>/SKILL.md` adapters; the canonical files live here.
+Codex names use the repository name and skill name with underscores changed to
+hyphens, so shared skills from different assistants remain distinct. Helper files
+beginning with `_` and this index are not public skills.
+
+After adding or renaming a public skill, run the shared Brain generator from the
+PyAutoLabs workspace (set `PYAUTO_BRAIN` to its checkout if using another layout):
+
+```bash
+bash "${PYAUTO_BRAIN:-organs/PyAutoBrain}/bin/install.sh" --write-project-discovery autolens_assistant
+bash "${PYAUTO_BRAIN:-organs/PyAutoBrain}/bin/install.sh" --check-project-discovery autolens_assistant
+```
+
+Commit both generated discovery surfaces with the canonical skill. A standalone
+assistant checkout retains the committed adapters; regeneration requires the
+Brain checkout and registered workspace body map.
 
 ## Conventions
 
