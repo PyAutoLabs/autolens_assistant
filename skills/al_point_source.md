@@ -21,7 +21,7 @@ the equivalent for the user's lens.
 - *"What data do you have — image positions only, positions + flux ratios,
   positions + time delays, or all three?"* Each adds a likelihood term.
 - *"How many lensed images — double, quad, or more (cluster-scale)?"*
-- *"Lens mass parameterisation — SIE + ExternalShear is the standard
+- *"Lens mass parameterisation — an SIE galaxy plus a separate ExternalShear field is the standard
   starting point; PowerLaw if the slope is interesting."*
 - *"Are positions associated with one source or several (multi-source
   systems)?"* Workspace covers both.

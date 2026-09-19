@@ -58,10 +58,10 @@ lens = af.Model(
     redshift=0.5,
     bulge=af.Model(al.lp.Sersic),
     mass=af.Model(al.mp.Isothermal),
-    shear=af.Model(al.mp.ExternalShear),
 )
+field = af.Model(al.MassField, redshift=0.5, shear=af.Model(al.mp.ExternalShear))
 source = af.Model(al.Galaxy, redshift=1.0, bulge=af.Model(al.lp.SersicCore))
-model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
+model = af.Collection(galaxies=af.Collection(lens=lens, source=source), fields=field)
 
 # --- Analysis ---
 analysis = al.AnalysisImaging(dataset=dataset)

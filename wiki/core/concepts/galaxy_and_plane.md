@@ -5,15 +5,22 @@ sources:
     paths:
       - autogalaxy/galaxy/galaxy.py
       - autogalaxy/galaxy/galaxies.py
-    pinned_commit: main
-last_updated: 2026-07-09
+      - autogalaxy/galaxy/mass_field.py
+    pinned_commit: dfb04cc6cc51fecbe5cdeadd584a9de0d1b561de
+  - project: PyAutoLens
+    paths:
+      - autolens/lens/tracer.py
+    pinned_commit: 8279bce04493d073261e1db07ae7bccd5ca4fd09
+last_updated: 2026-09-19
+content_sha256: 6524498022530e907e2bc532a570fa05a235095fbacdffbb92e30fce2ea79817
 ---
 
 # Galaxy and Galaxies (redshift planes)
 
 The two structural objects between profiles (`al.lp.*`, `al.mp.*`) and a `Tracer`.
-A `Galaxy` bundles light + mass profiles at one redshift; a `Galaxies` collection
-(used internally by `Tracer`) groups galaxies at the same redshift — what lensing
+A `Galaxy` bundles light + mass profiles at one redshift. An external shear or mass
+sheet belongs to a separate `MassField` at its own redshift. A `Galaxies` collection
+(used internally by `Tracer`) groups these objects at the same redshift — what lensing
 theory calls a *plane*. (Older PyAutoLens versions had a dedicated `Plane` class;
 it no longer exists — the redshift slice is now just a `Galaxies` collection.)
 
@@ -28,18 +35,23 @@ galaxy = al.Galaxy(
     bulge=al.lp.Sersic(...),
     disk=al.lp.Exponential(...),
     mass=al.mp.Isothermal(...),
-    shear=al.mp.ExternalShear(...),
 )
+field = al.MassField(redshift=0.5, shear=al.mp.ExternalShear(...))
+source = al.Galaxy(redshift=1.0, bulge=al.lp.Sersic(...))
+tracer = al.Tracer(galaxies=[galaxy, source], fields=[field])
 ```
 
 Key points:
 
-- **Attribute names are arbitrary.** `bulge`, `disk`, `mass`, `shear` are conventions
+- **Attribute names are arbitrary.** `bulge`, `disk`, and `mass` are conventions
   used in the workspace, not enum values. You can call a profile `weirdcomponent` if
   you want; the name becomes the key in the model later
   (`model.galaxies.lens.weirdcomponent`).
 - **A galaxy can hold multiple light or multiple mass profiles.** Each one is a
   separate kwarg.
+- **External fields have their own container.** `MassField` holds shear, sheets, or
+  other external mass profiles. Put one field per redshift in `Tracer(fields=[...])`;
+  in a fitted model, use a bare `fields=field` for one plane.
 - **Redshift is required.** It's how the tracer orders galaxies into planes and
   applies cosmological distance ratios.
 - **You can add a pixelisation** instead of (or alongside) light profiles for a
@@ -61,7 +73,7 @@ critical curves, magnification), wrap the galaxies in a `Tracer`.
 
 `al.Galaxies` is a list-like collection of galaxies that computes summed
 quantities (`image_2d_from`, `convergence_2d_from`, `deflections_yx_2d_from`)
-over its members. `Tracer` groups its input galaxy list by redshift into one
+over its members. `Tracer` groups its input galaxies and fields by redshift into one
 `Galaxies` per plane:
 
 ```python

@@ -48,14 +48,14 @@ lens = al.Galaxy(
     bulge=al.lp.Sersic(centre=(0.0, 0.0), ell_comps=(0.1, 0.0), intensity=4.0,
                        effective_radius=0.8, sersic_index=2.5),
     mass=al.mp.Isothermal(centre=(0.0, 0.0), ell_comps=(0.1, 0.05), einstein_radius=1.2),
-    shear=al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.0),
 )
+field = al.MassField(redshift=0.5, shear=al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.0))
 source = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.SersicCore(centre=(0.1, 0.1), ell_comps=(0.0, 0.0), intensity=0.3,
                            effective_radius=0.1, sersic_index=1.0, radius_break=0.025),
 )
-tracer = al.Tracer(galaxies=[lens, source])
+tracer = al.Tracer(galaxies=[lens, source], fields=[field])
 
 # 3. PSF + simulator. Match your target instrument (HST/JWST/Euclid have different
 #    PSF FWHM and pixel scale).

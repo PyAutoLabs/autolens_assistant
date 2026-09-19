@@ -9,7 +9,12 @@ sources:
       - autogalaxy/profiles/mass/sheets/
       - autogalaxy/profiles/mass/point/
     pinned_commit: 2547ca175a82f365a64af261923e0ac7232655ac
-last_updated: 2026-05-22
+  - project: PyAutoGalaxy
+    paths:
+      - autogalaxy/galaxy/mass_field.py
+    pinned_commit: dfb04cc6cc51fecbe5cdeadd584a9de0d1b561de
+last_updated: 2026-09-19
+content_sha256: 5566f8c33998937e1d911c62bc10b3b7d3c98ce487fcd623fbad7e0a39062b6c
 ---
 
 # Mass profile catalogue
@@ -81,6 +86,10 @@ Source: `PyAutoGalaxy:autogalaxy/profiles/mass/stellar/`.
 | `ExternalPotential` | centre, ell_comps, normalization | External potential term |
 
 Source: `PyAutoGalaxy:autogalaxy/profiles/mass/sheets/`.
+
+In a lens model, compose these external profiles in `al.MassField` at their
+redshift and pass the field through the top-level `fields=field` slot. For a
+constructed tracer, pass `fields=[field]`. The field is separate from any galaxy.
 
 ## Point masses
 

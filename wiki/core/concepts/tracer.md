@@ -5,14 +5,16 @@ sources:
     paths:
       - autolens/lens/tracer.py
       - autolens/lens/tracer_util.py
-    pinned_commit: main
-last_updated: 2026-07-09
+    pinned_commit: 8279bce04493d073261e1db07ae7bccd5ca4fd09
+last_updated: 2026-09-19
+content_sha256: 12bb7190fc9b4330fef7ac1cff5dde53224c55e24e08c9947dd102ed834c097d
 ---
 
 # Tracer — multi-plane ray tracing
 
-`al.Tracer` is the central lensing object. It composes one or more `Galaxy` objects
-(grouped internally into one `Galaxies` collection per redshift plane) and knows how
+`al.Tracer` is the central lensing object. It composes `Galaxy` objects and optional
+`MassField` objects, grouped internally into one `Galaxies` collection per redshift
+plane, and knows how
 to ray-trace a grid of image-plane coordinates back to each subsequent plane.
 
 Source: `PyAutoLens:autolens/lens/tracer.py`.
@@ -25,10 +27,11 @@ The galaxy-scale common case: one lens plane at redshift `z_l`, one source plane
 ```python
 lens = al.Galaxy(redshift=0.5, mass=al.mp.Isothermal(centre=(0.0, 0.0), einstein_radius=1.2))
 source = al.Galaxy(redshift=1.0, bulge=al.lp.SersicCore(...))
-tracer = al.Tracer(galaxies=[lens, source])
+field = al.MassField(redshift=0.5, shear=al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.0))
+tracer = al.Tracer(galaxies=[lens, source], fields=[field])
 ```
 
-`Tracer` reads the redshifts off the galaxies and groups them into `Galaxies`
+`Tracer` reads the redshifts off galaxies and fields and groups them into `Galaxies`
 collections internally — one per unique redshift, in ascending order. With two
 redshifts you get two planes; with three or more you get a multi-plane system.
 
@@ -55,7 +58,8 @@ For physical-unit equivalents, see [`cosmology_and_units`](./cosmology_and_units
 ## Per-galaxy and per-plane images
 
 ```python
-tracer.galaxies                         # list of Galaxy objects, by redshift order
+tracer.galaxies                         # input galaxies; fields never appear here
+tracer.fields                           # separate MassField objects
 tracer.planes                           # list of Galaxies collections, one per redshift slice
 tracer.galaxies[0].image_2d_from(grid)  # image-plane image of just the first galaxy
 tracer.planes[-1].image_2d_from(grid)   # image of the source plane

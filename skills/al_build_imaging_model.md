@@ -52,7 +52,7 @@ import autolens as al
 # Lens light — a Sersic for the bulge.
 lens_bulge = af.Model(al.lp.Sersic)
 
-# Lens mass — SIE + external shear.
+# Lens mass — SIE plus a separate external field.
 lens_mass = af.Model(al.mp.Isothermal)
 lens_shear = af.Model(al.mp.ExternalShear)
 
@@ -61,8 +61,8 @@ lens = af.Model(
     redshift=0.5,
     bulge=lens_bulge,
     mass=lens_mass,
-    shear=lens_shear,
 )
+field = af.Model(al.MassField, redshift=0.5, shear=lens_shear)
 
 # Source light — a single Sersic.
 source = af.Model(
@@ -72,9 +72,7 @@ source = af.Model(
 )
 
 # Compose into a Collection.
-model = af.Collection(
-    galaxies=af.Collection(lens=lens, source=source)
-)
+model = af.Collection(galaxies=af.Collection(lens=lens, source=source), fields=field)
 
 # Optional: customise priors. E.g. tighten the lens centre.
 lens_mass.centre.centre_0 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
@@ -85,6 +83,7 @@ print(model.info)
 
 Source citations:
 - `PyAutoGalaxy:autogalaxy/galaxy/galaxy.py` — `Galaxy`.
+- `PyAutoGalaxy:autogalaxy/galaxy/mass_field.py` — `MassField`.
 - `PyAutoGalaxy:autogalaxy/profiles/light/standard/sersic.py` — `Sersic`, `SersicCore`.
 - `PyAutoGalaxy:autogalaxy/profiles/mass/total/isothermal.py` — `Isothermal`.
 - `PyAutoFit:autofit/mapper/prior_model/prior_model.py` — `af.Model`.
