@@ -12,7 +12,7 @@ file is the protocol.
 The output of running this skill is:
 
 - A new `skills/al_<name>.md` file authored against `skills/_style.md`.
-- A symlink at `.claude/skills/al_<name>.md` pointing to `../../skills/al_<name>.md`.
+- Generated Claude symlinks and Codex `SKILL.md` adapters pointing to that canonical file.
 - An updated `skills/README.md` entry.
 - Optionally, one or more new wiki pages the new skill links into.
 - A working `.py` script in `scripts/` that demonstrates the new skill on the user's data.
@@ -102,9 +102,16 @@ Save the new skill at `skills/al_<task>.md`. Follow `_style.md`:
 
 ## Step 7 — register the skill
 
+Run the shared discovery generator from the PyAutoLabs workspace:
+
 ```bash
-ln -s ../../skills/al_<task>.md .claude/skills/al_<task>.md
+bash "${PYAUTO_BRAIN:-organs/PyAutoBrain}/bin/install.sh" --write-project-discovery autolens_assistant
+bash "${PYAUTO_BRAIN:-organs/PyAutoBrain}/bin/install.sh" --check-project-discovery autolens_assistant
 ```
+
+Keep the flat skill file canonical. Commit both generated harness adapters; never
+maintain a separate copy of the instructions. `skills/README.md` documents names
+and standalone-checkout setup.
 
 Add a one-line entry under the appropriate category in `skills/README.md`.
 
@@ -145,6 +152,6 @@ When it runs, tell the user:
 4. Read the relevant source. Take signature notes.
 5. Read or draft the matching wiki page(s).
 6. Write `skills/al_<task>.md`.
-7. Add symlink under `.claude/skills/`; add entry to `skills/README.md`.
+7. Regenerate and check both Claude and Codex adapters; add entry to `skills/README.md`.
 8. Generate the user-specific script in `scripts/`. Run it with `PYAUTO_TEST_MODE=1`.
 9. Report to the user: skill name, script path, new wiki pages, suggested chain.

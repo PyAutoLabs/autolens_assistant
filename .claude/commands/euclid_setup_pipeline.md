@@ -1,0 +1,1 @@
+../../skills/euclid_setup_pipeline.md
