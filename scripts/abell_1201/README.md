@@ -66,10 +66,10 @@ literature notes describing only an upper limit should not define the scorer.
   data have a circular support of roughly 100 pixels (about 4 arcsec at the
   published scale). Zero-noise pixels must be excluded, not passed directly
   into a likelihood. This support differs from the cited runner's 3.7 arcsec
-  mask and requires an explicit choice.
+  mask. The scientist chose this exact processed support on 2026-09-22.
 - Existing contaminant edits are visible to the right of the arc and below the
-  central galaxy. Confirm their treatment and any additional contaminants from
-  `dataset.png` before composing a fit.
+  central galaxy. The scientist confirmed retaining the existing removal images
+  and exclusions on 2026-09-22.
 - MGE-subtracted, scaled, `old` and other local variants need their own
   provenance and selection. Their names alone do not establish a noise/data
   pairing or suitability for inference.
@@ -85,11 +85,23 @@ literature notes describing only an upper limit should not define the scorer.
 The scientist confirmed on 2026-09-22 that the fit should use the existing
 contaminant-removal images. Presentation is a separate product: show an
 attractive image at the start of the public science prompt as well as on the
-website. Mask extent is still pending; this confirmation does not silently
-choose between the published 3.7 arcsec mask and the processed ~4 arcsec support.
+website. The scientist subsequently selected the processed ~4 arcsec boundary.
+Both bands have identical support: 31417 pixels, reaching exactly 4.0 arcsec.
 
-After inspection approval, implement the agreed preparation and fit with the
-live assistant APIs. Add the one-shot card/scorer under
+```bash
+python scripts/abell_1201/prepare_dataset.py --dataset /path/to/abell_1201
+```
+
+This loads the verified `image.fits` / `noise_map.fits` pair in each band,
+retains existing contaminant down-weighting, and applies the positive support
+of `noise_map_subtracted.fits` as a mask. The subtracted noise map is used only
+to recover the boundary; zero noise does not enter the likelihood. The current
+loader normalises the PSF, which is checked explicitly. Prepared dataset plots
+and a preparation report go to `scripts/scratch/abell_1201/prepared/`. Both bands
+have been loaded and plotted successfully; no lens model or fit is created.
+
+Preparation is implemented. Once the baseline and priors are agreed, implement
+the fit with the live assistant APIs. Add the one-shot card/scorer under
 `benchmarks/prompts/oneshot/abell-1201-point-mass/`, hidden reference material
 under `benchmarks/truth/abell-1201-point-mass/` and a version/hash lock entry.
 The card must carry the scientist-approved real-data preparation choices before
