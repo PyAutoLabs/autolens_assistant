@@ -68,8 +68,16 @@ def inventory(dataset):
                 "metadata": {
                     key: header[key]
                     for key in (
-                        "BUNIT", "EXPTIME", "FILTER", "PIXSCALE", "CDELT1",
-                        "CDELT2", "CD1_1", "CD2_2", "TELESCOP", "INSTRUME",
+                        "BUNIT",
+                        "EXPTIME",
+                        "FILTER",
+                        "PIXSCALE",
+                        "CDELT1",
+                        "CDELT2",
+                        "CD1_1",
+                        "CD2_2",
+                        "TELESCOP",
+                        "INSTRUME",
                     )
                     if key in header
                 },
@@ -107,14 +115,21 @@ def inspection(dataset, output):
         vmin, vmax = np.nanpercentile(data, (5, 99.7))
         norm = ImageNormalize(vmin=vmin, vmax=vmax, stretch=AsinhStretch(0.05))
         settings[band] = {
-            "vmin": float(vmin), "vmax": float(vmax), "asinh_a": 0.05,
-            "cmap": "magma", "origin": "lower", "axes": "pixel offsets",
+            "vmin": float(vmin),
+            "vmax": float(vmax),
+            "asinh_a": 0.05,
+            "cmap": "magma",
+            "origin": "lower",
+            "axes": "pixel offsets",
         }
         ny, nx = data.shape
         extent = (-nx / 2, nx / 2, -ny / 2, ny / 2)
         for col, (array, title) in enumerate(
-            ((data, "image.fits"), (subtracted, "data_mge_subtracted.fits"),
-             (data, "Original image: centre zoom"))
+            (
+                (data, "image.fits"),
+                (subtracted, "data_mge_subtracted.fits"),
+                (data, "Original image: centre zoom"),
+            )
         ):
             ax = axes[row, col]
             ax.imshow(array, origin="lower", extent=extent, cmap="magma", norm=norm)
@@ -129,12 +144,16 @@ def inspection(dataset, output):
         flags[large] = 1
         flags[subtracted_noise <= 0] = 2
         ax = axes[row, 3]
-        im = ax.imshow(flags, origin="lower", extent=extent, cmap="viridis", vmin=0, vmax=2)
+        im = ax.imshow(
+            flags, origin="lower", extent=extent, cmap="viridis", vmin=0, vmax=2
+        )
         ax.set_title("Noise flags (no mask applied)", fontsize=10)
         ax.set_xlabel("Column offset (pixels)")
         ax.set_ylabel("Row offset (pixels)")
         bar = fig.colorbar(im, ax=ax, ticks=(0, 1, 2), shrink=0.75)
-        bar.ax.set_yticklabels(("Other", "Large base noise", "Nonpositive subtracted noise"))
+        bar.ax.set_yticklabels(
+            ("Other", "Large base noise", "Nonpositive subtracted noise")
+        )
     fig.suptitle("Abell 1201 — input inspection; angular scale and mask unconfirmed")
     path = output / "dataset.png"
     fig.savefig(path, dpi=150)
@@ -153,8 +172,12 @@ The original FITS files are only read.
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("__Contents__")[0])
-    parser.add_argument("--dataset", type=Path, required=True)
-    parser.add_argument("--output", type=Path, default=Path("scripts/scratch/abell_1201"))
+    parser.add_argument(
+        "--dataset", type=Path, default=Path("dataset/imaging/abell_1201")
+    )
+    parser.add_argument(
+        "--output", type=Path, default=Path("scripts/scratch/abell_1201")
+    )
     args = parser.parse_args()
     records = inventory(args.dataset)
     args.output.mkdir(parents=True, exist_ok=True)

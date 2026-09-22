@@ -1,6 +1,6 @@
 # Abell 1201 point-mass benchmark preparation
 
-Status: **input inspection; no fitted or validated benchmark yet**.
+Status: **data preparation and coarse inversion smoke tested; no posterior fit or scientific validation yet**.
 Development is tracked in [issue #133](https://github.com/PyAutoLabs/autolens_assistant/issues/133).
 
 The intended benchmark fits a central black-hole point mass in one agreed
@@ -16,6 +16,7 @@ From the assistant root, with Astropy, NumPy and Matplotlib installed:
 python scripts/abell_1201/inspect_dataset.py --dataset /path/to/abell_1201
 ```
 
+Omit `--dataset` to use the bundled `dataset/imaging/abell_1201` inputs.
 The input directory must contain `f390w/` and `f814w/`, each with `image.fits`,
 `data_mge_subtracted.fits`, `noise_map.fits` and `noise_map_subtracted.fits`.
 The MGE products are additional locally supplied files, not available in the
@@ -61,7 +62,7 @@ literature notes describing only an upper limit should not define the scorer.
 - Both bands have 421 x 421 images; PSFs are 15 x 15. Supplied FITS arrays are
   finite, but headers contain no photometric units, WCS or pixel scale.
 - The unnormalised PSF sums are 7.39712771 (F390W) and 31.08467771 (F814W).
-  The future loader must use a verified PSF normalisation convention.
+  The current loader normalises them; both loaded sums were verified as 1.0.
 - Each `noise_map_subtracted.fits` contains 145824 zero pixels. The processed
   data have a circular support of roughly 100 pixels (about 4 arcsec at the
   published scale). Zero-noise pixels must be excluded, not passed directly
@@ -74,11 +75,11 @@ literature notes describing only an upper limit should not define the scorer.
   provenance and selection. Their names alone do not establish a noise/data
   pairing or suitability for inference.
 - Confirm photometric units and redistribution permission before bundling data.
-- Agree the band(s), baseline lens/source model, centre treatment, priors and
-  nuisance parameters. Preserve uncertainty interpretation if any parameters
-  are held fixed. Select matching reference results before setting tolerances.
-- Agree full-run compute budget and harness. No expensive inference or headless
-  benchmark run has been launched.
+- The scientist approved F390W with a power-law galaxy mass, external shear and
+  central point mass, fitting nuisance parameters alongside the black hole.
+  The candidate implementation below makes every prior/fixed choice explicit.
+- Execution is **prepare and smoke-test only**, confirmed 2026-09-22. No
+  posterior search, expensive inference or headless agent run is authorised yet.
 
 ## Remaining implementation
 
@@ -100,14 +101,66 @@ loader normalises the PSF, which is checked explicitly. Prepared dataset plots
 and a preparation report go to `scripts/scratch/abell_1201/prepared/`. Both bands
 have been loaded and plotted successfully; no lens model or fit is created.
 
-Preparation is implemented. Once the baseline and priors are agreed, implement
-the fit with the live assistant APIs. Add the one-shot card/scorer under
+Preparation, a candidate model setup and a not-yet-executed posterior driver
+are implemented. The scientifically calibrated fitting card remains to be completed under
 `benchmarks/prompts/oneshot/abell-1201-point-mass/`, hidden reference material
 under `benchmarks/truth/abell-1201-point-mass/` and a version/hash lock entry.
-The card must carry the scientist-approved real-data preparation choices before
-it can run without an operator. Score inference evidence and diagnostics, not
-just a quoted literature value. Run freeze-check, scoring tests and a cheap
-setup smoke check separately from full inference.
+The future full-fit card must carry the scientist-approved choices and an
+agreed compute budget. Score inference evidence and diagnostics, not just a
+quoted literature value. Do not freeze its reference tolerances before a
+validated full run at the benchmark's actual mask, light model and resolution.
+
+## Model and inexpensive benchmark
+
+```bash
+python scripts/abell_1201/prepare_dataset.py
+python scripts/abell_1201/build_model.py           # build the 28 x 28 candidate model only
+python scripts/abell_1201/build_model.py --smoke   # one coarse 12 x 12 inversion; no sampler
+python scripts/abell_1201/website_image.py
+python scripts/abell_1201/run_fit.py              # describe the future posterior run; no sampling
+```
+
+`build_model.py` defines 14 non-linear parameters: 6 for the power-law mass,
+1 for point-mass Einstein radius (centre tied to mass), 2 for shear, 4 for shared
+MGE lens-light geometry and 1 for source regularisation. Twenty fixed Gaussian
+widths span 0.01–10 arcsec; their amplitudes and source-pixel intensities are
+solved linearly at each evaluation. The density-adaptive rectangular mesh is
+28 x 28 for the candidate and 12 x 12 for the coarse smoke, with one spatial
+sample per image pixel in the smoke only. The supplied positions and a 0.4
+arcsec source-plane threshold are attached to the analysis.
+
+The matching archived PL+SMBH reference is run
+`fde010a075b68829d59321291c52d916` under the published repository's
+`results/rjlens_no_lens_light/f390w/mass_total[1]_mass[total]_source/`.
+That fit used previously subtracted lens light and a different source
+reconstruction/mask. Its posterior is useful context, not a ready-made tolerance
+for this new jointly fitted model. The candidate's mass-centre and slope priors
+follow that reference; bounded mass ellipticity/radius and shear priors are
+explicit implementation choices, not a claim of identical priors.
+
+The [setup-only card](../../benchmarks/prompts/oneshot/abell-1201-setup/card.md)
+is separately frozen as `abell-1201-setup`. It exercises presentation, data
+preparation and the coarse inversion without scoring a mass estimate. Its
+scorer rejects the wrong boundary/noise pair, nonfinite inversion values,
+missing images and claims of posterior/scientific validation. Local script
+smokes pass; a real headless qualification run is still pending. Do not add
+synthetic setup reports to benchmark runs as if an agent produced them.
+
+The smoke establishes only that one non-optimised instance produces a finite
+inversion. It does not validate the positions penalty, prior suitability,
+source resolution, lens-light flexibility or uncertainty calibration. Production
+oversampling and mesh convergence must be checked before interpreting a mass.
+
+`run_fit.py` defaults to description only. A later authorised run requires
+`--run --max-likelihood-calls <agreed-cap>` and an externally enforced wall-time
+budget. It uses Nautilus with 400 live points and an effective-sample target
+of 500, the 28 x 28 mesh and the CPU sparse operator. It exports preliminary
+68% mass intervals using Planck15 and the monotonic squared-Einstein-radius
+conversion. Insufficient effective samples or an unconverged PDF produce no
+mass estimate. Even completed samples are marked for scientific review; no
+result is automatically labelled validated. The default describe path and
+summary conversion have been tested against actual PyAutoFit sample objects;
+the full search and fit export path have not been executed.
 
 For the website image, use the available observed images for now.
 The supplied `image.fits` already has edited contaminant regions; do not fill

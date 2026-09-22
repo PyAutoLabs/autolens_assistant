@@ -21,7 +21,9 @@ Array2D.from_fits and Imaging.from_fits share FITS orientation conventions,
 so the support mask follows the image without assuming raw array orientation.
 """
 
-from autonerves import jax_wrapper  # Set the numerical environment before PyAuto imports.
+from autonerves import (
+    jax_wrapper,
+)  # Set the numerical environment before PyAuto imports.
 import argparse
 import json
 from pathlib import Path
@@ -54,7 +56,9 @@ def prepare(dataset_path):
         raise ValueError("Expected the inspected finite 421 x 421 processed support")
     mask_values = support_values <= 0
     if np.count_nonzero(~mask_values) != 31417:
-        raise ValueError("Processed support differs from the scientist-reviewed dataset")
+        raise ValueError(
+            "Processed support differs from the scientist-reviewed dataset"
+        )
     dataset = al.Imaging.from_fits(
         data_path=dataset_path / "image.fits",
         noise_map_path=dataset_path / "noise_map.fits",
@@ -62,7 +66,9 @@ def prepare(dataset_path):
         pixel_scales=0.04,
     )
     if dataset.shape_native != mask_values.shape:
-        raise ValueError("Loaded image shape changed; disable dataset capping for inspection")
+        raise ValueError(
+            "Loaded image shape changed; disable dataset capping for inspection"
+        )
     mask = al.Mask2D(mask=mask_values, pixel_scales=0.04)
     dataset = dataset.apply_mask(mask=mask)
     if not np.all(np.asarray(dataset.noise_map) > 0):
@@ -83,16 +89,23 @@ remains a subsequent scientific step.
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("__Contents__")[0])
-    parser.add_argument("--dataset", type=Path, required=True)
-    parser.add_argument("--output", type=Path, default=Path("scripts/scratch/abell_1201/prepared"))
+    parser.add_argument(
+        "--dataset", type=Path, default=Path("dataset/imaging/abell_1201")
+    )
+    parser.add_argument(
+        "--output", type=Path, default=Path("scripts/scratch/abell_1201/prepared")
+    )
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
+    (args.output / "preparation.json").write_text('{"status": "preparing"}\n')
     reports = {}
     for band in ("f390w", "f814w"):
         dataset = prepare(args.dataset / band)
         aplt.subplot_imaging_dataset(
-            dataset=dataset, output_path=str(args.output),
-            output_filename=f"dataset_{band}", output_format="png",
+            dataset=dataset,
+            output_path=str(args.output),
+            output_filename=f"dataset_{band}",
+            output_format="png",
         )
         reports[band] = {
             "mask": "exact positive support of noise_map_subtracted.fits",

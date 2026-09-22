@@ -40,8 +40,10 @@ def load_band(dataset, band):
     data = np.asarray(fits.getdata(path), dtype=float)
     if data.shape != (421, 421) or not np.all(np.isfinite(data)):
         raise ValueError(f"Expected finite 421 x 421 published image: {path}")
-    return data, {"path": str(path.resolve()),
-                  "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    return data, {
+        "path": str(path.resolve()),
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+    }
 
 
 """__Colour__
@@ -67,7 +69,8 @@ def colour(red, blue, red_scale, blue_scale, stretch):
     gain = np.divide(
         np.arcsinh(stretch * intensity),
         intensity * np.arcsinh(stretch),
-        out=np.zeros_like(intensity), where=intensity > 0,
+        out=np.zeros_like(intensity),
+        where=intensity > 0,
     )
     rgb *= gain[..., None]
     rgb /= np.maximum(1, np.max(rgb, axis=-1))[..., None]
@@ -87,8 +90,12 @@ the data provenance, crop and attribution for publication.
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("__Contents__")[0])
-    parser.add_argument("--dataset", type=Path, required=True)
-    parser.add_argument("--output", type=Path, default=Path("scripts/scratch/abell_1201/website"))
+    parser.add_argument(
+        "--dataset", type=Path, default=Path("dataset/imaging/abell_1201")
+    )
+    parser.add_argument(
+        "--output", type=Path, default=Path("scripts/scratch/abell_1201/website")
+    )
     parser.add_argument("--red-scale", type=float, default=0.65)
     parser.add_argument("--blue-scale", type=float, default=0.08)
     parser.add_argument("--stretch", type=float, default=12.0)
@@ -102,14 +109,29 @@ def main():
     red = red[y0:y1, x0:x1]
     blue = blue[y0:y1, x0:x1]
     rgb = colour(red, blue, args.red_scale, args.blue_scale, args.stretch)
-    mono = np.clip(np.arcsinh(args.stretch * np.maximum(blue, 0) / args.blue_scale)
-                   / np.arcsinh(args.stretch), 0, 1)
+    mono = np.clip(
+        np.arcsinh(args.stretch * np.maximum(blue, 0) / args.blue_scale)
+        / np.arcsinh(args.stretch),
+        0,
+        1,
+    )
     args.output.mkdir(parents=True, exist_ok=True)
     plt.imsave(args.output / "abell_1201_rgb.png", rgb, origin="lower")
-    plt.imsave(args.output / "abell_1201_f390w.png", mono, origin="lower", cmap="magma", vmin=0, vmax=1)
+    plt.imsave(
+        args.output / "abell_1201_f390w.png",
+        mono,
+        origin="lower",
+        cmap="magma",
+        vmin=0,
+        vmax=1,
+    )
     fig, axes = plt.subplots(1, 2, figsize=(12, 6), facecolor="#080b12")
-    for ax, array, title in zip(axes, (rgb, mono), ("Two-band colour", "F390W · intensity")):
-        ax.imshow(array, origin="lower", interpolation="nearest", cmap="magma", vmin=0, vmax=1)
+    for ax, array, title in zip(
+        axes, (rgb, mono), ("Two-band colour", "F390W · intensity")
+    ):
+        ax.imshow(
+            array, origin="lower", interpolation="nearest", cmap="magma", vmin=0, vmax=1
+        )
         ax.set_title(title, color="#e9edf5", fontsize=13, pad=14)
         ax.set_axis_off()
     fig.subplots_adjust(left=0.025, right=0.975, bottom=0.025, top=0.9, wspace=0.035)
@@ -126,15 +148,23 @@ def main():
         "status": "presentation_preview_not_fit_data",
         "sources": {"red": red_source, "blue": blue_source},
         "crop_array_slices_y0_y1_x0_x1": crop,
-        "origin": "lower", "pixel_scale_arcsec": 0.04,
-        "red_scale": args.red_scale, "blue_scale": args.blue_scale,
-        "green_mix": {"red": 0.55, "blue": 0.45}, "asinh_stretch": args.stretch,
+        "origin": "lower",
+        "pixel_scale_arcsec": 0.04,
+        "red_scale": args.red_scale,
+        "blue_scale": args.blue_scale,
+        "green_mix": {"red": 0.55, "blue": 0.45},
+        "asinh_stretch": args.stretch,
         "caption": caption,
         "alt_text": "A warm-coloured central galaxy below a curved blue arc of gravitationally lensed light.",
         "credit": "HST observations; processed analysis data accompanying Nightingale et al. (2023), doi:10.1093/mnras/stad587. Final publication attribution and redistribution permission pending.",
     }
     (args.output / "display.json").write_text(json.dumps(metadata, indent=2) + "\n")
-    for name in ("comparison.png", "abell_1201_rgb.png", "abell_1201_f390w.png", "display.json"):
+    for name in (
+        "comparison.png",
+        "abell_1201_rgb.png",
+        "abell_1201_f390w.png",
+        "display.json",
+    ):
         print((args.output / name).resolve())
 
 

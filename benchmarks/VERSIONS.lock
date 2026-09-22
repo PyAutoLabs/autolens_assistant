@@ -6,3 +6,6 @@
 oneshot-smoke:
   - version: 1
     prompt_sha256: a8b88b8dbe674653ea0385b8f795d2afd89709089401a6f5d6b6cc2cca108089
+abell-1201-setup:
+  - version: 1
+    prompt_sha256: a75d08eaa4285e413f297c4335f3263138336d010350db0e5e3ad12a0082a020

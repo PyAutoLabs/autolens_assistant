@@ -184,6 +184,12 @@ Start a science project for my SDSSJ0946+1006 analysis.
 
 ## Benchmarks
 
+Abell 1201 now has a [presentation and setup example](scripts/abell_1201/README.md)
+with bundled processed HST inputs and a [setup-only benchmark](benchmarks/prompts/oneshot/abell-1201-setup/card.md).
+It prepares a power-law + shear + central-point-mass model and checks a coarse
+inversion. The posterior fit and scientific validation are still pending; this
+does not claim to reproduce the black-hole discovery.
+
 The three example prompts above (plus the hard cross-package benchmark) are
 also shipped as **frozen benchmark prompts** under [`benchmarks/`](benchmarks/),
 with scoring rubrics and a small harness that records each run's conversation,
