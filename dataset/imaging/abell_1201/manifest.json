@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "pixel_scale_arcsec": 0.04,
+  "redshift_lens": 0.169,
+  "redshift_source": 0.451,
+  "mask": {
+    "source": "positive support of noise_map_subtracted.fits",
+    "approved": "2026-09-22",
+    "included_pixels": 31417,
+    "maximum_radius_arcsec": 4.0
+  },
+  "reference_commit": "d412b6379934f935bfd955ee0c2d74883e88c320",
+  "files": {
+    "f390w/data_mge_subtracted.fits": {
+      "sha256": "9c2f57c2f43dca8378cbba5c5409ba18fe791a6993be13448d10836b5e95d00e",
+      "bytes": 1422720,
+      "provenance": "locally supplied processed product"
+    },
+    "f390w/image.fits": {
+      "sha256": "4248ce8025c41d5728cc35338a5b236985afceaa106217e281741fd3a5fea820",
+      "bytes": 1422720,
+      "provenance": "published analysis repository; verified against upstream"
+    },
+    "f390w/noise_map.fits": {
+      "sha256": "eb1192f07505e6a79e668dc9720f6c35b9733fb52e74d2ce4ce0de1ff04cbb40",
+      "bytes": 1422720,
+      "provenance": "published analysis repository; verified against upstream"
+    },
+    "f390w/noise_map_subtracted.fits": {
+      "sha256": "2936dc2a31cb906e59167b665b575083b102d9c1f10996f61e35d9790ba5cce2",
+      "bytes": 1422720,
+      "provenance": "locally supplied processed product"
+    },
+    "f390w/positions.json": {
+      "sha256": "49b1413b1b620b9196a6800a12d1058c41aa996a85aeb11ac95a192271abd255",
+      "bytes": 112,
+      "provenance": "published analysis repository; verified against upstream"
+    },
+    "f390w/psf.fits": {
+      "sha256": "a692d8d72e61172ad9c1b5f23f106eb1ffbca6b5615787f5409989c491e21db9",
+      "bytes": 5760,
+      "provenance": "published analysis repository; verified against upstream"
+    },
+    "f814w/data_mge_subtracted.fits": {
+      "sha256": "c057d323f564bfed688d217b824b15694eac804a35920f0734489c197b5051be",
+      "bytes": 1422720,
+      "provenance": "locally supplied processed product"
+    },
+    "f814w/image.fits": {
+      "sha256": "807bff559ac6bd1e6e218a0a5f63499df69f23ba327b06a0c756a0545593ac76",
+      "bytes": 1422720,
+      "provenance": "published analysis repository; verified against upstream"
+    },
+    "f814w/noise_map.fits": {
+      "sha256": "c8539c5fb85b6f2178fdcdf53972ae2569482b35877955830bd5e7f87bf8c3ea",
+      "bytes": 1422720,
+      "provenance": "published analysis repository; verified against upstream"
+    },
+    "f814w/noise_map_subtracted.fits": {
+      "sha256": "eb2daa61e24b0bcc8292cf5181ae911a6d8f3a75457e64004d90d97ec00f4ed4",
+      "bytes": 1422720,
+      "provenance": "locally supplied processed product"
+    },
+    "f814w/positions.json": {
+      "sha256": "49b1413b1b620b9196a6800a12d1058c41aa996a85aeb11ac95a192271abd255",
+      "bytes": 112,
+      "provenance": "published analysis repository; verified against upstream"
+    },
+    "f814w/psf.fits": {
+      "sha256": "178357f7ded518cdb3603568abea983e090aa8093e1e28c8b10024ef16637f5b",
+      "bytes": 5760,
+      "provenance": "published analysis repository; verified against upstream"
+    }
+  }
+}

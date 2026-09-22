@@ -97,8 +97,9 @@ grows whatever survey modes its own domain has, if any), `paper/` (this
 assistant's own JOSS paper — a newborn writes its own), the README figure
 assets in `docs/` (COSMOS-Web Ring imagery + the `make_readme_figures.py`
 script that renders it — a newborn regrows its own), and the bundled science
-scripts in `scripts/` (`*_cosmos_web_ring.py`, tied to a named lens; only
-`scripts/`'s own AGENTS/CLAUDE/README docs are generic), and the setup and
+scripts in `scripts/` (`*_cosmos_web_ring.py`, tied to a named lens), plus
+`scripts/abell_1201/README.md` (named-lens inputs, priors and run protocol;
+only `scripts/`'s own AGENTS/CLAUDE/README docs are generic), and the setup and
 evaluation pages under `docs/` (the agent-access mechanics read the same everywhere; the
 worked prompts and dataset names are domain).
 
