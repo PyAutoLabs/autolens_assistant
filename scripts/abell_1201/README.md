@@ -109,7 +109,7 @@ it can run without an operator. Score inference evidence and diagnostics, not
 just a quoted literature value. Run freeze-check, scoring tests and a cheap
 setup smoke check separately from full inference.
 
-For the website image, obtain the appropriate observed image before styling.
+For the website image, use the available observed images for now.
 The supplied `image.fits` already has edited contaminant regions; do not fill
 them with invented pixels or call the result untouched telescope data. Keep
 plot settings, attribution, caption and alt text with the eventual export.
@@ -128,8 +128,10 @@ The RGB uses a common intensity stretch to preserve display channel ratios.
 Original FITS files and fit/noise preparation remain untouched.
 
 The current preview exposes an existing F814W contaminant cut-out near the
-right edge of the arc. Obtain pre-removal images for a seamless public image;
-do not invent replacement pixels. In particular, `f390w/image_new.fits` is
+right edge of the arc. On 2026-09-22 the scientist confirmed that pre-removal
+originals are not to hand and should be deferred rather than required now.
+Continue with available inputs, disclose the existing processing, and do not
+invent replacement pixels. In particular, `f390w/image_new.fits` is
 exactly the vertically flipped `f814w/image.fits` array, not a different blue
 observation. The published `image.fits` files are the verified preview inputs.
 
