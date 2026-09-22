@@ -25,7 +25,8 @@ Hubble Space Telescope observations and accompanying processed analysis data.
 The literature result is context, not a validated answer for this new mask and
 source reconstruction. No full benchmark fit has been performed.
 
-These files are included locally at the scientist's request. An upstream data
-license was not identified in the repository root; confirm the intended data
-redistribution terms and final attribution before publishing this branch.
-No new license for the observations is asserted by this metadata.
+The supplying scientist explicitly authorised public redistribution of these
+processed files for issue #133 on 2026-09-22, with credit to Nightingale et al.
+(2023) and HST. An upstream data license was not identified in the repository
+root; this records the scientist's permission, not an independently verified
+upstream license or a new license for the observations.

@@ -74,7 +74,9 @@ literature notes describing only an upper limit should not define the scorer.
 - MGE-subtracted, scaled, `old` and other local variants need their own
   provenance and selection. Their names alone do not establish a noise/data
   pairing or suitability for inference.
-- Confirm photometric units and redistribution permission before bundling data.
+- The scientist authorised public redistribution on 2026-09-22 with credit to
+  Nightingale et al. (2023) and HST; see the bundled dataset README. Absolute
+  photometric units remain unconfirmed; no absolute luminosity is inferred.
 - The scientist approved F390W with a power-law galaxy mass, external shear and
   central point mass, fitting nuisance parameters alongside the black hole.
   The candidate implementation below makes every prior/fixed choice explicit.
