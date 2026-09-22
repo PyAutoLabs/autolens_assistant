@@ -82,6 +82,12 @@ literature notes describing only an upper limit should not define the scorer.
 
 ## Remaining implementation
 
+The scientist confirmed on 2026-09-22 that the fit should use the existing
+contaminant-removal images. Presentation is a separate product: show an
+attractive image at the start of the public science prompt as well as on the
+website. Mask extent is still pending; this confirmation does not silently
+choose between the published 3.7 arcsec mask and the processed ~4 arcsec support.
+
 After inspection approval, implement the agreed preparation and fit with the
 live assistant APIs. Add the one-shot card/scorer under
 `benchmarks/prompts/oneshot/abell-1201-point-mass/`, hidden reference material
@@ -95,3 +101,34 @@ For the website image, obtain the appropriate observed image before styling.
 The supplied `image.fits` already has edited contaminant regions; do not fill
 them with invented pixels or call the result untouched telescope data. Keep
 plot settings, attribution, caption and alt text with the eventual export.
+
+## Presentation preview
+
+```bash
+python scripts/abell_1201/website_image.py --dataset /path/to/abell_1201
+```
+
+This writes a two-band RGB preview, an F390W intensity alternative, a side-by-side
+comparison and `display.json` under `scripts/scratch/abell_1201/website/`.
+F814W maps to red, F390W to blue; green mixes the two. Display balance and
+asinh stretch are CLI arguments recorded with the source checksums and crop.
+The RGB uses a common intensity stretch to preserve display channel ratios.
+Original FITS files and fit/noise preparation remain untouched.
+
+The current preview exposes an existing F814W contaminant cut-out near the
+right edge of the arc. Obtain pre-removal images for a seamless public image;
+do not invent replacement pixels. In particular, `f390w/image_new.fits` is
+exactly the vertically flipped `f814w/image.fits` array, not a different blue
+observation. The published `image.fits` files are the verified preview inputs.
+
+### Opening science prompt (draft; not a frozen benchmark)
+
+> Show me Abell 1201 in a colour image, then fit the central black-hole point
+> mass using the supplied contaminant-cleaned imaging and the agreed baseline
+> model. Report its mass and uncertainty and show the fit and residuals.
+
+The assistant should first display the presentation image with its two-band
+colour caption, then show the scientific dataset/mask inspection separately.
+The website RGB must never be loaded as the fitting image. The final one-shot
+benchmark must supply the approved model/mask decisions explicitly; this short
+public opening prompt may clarify them conversationally.
