@@ -23,6 +23,25 @@ $BASE/PyAutoFit:\
 $BASE/PyAutoArray:\
 $BASE/PyAutoGalaxy:\
 $BASE/PyAutoLens
+    # --- Keep caches OFF $HOME on HPC ---------------------------------------
+    # On many clusters (RAL: every node) /home sits on a small root disk, so tools that
+    # default to ~/.cache — the PyAutoNerves JAX compile cache (~/.cache/pyauto_jax), pip,
+    # matplotlib, numba, CUDA/Triton kernels — fill it and break the node (RAL admin,
+    # 2026-09-25). Send them to the shared project filesystem instead: by default a
+    # `.cache/` next to PYAUTO_HPC_BASE (override with PYAUTO_HPC_CACHE). Only unset
+    # variables are filled, so a submit script's own JAX_COMPILATION_CACHE_DIR still wins
+    # (and an explicitly EMPTY one still disables the JAX cache). Laptop `.venv` users
+    # never reach this branch.
+    export PYAUTO_HPC_CACHE="${PYAUTO_HPC_CACHE:-$(dirname "$PYAUTO_HPC_BASE")/.cache}"
+    mkdir -p "$PYAUTO_HPC_CACHE" 2>/dev/null || true
+    export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$PYAUTO_HPC_CACHE}"
+    export PIP_CACHE_DIR="${PIP_CACHE_DIR:-$PYAUTO_HPC_CACHE/pip}"
+    export MPLCONFIGDIR="${MPLCONFIGDIR:-$PYAUTO_HPC_CACHE/matplotlib}"
+    export NUMBA_CACHE_DIR="${NUMBA_CACHE_DIR:-$PYAUTO_HPC_CACHE/numba}"
+    export CUDA_CACHE_PATH="${CUDA_CACHE_PATH:-$PYAUTO_HPC_CACHE/nv}"
+    export TRITON_CACHE_DIR="${TRITON_CACHE_DIR:-$PYAUTO_HPC_CACHE/triton}"
+    export JAX_COMPILATION_CACHE_DIR="${JAX_COMPILATION_CACHE_DIR-$PYAUTO_HPC_CACHE/pyauto_jax}"
+    export ASTROPY_CACHE_DIR="${ASTROPY_CACHE_DIR:-$PYAUTO_HPC_CACHE/astropy}"
 else
     echo "No local .venv found (set PYAUTO_HPC_BASE for a shared/HPC PyAuto checkout)." >&2
 fi
