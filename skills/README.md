@@ -45,6 +45,12 @@ Every skill below is a **complete recipe** unless marked `(stub)` — the stubs 
 under "Pending — stubbed" at the end, with a queue of catalogued-but-unstubbed topics after
 them.
 
+### Greeting
+
+- [`al_greeting_cosmos_web_ring.md`](./al_greeting_cosmos_web_ring.md) — the public
+  starting prompt: show the JWST F444W COSMOS-Web Ring, explain it in plain words, ask the
+  reader's background (curious reader, student or researcher) and route the guided fit.
+
 ### Meta
 
 - [`_style.md`](./_style.md) — writing guide every skill is authored against. Read first

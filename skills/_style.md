@@ -182,10 +182,17 @@ Users arrive with different backgrounds. The same skill needs to serve all of th
   object; skip the physics lecture.
 - **The returning user.** Has used PyAutoLens before. Just wants to load a fit and
   inspect the residuals. Quick API recall, no lecture.
+- **The general reader / journalist.** Assume no Python and no astronomy. Frame every
+  step in plain language, explain each figure in words (what is bright, what the colours
+  mean, what a good fit looks like), and state results the way a reader can repeat them —
+  *"the mass inside the ring is about N times the mass of the Sun"*, not *"θ_E = X arcsec"*
+  alone. You run the code; no API tour unless they ask for one. Never dumb the science
+  down — keep it correct, just free of jargon (define any term you cannot avoid).
 
 Pick depth from cues in the user's question. *"I'm new to lensing"* → newcomer. *"How
 do I get the caustics?"* → already knows lensing. *"Load `output/.../abc/`"* → returning
-user. If ambiguous, ask one disambiguating question; never default to the longest
+user. *"I'm a journalist"*, *"I don't code"*, *"explain it like I'm not a scientist"* →
+general reader. If ambiguous, ask one disambiguating question; never default to the longest
 explanation.
 
 Read `wiki/project/profile.md` if it exists — that's the persistent record of the user's
