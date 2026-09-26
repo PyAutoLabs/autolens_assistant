@@ -1,0 +1,69 @@
+{
+  "card": "cosmos-web-ring-fit",
+  "version": 1,
+  "prompt_sha256": "4e768e7f230f0438ccb91bec63446fd8c8674a06eeb202e22af4256c322bfdb4",
+  "model": "claude-sonnet-5",
+  "harness": "claude-code",
+  "date": "2026-09-26",
+  "gates": [
+    {
+      "name": "finished",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "schema",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "compute_budget",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "run_budget",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "fit_was_run",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "noise_scaling_applied",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "mask_radius",
+      "passed": true,
+      "reason": null
+    }
+  ],
+  "metrics": [
+    {
+      "name": "einstein_radius_within_tol",
+      "value": 1.0,
+      "detail": "einstein_radius=0.8024849300043813 (reference 0.802 +/- 0.030)"
+    },
+    {
+      "name": "fit_quality",
+      "value": 1.0,
+      "detail": "reduced_chi_squared=0.6167332700382825 (good <= 0.678, poor <= 2.879)"
+    },
+    {
+      "name": "figures_exist",
+      "value": 1.0,
+      "detail": "3/3 listed PNG(s) exist"
+    },
+    {
+      "name": "summary_length",
+      "value": 1.0,
+      "detail": "3 sentence(s)"
+    }
+  ],
+  "score": 100.0,
+  "reason": null
+}

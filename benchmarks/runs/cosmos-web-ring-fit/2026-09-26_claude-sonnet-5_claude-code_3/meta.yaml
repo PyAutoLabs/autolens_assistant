@@ -1,0 +1,30 @@
+benchmark: cosmos-web-ring-fit
+kind: oneshot
+prompt_version: 1
+prompt_sha256: 4e768e7f230f0438ccb91bec63446fd8c8674a06eeb202e22af4256c322bfdb4
+date: '2026-09-26'
+model: claude-sonnet-5
+harness: claude-code
+assistant_sha: 1cbefd7
+stack:
+  autolens: not-installed
+  autofit: not-installed
+  autoarray: not-installed
+  autonerves: not-installed
+hardware:
+  system: Linux
+  machine: x86_64
+  cpu_count: 8
+  python: 3.12.10
+  accelerator: NVIDIA GeForce RTX 2060 Max-Q (cuda:0), JAX_PLATFORMS=cuda, OMP_NUM_THREADS=8
+run:
+  wall_seconds: 459.0
+  compute_seconds: 351.4
+  tokens_in: 985934
+  tokens_out: 9935
+  cost_usd: 0.5405206
+  turns: 17
+  exit_code: 0
+status: complete
+score: 100.0
+notes: GPU uncontended. figures_found.json restored after a scorer fix (see its note).
