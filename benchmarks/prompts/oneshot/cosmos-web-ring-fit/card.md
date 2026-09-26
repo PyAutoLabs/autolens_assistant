@@ -54,6 +54,12 @@ operator is present to answer the greeting skill's expertise question.
   made. The committed reference figures under `scripts/cosmos_web_ring/results/`
   do not count, and a session that never ran a fit fails `fit_was_run`.
 
+- **Finishing a long job headlessly.** The fit takes minutes, and a session
+  that starts it in the background and then ends its turn waiting for a
+  notification orphans the fit and never writes `result.json`; `finished`
+  catches this (`no_result_json`). `benchmarks/AGENTS.md` tells a session to
+  run the fit in the foreground or poll it to completion in the same turn.
+
 The budgets assume a GPU, or a machine whose CPU XLA compile is fast: the
 reference good fit takes 448 s wall on an RTX 2060 (`cuda:0`), most of it JAX
 compilation, so `compute_seconds` (900) allows about two fits and
