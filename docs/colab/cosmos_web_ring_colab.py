@@ -10,8 +10,8 @@ the model reproduces the picture, and compared a good model with a not-so-good o
 It is the second of two ways to start with the PyAutoLens Assistant
 (https://github.com/PyAutoLabs/autolens_assistant):
 
-- **The agent route.** Open the assistant repository in Claude Code or Codex and paste the
-  starting prompt below; the AI agent shows you the ring, asks your background and walks you
+- **The agent route.** Open Claude Code or Codex (in any folder) and paste the starting
+  prompt below; the AI agent shows you the ring, asks your background and walks you
   through the same analysis in conversation.
 - **This notebook.** The same analysis, written out step by step with the PyAutoLens code
   visible. It is the route to take if you are learning PyAutoLens and want to see the API.
@@ -19,6 +19,8 @@ It is the second of two ways to start with the PyAutoLens Assistant
 The assistant's starting prompt is:
 
 > I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant
+> First clone that repository, cd into it and follow its AGENTS.md.
+>
 > I'd like to understand how gravitational lensing works using the JWST image of the
 > COSMOS-Web Ring that ships with the assistant. Show me the picture, explain what we are
 > looking at, and walk me through fitting a lens model so we can measure the mass inside the

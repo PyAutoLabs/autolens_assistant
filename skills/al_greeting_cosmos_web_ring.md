@@ -1,6 +1,6 @@
 ---
 name: al_greeting_cosmos_web_ring
-description: The public greeting — walk a newcomer (journalist, curious reader, student or researcher) through the bundled JWST COSMOS-Web Ring. Use when the opening prompt is the public starting prompt ("I want to use the PyAutoLens Assistant ... COSMOS-Web Ring ... Pitch it at my level: ask me what my background is first ...") or any request to be shown / walked through the bundled COSMOS-Web Ring. Shows the F444W image first, asks one background question, then routes by audience.
+description: The public greeting — walk a newcomer (journalist, curious reader, student or researcher) through the bundled JWST COSMOS-Web Ring. Use when the opening prompt is the public starting prompt ("I want to use the PyAutoLens Assistant ... First clone that repository, cd into it and follow its AGENTS.md ... COSMOS-Web Ring ... Pitch it at my level: ask me what my background is first ...") or any request to be shown / walked through the bundled COSMOS-Web Ring. Shows the F444W image first, asks one background question, then routes by audience.
 ---
 
 # Greeting: the COSMOS-Web Ring
@@ -8,6 +8,8 @@ description: The public greeting — walk a newcomer (journalist, curious reader
 The public starting prompt reads, in full:
 
 > I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant
+> First clone that repository, cd into it and follow its AGENTS.md.
+>
 > I'd like to understand how gravitational lensing works using the JWST image of the
 > COSMOS-Web Ring that ships with the assistant. Show me the picture, explain what we are
 > looking at, and walk me through fitting a lens model so we can measure the mass inside
@@ -19,6 +21,28 @@ The person may be a journalist, a member of the public, a student or a lensing
 researcher. This skill makes the first two replies the same for all of them, then
 hands off by audience. Depth follows `skills/_style.md` "Adaptive depth" (the
 general-reader persona is the one most newcomers from the website need).
+
+## Step 0 — be inside the checkout
+
+Every path below is relative to the repository root. The prompt may arrive in an agent
+opened in some other folder, and it now says so itself: "First clone that repository, cd
+into it and follow its AGENTS.md." An agent that has not cloned yet does that **before
+anything else — including before asking the background question**; the "ask me what my
+background is first" in the next paragraph of the prompt comes after the bootstrap. If
+`dataset/imaging/cosmos_web_ring` is not present relative to your working directory,
+bootstrap first, as the README and `AGENTS.md` describe: clone the repository if it is
+not already there, `cd` into it, read `AGENTS.md` in full and follow its session start
+(hooks and project settings do not load for a folder entered mid-session, so
+self-enforce the code gate with `python autoassistant/audit_skill_apis.py --code/--file`).
+If `python` is not on PATH, use `python3`. If `import autolens` fails, or `--check-version`
+exits 2 or 3, install PyAutoLens via [`al_setup_environment`](./al_setup_environment.md)
+before Step 1 (it needs Python 3.12 or newer).
+
+The bootstrap is part of the walkthrough, not a detour: tell the person what you are
+installing and why, one line each (for example "downloading the assistant, which
+includes the JWST image" and "installing PyAutoLens, the lens-modelling software"), and
+mention once that they can relaunch the agent inside the cloned folder later for the
+full setup. Then carry straight on to Step 1 in the same reply.
 
 ## Step 1 — show the picture (first reply)
 

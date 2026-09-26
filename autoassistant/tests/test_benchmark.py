@@ -148,7 +148,7 @@ def test_report_builds_leaderboard_and_pending(root):
 def test_repo_prompt_cards_parse():
     """Every committed rubric card must load: unique ids, frontmatter, rubric."""
     cards = benchmark.load_cards(REPO_ROOT)
-    assert set(cards) == {"harness-smoke"}
+    assert set(cards) == {"harness-smoke", "bootstrap-smoke"}
     for card in cards.values():
         machine = sum(r.max_points for r in card.rubric if r.machine)
         judged = sum(r.max_points for r in card.rubric if not r.machine)

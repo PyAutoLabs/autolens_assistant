@@ -9,7 +9,7 @@ Vocabulary used throughout the assistants:
 
 | Word | Meaning |
 |---|---|
-| **Recommended / tested** | The agent the assistant is developed against day to day, and on which the three checks below pass repeatedly. Claude Code and Codex. |
+| **Recommended / tested** | The agent the assistant is developed against day to day, and on which checks 1-3 below pass repeatedly. Claude Code and Codex. |
 | **Experimental / compatible** | The agent loads `AGENTS.md`, runs code and follows the skills in principle, but no configuration has passed the checks below on record. OpenCode today. |
 | **Candidate for evaluation** | Worth a look; not offered to users at all until it has a record. Gemini CLI today. |
 | **Unsupported** | Cannot meet the requirements (no execution, no data access) — the retired chat routes. |
@@ -18,13 +18,15 @@ Vocabulary used throughout the assistants:
 "benchmarked" anywhere unless `benchmarks/RESULTS.md` carries the run that justifies it; as of
 2026-09-10 it carries none.
 
-## The three checks
+## The four checks
 
 Small enough to run in an afternoon on a laptop, large enough to expose the failure modes that
 matter. They are shipped as the frozen benchmark card
 [`benchmarks/prompts/harness_smoke.md`](../../benchmarks/prompts/harness_smoke.md) so a run is
 recorded exactly like any other benchmark (`python autoassistant/benchmark.py new-run
-harness-smoke --model <model> --harness <harness>`, then score and `report`).
+harness-smoke --model <model> --harness <harness>`, then score and `report`). Check 4 has its own
+card, [`benchmarks/prompts/bootstrap_smoke.md`](../../benchmarks/prompts/bootstrap_smoke.md)
+(`new-run bootstrap-smoke …`).
 
 1. **Grounded answering.** Ask a scientific/API question whose answer lives in a specific
    repository file (the card names one). Pass = the agent opens the right `skills/` or
@@ -41,6 +43,11 @@ harness-smoke --model <model> --harness <harness>`, then score and `report`).
    diagnoses it against the installed library or `skills/`, fixes it without inventing another
    symbol, and re-runs; on harnesses without the PreToolUse hook it should run
    `audit_skill_apis.py --file` before re-executing.
+4. **Bootstrap from an empty directory.** Start the agent in an empty folder and paste the
+   public starting prompt verbatim. Pass = the agent clones this repository, `cd`s into it, reads
+   `AGENTS.md` in full, installs or verifies PyAutoLens without being asked, plots the F444W
+   COSMOS-Web Ring and ends on the single background question — the evidence behind telling
+   users they can paste the prompt into an agent opened anywhere.
 
 Record failures as scored runs too — a negative result is the evidence that keeps an agent off
 the supported list.
@@ -56,9 +63,10 @@ the result. Nothing in it should be copied into user-facing docs as a support cl
 | Claude Code | Yes — subscription (Pro/Max, Team/Enterprise seats) or Claude Console usage billing, or Bedrock / Google Cloud / Foundry ([costs page](https://code.claude.com/docs/en/costs)). No free tier described. | 0 scored (developed against daily) | Primary harness; the only one with the PreToolUse code gate. |
 | Codex | Partially — the Codex README states sign-in with Plus, Pro, Business, Edu or Enterprise, or an API key. The pricing page (`developers.openai.com/codex/pricing`) was unreachable from the adopting session, so **free-plan Codex access is unverified**. | 0 scored (developed against daily) | Re-check the pricing page before stating anything about free access. |
 | OpenCode + a named free model | OpenCode's own docs: client open source; hosted provider (Zen) is pay-as-you-go with a few no-cost models "available for a limited time"; only one Zen model is documented as vision-capable, and it is not one of the free ones. | 0 | **No default free configuration is validated.** A candidate must pass check 2's figure inspection, which needs image input. |
+| Check 4 — bootstrap from an empty directory (Claude Code, Codex) | n/a | 4 pre-merge (2026-09-26, branch tree URL substituted): prompt v1 — Claude Code / claude-opus-5-5 97/100, Codex / gpt-5.6-sol 13/100 twice; prompt v2 (adds "First clone that repository, cd into it and follow its AGENTS.md.") — Claude Code 100/100; Codex v2 pending (rate-limited) | Added 2026-09-26 (#138). Claude Code cloned, read `AGENTS.md`, built a Python 3.12 venv, plotted F444W and stopped on the question. Codex made no tool calls: it asked a background question first and the one-turn run ended, so it never reached the bootstrap text. Definitive runs repeat with the real prompt after merge. |
 | Gemini CLI | Conflicting: the assistant's setup page recorded on 2026-06-18 that free/individual access was retired, while the Gemini CLI quota document currently lists a free individual tier (1,000 requests/day) alongside Google AI Pro/Ultra, Code Assist Standard/Enterprise, API-key and Vertex routes. Resolve at evaluation time. | 0 | Candidate only. `.gemini/settings.json` is kept so it loads `AGENTS.md`; do not add a user-facing setup page until it has a record. |
 
 Promotion rule: an agent (or an OpenCode provider/model pair) moves to *experimental with a
-tested configuration* after one recorded pass of all three checks, and to *recommended* only
+tested configuration* after one recorded pass of checks 1-3, and to *recommended* only
 after repeated passes across dates plus at least one of the full science benchmark cards. Every
 promotion is a dated edit to this table and to the README.

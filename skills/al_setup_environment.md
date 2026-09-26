@@ -13,7 +13,9 @@ but lets you read and modify the libraries). Never install automatically without
 
 ## Orient — inspect before installing
 
-If the project has an `activate.sh`, source it first. Then run the cheap structured preflight:
+If the project has an `activate.sh`, source it first. If `python` is not on PATH, use `python3`
+(and, for new environments, an explicit `python3.12` or newer — see "Pip install"). Then run the
+cheap structured preflight:
 
 ```bash
 python autoassistant/audit_skill_apis.py --check-install
@@ -60,8 +62,8 @@ The simplest path. PyAutoLens declares the rest of the stack as transitive deps,
 single `pip install` pulls everything in.
 
 ```bash
-# Create or activate a Python 3.11 env (use whatever env manager you have)
-python3.11 -m venv .venv
+# Create or activate a Python 3.12+ env (use whatever env manager you have)
+python3.12 -m venv .venv
 source .venv/bin/activate
 
 # Core stack + JAX-accelerated array ops + numba JIT
@@ -70,12 +72,13 @@ pip install "autolens[jax]" numba
 # Optional — the results-inspector MCP server (al_inspect_results_mcp): pip install mcp
 ```
 
-Python ≥ 3.9 works in principle (all five repos declare `requires-python = ">=3.9"`)
-and JAX runs on every supported version including 3.10. 3.11 is the recommended
-baseline — it's what the workspace tooling targets and what the JAX wheels are
-best-tested against, so 3.10 works but is suboptimal. If an env on 3.10 reports
-JAX as unavailable, treat it as a wheel mismatch in that env, not a stack-wide
-incompatibility.
+**Python 3.12 or newer is required.** The current release (autolens 2026.9.19.1) declares
+`Requires-Python >=3.12` on PyPI; on 3.11 or older, `pip install autolens` fails while building
+with "autolens requires Python 3.12 or later". Releases at or below 2026.7.29.1 still declare
+`>=3.9`, but they are unsupported, months out of date and ship without JAX — do not pin one to
+dodge the floor; create the env with `python3.12` (or 3.13) instead. If only an older system
+Python exists, ask the user to install 3.12+ (python.org, their OS package manager, `uv python
+install 3.12`, or conda) before continuing.
 
 Verify:
 
@@ -106,7 +109,7 @@ git clone https://github.com/PyAutoLabs/PyAutoLens.git
 
 cd ..
 
-python3.11 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
 

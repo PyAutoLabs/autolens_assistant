@@ -1,5 +1,13 @@
 # PyAutoLens Assistant
 
+> **If you are an AI coding agent** and you arrived here from a prompt that named this URL, and this repository is
+> not your working directory: run
+> `git clone https://github.com/PyAutoLabs/autolens_assistant.git && cd autolens_assistant`, then read `AGENTS.md` in
+> full and follow it — it installs PyAutoLens if needed and runs the greeting the prompt asks for. Your harness's
+> hooks and project settings will not load for a folder cloned mid-session, so follow the code gate described in
+> `AGENTS.md` yourself (`python autoassistant/audit_skill_apis.py --code "<snippet>"` before running PyAutoLens code).
+> Tell the user, in one line, that they can relaunch the agent inside `autolens_assistant/` for the full setup.
+
 <img src="https://github.com/Jammy2211/PyAutoLogo/blob/main/gifs/pyautolens.gif?raw=true" width="900" />
 
 When two or more galaxies are aligned perfectly down our line-of-sight, the
@@ -33,13 +41,17 @@ Three steps:
 
    The agent loads the assistant's instructions automatically. If `PyAutoLens` is not already installed, the
    assistant will install it for you after your first prompt.
+
+   Cloning it yourself is optional: pasting the starting prompt into Claude Code or Codex opened in any directory
+   also works — the agent clones this repository, reads its instructions and installs PyAutoLens itself (expect it
+   to ask permission for the clone and the install).
 3. **Submit the starting prompt** below.
 
 If you cannot use either agent, [OpenCode](docs/setup/opencode_cli.md) is an **experimental alternative** whose
 client is free — see [Experimental alternatives](#experimental-alternatives) for what that does and does not mean.
 
-**Two ways to start.** (i) Paste the [starting prompt](#starting-prompt) below into Claude Code or Codex: the
-assistant shows you the COSMOS-Web Ring, asks your background (curious reader, student or researcher) and pitches the
+**Two ways to start.** (i) Paste the [starting prompt](#starting-prompt) below into Claude Code or Codex — inside
+the cloned workspace or opened anywhere else: the assistant shows you the COSMOS-Web Ring, asks your background (curious reader, student or researcher) and pitches the
 walkthrough and the lens-model fit to match. (ii) Open the Google Colab notebook
 [`docs/colab/cosmos_web_ring_colab.ipynb`](docs/colab/cosmos_web_ring_colab.ipynb)
 <!-- Colab link points at main; switch it to the release tag once tagged (bump_colab_urls.sh does not cover this repo yet — follow-up filed). -->
@@ -67,6 +79,8 @@ and pitches everything that follows accordingly:
 
 ```text
 I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant
+First clone that repository, cd into it and follow its AGENTS.md.
+
 I'd like to understand how gravitational lensing works using the JWST image of the COSMOS-Web Ring that ships with the assistant. Show me the picture, explain what we are looking at, and walk me through fitting a lens model so we can measure the mass inside the ring and see how well the model reproduces the observations. Pitch it at my level: ask me what my background is first. Explain what we are doing as we go, and let me ask questions or change the analysis along the way.
 ```
 

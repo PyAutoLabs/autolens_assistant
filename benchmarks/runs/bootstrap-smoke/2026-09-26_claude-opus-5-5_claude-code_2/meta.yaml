@@ -1,0 +1,48 @@
+benchmark: bootstrap-smoke
+prompt_version: 2
+date: '2026-09-26'
+model: claude-opus-5-5
+harness: claude-code
+assistant_sha: 6949a59
+stack:
+  autolens: 2026.9.26.1 (installed by the agent from PyPI into <clone>/.venv, Python
+    3.12)
+  autofit: 2026.9.26.1
+  autoarray: 2026.9.26.1
+  autonerves: 2026.9.26.1
+hardware: WSL2 laptop (Linux 5.10), CPU
+operator: Claude Opus 5.5 subagent (headless run, human-authorised)
+run:
+  duration_minutes: 2.18
+  cost_usd: 0.521
+  tokens:
+    input: 20
+    cache_creation: 45678
+    cache_read: 344317
+    output: 4314
+  turns: 10
+status: complete
+score:
+  machine: 50.0
+  judged: 50.0
+  total: 100.0
+  judge: Claude Opus 5.5 subagent (operator), from transcript.jsonl and the files
+    the agent left in its directory
+notes: 'Card v2: the public prompt now carries ''First clone that repository, cd into
+  it and follow its AGENTS.md.'' as its second line. Pre-merge stage (a) of #138:
+  repository URL replaced by the branch tree URL https://github.com/PyAutoLabs/autolens_assistant/tree/feature/self-bootstrapping-greeting,
+  standing in for main until merge. Empty directory, scrubbed environment (env -i
+  HOME USER LANG TERM PATH=~/.local/bin:node:/usr/local/bin:/usr/bin:/bin; no venv,
+  no PYTHONPATH; system python3 3.10 without pip). claude-code 2.1.283, default model
+  claude-opus-5-5, claude -p <prompt> --output-format stream-json --verbose --permission-mode
+  bypassPermissions --max-turns 60. Wall 131 s, 10 turns. No web fetch. First tool
+  call was the clone (git clone -b feature/self-bootstrapping-greeting) + cat AGENTS.md,
+  then the greeting skill. Install path: `python` absent (exit 127) -> python3 (3.10)
+  --check-version exit 2 -> read al_setup_environment (now says 3.12+) -> python3.12
+  -m venv .venv + pip install ''autolens[jax]'' numba -> 2026.9.26.1 (released today)
+  -> --check-version exit 0 (drift clean; version stamp differs from the 2026-09-19
+  baseline, API identical). No failed 3.11 attempt this time (the v1 run lost a round
+  trip to it). Code gate self-enforced: audit_skill_apis.py --file plot_dataset.py
+  -> clean before running. Writes only inside its empty directory (plus pip''s cache).
+  Codex was not re-run on v2: the account is rate-limited until 20:36 (usage limit
+  hit during the v1 turn-2 attempt).'

@@ -3,5 +3,7 @@ claude-code:
   command: ["claude", "-p", "{prompt}", "--output-format", "stream-json", "--verbose", "--model", "{model}", "--permission-mode", "bypassPermissions", "--max-turns", "150"]
   transcript: claude-stream-json
 codex:
-  command: ["codex", "exec", "--json", "--full-auto", "--model", "{model}", "{prompt}"]
+  # codex-cli 0.157 removed `--full-auto`; `--sandbox workspace-write` is its sandbox half
+  # (writes confined to the workdir, network off). `codex exec` never prompts for approval.
+  command: ["codex", "exec", "--json", "--sandbox", "workspace-write", "--model", "{model}", "{prompt}"]
   transcript: codex-jsonl
