@@ -29,6 +29,19 @@ The assistant configures itself on your first prompt, and will install PyAutoLen
 it isn't already installed. The desktop app and the IDE extensions work the same way once they
 are opened on this folder.
 
+## Start from any directory
+
+Cloning first is optional. You can open Claude Code in any folder — even an empty one — and
+paste the [starting prompt](../../README.md#starting-prompt). Because the prompt names this
+repository, the agent will clone it, `cd` into it, read `AGENTS.md`, install PyAutoLens if it
+is missing, and then show you the COSMOS-Web Ring and ask your background.
+
+Expect Claude Code to ask permission before it runs `git clone` and `pip install`; approve
+them. One caveat: the repository's hooks and project settings (`.claude/settings.json`) only
+load when Claude Code is *launched* inside the folder, so in a session started elsewhere the
+agent checks its PyAutoLens code against the installed library by hand. For the full setup,
+quit and relaunch `claude` inside `autolens_assistant/` whenever convenient.
+
 ## Your first prompt
 
 You're set up — copy and paste this to start (the COSMOS-Web Ring data ships with the

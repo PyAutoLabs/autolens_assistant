@@ -4,7 +4,9 @@ Once [Claude Code](claude_code.md), [Codex](codex_cli.md) or (experimentally)
 [OpenCode](opencode_cli.md) is open inside the repository, these all work immediately — the
 COSMOS-Web Ring data ships with the repository. Start with the public greeting prompt — the
 assistant will ask your background first (curious reader, student or researcher) and pitch the
-walkthrough accordingly:
+walkthrough accordingly. The greeting also works before you have cloned anything: paste it
+into Claude Code or Codex opened in any folder and the agent clones the repository and installs
+PyAutoLens itself (see "Start from any directory" in the setup pages):
 
 <sub><b>Starting prompt for Claude Code, Codex or other AI coding agent</b></sub>
 
