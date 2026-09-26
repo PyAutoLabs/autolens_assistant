@@ -1,0 +1,48 @@
+benchmark: bootstrap-smoke
+prompt_version: 1
+date: '2026-09-26'
+model: gpt-5.6-sol
+harness: codex
+assistant_sha: f690a31
+stack:
+  autolens: not-installed (scrubbed environment; the agent installed nothing)
+  autofit: not-installed
+  autoarray: not-installed
+  autonerves: not-installed
+hardware: WSL2 laptop (Linux 5.10), CPU
+operator: Claude Opus 5.5 subagent (headless run, human-authorised)
+run:
+  duration_minutes: 0.17
+  cost_usd: null
+  tokens:
+    input_tokens: 17222
+    cached_input_tokens: 11136
+    cache_write_input_tokens: 0
+    output_tokens: 188
+    reasoning_output_tokens: 135
+  turns: 1
+status: complete
+score:
+  machine: 3.0
+  judged: 10.0
+  total: 13.0
+  judge: Claude Opus 5.5 subagent (operator), from transcript.jsonl
+notes: "Pre-merge stage (a) of #138: the prompt is the public starting prompt byte\
+  \ for byte except the repository URL, replaced by the branch tree URL https://github.com/PyAutoLabs/autolens_assistant/tree/feature/self-bootstrapping-greeting\
+  \ so the fetched text is the branch's, standing in for main until merge. Launched\
+  \ from an EMPTY directory under the session scratchpad in a scrubbed environment\
+  \ (env -i HOME USER LANG TERM PATH=~/.local/bin:node:/usr/local/bin:/usr/bin:/bin;\
+  \ no VIRTUAL_ENV, no PYTHONPATH), so no PyAutoLens was importable: system python3\
+  \ is 3.10 without pip; python3.9-3.14 present. Command: codex exec --json -s workspace-write\
+  \ -c sandbox_workspace_write.network_access=true --skip-git-repo-check <prompt>,\
+  \ codex-cli 0.157.1, model gpt-5.6-sol (from ~/.codex/config.toml; reasoning effort\
+  \ medium). (A first attempt with the plan's `--full-auto` exited at argument parsing:\
+  \ the flag no longer exists in 0.157; not recorded.) Wall 10 s, one turn, ZERO tool\
+  \ calls: the agent did not fetch the URL, clone, read AGENTS.md or install anything\
+  \ \u2014 it read \"ask me what my background is first\" as overriding and replied\
+  \ with a background question only, then the headless session ended. Finding: with\
+  \ Codex the bootstrap guidance in README/llms.txt/AGENTS.md is never reached on\
+  \ the first turn, because nothing is fetched before the question; the prompt text\
+  \ itself is byte-pinned, so any fix has to come from elsewhere (or be accepted:\
+  \ interactively the user answers and the agent continues). Nothing was written anywhere\
+  \ (its directory is still empty)."

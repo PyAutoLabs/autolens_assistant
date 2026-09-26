@@ -1,0 +1,4 @@
+{"type": "thread.started", "thread_id": "01a0de48-aec0-7072-a4a5-a0c9f4c06628"}
+{"type": "turn.started"}
+{"type": "item.completed", "item": {"id": "item_0", "type": "agent_message", "text": "What’s your background in gravitational lensing and model fitting?\n\nFor example: complete beginner, some astronomy/physics, or experienced with lensing/Bayesian inference. Also mention whether you’re comfortable reading a little Python as we go."}}
+{"type": "turn.completed", "usage": {"input_tokens": 17222, "cached_input_tokens": 11136, "cache_write_input_tokens": 0, "output_tokens": 188, "reasoning_output_tokens": 135}}
