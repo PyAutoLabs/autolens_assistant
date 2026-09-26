@@ -54,8 +54,8 @@ client is free — see [Experimental alternatives](#experimental-alternatives) f
 the cloned workspace or opened anywhere else: the assistant shows you the COSMOS-Web Ring, asks your background (curious reader, student or researcher) and pitches the
 walkthrough and the lens-model fit to match. (ii) Open the Google Colab notebook
 [`docs/colab/cosmos_web_ring_colab.ipynb`](docs/colab/cosmos_web_ring_colab.ipynb)
-<!-- Colab link points at main; switch it to the release tag once tagged (bump_colab_urls.sh does not cover this repo yet — follow-up filed). -->
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/PyAutoLabs/autolens_assistant/blob/main/docs/colab/cosmos_web_ring_colab.ipynb),
+<!-- Colab link pinned to release tag 2026.9.26.1; bump it by hand each release (bump_colab_urls.sh does not cover this repo yet — Mind draft filed). The tagged notebook predates #139, so its quoted starting prompt lacks the clone sentence. -->
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/PyAutoLabs/autolens_assistant/blob/2026.9.26.1/docs/colab/cosmos_web_ring_colab.ipynb),
 which walks through the same analysis with more explanation and is recommended if you are learning PyAutoLens and
 want to see the API.
 
