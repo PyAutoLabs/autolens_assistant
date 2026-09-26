@@ -21,6 +21,7 @@ NOTEBOOK = COLAB_DIR / "cosmos_web_ring_colab.ipynb"
 STARTING_PROMPT_OPENING = (
     "I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant"
 )
+STARTING_PROMPT_CLONE = "First clone that repository, cd into it and follow its AGENTS.md."
 
 
 def _cells():
@@ -55,6 +56,7 @@ def test_prose_covers_the_promised_content():
     assert "achromatic" in prose
     assert "Gemini" in prose
     assert STARTING_PROMPT_OPENING in prose
+    assert STARTING_PROMPT_CLONE in prose
 
 
 def test_notebook_regenerates_byte_identically(tmp_path):

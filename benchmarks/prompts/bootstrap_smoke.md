@@ -1,6 +1,6 @@
 ---
 id: bootstrap-smoke
-version: 1
+version: 2
 mode: assistant
 difficulty: easy
 datasets:
@@ -25,10 +25,16 @@ repository — the whole point is that the agent starts outside it.
 ## Prompt
 
 One message, pasted verbatim into an agent started in an **empty directory**. It is the public
-starting prompt, byte for byte:
+starting prompt, byte for byte. **Version 2 (2026-09-26)** adds the second line, "First clone
+that repository, cd into it and follow its AGENTS.md.", and a paragraph break: in the v1 runs
+Codex answered "ask me what my background is first" literally, with zero tool calls, and never
+reached the bootstrap guidance, so the public prompt now asks for the clone itself. v1 and v2
+scores are not comparable.
 
 ```
 I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant
+First clone that repository, cd into it and follow its AGENTS.md.
+
 I'd like to understand how gravitational lensing works using the JWST image of the COSMOS-Web Ring that ships with the assistant. Show me the picture, explain what we are looking at, and walk me through fitting a lens model so we can measure the mass inside the ring and see how well the model reproduces the observations. Pitch it at my level: ask me what my background is first. Explain what we are doing as we go, and let me ask questions or change the analysis along the way.
 ```
 

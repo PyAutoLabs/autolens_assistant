@@ -85,3 +85,14 @@ def test_step0_bootstraps_an_agent_opened_outside_the_checkout():
     assert "AGENTS.md" in step0
     assert "al_setup_environment" in step0
     assert "audit_skill_apis.py" in step0
+
+
+def test_skill_quotes_the_public_prompt_with_its_clone_sentence():
+    """The public prompt's second line asks for the bootstrap (v2 of the
+    prompt); the skill quotes it, triggers on it, and Step 0 puts it first."""
+    text = _text()
+    clone = "First clone that repository, cd into it and follow its AGENTS.md."
+    opening = "> I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant"
+    assert opening + "\n> " + clone + "\n>\n" in text
+    assert "First clone that repository" in text.split("---")[1]
+    assert "before asking the background question" in _section(text, "Step 0")
