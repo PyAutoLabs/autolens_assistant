@@ -1,0 +1,9 @@
+{
+  "einstein_radius": 0.8025,
+  "einstein_radius_tol": 0.03,
+  "reduced_chi_squared_good": 0.6161,
+  "reduced_chi_squared_poor": 2.8789,
+  "n_masked_pixels": 2813,
+  "mask_radius": 1.8,
+  "provenance": "scripts/cosmos_web_ring/results/{good,sersic_source}/summary.json (fit_cosmos_web_ring.py, F444W, MultiStartProdigy 48x300, 2026-09-26)"
+}
