@@ -57,6 +57,7 @@ benchmarks/
 | [`prompts/oneshot/oneshot-smoke/`](prompts/oneshot/oneshot-smoke/card.md) | one-shot | grounding without running code: the recommended search for the bundled COSMOS-Web Ring and the repository files that document it |
 | [`prompts/oneshot/cosmos-web-ring-fit/`](prompts/oneshot/cosmos-web-ring-fit/card.md) | one-shot | the assistant's recommended fit end to end on the JWST F444W COSMOS-Web Ring (noise scaling, 1.8" mask, MGE + isothermal + shear, `MultiStartProdigy`), scored against the recorded reference fits in `truth/` |
 | [`prompts/harness_smoke.md`](prompts/harness_smoke.md) | rubric (operator) | agent qualification: grounded answering, a small fit with figure inspection, recovery from a stale-API error — the evidence behind the README's support statements (protocol: [`docs/evaluation/agent_evaluation.md`](../docs/evaluation/agent_evaluation.md)) |
+| [`prompts/bootstrap_smoke.md`](prompts/bootstrap_smoke.md) | rubric (operator) | the public starting prompt from an EMPTY directory: the agent clones the repository, reads `AGENTS.md`, installs or verifies PyAutoLens, shows the F444W picture and stops on the one background question (autolens_assistant#138) |
 
 ## Running a one-shot benchmark
 
