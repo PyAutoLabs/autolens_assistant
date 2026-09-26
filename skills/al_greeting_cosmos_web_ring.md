@@ -29,8 +29,9 @@ bootstrap first, as the README and `AGENTS.md` describe: clone the repository if
 not already there, `cd` into it, read `AGENTS.md` in full and follow its session start
 (hooks and project settings do not load for a folder entered mid-session, so
 self-enforce the code gate with `python autoassistant/audit_skill_apis.py --code/--file`).
-If `import autolens` fails, or `--check-version` exits 2 or 3, install PyAutoLens via
-[`al_setup_environment`](./al_setup_environment.md) before Step 1.
+If `python` is not on PATH, use `python3`. If `import autolens` fails, or `--check-version`
+exits 2 or 3, install PyAutoLens via [`al_setup_environment`](./al_setup_environment.md)
+before Step 1 (it needs Python 3.12 or newer).
 
 The bootstrap is part of the walkthrough, not a detour: tell the person what you are
 installing and why, one line each (for example "downloading the assistant, which
