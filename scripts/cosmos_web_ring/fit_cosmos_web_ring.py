@@ -42,7 +42,9 @@ __Imports__
 (64-bit precision) the likelihood relies on. The variant switches exist so the reference
 "poor" fits a user could plausibly obtain are produced by the same script as the good one.
 """
-from autolens import jax_wrapper  # noqa: F401  Sets the JAX environment before other imports
+from autolens import (
+    jax_wrapper,
+)  # noqa: F401  Sets the JAX environment before other imports
 
 import argparse
 import json
@@ -98,7 +100,9 @@ to unit sum by default (`use_normalized_psf=True`). The shipped PSFs sum to abou
 normalisation matters: without it the model would be systematically about 3% too faint. The
 assertion below makes the normalisation explicit rather than assumed.
 """
-dataset_path = REPO_ROOT / "dataset" / "imaging" / "cosmos_web_ring" / "wavebands" / args.band
+dataset_path = (
+    REPO_ROOT / "dataset" / "imaging" / "cosmos_web_ring" / "wavebands" / args.band
+)
 info = json.loads((dataset_path / "info.json").read_text())
 pixel_scale = info["pixel_scale"]
 redshift_lens = info["redshift_lens"]
@@ -300,7 +304,9 @@ einstein_mass = sigma_crit * np.pi * einstein_radius**2
 evaluation_grid = al.Grid2D.uniform(shape_native=(200, 200), pixel_scales=0.03)
 lens_calc = al.LensCalc.from_tracer(tracer)
 try:
-    einstein_radius_effective = float(lens_calc.einstein_radius_from(grid=evaluation_grid))
+    einstein_radius_effective = float(
+        lens_calc.einstein_radius_from(grid=evaluation_grid)
+    )
     einstein_mass_effective = sigma_crit * float(
         lens_calc.einstein_mass_angular_from(grid=evaluation_grid)
     )
@@ -361,7 +367,8 @@ summary = {
         "use_jax": True,
     },
     "versions": {
-        name: _version(name) for name in ("autolens", "autogalaxy", "autoarray", "autofit", "jax")
+        name: _version(name)
+        for name in ("autolens", "autogalaxy", "autoarray", "autofit", "jax")
     },
     "jax_devices": [str(device) for device in jax.devices()],
     "thread_env": {
@@ -404,7 +411,10 @@ aplt.plot_array(
     output_format="png",
 )
 aplt.subplot_tracer(
-    tracer=tracer, grid=dataset.grids.lp, output_path=str(results_dir), output_format="png"
+    tracer=tracer,
+    grid=dataset.grids.lp,
+    output_path=str(results_dir),
+    output_format="png",
 )
 
 print(json.dumps(summary, indent=2))
