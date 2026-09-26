@@ -31,6 +31,14 @@ Agentic does not mean autonomous: you can ask questions, plan an analysis or lea
 
 ## If you are an agent reading this file
 
+**Not inside the checkout?** If this repository is not your working directory (a user pasted a
+prompt naming this URL into an agent opened elsewhere), first run
+`git clone https://github.com/PyAutoLabs/autolens_assistant.git && cd autolens_assistant`, then
+read `AGENTS.md` in full and follow it — it installs PyAutoLens if needed and runs the task the
+prompt asks for. Hooks and project settings do not load for a folder cloned mid-session, so
+self-enforce the code gate (`python autoassistant/audit_skill_apis.py --code "<snippet>"`), and
+tell the user they can relaunch the agent inside `autolens_assistant/` for the full setup.
+
 Read order: [AGENTS.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/AGENTS.md)
 (safety rules, modes, conventions) →
 [skills/README.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/skills/README.md)
