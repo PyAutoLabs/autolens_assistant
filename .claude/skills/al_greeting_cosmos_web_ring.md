@@ -1,0 +1,1 @@
+../../skills/al_greeting_cosmos_web_ring.md

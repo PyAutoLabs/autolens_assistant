@@ -22,6 +22,7 @@ __Contents__
 - **Registration**: the pixel mapping tying the RGB cutout to the `.fits` grid.
 - **Load**: read the RGB composite and both single-band images.
 - **Plot**: render the three panels, arrow annotation and mask overlay.
+- **Web image**: a clean, annotation-free upscale of the RGB for the website.
 """
 
 import numpy as np
@@ -35,6 +36,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from pathlib import Path
 from astropy.io import fits
+from PIL import Image, ImageDraw
 
 """__Paths__
 
@@ -50,6 +52,7 @@ REPO_PATH = DOCS_PATH.parent
 RGB_PATH = DOCS_PATH / "images" / "sources" / "cosmos_web_ring_6_rgb.png"
 DATASET_PATH = REPO_PATH / "dataset" / "imaging" / "cosmos_web_ring" / "wavebands"
 OUTPUT_PATH = DOCS_PATH / "images" / "cosmos_web_ring_dataset.png"
+WEB_OUTPUT_PATH = DOCS_PATH / "images" / "cosmos_web_ring_rgb.png"
 
 BANDS = ["F277W", "F444W"]
 
@@ -264,3 +267,52 @@ committed PNG."""
 figure.savefig(OUTPUT_PATH, dpi=110, facecolor="white")
 
 print(f"Figure written to: {OUTPUT_PATH.resolve()}")
+
+"""__Web image__
+
+The picture the website and the greeting prompt lead with: the COWLS RGB
+composite cropped to the ring and upscaled cleanly, and nothing else — no model
+output, no arrows, no labels — so it can be used as a press-ready image.
+
+The ring fills only the central ~45 pixels of the 167-pixel cutout, so on a web
+page the full frame reads as a dot. A 90-pixel (5.4") square centred on the lens
+keeps the whole ring, the small companion galaxy just below-right of it and a
+dark margin, while dropping the bright unrelated galaxy at the top of the frame.
+A Lanczos resample takes that crop to 840 pixels, sharp at the widths a web page
+shows it at, while keeping the committed PNG well under 1 MB.
+
+The 1.8" mask circle is available as a thin optional overlay but is off by
+default: on its own the ring reads better unframed.
+"""
+
+WEB_CROP_SIZE = 90
+WEB_OUTPUT_SIZE = 840
+WEB_MASK_CIRCLE = False
+
+
+def web_crop_box(size=WEB_CROP_SIZE):
+    """(left, upper, right, lower) of a square crop centred on the lens, in the
+    RGB's top-row-first pixel frame (PIL's crop convention)."""
+    y, x = LENS_CENTRE
+    half = size // 2
+    return (x - half, y - half, x - half + size, y - half + size)
+
+
+def web_image(output_size=WEB_OUTPUT_SIZE, mask_circle=WEB_MASK_CIRCLE):
+    box = web_crop_box()
+    image = Image.open(RGB_PATH).convert("RGB").crop(box)
+    scale = output_size / image.width
+    image = image.resize((output_size, output_size), resample=Image.LANCZOS)
+    if mask_circle:
+        draw = ImageDraw.Draw(image)
+        y = (LENS_CENTRE[0] - box[1] + 0.5) * scale
+        x = (LENS_CENTRE[1] - box[0] + 0.5) * scale
+        r = MASK_RADIUS_ARCSEC / PIXEL_SCALE * scale
+        draw.ellipse((x - r, y - r, x + r, y + r), outline=(0, 255, 255), width=2)
+    return image
+
+
+web_image().save(WEB_OUTPUT_PATH, optimize=True)
+
+print(f"Web image crop box (left, upper, right, lower): {web_crop_box()}")
+print(f"Web image written to: {WEB_OUTPUT_PATH.resolve()}")

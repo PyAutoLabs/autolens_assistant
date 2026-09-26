@@ -6,6 +6,6 @@
 oneshot-smoke:
   - version: 1
     prompt_sha256: a8b88b8dbe674653ea0385b8f795d2afd89709089401a6f5d6b6cc2cca108089
-abell-1201-setup:
+cosmos-web-ring-fit:
   - version: 1
-    prompt_sha256: a75d08eaa4285e413f297c4335f3263138336d010350db0e5e3ad12a0082a020
+    prompt_sha256: 4e768e7f230f0438ccb91bec63446fd8c8674a06eeb202e22af4256c322bfdb4

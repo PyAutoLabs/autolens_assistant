@@ -15,8 +15,13 @@ Two rules make it work:
 - **One folder per card**, named by card id (`truth/<card-id>/…`), so a card's
   reference material is retired with the card.
 
-It is empty today: `oneshot-smoke` is scored entirely from the checkout the
-agent was given (which files exist, which of them document the recommended
-search), so it needs no hidden truth. The first card whose answer is a number —
-a recovered Einstein radius, a log-evidence difference — brings the first
-`truth/<card-id>/` folder with it.
+`oneshot-smoke` is scored entirely from the checkout the agent was given
+(which files exist, which of them document the recommended search), so it needs
+no hidden truth. The first numeric card is `cosmos-web-ring-fit`:
+[`cosmos-web-ring-fit/truth.json`](cosmos-web-ring-fit/truth.json) holds the
+reference good fit's Einstein radius and reduced chi-squared, the poor
+(single-Sérsic source) fit's reduced chi-squared, the Einstein-radius tolerance
+(half the good–poor spread, floored at 0.03") and the mask. The values are
+copied from `scripts/cosmos_web_ring/results/*/summary.json`, and
+`autoassistant/tests/test_cosmos_web_ring_fit_card.py` checks the two agree, so
+a re-run of the reference fits that changes them must update both.

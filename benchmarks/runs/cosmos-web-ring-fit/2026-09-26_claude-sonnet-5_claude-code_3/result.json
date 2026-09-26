@@ -1,0 +1,14 @@
+{
+  "einstein_radius": 0.8024849300043813,
+  "reduced_chi_squared": 0.6167332700382825,
+  "n_masked_pixels": 2813,
+  "noise_scaling_applied": true,
+  "mask_radius": 1.8,
+  "search": "MultiStartProdigy",
+  "figures": [
+    "scripts/cosmos_web_ring/results/bench_run3/fit_subplot.png",
+    "scripts/cosmos_web_ring/results/bench_run3/source.png",
+    "scripts/cosmos_web_ring/results/bench_run3/tracer.png"
+  ],
+  "summary": "An isothermal-plus-shear lens with MGE lens-light and MGE source, fit to the F444W COSMOS-Web Ring imaging (extra-galaxy noise scaling applied, 1.8\" circular mask, 2813 pixels) using MultiStartProdigy (48 starts x 300 steps), converges to an Einstein radius of 0.80\", matching the tangential critical curve and Mercier et al. (2024). The reduced chi-squared of 0.62 shows the model reproduces the ring and residuals are close to noise-like, confirming a good fit rather than the degenerate wide-mass/no-ring basin the default priors can fall into."
+}

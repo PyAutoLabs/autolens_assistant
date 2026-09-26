@@ -1,0 +1,13 @@
+{
+  "figures": [
+    "scripts/cosmos_web_ring/results/bench_run3/fit_subplot.png",
+    "scripts/cosmos_web_ring/results/bench_run3/source.png",
+    "scripts/cosmos_web_ring/results/bench_run3/tracer.png"
+  ],
+  "found": [
+    true,
+    true,
+    true
+  ],
+  "note": "Restored 2026-09-26 after a scorer fix: the first score excluded every PNG under scripts/cosmos_web_ring/results/, including these new ones. Evidence: the session's own existence check in transcript.jsonl printed 'OK:' for all three paths before the workdir was deleted; fit_subplot.png is in artifacts/ (the other two exceeded the artifact budget)."
+}

@@ -1,0 +1,61 @@
+{
+  "variant": "good",
+  "band": "F444W",
+  "test_mode": false,
+  "einstein_radius": 0.8025175171177701,
+  "einstein_radius_effective": 0.7747921825317406,
+  "ell_comps": [
+    -0.12066413641140575,
+    0.19084979231242136
+  ],
+  "centre": [
+    -0.16039562808266652,
+    -0.16477642951909685
+  ],
+  "shear_gamma_1": 0.10764815460146393,
+  "shear_gamma_2": -0.05971120818916559,
+  "shear_magnitude": 0.12309977080608459,
+  "log_likelihood": 1204.3835262014154,
+  "chi_squared": 1733.0804216409006,
+  "n_masked_pixels": 2813,
+  "reduced_chi_squared": 0.6160968438111982,
+  "einstein_mass_solar_masses": 415531995055.06354,
+  "einstein_mass_effective_solar_masses": 387316401068.20984,
+  "einstein_radius_kpc": 6.888605978479994,
+  "critical_surface_density_solar_mass_per_arcsec2": 205374043967.38556,
+  "cosmology": "Planck15",
+  "redshift_lens": 2.0,
+  "redshift_source": 5.1043,
+  "mask_radius": 1.8,
+  "noise_scaling_applied": true,
+  "psf_sum_on_disk": 0.9718146634018352,
+  "wall_seconds": 448.0083526999997,
+  "search": {
+    "class": "MultiStartProdigy",
+    "n_starts": 48,
+    "n_steps": 300,
+    "batch_size": null,
+    "use_jax": true
+  },
+  "versions": {
+    "autolens": "2026.8.17.1",
+    "autogalaxy": "2026.8.17.1",
+    "autoarray": "2026.8.17.1",
+    "autofit": "2026.8.17.1",
+    "jax": "0.10.2"
+  },
+  "jax_devices": [
+    "cuda:0"
+  ],
+  "thread_env": {
+    "JAX_PLATFORMS": "cuda",
+    "OMP_NUM_THREADS": "8",
+    "OPENBLAS_NUM_THREADS": "8",
+    "MKL_NUM_THREADS": "8",
+    "XLA_FLAGS": "--xla_disable_hlo_passes=constant_folding --xla_gpu_autotune_level=0 --xla_gpu_enable_triton_gemm=false"
+  },
+  "cpu_count": 8,
+  "machine": "Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "processor": "x86_64",
+  "date": "2026-09-26"
+}

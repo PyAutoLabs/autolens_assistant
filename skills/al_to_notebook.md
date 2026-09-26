@@ -38,6 +38,15 @@ identically.) The CLI prints the absolute output path — quote it and offer to 
   reconvert. Keep the script the committed source of truth unless the user explicitly wants
   the notebook tracked (e.g. a shared/Colab-facing artifact in a science project).
 
+## The tracked Colab example
+
+`docs/colab/cosmos_web_ring_colab.ipynb` is the one notebook this repository tracks: the
+Colab-facing COSMOS-Web Ring walkthrough linked from the README's "Two ways to start". Its source
+of truth is `docs/colab/cosmos_web_ring_colab.py` (the Colab setup cell is hand-written in the
+`.py`, right after the title docstring). Edit the `.py`, then regenerate with
+`python -m autoassistant.to_notebook docs/colab/cosmos_web_ring_colab.py docs/colab/cosmos_web_ring_colab.ipynb`
+and commit both; `autoassistant/tests/test_colab_notebook.py` fails if the two drift apart.
+
 ## Combine
 
 - A converted notebook in a science project pairs well with the shareable-repo story

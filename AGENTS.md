@@ -137,6 +137,10 @@ than improvising. State an inferred mode in one line and invite correction; ackn
 explicit one only if it changes behavior. Read `modes/<mode>.md`; depth still follows
 `skills/_style.md` "Adaptive depth".
 
+The public greeting prompt (walk me through the bundled COSMOS-Web Ring, "ask me what my
+background is first") runs [`skills/al_greeting_cosmos_web_ring.md`](./skills/al_greeting_cosmos_web_ring.md),
+which asks the background question and picks the mode from the answer.
+
 ---
 
 ## Working with skills

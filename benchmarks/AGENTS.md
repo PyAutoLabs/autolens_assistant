@@ -27,6 +27,13 @@ must write `result.json` to. So:
 - **Mind the clock and the compute.** Each card has a wall-clock budget and a
   budget for interpreter time; both are gates. If the prompt says not to run a
   fit or write a script, running one is a failure even when the answer is right.
+- **Run long work in the foreground.** In a headless one-shot the session ends
+  when your turn ends, so a fit started in the background (`nohup … &`, a
+  background shell task) is orphaned and `result.json` is never written —
+  no notification will wake you. Run the fit in the foreground with a long
+  enough timeout, or poll the background process to completion inside the same
+  turn, then write `result.json`. (The first two recorded `cosmos-web-ring-fit`
+  runs, 2026-09-26, did exactly this and scored 0 on `finished`.)
 - **Report honestly, including failures.** An honest "I could not do X" in a
   well-formed `result.json` beats a fabricated number, always.
 

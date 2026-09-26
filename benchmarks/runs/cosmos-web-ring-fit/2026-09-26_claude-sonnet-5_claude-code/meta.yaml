@@ -1,0 +1,31 @@
+benchmark: cosmos-web-ring-fit
+kind: oneshot
+prompt_version: 1
+prompt_sha256: 4e768e7f230f0438ccb91bec63446fd8c8674a06eeb202e22af4256c322bfdb4
+date: '2026-09-26'
+model: claude-sonnet-5
+harness: claude-code
+assistant_sha: 1eb01f8
+stack:
+  autolens: not-installed
+  autofit: not-installed
+  autoarray: not-installed
+  autonerves: not-installed
+hardware:
+  system: Linux
+  machine: x86_64
+  cpu_count: 8
+  python: 3.12.10
+  accelerator: NVIDIA GeForce RTX 2060 Max-Q (cuda:0), JAX_PLATFORMS=cuda, OMP_NUM_THREADS=8
+run:
+  wall_seconds: 344.6
+  compute_seconds: 108.3
+  tokens_in: 1444994
+  tokens_out: 8126
+  cost_usd: 0.607386
+  turns: 21
+  exit_code: 0
+status: failed
+score: 0.0
+notes: GPU shared with an orphaned test-mode fit during this run; session backgrounded
+  its fit and ended the turn (no result.json).
