@@ -78,6 +78,13 @@ model = af.Collection(galaxies=af.Collection(lens=lens, source=source), fields=f
 lens_mass.centre.centre_0 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
 lens_mass.centre.centre_1 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
 
+# On real data, bound the Einstein radius from the ring you can see in the image
+# (the default prior is uniform over 0-8"). A maximum-likelihood optimiser such as
+# MultiStartProdigy otherwise finds degenerate basins where theta_E exceeds the mask,
+# the "source" lands on a neighbouring galaxy and the ring is left in the residuals
+# (this is exactly what happened on the bundled COSMOS-Web Ring: theta_E 2.4" vs 0.8").
+lens_mass.einstein_radius = af.UniformPrior(lower_limit=0.3, upper_limit=1.5)
+
 print(model.info)
 ```
 
