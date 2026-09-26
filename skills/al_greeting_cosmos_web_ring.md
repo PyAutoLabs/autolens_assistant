@@ -20,6 +20,24 @@ researcher. This skill makes the first two replies the same for all of them, the
 hands off by audience. Depth follows `skills/_style.md` "Adaptive depth" (the
 general-reader persona is the one most newcomers from the website need).
 
+## Step 0 — be inside the checkout
+
+Every path below is relative to the repository root. The prompt may arrive in an agent
+opened in some other folder, with only the URL to go on. If
+`dataset/imaging/cosmos_web_ring` is not present relative to your working directory,
+bootstrap first, as the README and `AGENTS.md` describe: clone the repository if it is
+not already there, `cd` into it, read `AGENTS.md` in full and follow its session start
+(hooks and project settings do not load for a folder entered mid-session, so
+self-enforce the code gate with `python autoassistant/audit_skill_apis.py --code/--file`).
+If `import autolens` fails, or `--check-version` exits 2 or 3, install PyAutoLens via
+[`al_setup_environment`](./al_setup_environment.md) before Step 1.
+
+The bootstrap is part of the walkthrough, not a detour: tell the person what you are
+installing and why, one line each (for example "downloading the assistant, which
+includes the JWST image" and "installing PyAutoLens, the lens-modelling software"), and
+mention once that they can relaunch the agent inside the cloned folder later for the
+full setup. Then carry straight on to Step 1 in the same reply.
+
 ## Step 1 — show the picture (first reply)
 
 Before any question, plot the **F444W** image — the band used throughout this

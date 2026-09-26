@@ -72,3 +72,16 @@ def test_route_step_bounds_the_mass_priors():
     assert "einstein_radius = af.UniformPrior(lower_limit=0.3, upper_limit=1.5)" in route
     assert "gamma_1 = af.UniformPrior(lower_limit=-0.15, upper_limit=0.15)" in route
     assert "degenerate" in route
+
+
+def test_step0_bootstraps_an_agent_opened_outside_the_checkout():
+    """The public prompt may be pasted into an agent opened anywhere
+    (autolens_assistant#138): Step 0 must send it into the checkout, through
+    AGENTS.md, and install PyAutoLens before the picture."""
+    text = _text()
+    step0 = _section(text, "Step 0")
+    assert text.index("## Step 0") < text.index("## Step 1")
+    assert "dataset/imaging/cosmos_web_ring" in step0
+    assert "AGENTS.md" in step0
+    assert "al_setup_environment" in step0
+    assert "audit_skill_apis.py" in step0
