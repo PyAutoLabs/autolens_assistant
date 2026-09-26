@@ -2,7 +2,16 @@
 
 Once [Claude Code](claude_code.md), [Codex](codex_cli.md) or (experimentally)
 [OpenCode](opencode_cli.md) is open inside the repository, these all work immediately — the
-COSMOS-Web Ring data ships with the repository:
+COSMOS-Web Ring data ships with the repository. Start with the public greeting prompt — the
+assistant will ask your background first (curious reader, student or researcher) and pitch the
+walkthrough accordingly:
+
+<sub><b>Starting prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
+I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant
+I'd like to understand how gravitational lensing works using the JWST image of the COSMOS-Web Ring that ships with the assistant. Show me the picture, explain what we are looking at, and walk me through fitting a lens model so we can measure the mass inside the ring and see how well the model reproduces the observations. Pitch it at my level: ask me what my background is first. Explain what we are doing as we go, and let me ask questions or change the analysis along the way.
+```
 
 <sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
 

@@ -22,6 +22,7 @@ __Contents__
 - **Registration**: the pixel mapping tying the RGB cutout to the `.fits` grid.
 - **Load**: read the RGB composite and both single-band images.
 - **Plot**: render the three panels, arrow annotation and mask overlay.
+- **Web image**: a clean, annotation-free upscale of the RGB for the website.
 """
 
 import numpy as np
@@ -35,6 +36,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from pathlib import Path
 from astropy.io import fits
+from PIL import Image, ImageDraw
 
 """__Paths__
 
@@ -50,6 +52,7 @@ REPO_PATH = DOCS_PATH.parent
 RGB_PATH = DOCS_PATH / "images" / "sources" / "cosmos_web_ring_6_rgb.png"
 DATASET_PATH = REPO_PATH / "dataset" / "imaging" / "cosmos_web_ring" / "wavebands"
 OUTPUT_PATH = DOCS_PATH / "images" / "cosmos_web_ring_dataset.png"
+WEB_OUTPUT_PATH = DOCS_PATH / "images" / "cosmos_web_ring_rgb.png"
 
 BANDS = ["F277W", "F444W"]
 
@@ -264,3 +267,35 @@ committed PNG."""
 figure.savefig(OUTPUT_PATH, dpi=110, facecolor="white")
 
 print(f"Figure written to: {OUTPUT_PATH.resolve()}")
+
+"""__Web image__
+
+The picture the website and the greeting prompt lead with: the same COWLS RGB
+composite, upscaled cleanly and nothing else — no model output, no arrows, no
+labels — so it can be used as a press-ready image. A 5x Lanczos resample takes
+the 167-pixel cutout to 835 pixels, sharp at the ~800 pixel widths a web page
+shows it at, while keeping the committed PNG well under 1 MB.
+
+The 1.8" mask circle is available as a thin optional overlay but is off by
+default: on its own the ring reads better unframed.
+"""
+
+WEB_UPSCALE = 5
+WEB_MASK_CIRCLE = False
+
+
+def web_image(upscale=WEB_UPSCALE, mask_circle=WEB_MASK_CIRCLE):
+    image = Image.open(RGB_PATH).convert("RGB")
+    size = image.width * upscale
+    image = image.resize((size, size), resample=Image.LANCZOS)
+    if mask_circle:
+        draw = ImageDraw.Draw(image)
+        y, x = ((c + 0.5) * upscale for c in LENS_CENTRE)
+        r = MASK_RADIUS_ARCSEC / PIXEL_SCALE * upscale
+        draw.ellipse((x - r, y - r, x + r, y + r), outline=(0, 255, 255), width=2)
+    return image
+
+
+web_image().save(WEB_OUTPUT_PATH, optimize=True)
+
+print(f"Web image written to: {WEB_OUTPUT_PATH.resolve()}")

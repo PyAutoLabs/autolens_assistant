@@ -38,6 +38,13 @@ Three steps:
 If you cannot use either agent, [OpenCode](docs/setup/opencode_cli.md) is an **experimental alternative** whose
 client is free — see [Experimental alternatives](#experimental-alternatives) for what that does and does not mean.
 
+**Two ways to start.** (i) Paste the [starting prompt](#starting-prompt) below into Claude Code or Codex: the
+assistant shows you the COSMOS-Web Ring, asks your background (curious reader, student or researcher) and pitches the
+walkthrough and the lens-model fit to match. (ii) Open the Google Colab notebook
+[`docs/colab/cosmos_web_ring_colab.ipynb`](docs/colab/cosmos_web_ring_colab.ipynb) (being added alongside this
+greeting), which walks through the same analysis with more explanation and is recommended if you are learning
+PyAutoLens and want to see the API.
+
 ### Using PyAutoLens Assistant
 
 To illustrate the `autolens_assistant` we will use James Webb Space Telescope imaging data of the 
@@ -51,7 +58,17 @@ interactions with the `autolens_assistant` may ask you about how to handle these
 
 ### Starting prompt
 
-Here is a good initial prompt to try it out, noting that data for the COSMOS-Web Ring is included in this repository as an example:
+This prompt works for anyone — journalist, student or lensing researcher. The assistant asks your background first
+and pitches everything that follows accordingly:
+
+<sub><b>Starting prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
+I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant
+I'd like to understand how gravitational lensing works using the JWST image of the COSMOS-Web Ring that ships with the assistant. Show me the picture, explain what we are looking at, and walk me through fitting a lens model so we can measure the mass inside the ring and see how well the model reproduces the observations. Pitch it at my level: ask me what my background is first. Explain what we are doing as we go, and let me ask questions or change the analysis along the way.
+```
+
+Another good initial prompt, noting that data for the COSMOS-Web Ring is included in this repository as an example:
 
 <sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
 
@@ -183,6 +200,9 @@ Start a science project for my SDSSJ0946+1006 analysis.
 ```
 
 ## Benchmarks
+
+The COSMOS-Web Ring fit behind the starting prompt is also the machine-scored `cosmos-web-ring-fit` benchmark
+card (see [`benchmarks/README.md`](benchmarks/README.md)).
 
 The three example prompts above (plus the hard cross-package benchmark) are
 also shipped as **frozen benchmark prompts** under [`benchmarks/`](benchmarks/),
