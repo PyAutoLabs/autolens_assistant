@@ -40,8 +40,11 @@ repository, the agent will clone it, `cd` into it, read `AGENTS.md`, install PyA
 is missing, and then show you the COSMOS-Web Ring and ask your background.
 
 Codex's default sandbox blocks network access, so the clone and the install need it: approve
-the network request when Codex asks, start it with `codex --full-auto`, or clone the
-repository yourself and relaunch `codex` inside it. Codex reads `AGENTS.md` and registers the
+the network request when Codex asks, or start it with network enabled inside the
+workspace-write sandbox —
+`codex --sandbox workspace-write -c sandbox_workspace_write.network_access=true` (codex-cli
+0.157; the older `--full-auto` flag no longer exists) — or clone the repository yourself and
+relaunch `codex` inside it. Codex reads `AGENTS.md` and registers the
 project hooks only at launch, so in a session started elsewhere the agent reads the file
 explicitly and checks its PyAutoLens code against the installed library by hand; relaunching
 inside `autolens_assistant/` gives you the full setup.

@@ -72,7 +72,9 @@ operator does not answer it.
   `pip install` into (a throwaway venv is ideal).
 - Claude Code asks permission for `git clone` / `pip install`; approve them (headless:
   `claude -p "<prompt>" --permission-mode bypassPermissions --max-turns 60`). Codex's default
-  sandbox blocks network; run `codex exec --full-auto "<prompt>"` or approve the request.
+  sandbox blocks network; headless, run `codex exec --json --sandbox workspace-write -c
+  sandbox_workspace_write.network_access=true "<prompt>"` (codex-cli 0.157 removed `--full-auto`),
+  or approve the request interactively.
 - Expected wall-clock: 3–25 minutes, dominated by the PyAutoLens install when it is absent.
 - Record the model, harness, whether PyAutoLens was already importable, and the install path
   the agent took in `meta.yaml` `notes`. A run that never clones, or that tries to plot from the
