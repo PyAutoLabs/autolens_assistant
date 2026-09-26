@@ -3,20 +3,21 @@ title: Installation
 sources:
   - project: PyAutoNerves
     paths: [pyproject.toml]
-    pinned_commit: main
+    pinned_commit: 8021c41dd110e7f3a70e3c650234e138a05cfb8a  # release tag 2026.9.26.1
   - project: PyAutoArray
     paths: [pyproject.toml]
-    pinned_commit: main
+    pinned_commit: 0f870c38712cd4124fb44c5626dbc78b1391c531  # release tag 2026.9.26.1
   - project: PyAutoFit
     paths: [pyproject.toml]
-    pinned_commit: main
+    pinned_commit: 326f611b1b40afd89bb73956441faa7379328407  # release tag 2026.9.26.1
   - project: PyAutoGalaxy
     paths: [pyproject.toml]
-    pinned_commit: main
+    pinned_commit: 6bf0bb40a194abed2366190695d9b37268c00a5d  # release tag 2026.9.26.1
   - project: PyAutoLens
     paths: [pyproject.toml]
-    pinned_commit: main
-last_updated: 2026-05-22
+    pinned_commit: 33e41eaecaa159ea2c159806e0535b7bb5705f9b  # release tag 2026.9.26.1
+last_updated: 2026-09-26
+content_sha256: fe95b626301c5848f2cd1727778f920b5b5eefa8c3f3418862f467a30801f175
 ---
 
 # Installation
@@ -33,19 +34,26 @@ paths in code. This page is the rationale and reference.
 ## Pip install (most users)
 
 ```bash
-python3.11 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 pip install "autolens[jax]" numba
 ```
 
-Python ≥ 3.9 is the minimum across the stack and JAX runs on every supported
-version including 3.10. 3.11 is the recommended baseline (it's what
-`autolens_workspace`'s `runtime.txt` targets and what the JAX wheels are
-best-tested against), so 3.10 works but is suboptimal — prefer 3.11 for new
-environments. Treat any "JAX unavailable on Python 3.10" message as a wheel
-mismatch in that specific env, not a stack-wide constraint.
+**Python 3.12 or newer is required.** Every library in the stack declares
+`requires-python = ">=3.12"` in its `pyproject.toml` (checked at release tag
+2026.9.26.1 for PyAutoNerves, PyAutoArray, PyAutoFit, PyAutoGalaxy and
+PyAutoLens), and PyPI's metadata for `autolens` reports `requires_python >=3.12`
+for every current release (all of 2026.8.x and 2026.9.x, including 2026.9.19.1 and
+the current 2026.9.26.1). On Python 3.11 or older, `pip install autolens` fails
+with "autolens requires Python 3.12 or later"; releases at or below 2026.7.29.1
+still declare `>=3.9` but are unsupported and ship without JAX, so do not pin one
+to dodge the floor. Create the environment with an explicit `python3.12` (or
+3.13 / 3.14, which the classifiers also list), as above and in
+[`al_setup_environment`](../../../skills/al_setup_environment.md).
 
-`autolens[jax]` includes JAX, which provides large speedups on CPU multithreading and
+JAX is a base dependency of the stack (via `autonerves`, on every platform except
+Intel macOS, which has no `jaxlib` wheels); the `[jax]` extra is kept as a no-op so
+the command above keeps resolving. JAX provides large speedups on CPU multithreading and
 order-of-magnitude speedups on GPU. `numba` is optional but accelerates the
 JIT-compiled geometry kernels in PyAutoArray.
 
@@ -76,13 +84,15 @@ hard-coded URLs above; the YAML is the source of truth and accommodates URL chan
 The PyAuto\* stack pins several deps strictly to keep numerical reproducibility. The
 ones that bite users most often:
 
-- `numpy >= 1.24.0, <= 2.0.1` — PyAutoNerves
-- `scipy <= 1.14.0` — PyAutoArray + PyAutoFit
-- `scikit-image <= 0.24.0`, `scikit-learn <= 1.5.1` — PyAutoArray
-- `dynesty == 2.1.4`, `emcee >= 3.1.6`, `Nautilus == 1.0.5` — PyAutoFit + downstream
-- `JAX 0.4.13 <= x < 0.5.0`
+- `numpy >= 1.24.0, < 3.0.0` and `jax` / `jaxlib >= 0.7.0, < 0.12.0`,
+  `jaxnnls == 1.0.1` — PyAutoNerves (JAX 0.11 in turn needs `numpy >= 2.1` and
+  `scipy >= 1.15`)
+- `scipy <= 1.17.1` — PyAutoArray + PyAutoFit
+- `scikit-image <= 0.26.0`, `scikit-learn <= 1.8.0` — PyAutoArray
+- `dynesty == 2.1.5`, `emcee >= 3.1.6` — PyAutoFit; `nautilus-sampler == 1.0.5` —
+  PyAutoFit + PyAutoLens
 
-If you're upgrading one of these manually (e.g. trying `numpy 2.1`), expect things
+If you're upgrading one of these manually (e.g. trying `scipy 1.18`), expect things
 to break in non-obvious places. Stick to the pinned ranges unless you specifically
 need the new behaviour and you've checked that the stack supports it.
 
