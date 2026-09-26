@@ -39,12 +39,14 @@ Headless runs, computed scores: every gate must pass, each metric reads 0–1, a
 | Model | Harness | Runs | Best | Latest | Latest date |
 |-------|---------|------|------|--------|-------------|
 | claude-opus-5-5 | claude-code | 2 | 100 | 100 | 2026-09-26 |
+| claude-fable-5-1 | claude-code | 1 | 98 | 98 | 2026-09-26 |
 | gpt-5.6-sol | codex | 2 | 13 | 13 | 2026-09-26 |
 
 ### All scored runs (chronological)
 
 | Date | Model | Harness | Machine | Judged | Total | Prompt v | Run |
 |------|-------|---------|---------|--------|-------|----------|-----|
+| 2026-09-26 | claude-fable-5-1 | claude-code | 50 | 48 | 98 | 2 | `runs/bootstrap-smoke/2026-09-26_claude-fable-5-1_claude-code` |
 | 2026-09-26 | claude-opus-5-5 | claude-code | 50 | 47 | 97 | 1 | `runs/bootstrap-smoke/2026-09-26_claude-opus-5-5_claude-code` |
 | 2026-09-26 | claude-opus-5-5 | claude-code | 50 | 50 | 100 | 2 | `runs/bootstrap-smoke/2026-09-26_claude-opus-5-5_claude-code_2` |
 | 2026-09-26 | gpt-5.6-sol | codex | 3 | 10 | 13 | 1 | `runs/bootstrap-smoke/2026-09-26_gpt-5.6-sol_codex` |

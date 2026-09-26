@@ -1,0 +1,49 @@
+benchmark: bootstrap-smoke
+prompt_version: 2
+date: '2026-09-26'
+model: claude-fable-5-1
+harness: claude-code
+assistant_sha: ab6acde
+stack:
+  autolens: 2026.9.26.1 (installed by the agent from PyPI into <clone>/.venv, Python
+    3.12)
+  autofit: 2026.9.26.1
+  autoarray: 2026.9.26.1
+  autonerves: 2026.9.26.1
+hardware: WSL2 laptop (Linux 5.10), CPU
+operator: Claude Opus 5.5 subagent (headless run, human-authorised)
+run:
+  duration_minutes: 2.53
+  cost_usd: 1.877
+  tokens:
+    input: 452
+    cache_creation: 66244
+    cache_read: 752352
+    output: 7186
+  turns: 16
+status: complete
+score:
+  machine: 50.0
+  judged: 48.0
+  total: 98.0
+  judge: Claude Opus 5.5 subagent (operator), from transcript.jsonl and the files
+    the agent left in its directory
+notes: 'Stage (b) of #138: FIRST run with the real public prompt (README.md on main,
+  verbatim, real URL https://github.com/PyAutoLabs/autolens_assistant, no substitution)
+  against main post-merge (ab6acde, #138/#139). Empty directory, scrubbed environment
+  (env -i HOME USER LANG TERM PATH=~/.local/bin:node:/usr/local/bin:/usr/bin:/bin;
+  no venv, no PYTHONPATH; system python3 3.10 without pip). claude-code 2.1.283; the
+  CLI''s default model is now claude-fable-5-1 (stage-a runs got claude-opus-5-5),
+  so this row is not a like-for-like model repeat. claude -p <prompt> --output-format
+  stream-json --verbose --permission-mode bypassPermissions --max-turns 60. Wall 153
+  s (result duration 152 s), 16 turns, no web fetch. First tool call was a plain `git
+  clone` of main + cat AGENTS.md, then the greeting skill. Install path: `python`
+  absent -> python3 (3.10) --check-version NOT INSTALLED exit 2 -> read al_setup_environment
+  -> looked for existing interpreters (read-only probe of ~/venv/*/bin/python for
+  autolens, none had it) -> python3.12 -m venv .venv + pip install ''autolens[jax]''
+  numba (backgrounded, the agent wrote plot_dataset.py while it ran) -> 2026.9.26.1,
+  jax 0.11.2 -> --check-version exit 0 (drift clean). Code gate self-enforced: audit_skill_apis.py
+  --file plot_dataset.py clean before running; viewed the PNG before describing it.
+  Writes only inside its empty directory (plus pip''s cache, /tmp/numba_cache, /tmp/matplotlib).
+  Codex not run: `codex exec` still hits the account usage limit (''try again at 8:36
+  PM'') at 16:5x.'
