@@ -10,6 +10,15 @@ ask one focused question — never default to the longest possible explanation.
 
 ## Session start — do this first, every session
 
+0. **Not launched inside the checkout?** If your working directory is not the root of this
+   assistant repository (this file is not at `./AGENTS.md`, or `git rev-parse --show-toplevel`
+   points elsewhere) — e.g. the user pasted a prompt naming this repository into an agent opened
+   in another folder — clone the repository if it is not already present, `cd` into its root
+   (every path in this file and in `skills/` is relative to it), read this file in full and
+   follow it from step 1. Hooks and project settings do not load for a folder entered
+   mid-session, so **self-enforce the code gate** below (`audit_skill_apis.py --code/--file`
+   before executing generated code). Tell the user, in one line, that they can relaunch the agent
+   inside the cloned folder for the full setup; do not stop to wait for them to do so.
 1. **Maintainer mode.** Check for `.maintainer`; if present, read `modes/maintainer.md`.
    (`touch`/`rm .maintainer`; gitignored.)
 2. **Project memory.** Read, when present: `wiki/project/state.md` (where the work got to —
