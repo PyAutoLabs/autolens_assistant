@@ -94,6 +94,23 @@ mirror it rather than composing from memory (model composition:
 [`al_build_imaging_model`](./al_build_imaging_model.md); search:
 [`al_configure_search`](./al_configure_search.md)).
 
+**Bound the mass priors.** With the library defaults (`einstein_radius` uniform over
+0-8") the maximum-likelihood optimiser falls into a degenerate basin: θ_E ≈ 2.4", the
+"source" sits on a neighbouring galaxy and the whole ring is left in the residuals.
+Set what a careful user would tell you the picture already shows — the ring is under
+an arcsecond across:
+
+```python
+lens.mass.einstein_radius = af.UniformPrior(lower_limit=0.3, upper_limit=1.5)
+lens.mass.centre.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+lens.mass.centre.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
+shear.gamma_1 = af.UniformPrior(lower_limit=-0.15, upper_limit=0.15)
+shear.gamma_2 = af.UniformPrior(lower_limit=-0.15, upper_limit=0.15)
+```
+
+Say so to the person in one sentence (for a general reader: "we tell the computer the
+ring is roughly an arcsecond across so it does not waste time on absurd answers").
+
 - **Curious reader / journalist** → the general-reader persona. You run the fit
   yourself, narrating each step in one or two plain sentences (what the model is, why
   the fit takes a few minutes, what the computer is trying). Show `subplot_fit` and

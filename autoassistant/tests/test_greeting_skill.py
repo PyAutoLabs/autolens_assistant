@@ -63,3 +63,12 @@ def test_skill_is_discoverable_everywhere_skills_are_indexed():
     assert codex.is_file()
     assert f"skills/{NAME}.md" in codex.read_text(encoding="utf-8")
     assert f"skills/{NAME}.md" in (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+
+
+def test_route_step_bounds_the_mass_priors():
+    """Library-default priors send the optimiser to a theta_E ~ 2.4" basin; the
+    skill must pin the Einstein radius and shear the way the reference script does."""
+    route = _section(_text(), "Step 3")
+    assert "einstein_radius = af.UniformPrior(lower_limit=0.3, upper_limit=1.5)" in route
+    assert "gamma_1 = af.UniformPrior(lower_limit=-0.15, upper_limit=0.15)" in route
+    assert "degenerate" in route
