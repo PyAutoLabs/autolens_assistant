@@ -44,5 +44,12 @@ two things with you: whether there are extra galaxies or artefacts in the frame,
 mask should be. It will plot the data itself and show you the file; that is the rule working,
 not the assistant being slow.
 
+**No agent? Use the Colab notebook.** The same COSMOS-Web Ring analysis is also a Google Colab
+notebook, [`docs/colab/cosmos_web_ring_colab.ipynb`](../colab/cosmos_web_ring_colab.ipynb)
+([open in Colab](https://colab.research.google.com/github/PyAutoLabs/autolens_assistant/blob/main/docs/colab/cosmos_web_ring_colab.ipynb)): it installs PyAutoLens, loads the ring, compares two JWST colours, fits
+the lens model on a free Colab GPU and compares a good fit with a poorer one, with the code in view
+and a suggested question for Colab's Gemini at the end of each section. It is the recommended route
+if you are learning PyAutoLens and want to see the API.
+
 More ambitious examples — dark-matter subhalo detection, joint imaging + interferometer +
 weak-lensing fits — are in the [README](../../README.md).

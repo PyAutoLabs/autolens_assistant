@@ -41,9 +41,11 @@ client is free — see [Experimental alternatives](#experimental-alternatives) f
 **Two ways to start.** (i) Paste the [starting prompt](#starting-prompt) below into Claude Code or Codex: the
 assistant shows you the COSMOS-Web Ring, asks your background (curious reader, student or researcher) and pitches the
 walkthrough and the lens-model fit to match. (ii) Open the Google Colab notebook
-[`docs/colab/cosmos_web_ring_colab.ipynb`](docs/colab/cosmos_web_ring_colab.ipynb) (being added alongside this
-greeting), which walks through the same analysis with more explanation and is recommended if you are learning
-PyAutoLens and want to see the API.
+[`docs/colab/cosmos_web_ring_colab.ipynb`](docs/colab/cosmos_web_ring_colab.ipynb)
+<!-- Colab link points at main; switch it to the release tag once tagged (bump_colab_urls.sh does not cover this repo yet — follow-up filed). -->
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/PyAutoLabs/autolens_assistant/blob/main/docs/colab/cosmos_web_ring_colab.ipynb),
+which walks through the same analysis with more explanation and is recommended if you are learning PyAutoLens and
+want to see the API.
 
 ### Using PyAutoLens Assistant
 
