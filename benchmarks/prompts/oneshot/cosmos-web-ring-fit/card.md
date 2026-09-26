@@ -94,7 +94,7 @@ Metrics (each 0–1; `score = 100 × mean`):
 |--------|---------|
 | `einstein_radius_within_tol` | 1 if \|θ_E − 0.80"\| ≤ tol, falling linearly to 0 at 3 × tol (either the isothermal parameter or the effective radius passes) |
 | `fit_quality` | 1 if reduced χ² ≤ 1.1 × the good fit's, 0.5 if ≤ the poor fit's, else 0 |
-| `figures_exist` | fraction of the listed PNGs the session made that exist (reference figures excluded) |
+| `figures_exist` | fraction of the listed PNGs the session made that exist (unchanged copies of the committed reference figures excluded) |
 | `summary_length` | 1 if the summary is 1–3 sentences |
 
 Which figures existed is decided once, while the workdir exists, and recorded

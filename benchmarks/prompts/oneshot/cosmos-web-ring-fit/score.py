@@ -114,7 +114,7 @@ def fit_quality_reading(value, truth: dict) -> float:
 
 
 def _figures_found(ctx, figures: list[str]) -> list[bool]:
-    """Which listed PNGs exist — decided once, while the workdir exists."""
+    """Which listed PNGs the session made — decided once, while the workdir exists."""
     sidecar = Path(ctx.run_dir) / FIGURES_SIDECAR
     artifacts = Path(ctx.run_dir) / "artifacts"
     workdir = Path(ctx.workdir) if ctx.workdir is not None else None
@@ -123,10 +123,10 @@ def _figures_found(ctx, figures: list[str]) -> list[bool]:
         for figure in figures:
             path = Path(figure)
             candidates = [path] if path.is_absolute() else [workdir / figure, Path(ctx.run_dir) / figure]
-            found.append(
-                _counts(figure)
-                and (any(c.is_file() for c in candidates) or (artifacts / path.name).is_file())
-            )
+            made = next((c for c in candidates if c.is_file()), None)
+            if made is None and (artifacts / path.name).is_file():
+                made = artifacts / path.name
+            found.append(made is not None and _counts(figure, ctx, made))
         sidecar.write_text(
             json.dumps({"figures": figures, "found": found}, indent=2) + "\n"
         )
@@ -135,13 +135,34 @@ def _figures_found(ctx, figures: list[str]) -> list[bool]:
         recorded = json.loads(sidecar.read_text())
         if recorded.get("figures") == figures:
             return [bool(v) for v in recorded.get("found", [])]
-    return [_counts(figure) and (artifacts / Path(figure).name).is_file() for figure in figures]
+    return [
+        (artifacts / Path(figure).name).is_file()
+        and _counts(figure, ctx, artifacts / Path(figure).name)
+        for figure in figures
+    ]
 
 
-def _counts(figure: str) -> bool:
-    """A PNG the session made, not one of the committed reference figures."""
-    relative = figure.lstrip("./")
-    return figure.lower().endswith(".png") and not relative.startswith(REFERENCE_FIGURES_PREFIX)
+def _counts(figure: str, ctx, made: Path) -> bool:
+    """A PNG the session made, not a copy of one of the committed reference figures.
+
+    The reference fit's figures ship in the session's checkout under
+    `scripts/cosmos_web_ring/results/`; listing one of them unchanged is not
+    making a figure. A new file in that folder, or a reference file the session
+    regenerated (different bytes), counts.
+    """
+    if not figure.lower().endswith(".png"):
+        return False
+    relative = figure[2:] if figure.startswith("./") else figure
+    if not relative.startswith(REFERENCE_FIGURES_PREFIX):
+        return True
+    root = getattr(ctx, "root", None)
+    reference = Path(root) / relative if root is not None else None
+    if reference is None or not reference.is_file():
+        return True
+    try:
+        return reference.read_bytes() != Path(made).read_bytes()
+    except OSError:
+        return False
 
 
 def _compute_seconds(ctx) -> float | None:

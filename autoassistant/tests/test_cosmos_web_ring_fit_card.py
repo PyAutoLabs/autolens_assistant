@@ -229,3 +229,15 @@ def test_fit_script_test_mode_smoke(tmp_path):
     assert summary["noise_scaling_applied"] is True
     for name in ("fit_subplot.png", "source.png", "tracer.png"):
         assert (tmp_path / "results" / name).is_file()
+
+
+def test_a_new_figure_beside_the_reference_results_counts(tmp_path):
+    """Recorded run 3 (2026-09-26) wrote its own figures to
+    `scripts/cosmos_web_ring/results/bench_run3/`; only unchanged copies of the
+    committed reference figures are excluded, not the whole folder."""
+    figure = "scripts/cosmos_web_ring/results/bench_run3/fit_subplot.png"
+    workdir = tmp_path / "workdir"
+    (workdir / figure).parent.mkdir(parents=True)
+    (workdir / figure).write_bytes(b"\x89PNG\r\n\x1a\n new")
+    _gates, metrics, _score = _computed(tmp_path, _result(figures=[figure]), workdir=workdir)
+    assert metrics["figures_exist"] == 1.0
