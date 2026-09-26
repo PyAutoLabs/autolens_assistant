@@ -158,7 +158,7 @@ def test_repo_prompt_cards_parse():
 def test_repo_oneshot_cards_parse():
     """Every committed one-shot card must load with a unique id."""
     cards = benchmark.load_oneshot_cards(REPO_ROOT)
-    assert set(cards) == {"oneshot-smoke", "abell-1201-setup"}
+    assert set(cards) == {"oneshot-smoke"}
 
 
 def test_repo_card_datasets_exist():

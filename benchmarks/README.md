@@ -54,7 +54,6 @@ benchmarks/
 
 | Card | Kind | Exercises |
 |------|------|-----------|
-| [`prompts/oneshot/abell-1201-setup/`](prompts/oneshot/abell-1201-setup/card.md) | one-shot | Abell 1201 colour presentation, approved data preparation and a coarse point-mass model smoke check; no posterior inference; headless qualification pending |
 | [`prompts/oneshot/oneshot-smoke/`](prompts/oneshot/oneshot-smoke/card.md) | one-shot | grounding without running code: the recommended search for the bundled COSMOS-Web Ring and the repository files that document it |
 | [`prompts/harness_smoke.md`](prompts/harness_smoke.md) | rubric (operator) | agent qualification: grounded answering, a small fit with figure inspection, recovery from a stale-API error — the evidence behind the README's support statements (protocol: [`docs/evaluation/agent_evaluation.md`](../docs/evaluation/agent_evaluation.md)) |
 
