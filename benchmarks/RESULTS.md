@@ -38,7 +38,7 @@ Headless runs, computed scores: every gate must pass, each metric reads 0–1, a
 
 | Model | Harness | Runs | Best | Latest | Latest date |
 |-------|---------|------|------|--------|-------------|
-| claude-opus-5-5 | claude-code | 1 | 97 | 97 | 2026-09-26 |
+| claude-opus-5-5 | claude-code | 2 | 100 | 100 | 2026-09-26 |
 | gpt-5.6-sol | codex | 2 | 13 | 13 | 2026-09-26 |
 
 ### All scored runs (chronological)
@@ -46,6 +46,7 @@ Headless runs, computed scores: every gate must pass, each metric reads 0–1, a
 | Date | Model | Harness | Machine | Judged | Total | Prompt v | Run |
 |------|-------|---------|---------|--------|-------|----------|-----|
 | 2026-09-26 | claude-opus-5-5 | claude-code | 50 | 47 | 97 | 1 | `runs/bootstrap-smoke/2026-09-26_claude-opus-5-5_claude-code` |
+| 2026-09-26 | claude-opus-5-5 | claude-code | 50 | 50 | 100 | 2 | `runs/bootstrap-smoke/2026-09-26_claude-opus-5-5_claude-code_2` |
 | 2026-09-26 | gpt-5.6-sol | codex | 3 | 10 | 13 | 1 | `runs/bootstrap-smoke/2026-09-26_gpt-5.6-sol_codex` |
 | 2026-09-26 | gpt-5.6-sol | codex | 3 | 10 | 13 | 1 | `runs/bootstrap-smoke/2026-09-26_gpt-5.6-sol_codex_2` |
 
