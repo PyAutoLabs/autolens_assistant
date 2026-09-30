@@ -8,7 +8,7 @@ sources:
       - hpc/batch_cpu/template
       - hpc/sync
     pinned_commit: main
-last_updated: 2026-06-19
+last_updated: 2026-09-30
 ---
 
 # HPC infrastructure shipped with the assistant
@@ -65,6 +65,23 @@ Differences:
 
 The CPU template also exports `JAX_PLATFORMS=cpu`, `VECLIB_MAXIMUM_THREADS`,
 `NUMEXPR_NUM_THREADS`, and `NPROC`, all pinned to `$SLURM_CPUS_PER_TASK`.
+
+### Partition rule — CPU arrays never go on `gpu` (human rule, 2026-09-30)
+
+- Bulk/production CPU-only arrays use the cluster's CPU partition only (on RAL:
+  `--partition=ral`) — never `gpu`, `ral,gpu` or `gpu,ral`, even when the CPU nodes are
+  drained or busy; the jobs wait for them instead. On 2026-09-30 euclid_dr1 CPU arrays
+  submitted with `ral,gpu` took all 124 CPUs on euclid-ral-gpu-1/-2, leaving all 8 A100s
+  idle but unschedulable for hours with 3,938 CPU tasks queued eligible for those nodes.
+- Only exemption: small bounded CPU timing legs (e.g. autolens_profiling quiet-node timing)
+  may use `gpu` without `--gres` when **all** hold: ≤8 CPUs/task, array throttle ≤`%2`, and
+  `squeue -p gpu -t PD` shows no pending job requesting gres/gpu.
+- A partition name is not a device: before calling a job a "GPU run", check its TRES for
+  `gres/gpu` in `scontrol show job <id>`; for a stuck A100 job compare the node's
+  `AllocTRES` cpu against `CfgTRES`.
+- Never reorder, hold or cancel another campaign's jobs without the human's OK.
+
+Source: human instruction, 2026-09-30 (RAL `gpu`-partition incident).
 
 ### Checklist after copying (edit both `batch_gpu/template` and `batch_cpu/template`)
 

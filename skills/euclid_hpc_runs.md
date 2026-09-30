@@ -19,7 +19,11 @@ Euclid-pipeline application of them.
 
 - *"Which cluster, and is sync configured?"* — `hpc/sync.conf` is per-machine and
   gitignored; first-time setup is the first branch.
-- *"GPU or CPU partition?"* — picks `batch_gpu/` vs `batch_cpu/` templates.
+- *"GPU or CPU partition?"* — picks `batch_gpu/` vs `batch_cpu/` templates. CPU-only
+  arrays go on the CPU partition only (RAL: `--partition=ral`) — never `gpu`, `ral,gpu` or
+  `gpu,ral`, even when ral is busy; see the partition rule in
+  [`hpc_infrastructure`](../wiki/core/operations/hpc_infrastructure.md) (human rule,
+  2026-09-30; narrow timing-leg exemption there).
 - *"Which stage over which lenses?"* — each template pairs with a pipeline stage
   (`submit_start_here`, `submit_full_model`); the dataset list defines the array.
 
@@ -49,8 +53,10 @@ The templates (`hpc/batch_gpu/submit_start_here`, `hpc/batch_gpu/submit_full_mod
 CPU twins under `hpc/batch_cpu/`) are SLURM array jobs: a `datasets=( … )` list, the
 `--array=0-N` range to match, `sample=` for the dataset folder, and per-task resources
 (`--partition=gpu --gres=gpu:1`, 32 GB, 2 h for the initial fit — raise the time limit
-for `full_model`, which chains five searches). Edit the list, the array range, and the
-mail address, then on the cluster:
+for `full_model`, which chains five searches). The CPU twins keep their CPU partition —
+never add `gpu` to them (it fills the A100 nodes' CPUs and idles the GPUs). A partition
+name is not a device: confirm `gres/gpu` in `scontrol show job <id>` before calling a job
+a GPU run. Edit the list, the array range, and the mail address, then on the cluster:
 
 ```bash
 cd $PROJECT_PATH && sbatch hpc/batch_gpu/submit_start_here
