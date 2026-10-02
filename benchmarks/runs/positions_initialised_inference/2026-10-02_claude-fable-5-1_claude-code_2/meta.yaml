@@ -1,0 +1,28 @@
+benchmark: positions_initialised_inference
+kind: oneshot
+prompt_version: 1
+prompt_sha256: f80d6a80f6bbf4dada023afae0a50264576db5dda05c71f4b51c8f794186c84c
+date: '2026-10-02'
+model: claude-fable-5-1
+harness: claude-code
+assistant_sha: abafd86
+stack:
+  autolens: 2026.9.27.2
+  autofit: 2026.9.27.2
+  autoarray: 2026.9.27.2
+  autonerves: 2026.9.27.2
+hardware:
+  system: Linux
+  machine: x86_64
+  cpu_count: 8
+  python: 3.12.10
+run:
+  wall_seconds: 1260.1
+  compute_seconds: 42.3
+  tokens_in: null
+  tokens_out: null
+  cost_usd: null
+  turns: null
+  exit_code: timeout
+status: failed
+score: 0.0

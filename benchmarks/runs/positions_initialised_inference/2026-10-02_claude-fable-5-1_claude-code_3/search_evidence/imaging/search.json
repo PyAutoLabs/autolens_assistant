@@ -1,0 +1,61 @@
+{
+    "type": "instance",
+    "class_path": "autofit.non_linear.search.nest.nautilus.search.Nautilus",
+    "arguments": {
+        "n_like_new_bound": null,
+        "n_batch": 100,
+        "silence": false,
+        "vectorized": false,
+        "inplace": false,
+        "paths": {
+            "type": "instance",
+            "class_path": "autofit.non_linear.paths.directory.DirectoryPaths",
+            "arguments": {
+                "image_path_suffix": "",
+                "path_prefix": {
+                    "type": "path",
+                    "path": "positions_initialised_inference"
+                },
+                "unique_tag": null,
+                "name": "imaging_fit",
+                "parent": null,
+                "is_identifier_in_paths": true,
+                "identifier": "c33a40b954a4b96fe227bf7ad5b2942c"
+            }
+        },
+        "f_live": 0.01,
+        "seed": null,
+        "n_networks": 4,
+        "n_shell": 1,
+        "unique_tag": null,
+        "initial_values": {
+            "type": "dict",
+            "arguments": {}
+        },
+        "initializer": {
+            "type": "instance",
+            "class_path": "autofit.non_linear.initializer.InitializerPrior",
+            "arguments": {}
+        },
+        "n_eff": 300,
+        "path_prefix": {
+            "type": "path",
+            "path": "positions_initialised_inference"
+        },
+        "force_x1_cpu": false,
+        "n_update": null,
+        "n_live": 75,
+        "name": "imaging_fit",
+        "discard_exploration": false,
+        "split_threshold": 100,
+        "enlarge_per_dim": 1.1,
+        "verbose": true,
+        "live_visual_update": false,
+        "n_points_min": null,
+        "iterations_per_quick_update": 2500.0,
+        "use_jax_vmap": true,
+        "iterations_per_full_update": 1e+99,
+        "n_like_max": Infinity,
+        "number_of_cores": 1
+    }
+}

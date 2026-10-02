@@ -44,6 +44,18 @@ Headless runs, computed scores: every gate must pass, each metric reads 0–1, a
 |------|-------|---------|-------|--------------|--------|-----|
 | 2026-09-17 | claude-sonnet-5 | claude-code | 100 | — | 23.7 | `runs/oneshot-smoke/2026-09-17_claude-sonnet-5_claude-code` |
 
+### positions_initialised_inference
+
+| Prompt v | Model | Harness | Runs | Median | Min–max | Median wall s | Median compute s |
+|----------|-------|---------|------|--------|---------|---------------|------------------|
+| 1 | claude-fable-5-1 | claude-code | 3 | 0 | 0–0 | 1260.1 | 280.2 |
+
+| Date | Model | Harness | Score | Gate failure | Wall s | Run |
+|------|-------|---------|-------|--------------|--------|-----|
+| 2026-10-02 | claude-fable-5-1 | claude-code | 0 | finished: no_result_json | 1260.1 | `runs/positions_initialised_inference/2026-10-02_claude-fable-5-1_claude-code` |
+| 2026-10-02 | claude-fable-5-1 | claude-code | 0 | finished: no_result_json | 1260.1 | `runs/positions_initialised_inference/2026-10-02_claude-fable-5-1_claude-code_2` |
+| 2026-10-02 | claude-fable-5-1 | claude-code | 0 | compute_budget: 566.2s > 300s of compute | 1020.2 | `runs/positions_initialised_inference/2026-10-02_claude-fable-5-1_claude-code_3` |
+
 ## bootstrap-smoke
 
 ### Leaderboard (model × harness)

@@ -1,0 +1,190 @@
+{
+    "type": "collection",
+    "arguments": {
+        "galaxies": {
+            "type": "collection",
+            "arguments": {
+                "lens": {
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "type": "model",
+                    "arguments": {
+                        "redshift": {
+                            "type": "Constant",
+                            "value": 0.5
+                        },
+                        "bulge": {
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.Sersic",
+                            "type": "model",
+                            "arguments": {
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "intensity": {
+                                    "type": "LogUniform",
+                                    "id": 25,
+                                    "lower_limit": 1e-06,
+                                    "upper_limit": 1000000.0
+                                },
+                                "effective_radius": {
+                                    "type": "Uniform",
+                                    "id": 28,
+                                    "lower_limit": 0.0,
+                                    "upper_limit": 5.0
+                                },
+                                "sersic_index": {
+                                    "type": "Uniform",
+                                    "id": 27,
+                                    "lower_limit": 0.8,
+                                    "upper_limit": 5.0
+                                }
+                            }
+                        },
+                        "mass": {
+                            "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
+                            "type": "model",
+                            "arguments": {
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "ell_comps": {
+                                    "type": "tuple_prior",
+                                    "arguments": {
+                                        "ell_comps_0": {
+                                            "type": "TruncatedGaussian",
+                                            "id": 14,
+                                            "mean": 0.2831645214912324,
+                                            "sigma": 0.15,
+                                            "lower_limit": -1.0,
+                                            "upper_limit": 1.0
+                                        },
+                                        "ell_comps_1": {
+                                            "type": "TruncatedGaussian",
+                                            "id": 15,
+                                            "mean": 0.04047805268759401,
+                                            "sigma": 0.1476110028287244,
+                                            "lower_limit": -1.0,
+                                            "upper_limit": 1.0
+                                        }
+                                    }
+                                },
+                                "einstein_radius": {
+                                    "type": "TruncatedGaussian",
+                                    "id": 16,
+                                    "mean": 1.3230899618074972,
+                                    "sigma": 0.24135692450525925,
+                                    "lower_limit": 0.0,
+                                    "upper_limit": 8.0
+                                }
+                            }
+                        }
+                    }
+                },
+                "source": {
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "type": "model",
+                    "arguments": {
+                        "redshift": {
+                            "type": "Constant",
+                            "value": 1.0
+                        },
+                        "bulge": {
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.Sersic",
+                            "type": "model",
+                            "arguments": {
+                                "centre": {
+                                    "type": "tuple_prior",
+                                    "arguments": {
+                                        "centre_0": {
+                                            "type": "Gaussian",
+                                            "id": 36,
+                                            "mean": 0.04414848870294876,
+                                            "sigma": 0.05
+                                        },
+                                        "centre_1": {
+                                            "type": "Gaussian",
+                                            "id": 37,
+                                            "mean": 0.028297383983199375,
+                                            "sigma": 0.05
+                                        }
+                                    }
+                                },
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "intensity": {
+                                    "type": "LogUniform",
+                                    "id": 33,
+                                    "lower_limit": 1e-06,
+                                    "upper_limit": 1000000.0
+                                },
+                                "effective_radius": {
+                                    "type": "Uniform",
+                                    "id": 38,
+                                    "lower_limit": 0.0,
+                                    "upper_limit": 3.0
+                                },
+                                "sersic_index": {
+                                    "type": "Uniform",
+                                    "id": 35,
+                                    "lower_limit": 0.8,
+                                    "upper_limit": 5.0
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "fields": {
+            "class_path": "autogalaxy.galaxy.mass_field.MassField",
+            "type": "model",
+            "arguments": {
+                "redshift": {
+                    "type": "Constant",
+                    "value": 0.5
+                },
+                "shear": {
+                    "class_path": "autogalaxy.profiles.mass.sheets.external_shear.ExternalShear",
+                    "type": "model",
+                    "arguments": {
+                        "gamma_1": {
+                            "type": "TruncatedGaussian",
+                            "id": 19,
+                            "mean": 0.023705135874146133,
+                            "sigma": 0.09145903299350741,
+                            "lower_limit": -0.3,
+                            "upper_limit": 0.3
+                        },
+                        "gamma_2": {
+                            "type": "TruncatedGaussian",
+                            "id": 20,
+                            "mean": 0.012477970369965119,
+                            "sigma": 0.1,
+                            "lower_limit": -0.3,
+                            "upper_limit": 0.3
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -90,7 +90,9 @@ standard-imports convention, `hpc/` templates tuned to lensing runtimes, the
 benchmark prompt cards (`benchmarks/prompts/` — the cards *and* each one-shot
 card's own `score.py`, since what an answer is worth is domain knowledge; a new
 domain writes its own cards against its own bundled data) and the hidden
-reference values behind them (`benchmarks/truth/`), the
+reference values behind them (`benchmarks/truth/`), the frozen input data a
+one-shot card ships (`benchmarks/datasets/<card>/` — e.g. the simulated lens behind
+`positions_initialised_inference`; a newborn regrows its own), the
 **euclid mode** (`skills/euclid_*.md` + the `wiki/euclid/` sub-wiki — a
 survey-specific pipeline register that is lensing science throughout; a newborn
 grows whatever survey modes its own domain has, if any), `paper/` (this

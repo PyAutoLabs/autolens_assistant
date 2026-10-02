@@ -1,0 +1,42 @@
+/home/jammy/Code/PyAutoLabs/.worktrees/assistant/scratch/forward-wheel/lib/python3.12/site-packages/autonerves/workspace.py:31: UserWarning: The workspace at /home/jammy/Code/PyAutoLabs/.worktrees/assistant/autolens_assistant records library version 2026.7.9.1, but the installed library is 2026.9.27.2 — more than 30 days newer. The workspace examples and configs may lag the installed API. Pull the latest workspace:
+
+    cd /home/jammy/Code/PyAutoLabs/.worktrees/assistant/autolens_assistant && git pull origin main
+
+To bypass this check, edit config/general.yaml:
+
+    version:
+      workspace_version_check: False
+
+You can also set the environment variable PYAUTO_SKIP_WORKSPACE_VERSION_CHECK=1 to disable temporarily.
+  warnings.warn(message)
+2026-10-02 10:41:48,308 - autoarray.dataset.imaging.dataset - INFO - IMAGING - Data masked, contains a total of 1976 image-pixels
+2026-10-02 10:41:58,795 - autofit.non_linear.search.abstract_search - INFO - Starting non-linear search with JAX (CPU: cpu).
+2026-10-02 10:41:58,796 - autofit.non_linear.search.abstract_search - INFO - On-the-fly updates of the maximum likelihood model every 1000000 iterations.
+2026-10-02 10:41:58,925 - positions_jax_probe - INFO - The output path of this fit is /home/jammy/Code/PyAutoLabs/.worktrees/assistant/autolens_assistant/output/benchmark_reference/positions_jax_probe/2e01e3a475bbe3c939fec5158dc85e47
+2026-10-02 10:41:58,925 - positions_jax_probe - INFO - Outputting pre-fit files (e.g. model.info, visualization).
+2026-10-02 10:42:14,311 - positions_jax_probe - INFO - Starting new Nautilus non-linear search (no previous samples found).
+2026-10-02 10:42:14,320 - autofit.non_linear.fitness - INFO - Warming up visualization (one-time JAX compilation)...
+2026-10-02 10:42:32,334 - autofit.non_linear.fitness - INFO - Visualization warm-up complete.
+2026-10-02 10:42:32,356 - positions_jax_probe - INFO - Running search with JAX vectorization (parallelization handled by JAX).
+Starting the nautilus sampler...
+Please report issues at github.com/johannesulf/nautilus.
+Status    | Bounds | Ellipses | Networks | Calls    | f_live | N_eff | log Z    
+Sampling  | 1      | 0        | 0        | 0        | 1.0000 | 0     | N/A      Computing | 1      | 0        | 0        | 0        | 1.0000 | 0     | N/A      2026-10-02 10:42:38,791 - autofit.non_linear.jax_compile - INFO - JAX jit compiling vectorized (vmap) likelihood function, could take seconds or minutes...
+2026-10-02 10:42:49,763 - autofit.non_linear.jax_compile - INFO - JAX jit compilation of vectorized (vmap) likelihood function: traced, lowered and compiled in 11.0 seconds; waiting for the result to materialize...
+2026-10-02 10:42:50,028 - autofit.non_linear.jax_compile - INFO - JAX jit compilation of vectorized (vmap) likelihood function: result materialized in 0.3 seconds.
+2026-10-02 10:42:50,028 - autofit.non_linear.jax_compile - INFO - JAX jit compilation of vectorized (vmap) likelihood function complete in 11.2 seconds.
+Sampling  | 1      | 0        | 0        | 100      | 1.0000 | 1     | -79076.73Computing | 1      | 0        | 0        | 100      | 1.0000 | 1     | -79076.73Sampling  | 1      | 0        | 0        | 200      | 1.0000 | 1     | -79077.42Computing | 1      | 0        | 0        | 200      | 1.0000 | 1     | -79077.42Sampling  | 1      | 0        | 0        | 300      | 1.0000 | 1     | -79077.83Computing | 1      | 0        | 0        | 300      | 1.0000 | 1     | -79077.83Sampling  | 1      | 0        | 0        | 400      | 1.0000 | 1     | -79078.11Computing | 1      | 0        | 0        | 400      | 1.0000 | 1     | -79078.11Sampling  | 1      | 0        | 0        | 500      | 1.0000 | 1     | -69137.78Computing | 1      | 0        | 0        | 500      | 1.0000 | 1     | -69137.78Sampling  | 1      | 0        | 0        | 600      | 1.0000 | 1     | -66876.92Computing | 1      | 0        | 0        | 600      | 1.0000 | 1     | -66876.92Sampling  | 1      | 0        | 0        | 700      | 1.0000 | 1     | -66877.08Computing | 1      | 0        | 0        | 700      | 1.0000 | 1     | -66877.08Bounding  | 1      | 0        | 0        | 800      | 1.0000 | 1     | -66877.21Sampling  | 2      | 0        | 4        | 800      | 1.0000 | 1     | -350343.6Computing | 2      | 0        | 4        | 800      | 1.0000 | 1     | -350343.6Sampling  | 2      | 0        | 4        | 900      | 1.0000 | 1     | -61436.55Computing | 2      | 0        | 4        | 900      | 1.0000 | 1     | -61436.55Stopped   | 2      | 0        | 4        | 1000     | 1.0000 | 1     | -61436.73
+2026-10-02 10:43:22,944 - positions_jax_probe - INFO - Fit Running: Updating results (see output folder).
+2026-10-02 10:43:24,360 - autofit.non_linear.samples.samples - INFO - Samples with weight less than 1e-10 removed from samples.csv.
+2026-10-02 10:43:24,370 - autofit.non_linear.search.updater - INFO - Creating latent samples by drawing 100 from the PDF.
+2026-10-02 10:43:24,371 - autolens.analysis.latent - WARNING - latent.yaml lists 'total_galaxy_0_flux' but no such latent is registered; dropping. Known latents: ['effective_einstein_radius', 'magnification', 'total_lens_flux', 'total_lens_flux_mujy', 'total_lensed_source_flux', 'total_lensed_source_flux_mujy', 'total_source_flux', 'total_source_flux_mujy']
+2026-10-02 10:43:24,383 - autofit.non_linear.jax_compile - INFO - JAX jit compiling latent variable function (per-sample jit), could take seconds or minutes...
+2026-10-02 10:43:24,385 - autolens.analysis.latent - WARNING - latent.yaml lists 'total_galaxy_0_flux' but no such latent is registered; dropping. Known latents: ['effective_einstein_radius', 'magnification', 'total_lens_flux', 'total_lens_flux_mujy', 'total_lensed_source_flux', 'total_lensed_source_flux_mujy', 'total_source_flux', 'total_source_flux_mujy']
+2026-10-02 10:43:28,627 - autofit.non_linear.jax_compile - INFO - JAX jit compilation of latent variable function (per-sample jit): traced, lowered and compiled in 4.2 seconds; waiting for the result to materialize...
+2026-10-02 10:43:28,635 - autofit.non_linear.jax_compile - INFO - JAX jit compilation of latent variable function (per-sample jit): result materialized in 0.0 seconds.
+2026-10-02 10:43:28,635 - autofit.non_linear.jax_compile - INFO - JAX jit compilation of latent variable function (per-sample jit) complete in 4.3 seconds.
+Time to compute latent variables: 4.909322738647461 seconds for 100 samples.
+2026-10-02 10:44:00,470 - autofit.non_linear.plot.plot_util - INFO - Unable to produce corner_anesthetic visual: posterior estimate not yet sufficient. Should succeed in a later update.
+2026-10-02 10:44:10,221 - positions_jax_probe - INFO - Removing search internal folder.
+2026-10-02 10:44:10,223 - positions_jax_probe - INFO - Removing all files except for .zip file
+2026-10-02 10:44:12,007 - positions_jax_probe - INFO - Search complete, returning result

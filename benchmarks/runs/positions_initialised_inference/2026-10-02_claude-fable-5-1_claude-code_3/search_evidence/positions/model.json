@@ -1,0 +1,121 @@
+{
+    "type": "collection",
+    "arguments": {
+        "galaxies": {
+            "type": "collection",
+            "arguments": {
+                "lens": {
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "type": "model",
+                    "arguments": {
+                        "redshift": {
+                            "type": "Constant",
+                            "value": 0.5
+                        },
+                        "mass": {
+                            "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
+                            "type": "model",
+                            "arguments": {
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "ell_comps": {
+                                    "type": "tuple_prior",
+                                    "arguments": {
+                                        "ell_comps_0": {
+                                            "type": "TruncatedGaussian",
+                                            "id": 2,
+                                            "mean": 0.0,
+                                            "sigma": 0.3,
+                                            "lower_limit": -1.0,
+                                            "upper_limit": 1.0
+                                        },
+                                        "ell_comps_1": {
+                                            "type": "TruncatedGaussian",
+                                            "id": 3,
+                                            "mean": 0.0,
+                                            "sigma": 0.3,
+                                            "lower_limit": -1.0,
+                                            "upper_limit": 1.0
+                                        }
+                                    }
+                                },
+                                "einstein_radius": {
+                                    "type": "Uniform",
+                                    "id": 4,
+                                    "lower_limit": 0.0,
+                                    "upper_limit": 8.0
+                                }
+                            }
+                        }
+                    }
+                },
+                "source": {
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "type": "model",
+                    "arguments": {
+                        "redshift": {
+                            "type": "Constant",
+                            "value": 1.0
+                        },
+                        "point_0": {
+                            "class_path": "autogalaxy.profiles.point_sources.Point",
+                            "type": "model",
+                            "arguments": {
+                                "centre": {
+                                    "type": "tuple_prior",
+                                    "arguments": {
+                                        "centre_0": {
+                                            "type": "Gaussian",
+                                            "id": 7,
+                                            "mean": 0.0,
+                                            "sigma": 0.3
+                                        },
+                                        "centre_1": {
+                                            "type": "Gaussian",
+                                            "id": 8,
+                                            "mean": 0.0,
+                                            "sigma": 0.3
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "fields": {
+            "class_path": "autogalaxy.galaxy.mass_field.MassField",
+            "type": "model",
+            "arguments": {
+                "redshift": {
+                    "type": "Constant",
+                    "value": 0.5
+                },
+                "shear": {
+                    "class_path": "autogalaxy.profiles.mass.sheets.external_shear.ExternalShear",
+                    "type": "model",
+                    "arguments": {
+                        "gamma_1": {
+                            "type": "Uniform",
+                            "id": 5,
+                            "lower_limit": -0.3,
+                            "upper_limit": 0.3
+                        },
+                        "gamma_2": {
+                            "type": "Uniform",
+                            "id": 6,
+                            "lower_limit": -0.3,
+                            "upper_limit": 0.3
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

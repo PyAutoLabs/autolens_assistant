@@ -161,6 +161,7 @@ def test_repo_oneshot_cards_parse():
     assert set(cards) == {
         "oneshot-smoke",
         "cosmos-web-ring-fit",
+        "positions_initialised_inference",
         "forward_model_consistency",
     }
 
