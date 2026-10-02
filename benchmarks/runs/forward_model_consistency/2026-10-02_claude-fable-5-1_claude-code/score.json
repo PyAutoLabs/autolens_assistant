@@ -1,0 +1,129 @@
+{
+  "card": "forward_model_consistency",
+  "version": 1,
+  "prompt_sha256": "59eaa5f85976add1a52a7aebe92108499144b0e1a4a1c93fe7f42e5b6a79c694",
+  "model": "claude-fable-5-1",
+  "harness": "claude-code",
+  "date": "2026-10-02",
+  "gates": [
+    {
+      "name": "finished",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "schema",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "compute_budget",
+      "passed": false,
+      "reason": "159.9s > 120s of compute"
+    },
+    {
+      "name": "run_budget",
+      "passed": false,
+      "reason": "360.1s > 300s wall"
+    },
+    {
+      "name": "library_readers",
+      "passed": true,
+      "reason": null
+    }
+  ],
+  "metrics": [
+    {
+      "name": "image",
+      "value": 0.9984,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "noise_map",
+      "value": 0.9953,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "psf",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "visibilities",
+      "value": 0.9996,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "dirty_image",
+      "value": 0.9996,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "conversions",
+      "value": 0.9992,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "multiplicity",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "positions",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "magnifications",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "time_delays",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "point_report",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "saved_model",
+      "value": 0.9992,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "image_peaks",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "image_peaks_weight_2",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "dirty_peaks",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "dirty_peaks_weight_2",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "mask",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    },
+    {
+      "name": "figure",
+      "value": 1.0,
+      "detail": "Agreement with persisted products and centre-specific reference"
+    }
+  ],
+  "score": 0.0,
+  "reason": "compute_budget: 159.9s > 120s of compute"
+}

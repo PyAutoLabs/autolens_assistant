@@ -1,0 +1,13 @@
+{
+  "wheel": "2026.9.27.2",
+  "method": "Two separate make_truth.py processes; all FITS SHA256 match byte for byte",
+  "fits_sha256": {
+    "dirty_image.fits": "2b7935c23123d2655dcc8cd437e439674fdf8673a49b407c5b23e6952057303d",
+    "image.fits": "9b9c0efe701598457b5b448a34e94a6ffb262abb66ab787f977cd72203b37da2",
+    "noise_map.fits": "4518c6af651cbadbb2e5186cc18722ff2d30a1d6736005109933c4f8f2fa753f",
+    "psf.fits": "575c01a2b8fb83273fffa5cb89bb923bffce1e6cdbf733e5416eec5c3fb25dd1",
+    "uv_wavelengths.fits": "5162a7bc63cb9c18d435f4d74799375544b3fbc103403f11491014bb8173cb07",
+    "visibilities.fits": "9e986dc24277c43018a0e5aadfb7f8365c81f29b4c74131f68cc60b25fc6cbff",
+    "visibility_noise.fits": "bcf73b3348f2880332df6850673ec63ac3f0ef0663d9d43c97a7ceee6e500621"
+  }
+}
