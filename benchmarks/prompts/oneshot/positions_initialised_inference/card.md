@@ -88,5 +88,51 @@ data; inspecting a real-data mask with a human is unnecessary.
 
 ## Calibration
 
-Pending three independent Claude Code runs after the card and hidden posterior
-are committed. All outcomes, including failures and budget overruns, are kept.
+Three independent Claude Code 2.1.287 runs on 2026-10-02 resolved the current
+default model to `claude-fable-5-1`. **0/3 passed; median 0, range 0–0. The
+five-minute compute target was not demonstrated.**
+
+| Repeat | Wall seconds | Recorded compute seconds | Outcome |
+|---|---:|---:|---|
+| 1 | 1260.1 | 280.2 (incomplete) | No result; wall timeout |
+| 2 | 1260.1 | 42.3 (incomplete) | No result; wall timeout |
+| 3 | 1020.2 | 566.2 | Valid posterior and result; compute budget failed |
+
+**Timing limitation:** the inherited interpreter shim records an invocation only
+after it exits. Killed/background invocations are therefore missing from repeats
+1 and 2; their raw `compute_budget: true` gates are invalid measurements, not
+budget successes. The generated records remain untouched. Both runs independently
+fail the finished/wall gates. Repeat 3 records more than 300 seconds and correctly
+fails compute. No repetition establishes a budget success. Timeout cleanup left
+own-session descendants; these were stopped before the next repeat.
+
+Repeat 3 passes every scientific gate, including saved-search consistency,
+positions-initialised priors, posterior sample floor and likelihood convergence.
+Its metrics are recovery 1, imaging radius 0.9978, likelihood 1, positions radius
+0 and figure 1. The positions radius discriminates (1.3231 versus 1.25 arcsec);
+imaging radius is nearly saturated. Recovery, likelihood and figure saturate at
+one for this one completed fit; the two incomplete runs cannot establish their
+discriminatory power. The aggregate is saturated at zero by the budget/finished
+gates, so this calibration does not establish useful aggregate discrimination.
+
+All repeats used the released 2026.9.27.2 PyAuto stack, Python 3.12.10, CPU JAX
+with fp64 (`JAX_PLATFORMS=cpu`, `JAX_ENABLE_X64=true`), single-thread BLAS/OpenMP,
+and affinity 0,2,4,6: four physical cores on the Intel i9-10885H laptop. The host
+exposes eight logical CPUs, which explains the harness metadata's `cpu_count: 8`.
+Reference/test compute did not overlap these repeats; unrelated host workloads
+were not controlled, so timings are measurements of this shared host.
+
+Repeats 2–3 archived `abafd86`. Repeat 1 archived `0a828fa`; while it ran, the
+hidden reference CSV index was corrected in `abafd86` to preserve its raw bytes.
+The runner records HEAD at completion, so its generated metadata says `abafd86`.
+Agent-visible tracked trees (excluding `benchmarks/truth/` and `benchmarks/runs/`)
+are identical: 596 records with SHA256
+`bf7288203e42660e8f2c0801c17cab5c487d9ebd64e104d2a876f838ab4bae6d`.
+The truth and previous runs were absent from each live agent checkout. HEAD was
+held fixed for repeats 2–3; no hints or workdir edits were supplied.
+
+Raw transcripts, timings, results and scores are retained under
+`benchmarks/runs/positions_initialised_inference/`. Repeat 3 also retains both
+raw search outputs and its PNG under `search_evidence/`, allowing re-scoring
+after workdir cleanup. The frozen prompt and score mappings were not changed
+in response to calibration outcomes.

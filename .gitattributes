@@ -13,3 +13,6 @@
 
 # The hidden reference records hashes of the library's raw CSV bytes (CRLF).
 benchmarks/truth/positions_initialised_inference/posterior/samples.csv binary
+
+# Preserve raw calibration posterior evidence across checkout and re-scoring.
+benchmarks/runs/positions_initialised_inference/*/search_evidence/*/samples.csv binary

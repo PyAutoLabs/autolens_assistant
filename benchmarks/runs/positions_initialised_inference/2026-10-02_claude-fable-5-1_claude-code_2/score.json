@@ -1,0 +1,84 @@
+{
+  "card": "positions_initialised_inference",
+  "version": 1,
+  "prompt_sha256": "f80d6a80f6bbf4dada023afae0a50264576db5dda05c71f4b51c8f794186c84c",
+  "model": "claude-fable-5-1",
+  "harness": "claude-code",
+  "date": "2026-10-02",
+  "gates": [
+    {
+      "name": "finished",
+      "passed": false,
+      "reason": "no_result_json"
+    },
+    {
+      "name": "schema",
+      "passed": false,
+      "reason": "no_result_json"
+    },
+    {
+      "name": "compute_budget",
+      "passed": true,
+      "reason": null
+    },
+    {
+      "name": "run_budget",
+      "passed": false,
+      "reason": "1260.1s > 1200s wall"
+    },
+    {
+      "name": "saved_searches",
+      "passed": false,
+      "reason": "missing or invalid result schema"
+    },
+    {
+      "name": "positions_initialized",
+      "passed": false,
+      "reason": "mass/shear priors not narrowed and centred on positions posterior"
+    },
+    {
+      "name": "posterior_sample_floor",
+      "passed": false,
+      "reason": "requires >=200 rows, ESS>=100, >=50 live points, and all 13 free parameters"
+    },
+    {
+      "name": "reported_matches_samples",
+      "passed": false,
+      "reason": "reported estimates differ from weighted search samples"
+    },
+    {
+      "name": "likelihood_converged",
+      "passed": false,
+      "reason": "maximum likelihood more than 50 below reference"
+    }
+  ],
+  "metrics": [
+    {
+      "name": "recovery",
+      "value": 0.0,
+      "detail": "truth inside 3 sigma with <=5x reference widths"
+    },
+    {
+      "name": "einstein_radius",
+      "value": 0.0,
+      "detail": "relative error: 0 at 5%"
+    },
+    {
+      "name": "delta_log_likelihood",
+      "value": 0.0,
+      "detail": "1 within 5, 0 at 50 below reference"
+    },
+    {
+      "name": "positions_einstein_radius",
+      "value": 0.0,
+      "detail": "relative error: 0 at 5%"
+    },
+    {
+      "name": "figure",
+      "value": 0.0,
+      "detail": "decodable PNG >=10000 bytes and >=200 pixels each dimension"
+    }
+  ],
+  "score": 0.0,
+  "reason": "finished: no_result_json"
+}

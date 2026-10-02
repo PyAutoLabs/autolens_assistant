@@ -1,0 +1,64 @@
+{
+  "parameters": {
+    "galaxies.lens.mass.ell_comps.ell_comps_0": {
+      "median": 0.1302359739643669,
+      "sigma": 0.002607305993776385
+    },
+    "galaxies.lens.mass.ell_comps.ell_comps_1": {
+      "median": 0.041464077495732506,
+      "sigma": 0.0016830086543010714
+    },
+    "galaxies.lens.mass.einstein_radius": {
+      "median": 1.2498619496223249,
+      "sigma": 0.000761937057094042
+    },
+    "fields.shear.gamma_1": {
+      "median": 0.025661426507126578,
+      "sigma": 0.0009518794095747449
+    },
+    "fields.shear.gamma_2": {
+      "median": -0.035282022151086806,
+      "sigma": 0.000996957088148183
+    },
+    "galaxies.lens.bulge.intensity": {
+      "median": 0.6361042710054137,
+      "sigma": 0.02157505793549952
+    },
+    "galaxies.lens.bulge.sersic_index": {
+      "median": 1.9205358373386827,
+      "sigma": 0.05851206166972556
+    },
+    "galaxies.lens.bulge.effective_radius": {
+      "median": 0.3127259996226964,
+      "sigma": 0.005176005000883083
+    },
+    "galaxies.source.bulge.intensity": {
+      "median": 0.8109004994253156,
+      "sigma": 0.009583883644107505
+    },
+    "galaxies.source.bulge.sersic_index": {
+      "median": 1.1752820932869075,
+      "sigma": 0.014724845900570105
+    },
+    "galaxies.source.bulge.centre.centre_0": {
+      "median": 0.03523259072167602,
+      "sigma": 0.0003496612446848915
+    },
+    "galaxies.source.bulge.centre.centre_1": {
+      "median": 0.0245213525648268,
+      "sigma": 0.0003529869189149975
+    },
+    "galaxies.source.bulge.effective_radius": {
+      "median": 0.17849005894262587,
+      "sigma": 0.00101155571270857
+    }
+  },
+  "einstein_radius": 1.2498619496223249,
+  "log_likelihood_max": 4917.877435185084,
+  "positions_fit": {
+    "einstein_radius": 1.3230899618074972,
+    "search_output": "output/positions_initialised_inference/positions_fit/5670c0ad1cc36b9a35ec7eea87995c7e"
+  },
+  "fit_figure": "scripts/scratch/positions_initialised/fit.png",
+  "imaging_search": "output/positions_initialised_inference/imaging_fit/c33a40b954a4b96fe227bf7ad5b2942c"
+}
