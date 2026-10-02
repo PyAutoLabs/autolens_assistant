@@ -1,0 +1,115 @@
+{
+  "seed": 17429,
+  "einstein_radius": 1.25,
+  "log_likelihood_max": 4917.641227817463,
+  "parameters": {
+    "galaxies.lens.mass.ell_comps.ell_comps_0": {
+      "median": 0.13011024143879332,
+      "sigma": 0.0025652893190458853,
+      "truth": 0.13
+    },
+    "galaxies.lens.mass.ell_comps.ell_comps_1": {
+      "median": 0.04146641931026734,
+      "sigma": 0.0016874123292847654,
+      "truth": 0.04
+    },
+    "galaxies.lens.mass.einstein_radius": {
+      "median": 1.2498657252598986,
+      "sigma": 0.0007886262388802079,
+      "truth": 1.25
+    },
+    "fields.shear.gamma_1": {
+      "median": 0.02564680334791829,
+      "sigma": 0.0009531473444899796,
+      "truth": 0.025
+    },
+    "fields.shear.gamma_2": {
+      "median": -0.035315114559525206,
+      "sigma": 0.0010053503253486251,
+      "truth": -0.035
+    },
+    "galaxies.lens.bulge.intensity": {
+      "median": 0.6376016204139375,
+      "sigma": 0.022289054880847037,
+      "truth": 0.6
+    },
+    "galaxies.lens.bulge.effective_radius": {
+      "median": 0.3125351680505725,
+      "sigma": 0.005427470754679142,
+      "truth": 0.32
+    },
+    "galaxies.lens.bulge.sersic_index": {
+      "median": 1.9157938487114932,
+      "sigma": 0.06036594579706689,
+      "truth": 2.0
+    },
+    "galaxies.source.bulge.centre.centre_0": {
+      "median": 0.035211390953177046,
+      "sigma": 0.00036059418618164876,
+      "truth": 0.035
+    },
+    "galaxies.source.bulge.centre.centre_1": {
+      "median": 0.02452357837486707,
+      "sigma": 0.00035066179117463833,
+      "truth": 0.025
+    },
+    "galaxies.source.bulge.intensity": {
+      "median": 0.8111177307157348,
+      "sigma": 0.01006177265941055,
+      "truth": 0.8
+    },
+    "galaxies.source.bulge.effective_radius": {
+      "median": 0.17847368442648873,
+      "sigma": 0.0010136964538813853,
+      "truth": 0.18
+    },
+    "galaxies.source.bulge.sersic_index": {
+      "median": 1.1758999639717296,
+      "sigma": 0.01497200078723171,
+      "truth": 1.2
+    }
+  },
+  "n_samples": 14195,
+  "effective_sample_size": 6120.774866869101,
+  "reference_seconds": 1811.9103181362152,
+  "test_mode": false,
+  "backend": "cpu",
+  "precision": "float64",
+  "devices": [
+    "cpu:0"
+  ],
+  "jax_version": "0.11.2",
+  "numpy_version": "2.5.3",
+  "cpu_affinity": [
+    0,
+    2,
+    4,
+    6
+  ],
+  "stack": {
+    "autofit": "2026.9.27.2",
+    "autoarray": "2026.9.27.2",
+    "autogalaxy": "2026.9.27.2",
+    "autolens": "2026.9.27.2",
+    "autonerves": "2026.9.27.2"
+  },
+  "dataset_sha256": {
+    "data.fits": "9dfca8d7a44ed6629aabd27348dd4f17fbea06312672fa1fce122085ac751461",
+    "positions.json": "285b4f237cc1d31422af538eab229b619475b5e027a91e74ba55b60056c9cf3e",
+    "noise_map.fits": "0f5aadfaa5aa870155dce70ee4b253d9f74e973ca92f235bfb0e4096609b8c62",
+    "psf.fits": "83b8eb6ad7ec223e6abf7f9041a0b1ecfcf3390bd32453f86c502107a1ec21c3"
+  },
+  "posterior_sha256": {
+    "samples_info.json": "7b5e4710d4dda9419804deded4fdeb2cbc04b3d68f0afd9d8300df06ccdb5fb6",
+    "model.json": "485b23e164c056632cf6f40bb2340ac3df07ef9dd92a63a4e7f8a8490947e498",
+    "search.json": "25a429e82ce56c3f54e021ec5eec988c77393d6460900e9bf12572c8fafb7fbf",
+    "samples_summary.json": "901ea1d4416107aed12814ca78b25dae630a1eb3bb15a38721123ff5579c5792",
+    "samples.csv": "862956dcd7f274896562a9403fdb3222ba7ccc60a61faa64a6a38efb153affd3"
+  },
+  "search": {
+    "class": "Nautilus",
+    "n_live": 400,
+    "n_eff": 1200,
+    "number_of_cores": 4
+  }
+}

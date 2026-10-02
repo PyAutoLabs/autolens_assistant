@@ -1,0 +1,21 @@
+/home/jammy/Code/PyAutoLabs/.worktrees/assistant/scratch/forward-wheel/lib/python3.12/site-packages/autonerves/workspace.py:31: UserWarning: The workspace at /home/jammy/Code/PyAutoLabs/.worktrees/assistant/autolens_assistant records library version 2026.7.9.1, but the installed library is 2026.9.27.2 — more than 30 days newer. The workspace examples and configs may lag the installed API. Pull the latest workspace:
+
+    cd /home/jammy/Code/PyAutoLabs/.worktrees/assistant/autolens_assistant && git pull origin main
+
+To bypass this check, edit config/general.yaml:
+
+    version:
+      workspace_version_check: False
+
+You can also set the environment variable PYAUTO_SKIP_WORKSPACE_VERSION_CHECK=1 to disable temporarily.
+  warnings.warn(message)
+/home/jammy/Code/PyAutoLabs/.worktrees/assistant/scratch/forward-wheel/lib/python3.12/site-packages/autoarray/operators/convolver.py:1484: UserWarning: No blurring_image provided. Only the direct image will be convolved. This may change the correctness of the PSF convolution.
+  warnings.warn(
+Traceback (most recent call last):
+  File "/home/jammy/Code/PyAutoLabs/.worktrees/assistant/autolens_assistant/benchmarks/truth/positions_initialised_inference/make_truth.py", line 152, in <module>
+    if args.action in ('simulate','all'): simulate()
+                                          ^^^^^^^^^^
+  File "/home/jammy/Code/PyAutoLabs/.worktrees/assistant/autolens_assistant/benchmarks/truth/positions_initialised_inference/make_truth.py", line 63, in simulate
+    dataset.output_to_fits(data_path=DATA/'data.fits', noise_map_path=DATA/'noise_map.fits',
+    ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Imaging' object has no attribute 'output_to_fits'

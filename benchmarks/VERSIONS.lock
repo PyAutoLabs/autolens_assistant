@@ -9,3 +9,6 @@ oneshot-smoke:
 cosmos-web-ring-fit:
   - version: 1
     prompt_sha256: 4e768e7f230f0438ccb91bec63446fd8c8674a06eeb202e22af4256c322bfdb4
+positions_initialised_inference:
+  - version: 1
+    prompt_sha256: f80d6a80f6bbf4dada023afae0a50264576db5dda05c71f4b51c8f794186c84c

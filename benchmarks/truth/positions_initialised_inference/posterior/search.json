@@ -1,0 +1,61 @@
+{
+    "type": "instance",
+    "class_path": "autofit.non_linear.search.nest.nautilus.search.Nautilus",
+    "arguments": {
+        "initializer": {
+            "type": "instance",
+            "class_path": "autofit.non_linear.initializer.InitializerPrior",
+            "arguments": {}
+        },
+        "path_prefix": {
+            "type": "path",
+            "path": "benchmark_reference"
+        },
+        "n_points_min": null,
+        "split_threshold": 100,
+        "inplace": false,
+        "discard_exploration": false,
+        "n_like_max": Infinity,
+        "n_update": null,
+        "n_batch": 100,
+        "enlarge_per_dim": 1.1,
+        "vectorized": false,
+        "iterations_per_quick_update": 1000000.0,
+        "name": "positions_initialised_inference_jax",
+        "n_networks": 4,
+        "number_of_cores": 4,
+        "verbose": true,
+        "iterations_per_full_update": 1000000.0,
+        "unique_tag": null,
+        "f_live": 0.01,
+        "n_like_new_bound": null,
+        "force_x1_cpu": false,
+        "silence": false,
+        "initial_values": {
+            "type": "dict",
+            "arguments": {}
+        },
+        "n_eff": 1200,
+        "live_visual_update": false,
+        "paths": {
+            "type": "instance",
+            "class_path": "autofit.non_linear.paths.directory.DirectoryPaths",
+            "arguments": {
+                "unique_tag": null,
+                "path_prefix": {
+                    "type": "path",
+                    "path": "benchmark_reference"
+                },
+                "parent": null,
+                "identifier": "2e01e3a475bbe3c939fec5158dc85e47",
+                "image_path_suffix": "",
+                "name": "positions_initialised_inference_jax",
+                "is_identifier_in_paths": true
+            }
+        },
+        "seed": 17429,
+        "use_jax_vmap": true,
+        "n_shell": 1,
+        "n_live": 400
+    }
+}
