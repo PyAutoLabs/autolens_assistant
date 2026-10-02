@@ -319,29 +319,56 @@ def score(ctx):
 
         def model_parameters(t):
             lens, source = t.galaxies
-            shear = t.fields[0].shear
+            masses = [p for p in vars(lens).values() if isinstance(p, al.mp.PowerLaw)]
+            lights = [p for p in vars(source).values() if isinstance(p, al.lp.Sersic)]
+            if len(masses) != 1 or len(lights) != 1:
+                raise ValueError("expected one EPL lens and one Sersic source")
+            mass, light = masses[0], lights[0]
+            profiles = [
+                (member, profile)
+                for member in t.members
+                for profile in vars(member).values()
+                if isinstance(profile, (al.mp.MassProfile, al.LightProfile))
+            ]
+            shears = [
+                (member, profile)
+                for member, profile in profiles
+                if isinstance(profile, al.mp.ExternalShear)
+            ]
+            if len(profiles) != 3 or len(shears) != 1:
+                raise ValueError(
+                    "expected only EPL, external shear and Sersic components"
+                )
+            shear_member, shear = shears[0]
             return [
                 lens.redshift,
                 source.redshift,
-                *lens.mass.centre,
-                *lens.mass.ell_comps,
-                lens.mass.einstein_radius,
-                lens.mass.slope,
+                *mass.centre,
+                *mass.ell_comps,
+                mass.einstein_radius,
+                mass.slope,
                 shear.gamma_1,
                 shear.gamma_2,
-                *source.bulge.centre,
-                *source.bulge.ell_comps,
-                source.bulge.intensity,
-                source.bulge.effective_radius,
-                source.bulge.sersic_index,
+                shear_member.redshift,
+                *light.centre,
+                *light.ell_comps,
+                light.intensity,
+                light.effective_radius,
+                light.sersic_index,
                 t.cosmology.H0,
                 t.cosmology.Om0,
             ]
 
-        actual, expected = model_parameters(model), model_parameters(expected_model)
-        values["saved_model"] = min(
-            agreement(a, b, 0.01) for a, b in zip(actual, expected)
-        )
+        try:
+            actual, expected = model_parameters(model), model_parameters(expected_model)
+            values["saved_model"] = min(
+                agreement(a, b, 0.01) for a, b in zip(actual, expected)
+            )
+        except (AttributeError, IndexError, TypeError, ValueError) as exc:
+            details["saved_model"] = (
+                f"Unreadable model parameters: {type(exc).__name__}: {exc}"
+            )
+
         values["image_peaks"] = peak_fraction(image.data.native, positions, truth.SCALE)
         values["dirty_peaks"] = peak_fraction(dirty.native, positions, truth.SCALE)
         for name in ("image_peaks", "dirty_peaks"):

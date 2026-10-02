@@ -1,0 +1,57 @@
+{
+  "source_centre": [
+    0.03,
+    -0.05
+  ],
+  "conversions": {
+    "epl_normalization": 0.3999999999999999,
+    "intensity": 2.758866517685408,
+    "psf_sigma_pixels": 0.6369913502160143,
+    "gamma_1": 0.1041987555688496,
+    "gamma_2": 0.10790097005079766
+  },
+  "positions": [
+    [
+      -0.32531250000000006,
+      -1.1332303252437623
+    ],
+    [
+      0.59,
+      0.9414417826973335
+    ],
+    [
+      0.895625,
+      -0.2302184198393633
+    ],
+    [
+      -0.7453125000000002,
+      0.4209244306310615
+    ]
+  ],
+  "magnifications": [
+    3.0340672732955576,
+    3.733257926065704,
+    -3.0168226946038192,
+    -2.046673502840429
+  ],
+  "time_delays_days": [
+    0.0,
+    9.929047437725899,
+    19.8175218898366,
+    30.407397187223353
+  ],
+  "files": {
+    "image": "artifacts/image.fits",
+    "noise_map": "artifacts/noise_map.fits",
+    "psf": "artifacts/psf.fits",
+    "point": "artifacts/point_dataset.json",
+    "tracer": "artifacts/tracer.json",
+    "visibilities": "artifacts/visibilities.fits",
+    "visibility_noise": "artifacts/visibility_noise.fits",
+    "uv_wavelengths": "artifacts/uv_wavelengths.fits",
+    "dirty_image": "artifacts/dirty_image.fits",
+    "mask": "artifacts/mask.fits",
+    "figure": "artifacts/figure.png"
+  },
+  "summary": "Quad lens (PowerLawSph theta_E=1, slope=2.2 + shear 0.15@23deg, Planck15, z=0.5/1.0), SersicSph source at (0.03, -0.05), m_AB=23 (ZP 25). 4 images solved to 0.0005 arcsec; signed mags [3.034, 3.733, -3.017, -2.047]; delays [0.0, 9.929, 19.818, 30.407] d. Imaging: 64x64@0.08, PSF FWHM 0.12, t=1e4 s, sky 0.01 subtracted, Poisson seed 1729. Interferometer: supplied uv, exact DFT, sigma=0.001, seed 1729. Local maxima within 2 px of each image: imaging [(2.52, 2.465), (3.161, 3.161), (2.45, 2.45), (2.15, 2.15)] (max, at-pixel); dirty [(9861.0246, 9754.0567), (12020.2536, 12020.2536), (8945.8196, 8945.8196), (7898.0893, 7898.0893)]. Both images peak within 1 px of every solved position. Imaging values are counts/s/pixel after PSF blur and Poisson noise; the dirty image is the un-normalised DFT inverse (sum over 1024 baselines of exposure-scaled visibilities), so its scale is ~1e4x larger and its sidelobes (dirty beam from the sparse uv coverage) plus the absence of the Gaussian PSF shift one peak by a pixel; this is a beam/centroid effect, not a positional inconsistency. point_dataset.json read back: fluxes (|mu|) [3.034, 3.733, 3.017, 2.047], delays [0.0, 9.929, 19.818, 30.407] d. Interpreter time 9.3s."
+}

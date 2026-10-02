@@ -159,3 +159,73 @@ def test_bad_products_fail_reader_gate(submission):
     broken.result = copy.deepcopy(ctx.result)
     broken.result["files"]["point"] = "artifacts/missing.json"
     assert not score.score(broken).gates[0].passed
+
+
+def test_equivalent_shear_on_galaxy(submission):
+    """An equivalent physical model must not require a particular shear container."""
+    import autolens as al
+
+    ctx, _ = submission
+    variant = copy.copy(ctx)
+    variant.result = copy.deepcopy(ctx.result)
+    model = al.from_json(file_path=ctx.run_dir / ctx.result["files"]["tracer"])
+    lens, source = model.galaxies
+    equivalent = al.Tracer(
+        galaxies=[
+            al.Galaxy(
+                redshift=lens.redshift, deflector=lens.mass, shear=model.fields[0].shear
+            ),
+            al.Galaxy(redshift=source.redshift, emission=source.bulge),
+        ],
+        cosmology=model.cosmology,
+    )
+    path = "artifacts/equivalent-tracer.json"
+    al.output_to_json(obj=equivalent, file_path=ctx.run_dir / path)
+    variant.result["files"]["tracer"] = path
+    scored = score.score(variant)
+    assert all(g.passed for g in scored.gates), scored.gates
+    assert all(m.value > 0.999 for m in scored.metrics), scored.metrics
+
+
+def test_unreadable_model_does_not_abort_other_metrics(submission):
+    import autolens as al
+
+    ctx, _ = submission
+    variant = copy.copy(ctx)
+    variant.result = copy.deepcopy(ctx.result)
+    model = al.from_json(file_path=ctx.run_dir / ctx.result["files"]["tracer"])
+    incomplete = al.Tracer(galaxies=[model.galaxies[0]])
+    path = "artifacts/incomplete-tracer.json"
+    al.output_to_json(obj=incomplete, file_path=ctx.run_dir / path)
+    variant.result["files"]["tracer"] = path
+    scored = score.score(variant)
+    assert all(g.passed for g in scored.gates), scored.gates
+    values = {m.name: m.value for m in scored.metrics}
+    assert values["saved_model"] == 0
+    for name in ("image_peaks", "dirty_peaks", "mask", "figure"):
+        assert values[name] == 1
+
+
+@pytest.mark.parametrize("defect", ["extra_mass", "extra_light", "shear_redshift"])
+def test_saved_model_rejects_extra_components_and_wrong_shear_plane(submission, defect):
+    import autolens as al
+
+    ctx, _ = submission
+    variant = copy.copy(ctx)
+    variant.result = copy.deepcopy(ctx.result)
+    model = al.from_json(file_path=ctx.run_dir / ctx.result["files"]["tracer"])
+    lens, source = model.galaxies
+    if defect == "extra_mass":
+        lens.perturber = copy.deepcopy(lens.mass)
+    elif defect == "extra_light":
+        lens.unwanted_light = copy.deepcopy(source.bulge)
+    else:
+        model.fields[0].redshift = lens.redshift * 1.2
+    path = f"artifacts/{defect}-tracer.json"
+    al.output_to_json(obj=model, file_path=ctx.run_dir / path)
+    variant.result["files"]["tracer"] = path
+    scored = score.score(variant)
+    assert all(g.passed for g in scored.gates), scored.gates
+    values = {m.name: m.value for m in scored.metrics}
+    assert values["saved_model"] == 0
+    assert values["image_peaks"] == values["dirty_peaks"] == 1

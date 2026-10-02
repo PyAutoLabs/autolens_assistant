@@ -63,7 +63,47 @@ figure row requires a decoded PNG at least 100x100 pixels. Other rows have weigh
 
 ## Calibration
 
-Pending the three real Claude Code default-model runs. Failures are retained.
+Recorded 2026-10-02 on released PyAuto wheels 2026.9.27.2, Python 3.12.10,
+Claude Code 2.1.287, model `claude-fable-5-1`. A separate default-model probe
+(with no model override) resolved this same model in both init and modelUsage.
+All three measured sessions archived assistant commit `a301a14`.
+
+| Repeat | Wall / compute (s) | Official score | Outcome |
+|---|---:|---:|---|
+| 1 | 360.1 / 159.9 | 0 | Complete products; both budgets exceeded; process timed out |
+| 2 | 360.2 / 242.2 | 0 | Timed out without result.json |
+| 3 | 360.1 / 149.4 | 0 | Timed out without result.json |
+
+**Timing caveat:** the full test suite overlapped approximately the first three
+minutes of repeat 1. This timing is confounded. No test or truth-generation
+workload overlapped repeats 2/3. No run was dropped or replaced. These outcomes
+do not establish that the budget is intrinsically too small.
+
+The finish and budget gates discriminate in this sample. In the only completed
+artifact set, multiplicity, positions, magnifications, delays, point persistence,
+both weighted peak checks, mask and PNG saturate at 1.0. Array/conversion/model
+rows lie between 0.9953 and 1.0. There are too few completed artifact sets to
+assess those rows' discrimination across agents. Repeat 2's transcript records
+stale dataset-output and magnification APIs during discovery; its failure is
+not evidence of a wrong physical solution, because no result was delivered.
+The transcripts and missing-result failures are retained verbatim.
+
+Initial scoring exposed an authoring bug: equivalent external shear stored on
+the lens Galaxy was assumed to live in MassField, aborting later metrics. After
+all three repetitions, the reader was corrected to find the physical profile
+independently of container/component names; an unreadable saved model now zeros
+that row without aborting peak/mask/figure checks. Regression tests cover
+these cases, additional mass/light components, and a shear on the wrong redshift
+plane. Extra components are rejected and the shear-plane redshift is checked. All original score JSONs are preserved byte-for-byte under
+`benchmarks/truth/forward_model_consistency/initial_scores/`; official
+`score-oneshot` then rescored all runs. Official scores remain 0, 0, 0.
+
+No prompt wording, tolerance, mapping or budget changed in calibration. No
+further physical specification ambiguity was established by this sample. Any
+future budget or prompt revision must be a new frozen version; version 1's
+failures remain comparable within their recorded environment. Full execution
+provenance and concurrency caveats are in the hidden truth directory's
+`calibration_provenance.json`.
 
 ## Future version
 

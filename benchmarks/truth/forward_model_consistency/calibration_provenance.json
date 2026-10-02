@@ -1,0 +1,58 @@
+{
+  "command": "python autoassistant/benchmark.py run forward_model_consistency --model claude-fable-5-1 --harness claude-code --repeats 3",
+  "default_model_probe": "claude -p \"Reply only OK.\" --output-format stream-json --verbose --max-turns 1; init.model and modelUsage both resolved claude-fable-5-1 before measurement.",
+  "runs": [
+    {
+      "run": "2026-10-02_claude-fable-5-1_claude-code",
+      "assistant_sha": "a301a14",
+      "observed_model": "claude-fable-5-1",
+      "claude_code_version": "2.1.287",
+      "run_metadata": {
+        "wall_seconds": 360.1,
+        "compute_seconds": 159.9,
+        "tokens_in": null,
+        "tokens_out": null,
+        "cost_usd": null,
+        "turns": null,
+        "exit_code": "timeout"
+      },
+      "concurrent_workload": "Full test suite overlapped the first approximately three minutes; timing is confounded.",
+      "original_score_file": "initial_scores/2026-10-02_claude-fable-5-1_claude-code.json"
+    },
+    {
+      "run": "2026-10-02_claude-fable-5-1_claude-code_2",
+      "assistant_sha": "a301a14",
+      "observed_model": "claude-fable-5-1",
+      "claude_code_version": "2.1.287",
+      "run_metadata": {
+        "wall_seconds": 360.2,
+        "compute_seconds": 242.2,
+        "tokens_in": null,
+        "tokens_out": null,
+        "cost_usd": null,
+        "turns": null,
+        "exit_code": "timeout"
+      },
+      "concurrent_workload": "No concurrent test or truth-generation job.",
+      "original_score_file": "initial_scores/2026-10-02_claude-fable-5-1_claude-code_2.json"
+    },
+    {
+      "run": "2026-10-02_claude-fable-5-1_claude-code_3",
+      "assistant_sha": "a301a14",
+      "observed_model": "claude-fable-5-1",
+      "claude_code_version": "2.1.287",
+      "run_metadata": {
+        "wall_seconds": 360.1,
+        "compute_seconds": 149.4,
+        "tokens_in": null,
+        "tokens_out": null,
+        "cost_usd": null,
+        "turns": null,
+        "exit_code": "timeout"
+      },
+      "concurrent_workload": "No concurrent test or truth-generation job.",
+      "original_score_file": "initial_scores/2026-10-02_claude-fable-5-1_claude-code_3.json"
+    }
+  ],
+  "scorer_repair": "After all repetitions, accept equivalent Galaxy/MassField shear and profile names; isolate unreadable saved-model row. Rescore using score-oneshot. Prompt, mappings, thresholds, budgets and recorded execution metadata unchanged. Final review also rejects extra mass/light components and checks the shear plane redshift."
+}
