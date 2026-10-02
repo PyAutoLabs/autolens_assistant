@@ -158,7 +158,12 @@ def test_repo_prompt_cards_parse():
 def test_repo_oneshot_cards_parse():
     """Every committed one-shot card must load with a unique id."""
     cards = benchmark.load_oneshot_cards(REPO_ROOT)
-    assert set(cards) == {"oneshot-smoke", "cosmos-web-ring-fit", "positions_initialised_inference"}
+    assert set(cards) == {
+        "oneshot-smoke",
+        "cosmos-web-ring-fit",
+        "positions_initialised_inference",
+        "forward_model_consistency",
+    }
 
 
 def test_repo_card_datasets_exist():

@@ -22,6 +22,18 @@ Headless runs, computed scores: every gate must pass, each metric reads 0–1, a
 | 2026-09-26 | claude-sonnet-5 | claude-code | 0 | finished: no_result_json | 209.7 | `runs/cosmos-web-ring-fit/2026-09-26_claude-sonnet-5_claude-code_2` |
 | 2026-09-26 | claude-sonnet-5 | claude-code | 100 | — | 459 | `runs/cosmos-web-ring-fit/2026-09-26_claude-sonnet-5_claude-code_3` |
 
+### forward_model_consistency
+
+| Prompt v | Model | Harness | Runs | Median | Min–max | Median wall s | Median compute s |
+|----------|-------|---------|------|--------|---------|---------------|------------------|
+| 1 | claude-fable-5-1 | claude-code | 3 | 0 | 0–0 | 360.1 | 159.9 |
+
+| Date | Model | Harness | Score | Gate failure | Wall s | Run |
+|------|-------|---------|-------|--------------|--------|-----|
+| 2026-10-02 | claude-fable-5-1 | claude-code | 0 | compute_budget: 159.9s > 120s of compute | 360.1 | `runs/forward_model_consistency/2026-10-02_claude-fable-5-1_claude-code` |
+| 2026-10-02 | claude-fable-5-1 | claude-code | 0 | finished: no_result_json | 360.2 | `runs/forward_model_consistency/2026-10-02_claude-fable-5-1_claude-code_2` |
+| 2026-10-02 | claude-fable-5-1 | claude-code | 0 | finished: no_result_json | 360.1 | `runs/forward_model_consistency/2026-10-02_claude-fable-5-1_claude-code_3` |
+
 ### oneshot-smoke
 
 | Prompt v | Model | Harness | Runs | Median | Min–max | Median wall s | Median compute s |
