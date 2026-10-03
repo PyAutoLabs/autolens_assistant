@@ -62,6 +62,11 @@ This repo is the reference implementation future PyAuto domain assistants (e.g.
 this boundary in mind — it is the seam a future cloning workflow will cut along. Do not
 generalise anything pre-emptively; just avoid entangling the two sides.
 
+The portable `skills/feedback.md` workflow and its Claude adapters are generic.
+Generate it from Brain with `python3 PyAutoBrain/bin/sync_feedback.py autolens_assistant`,
+then use clone sync for siblings and regenerate their discovery wrappers.
+The embedded report template/invitation remain owned by Brain.
+
 **Generic assistant infrastructure** (clones to any domain assistant near-verbatim):
 `AGENTS.md`'s skeleton (session start, safety invariants, three-layer model, mode
 selection, source-of-truth resolution, commit cadence), the root `AI_POLICY.md` usage

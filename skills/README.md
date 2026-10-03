@@ -39,6 +39,13 @@ Brain checkout and registered workspace body map.
 - Wiki references use workspace-relative paths,
   e.g. `wiki/core/concepts/non_linear_search.md`.
 
+## Feedback
+
+- [`feedback.md`](./feedback.md) — draft user-reviewed experience feedback with
+  `/feedback`, `/feedback retrospective <selected sources>` or `/feedback invite`.
+  No automatic posting or telemetry; the user submits to the Discussions hub.
+  This standalone copy is generated from Brain’s canonical feedback workflow.
+
 ## Index
 
 Every skill below is a **complete recipe** unless marked `(stub)` — the stubs are gathered
