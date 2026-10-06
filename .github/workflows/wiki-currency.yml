@@ -93,6 +93,9 @@ jobs:
           # Cone mode: directories only; root-level files (llms.txt, llms-full.txt,
           # workspace_index.json) are always included automatically.
           git -C sources/autolens_workspace sparse-checkout set scripts
+          git clone --quiet --depth 1 --filter=blob:none --sparse \
+            https://github.com/PyAutoLabs/autolens_profiling sources/autolens_profiling
+          git -C sources/autolens_profiling sparse-checkout set catalogue
 
       # Paired-PR support (same trade-off as the Brain-ref hatch, PyAutoBrain#186):
       # on PR events, any cited source repo with a branch matching this PR's head

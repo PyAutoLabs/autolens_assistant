@@ -65,6 +65,10 @@ them.
 - [`_bootstrap_skill.md`](./_bootstrap_skill.md) — protocol for authoring a new skill on
   demand when a user requests a capability not yet covered.
 
+### Profiling evidence
+
+- [`al_profiling_setup.md`](./al_profiling_setup.md) — query a pinned setup catalogue, cite exact records and distinguish matching configurations, analogues and absent evidence; no jobs or baseline acceptance.
+
 ### Setup & maintenance
 
 - [`al_setup_environment.md`](./al_setup_environment.md) — detect absent or broken PyAuto\*
