@@ -44,6 +44,11 @@ projects:
     role: tutorial-lectures # HowToLens lecture-series notebooks (read-only reference)
     git: https://github.com/PyAutoLabs/HowToLens
 
+  - name: autolens_profiling
+    import: null
+    role: profiling-evidence
+    git: https://github.com/PyAutoLabs/autolens_profiling
+
   - name: autolens_assistant
     import: null
     role: assistant        # this repo — PyAutoLens AI Assistant

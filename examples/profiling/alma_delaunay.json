@@ -1,0 +1,21 @@
+{
+  "axis": "runtime",
+  "dataset": "interferometer",
+  "model": "delaunay",
+  "instrument": "alma",
+  "configuration": {
+    "n_vis": 1000000,
+    "image_pixels_masked": null,
+    "source_pixels": 1500,
+    "transformer": null,
+    "solver": null,
+    "regularization": null,
+    "preloads": null
+  },
+  "device": "a100",
+  "backend": "gpu",
+  "precision": "float64",
+  "library_version": null,
+  "software": {},
+  "hardware_details": {}
+}

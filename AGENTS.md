@@ -251,6 +251,13 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
 
 ---
 
+## Profiling setup advice
+
+For setup performance, hardware or likelihood-runtime questions, use
+[`al_profiling_setup`](./skills/al_profiling_setup.md). Read a pinned project catalogue;
+report exact match, approximate analogue or no applicable evidence. Keep archive
+acceptance, measurement methods and fit-time assumptions explicit.
+
 ## Reference & operations
 
 Load operational references on demand, not every session:
