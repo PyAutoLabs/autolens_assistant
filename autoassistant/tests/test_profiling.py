@@ -310,7 +310,7 @@ def test_measurement_kind_can_be_selected(snapshot):
 
 def test_example_shape_and_skill_links():
     root = Path(__file__).resolve().parents[2]
-    query = json.loads((root / "examples/profiling/alma_delaunay.json").read_text())
+    query = json.loads((root / "docs/profiling/alma_delaunay.json").read_text())
     assert query["axis"] == "runtime"
     assert query["dataset"] == "interferometer"
     assert query["library_version"] is None

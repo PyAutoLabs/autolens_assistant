@@ -45,13 +45,13 @@ snapshot returns an explicit error; it is not an empty successful search. The in
 `producer_revision` is publication metadata, not the commit containing the snapshot and
 not necessarily the measured library revision.
 
-Save a query such as the committed [ALMA example](../examples/profiling/alma_delaunay.json),
+Save a query such as the committed [ALMA example](../docs/profiling/alma_delaunay.json),
 replacing its unknowns only with your actual settings. From the assistant root:
 
 ```bash
 python -m autoassistant.profiling \
   --catalogue /path/to/autolens_profiling/dashboard/catalogue.json \
-  --query examples/profiling/alma_delaunay.json --limit 5
+  --query docs/profiling/alma_delaunay.json --limit 5
 ```
 
 This runs standard-library lookup only. It never imports PyAutoLens or submits jobs.

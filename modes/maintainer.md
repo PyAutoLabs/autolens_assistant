@@ -108,7 +108,9 @@ scripts in `scripts/` (`scripts/cosmos_web_ring/` — the ring fit script, its
 results and README, tied to a named lens; only `scripts/`'s own
 AGENTS/CLAUDE/README docs are generic), and the setup and
 evaluation pages under `docs/` (the agent-access mechanics read the same everywhere; the
-worked prompts and dataset names are domain).
+worked prompts and dataset names are domain). Profiling query examples in
+`docs/profiling/` describe PyAutoLens datasets and model families; they are domain
+content covered by the existing `docs/*` clone rule, not generic assistant defaults.
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
 `config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
