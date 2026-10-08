@@ -33,6 +33,8 @@ Naturally handles multi-modal posteriors. The right default for lensing.
 
 - **Nautilus** — fast, modern, well-tuned. The workspace's default.
 - **DynestyStatic / DynestyDynamic** — alternative, well-tested.
+- **NSS** — nested slice sampling via BlackJAX, run entirely inside `jax.jit`; needs a
+  JAX-traceable analysis (`use_jax=True`).
 
 (UltraNest is not currently exposed as a public `autofit` search class — see
 [`../api/searches.md`](../api/searches.md).)
@@ -45,6 +47,9 @@ modes from scratch.
 
 - **Emcee** — affine-invariant ensemble sampler.
 - **Zeus** — ensemble slice sampler; handles correlations better than Emcee.
+- **BlackJAXNUTS** — the No-U-Turn gradient sampler via BlackJAX; needs `use_jax=True`.
+- **SMC** — BlackJAX adaptive tempered sequential Monte Carlo with a gradient kernel; also
+  returns the evidence. Needs `use_jax=True`.
 
 ### Maximum-likelihood / optimisation
 
@@ -56,13 +61,14 @@ chain.
   (learning-rate free). Launches many broad starts in parallel via `jax.vmap` and
   keeps the best — the "multi-start" approach from GIGA-Lens (Gu, Huang et al. 2022)
   that makes gradient descent robust on the multi-modal lens likelihood.
-  `MultiStartAdam` (the GIGA-Lens original) and `MultiStartADABelief` are alternatives.
+  `MultiStartAdam` (the GIGA-Lens original), `MultiStartADABelief` and `MultiStartLion`
+  are alternatives.
   **Works for parametric sources (MGE, Sersic) only; not yet pixelised sources — see
   note below.**
 - **BFGS / LBFGS** — single-start gradient descent (LBFGS = limited-memory variant).
 - **Drawer** — random prior draws. Debugging only.
 
-(PySwarms is not currently exposed as a public `autofit` search class.)
+(PySwarms has been removed from PyAutoFit.)
 
 > **Parametric vs pixelised.** The JAX multi-start optimizers require a JAX-traceable
 > analysis (`use_jax=True`) and today are validated only on **parametric** sources. On a
