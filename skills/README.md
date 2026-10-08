@@ -68,6 +68,7 @@ them.
 ### Profiling evidence
 
 - [`al_profiling_setup.md`](./al_profiling_setup.md) — query a pinned setup catalogue, cite exact records and distinguish matching configurations, analogues and absent evidence; no jobs or baseline acceptance.
+- [`al_inference_setup.md`](./al_inference_setup.md) — read pinned inference v2 setup/problem evidence with qualified matches, baseline/start/hardware/cost diagnostics and immutable citations; no jobs or sampler ranking.
 
 ### Setup & maintenance
 

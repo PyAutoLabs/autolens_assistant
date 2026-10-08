@@ -1,0 +1,638 @@
+{
+  "comparison_policy": {
+    "id": "declared-target-seed-stage-v1",
+    "note": "Targets/seeds/stages retained; no automatic parity certification or best-seed selection",
+    "ranking": "none"
+  },
+  "comparisons": [
+    {
+      "id": "cold-pair",
+      "records": [
+        "baseline-mass",
+        "experiment-cold"
+      ],
+      "protocol": "fixed-mass-protocol-v1"
+    }
+  ],
+  "coverage": {
+    "excluded": [],
+    "expected": {
+      "reason": "No complete expected-run manifest; unrecorded jobs cannot be enumerated",
+      "runs": null
+    },
+    "observed": {
+      "records": 5
+    }
+  },
+  "evidence_updated_at": null,
+  "evidence_updated_at_reason": "Legacy result rows do not record measurement timestamps",
+  "generated_at": "2026-10-04T07:35:14Z",
+  "generation_basis": "Source commit timestamp; not a measurement or check-in time",
+  "limitations": [
+    "No scientific acceptance or convergence inferred from process completion",
+    "Sample archives remain in project storage; current availability unknown",
+    "No evidence from the retired inference programme is imported",
+    "Archived rows belong to this project's September 2026 runs and are historical, not current baselines"
+  ],
+  "producer_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "project": "autolens_inference",
+  "records": [
+    {
+      "archived": false,
+      "backend": "jax_cpu",
+      "comparison": {
+        "declared_target": "simple/source_plane_solved/seed0",
+        "group": null,
+        "note": "Declared target is not a verified comparison group; no ranking"
+      },
+      "configuration": {
+        "free_parameters": 10
+      },
+      "dataset": {
+        "id": "simulated-hst-v1",
+        "instrument": "hst",
+        "class": "imaging"
+      },
+      "dependency_revisions": {
+        "PyAutoLens": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "diagnostics": {
+        "status": "available",
+        "values": {
+          "max_log_likelihood": 100.0,
+          "max_likelihood_parameters": {
+            "einstein_radius": 1.6
+          }
+        }
+      },
+      "evidence_paths": [
+        "results/baseline.json"
+      ],
+      "execution": {
+        "completed": true,
+        "reason": null,
+        "status": "complete"
+      },
+      "hardware": {
+        "device": "cpu"
+      },
+      "id": "baseline-mass",
+      "library_version": "2026.8.17.1",
+      "measured_at": null,
+      "model": "mass-model-v1",
+      "parent_run_id": null,
+      "pipeline": "slam5",
+      "precision": "fp64",
+      "sampler": "nautilus",
+      "samples": {
+        "availability": "restricted",
+        "path": "output/baseline/samples.csv"
+      },
+      "scientific": {
+        "acceptance": "not_assessed",
+        "convergence": "not_assessed",
+        "reason": "Exporter does not make scientific rulings; consult Cortex"
+      },
+      "seed": 0,
+      "stage": "mass_total[1]",
+      "target": "simple/source_plane_solved/seed0",
+      "timings": {
+        "compile_s": 1.9011598539655097,
+        "definitions": {
+          "compile_s": "Separate likelihood warm-up probe; not added to total_s",
+          "sampling_s": "wall_s: sampler clock from samples_info.json; includes sampler overhead",
+          "setup_s": "Not measured separately; unknown, not total minus sampling",
+          "total_s": "total_wall_s: elapsed search.fit call; excludes prior compile probe and dataset/model setup",
+          "preparation_s": "Prerequisite SLaM work, excluded from this stage fit clock",
+          "initialization_s": "Sampler initialization inside sampling_s; never add again"
+        },
+        "sampling_s": 56.56000781059265,
+        "setup_s": null,
+        "total_s": 65.21035292901797,
+        "preparation_s": null,
+        "preparation_s_reason": "Baseline prerequisite cost not separately measured",
+        "initialization_s": null,
+        "initialization_s_reason": "Included in sampler clock; not separately measured"
+      },
+      "unknown_reasons": {
+        "measured_at": "Not recorded in source result"
+      },
+      "setup_id": "imaging/delaunay/hst",
+      "problem_id": "hst-delaunay-mass-v1",
+      "experiment_protocol": "fixed-mass-protocol-v1",
+      "initialization": {
+        "mode": "cold",
+        "recipe": "Draw from the prepared priors",
+        "sources": []
+      },
+      "environment": {
+        "hardware_id": "cpu-host-v1-8cores",
+        "compilation": "cold",
+        "cache": "cold"
+      },
+      "work": {
+        "likelihood_evaluations": 20000,
+        "gradient_evaluations": 0,
+        "iterations": null,
+        "iterations_reason": "Not exposed",
+        "retained_samples": 1000,
+        "effective_sample_size": 900.0,
+        "definitions": {
+          "likelihood_evaluations": "Calls to log likelihood including initialization",
+          "gradient_evaluations": "Calls to log likelihood gradient",
+          "iterations": "Sampler-native iterations; unavailable here",
+          "retained_samples": "Stored posterior samples after warmup",
+          "effective_sample_size": "Sampler-reported posterior ESS"
+        }
+      }
+    },
+    {
+      "archived": false,
+      "backend": "jax_cpu",
+      "comparison": {
+        "declared_target": "simple/source_plane_solved/seed0",
+        "group": null,
+        "note": "Declared target is not a verified comparison group; no ranking"
+      },
+      "configuration": {
+        "free_parameters": 10
+      },
+      "dataset": {
+        "id": "simulated-hst-v1",
+        "instrument": "hst",
+        "class": "imaging"
+      },
+      "dependency_revisions": {
+        "PyAutoLens": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "diagnostics": {
+        "status": "available",
+        "values": {
+          "max_log_likelihood": 100.0,
+          "max_likelihood_parameters": {
+            "einstein_radius": 1.6
+          }
+        }
+      },
+      "evidence_paths": [
+        "results/baseline.json"
+      ],
+      "execution": {
+        "completed": true,
+        "reason": null,
+        "status": "complete"
+      },
+      "hardware": {
+        "device": "cpu"
+      },
+      "id": "baseline-source",
+      "library_version": "2026.8.17.1",
+      "measured_at": null,
+      "model": "mass-model-v1",
+      "parent_run_id": null,
+      "pipeline": "slam5",
+      "precision": "fp64",
+      "sampler": "nautilus",
+      "samples": {
+        "availability": "restricted",
+        "path": "output/baseline/samples.csv"
+      },
+      "scientific": {
+        "acceptance": "not_assessed",
+        "convergence": "not_assessed",
+        "reason": "Exporter does not make scientific rulings; consult Cortex"
+      },
+      "seed": 0,
+      "stage": "source_pix[2]",
+      "target": "simple/source_plane_solved/seed0",
+      "timings": {
+        "compile_s": 1.9011598539655097,
+        "definitions": {
+          "compile_s": "Separate likelihood warm-up probe; not added to total_s",
+          "sampling_s": "wall_s: sampler clock from samples_info.json; includes sampler overhead",
+          "setup_s": "Not measured separately; unknown, not total minus sampling",
+          "total_s": "total_wall_s: elapsed search.fit call; excludes prior compile probe and dataset/model setup",
+          "preparation_s": "Prerequisite SLaM work, excluded from this stage fit clock",
+          "initialization_s": "Sampler initialization inside sampling_s; never add again"
+        },
+        "sampling_s": 56.56000781059265,
+        "setup_s": null,
+        "total_s": 65.21035292901797,
+        "preparation_s": null,
+        "preparation_s_reason": "Baseline prerequisite cost not separately measured",
+        "initialization_s": null,
+        "initialization_s_reason": "Included in sampler clock; not separately measured"
+      },
+      "unknown_reasons": {
+        "measured_at": "Not recorded in source result"
+      },
+      "setup_id": "imaging/delaunay/hst",
+      "problem_id": null,
+      "experiment_protocol": "fixed-mass-protocol-v1",
+      "initialization": {
+        "mode": "cold",
+        "recipe": "Draw from the prepared priors",
+        "sources": []
+      },
+      "environment": {
+        "hardware_id": "cpu-host-v1-8cores",
+        "compilation": "cold",
+        "cache": "cold"
+      },
+      "work": {
+        "likelihood_evaluations": 20000,
+        "gradient_evaluations": 0,
+        "iterations": null,
+        "iterations_reason": "Not exposed",
+        "retained_samples": 1000,
+        "effective_sample_size": 900.0,
+        "definitions": {
+          "likelihood_evaluations": "Calls to log likelihood including initialization",
+          "gradient_evaluations": "Calls to log likelihood gradient",
+          "iterations": "Sampler-native iterations; unavailable here",
+          "retained_samples": "Stored posterior samples after warmup",
+          "effective_sample_size": "Sampler-reported posterior ESS"
+        }
+      },
+      "problem_id_reason": "Prerequisite stage; no standalone comparison problem"
+    },
+    {
+      "archived": false,
+      "backend": "jax_cpu",
+      "comparison": {
+        "declared_target": "simple/source_plane_solved/seed0",
+        "group": null,
+        "note": "Declared target is not a verified comparison group; no ranking"
+      },
+      "configuration": {
+        "free_parameters": 10
+      },
+      "dataset": {
+        "id": "simulated-hst-v1",
+        "instrument": "hst",
+        "class": "imaging"
+      },
+      "dependency_revisions": {
+        "PyAutoLens": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "diagnostics": {
+        "status": "available",
+        "values": {
+          "max_log_likelihood": 100.0,
+          "max_likelihood_parameters": {
+            "einstein_radius": 1.6
+          }
+        }
+      },
+      "evidence_paths": [
+        "results/baseline.json"
+      ],
+      "execution": {
+        "completed": true,
+        "reason": null,
+        "status": "complete"
+      },
+      "hardware": {
+        "device": "cpu"
+      },
+      "id": "experiment-cold",
+      "library_version": "2026.8.17.1",
+      "measured_at": null,
+      "model": "mass-model-v1",
+      "parent_run_id": null,
+      "pipeline": "slam5",
+      "precision": "fp64",
+      "sampler": "smc",
+      "samples": {
+        "availability": "restricted",
+        "path": "output/baseline/samples.csv"
+      },
+      "scientific": {
+        "acceptance": "not_assessed",
+        "convergence": "not_assessed",
+        "reason": "Exporter does not make scientific rulings; consult Cortex"
+      },
+      "seed": 0,
+      "stage": "mass_total[1]",
+      "target": "simple/source_plane_solved/seed0",
+      "timings": {
+        "compile_s": 1.9011598539655097,
+        "definitions": {
+          "compile_s": "Separate likelihood warm-up probe; not added to total_s",
+          "sampling_s": "wall_s: sampler clock from samples_info.json; includes sampler overhead",
+          "setup_s": "Not measured separately; unknown, not total minus sampling",
+          "total_s": "total_wall_s: elapsed search.fit call; excludes prior compile probe and dataset/model setup",
+          "preparation_s": "Prerequisite SLaM work, excluded from this stage fit clock",
+          "initialization_s": "Sampler initialization inside sampling_s; never add again"
+        },
+        "sampling_s": 56.56000781059265,
+        "setup_s": null,
+        "total_s": 65.21035292901797,
+        "preparation_s": null,
+        "preparation_s_reason": "Baseline prerequisite cost not separately measured",
+        "initialization_s": null,
+        "initialization_s_reason": "Included in sampler clock; not separately measured"
+      },
+      "unknown_reasons": {
+        "measured_at": "Not recorded in source result"
+      },
+      "setup_id": "imaging/delaunay/hst",
+      "problem_id": "hst-delaunay-mass-v1",
+      "experiment_protocol": "fixed-mass-protocol-v1",
+      "initialization": {
+        "mode": "cold",
+        "recipe": "Draw from the prepared priors",
+        "sources": []
+      },
+      "environment": {
+        "hardware_id": "cpu-host-v1-8cores",
+        "compilation": "cold",
+        "cache": "cold"
+      },
+      "work": {
+        "likelihood_evaluations": 20000,
+        "gradient_evaluations": 0,
+        "iterations": null,
+        "iterations_reason": "Not exposed",
+        "retained_samples": 1000,
+        "effective_sample_size": 900.0,
+        "definitions": {
+          "likelihood_evaluations": "Calls to log likelihood including initialization",
+          "gradient_evaluations": "Calls to log likelihood gradient",
+          "iterations": "Sampler-native iterations; unavailable here",
+          "retained_samples": "Stored posterior samples after warmup",
+          "effective_sample_size": "Sampler-reported posterior ESS"
+        }
+      }
+    },
+    {
+      "archived": false,
+      "backend": "jax_cpu",
+      "comparison": {
+        "declared_target": "simple/source_plane_solved/seed0",
+        "group": null,
+        "note": "Declared target is not a verified comparison group; no ranking"
+      },
+      "configuration": {
+        "free_parameters": 10
+      },
+      "dataset": {
+        "id": "simulated-hst-v1",
+        "instrument": "hst",
+        "class": "imaging"
+      },
+      "dependency_revisions": {
+        "PyAutoLens": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "diagnostics": {
+        "status": "available",
+        "values": {
+          "max_log_likelihood": 100.0,
+          "max_likelihood_parameters": {
+            "einstein_radius": 1.6
+          }
+        }
+      },
+      "evidence_paths": [
+        "results/baseline.json"
+      ],
+      "execution": {
+        "completed": true,
+        "reason": null,
+        "status": "complete"
+      },
+      "hardware": {
+        "device": "cpu"
+      },
+      "id": "experiment-warm",
+      "library_version": "2026.8.17.1",
+      "measured_at": null,
+      "model": "mass-model-v1",
+      "parent_run_id": null,
+      "pipeline": "slam5",
+      "precision": "fp64",
+      "sampler": "smc",
+      "samples": {
+        "availability": "restricted",
+        "path": "output/baseline/samples.csv"
+      },
+      "scientific": {
+        "acceptance": "not_assessed",
+        "convergence": "not_assessed",
+        "reason": "Exporter does not make scientific rulings; consult Cortex"
+      },
+      "seed": 0,
+      "stage": "mass_total[1]",
+      "target": "simple/source_plane_solved/seed0",
+      "timings": {
+        "compile_s": 1.9011598539655097,
+        "definitions": {
+          "compile_s": "Separate likelihood warm-up probe; not added to total_s",
+          "sampling_s": "wall_s: sampler clock from samples_info.json; includes sampler overhead",
+          "setup_s": "Not measured separately; unknown, not total minus sampling",
+          "total_s": "total_wall_s: elapsed search.fit call; excludes prior compile probe and dataset/model setup",
+          "preparation_s": "Prerequisite SLaM work, excluded from this stage fit clock",
+          "initialization_s": "Sampler initialization inside sampling_s; never add again"
+        },
+        "sampling_s": 56.56000781059265,
+        "setup_s": null,
+        "total_s": 65.21035292901797,
+        "preparation_s": null,
+        "preparation_s_reason": "Baseline prerequisite cost not separately measured",
+        "initialization_s": null,
+        "initialization_s_reason": "Included in sampler clock; not separately measured"
+      },
+      "unknown_reasons": {
+        "measured_at": "Not recorded in source result"
+      },
+      "setup_id": "imaging/delaunay/hst",
+      "problem_id": "hst-delaunay-mass-v1",
+      "experiment_protocol": "fixed-mass-protocol-v1",
+      "initialization": {
+        "mode": "warm",
+        "recipe": "Initialize from baseline posterior particles",
+        "sources": [
+          {
+            "kind": "posterior_samples",
+            "record_id": "baseline-mass",
+            "path": "output/baseline/samples.csv",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          }
+        ]
+      },
+      "environment": {
+        "hardware_id": "cpu-host-v1-8cores",
+        "compilation": "cold",
+        "cache": "cold"
+      },
+      "work": {
+        "likelihood_evaluations": 20000,
+        "gradient_evaluations": 0,
+        "iterations": null,
+        "iterations_reason": "Not exposed",
+        "retained_samples": 1000,
+        "effective_sample_size": 900.0,
+        "definitions": {
+          "likelihood_evaluations": "Calls to log likelihood including initialization",
+          "gradient_evaluations": "Calls to log likelihood gradient",
+          "iterations": "Sampler-native iterations; unavailable here",
+          "retained_samples": "Stored posterior samples after warmup",
+          "effective_sample_size": "Sampler-reported posterior ESS"
+        }
+      }
+    },
+    {
+      "archived": false,
+      "backend": "jax_cpu",
+      "comparison": {
+        "declared_target": "simple/source_plane_solved/seed0",
+        "group": null,
+        "note": "Declared target is not a verified comparison group; no ranking"
+      },
+      "configuration": {
+        "free_parameters": 10
+      },
+      "dataset": {
+        "id": "simulated-hst-v1",
+        "instrument": "hst",
+        "class": "imaging"
+      },
+      "dependency_revisions": {
+        "PyAutoLens": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "diagnostics": {
+        "status": "available",
+        "values": {
+          "max_log_likelihood": 100.0,
+          "max_likelihood_parameters": {
+            "einstein_radius": 1.6
+          }
+        }
+      },
+      "evidence_paths": [
+        "results/baseline.json"
+      ],
+      "execution": {
+        "completed": true,
+        "reason": null,
+        "status": "complete"
+      },
+      "hardware": {
+        "device": "cpu"
+      },
+      "id": "experiment-resume",
+      "library_version": "2026.8.17.1",
+      "measured_at": null,
+      "model": "mass-model-v1",
+      "parent_run_id": null,
+      "pipeline": "slam5",
+      "precision": "fp64",
+      "sampler": "smc",
+      "samples": {
+        "availability": "restricted",
+        "path": "output/baseline/samples.csv"
+      },
+      "scientific": {
+        "acceptance": "not_assessed",
+        "convergence": "not_assessed",
+        "reason": "Exporter does not make scientific rulings; consult Cortex"
+      },
+      "seed": 0,
+      "stage": "mass_total[1]",
+      "target": "simple/source_plane_solved/seed0",
+      "timings": {
+        "compile_s": 1.9011598539655097,
+        "definitions": {
+          "compile_s": "Separate likelihood warm-up probe; not added to total_s",
+          "sampling_s": "wall_s: sampler clock from samples_info.json; includes sampler overhead",
+          "setup_s": "Not measured separately; unknown, not total minus sampling",
+          "total_s": "total_wall_s: elapsed search.fit call; excludes prior compile probe and dataset/model setup",
+          "preparation_s": "Prerequisite SLaM work, excluded from this stage fit clock",
+          "initialization_s": "Sampler initialization inside sampling_s; never add again"
+        },
+        "sampling_s": 56.56000781059265,
+        "setup_s": null,
+        "total_s": 65.21035292901797,
+        "preparation_s": null,
+        "preparation_s_reason": "Baseline prerequisite cost not separately measured",
+        "initialization_s": null,
+        "initialization_s_reason": "Included in sampler clock; not separately measured"
+      },
+      "unknown_reasons": {
+        "measured_at": "Not recorded in source result"
+      },
+      "setup_id": "imaging/delaunay/hst",
+      "problem_id": "hst-delaunay-mass-v1",
+      "experiment_protocol": "fixed-mass-protocol-v1",
+      "initialization": {
+        "mode": "resume",
+        "recipe": "Continue the warm experiment checkpoint",
+        "sources": [
+          {
+            "kind": "checkpoint",
+            "record_id": "experiment-warm",
+            "path": "output/warm/checkpoint.bin",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+          }
+        ]
+      },
+      "environment": {
+        "hardware_id": "cpu-host-v1-8cores",
+        "compilation": "cold",
+        "cache": "cold"
+      },
+      "work": {
+        "likelihood_evaluations": 20000,
+        "gradient_evaluations": 0,
+        "iterations": null,
+        "iterations_reason": "Not exposed",
+        "retained_samples": 1000,
+        "effective_sample_size": 900.0,
+        "definitions": {
+          "likelihood_evaluations": "Calls to log likelihood including initialization",
+          "gradient_evaluations": "Calls to log likelihood gradient",
+          "iterations": "Sampler-native iterations; unavailable here",
+          "retained_samples": "Stored posterior samples after warmup",
+          "effective_sample_size": "Sampler-reported posterior ESS"
+        }
+      }
+    }
+  ],
+  "schema": "inference-summary",
+  "scope": "inference",
+  "valid_until": null,
+  "version": 2,
+  "setups": [
+    {
+      "id": "imaging/delaunay/hst",
+      "dataset_family": "imaging",
+      "model_family": "delaunay",
+      "label": "HST Delaunay",
+      "reference_record_id": null,
+      "reference_record_id_reason": "Synthetic fixture; not scientifically assessed",
+      "instrument": "hst"
+    }
+  ],
+  "prepared_problems": [
+    {
+      "id": "hst-delaunay-mass-v1",
+      "setup_id": "imaging/delaunay/hst",
+      "dataset_id": "simulated-hst-v1",
+      "model_id": "mass-model-v1",
+      "priors_id": "mass-priors-v1",
+      "stage": "mass_total[1]",
+      "baseline_record_id": "baseline-mass",
+      "artifacts": [
+        {
+          "kind": "adapt_image",
+          "record_id": "baseline-source",
+          "path": "prepared/adapt.fits",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ]
+    }
+  ]
+}
