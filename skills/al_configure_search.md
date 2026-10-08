@@ -207,8 +207,10 @@ Source: `PyAutoFit:autofit/non_linear/search/mcmc/emcee/`.
 
 ## Branch — Other searches
 
-Zeus (ensemble slice MCMC), DynestyDynamic (dynamic nested sampling), BFGS / LBFGS
-(single-start gradient descent for MLE), Drawer (random prior draws — debugging only). See
+Zeus (ensemble slice MCMC), DynestyDynamic (dynamic nested sampling), NSS (JAX nested slice
+sampling), BlackJAXNUTS and SMC (JAX gradient MCMC; SMC also returns the evidence), BFGS / LBFGS
+(single-start gradient descent for MLE), Drawer (random prior draws — debugging only). NSS,
+BlackJAXNUTS and SMC need a JAX-traceable analysis (`use_jax=True`). See
 [`wiki/core/api/searches.md`](../wiki/core/api/searches.md) for the comparison table. For a
 *JAX* gradient optimizer, prefer the multi-start family (`MultiStartProdigy` and friends) in
 "Branch — MultiStartProdigy" above over single-start `BFGS`/`LBFGS`.
