@@ -5,7 +5,7 @@ sources:
     paths: [autonerves/jax_wrapper.py]
     pinned_commit: main
   - project: autolens_workspace
-    paths: [CLAUDE.md, README.md]
+    paths: [AGENTS.md, README.md]
     pinned_commit: main
 last_updated: 2026-05-22
 ---
