@@ -1,0 +1,21 @@
+{
+  "dataset_family": "imaging",
+  "model_family": "delaunay",
+  "instrument": "hst",
+  "setup_id": "imaging/delaunay/hst",
+  "problem_id": null,
+  "dataset_id": null,
+  "model_id": null,
+  "priors_id": null,
+  "stage": "mass_total[1]",
+  "sampler": null,
+  "backend": null,
+  "precision": null,
+  "seed": null,
+  "experiment_protocol": null,
+  "configuration": {},
+  "hardware": {},
+  "dependency_revisions": {},
+  "initialization": {"mode": null, "recipe": null, "sources": null},
+  "environment": {"hardware_id": null, "compilation": null, "cache": null}
+}

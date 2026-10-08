@@ -258,6 +258,14 @@ For setup performance, hardware or likelihood-runtime questions, use
 report exact match, approximate analogue or no applicable evidence. Keep archive
 acceptance, measurement methods and fit-time assumptions explicit.
 
+## Inference setup advice
+
+For sampler/setup evidence questions, use
+[`al_inference_setup`](./skills/al_inference_setup.md). Read committed
+`inference-summary@2` at an explicit full revision. Retain exact/analogue/absent
+match reasons, frozen priors/stage identities, baseline acceptance, archived
+status, start/hardware conditions and separately defined costs/diagnostics.
+
 ## Reference & operations
 
 Load operational references on demand, not every session:

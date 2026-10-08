@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/PyAutoLabs/PyAutoInsight",
+  "revision": "52c637f5a2dfc1bd361cf4fcedee2fbf374998ea",
+  "files": {
+    "summary.py": {
+      "source_path": "insight/summary.py",
+      "source_sha256": "e9ca1cf3f4fc329d97ff20bc2baef29d7bd05bd0e1031f69bbcf93bf86bbb71d",
+      "vendored_sha256": "4afc23061d8c29192d0b5e078e235abbf00effdff06a60099ea40f0e20b01113"
+    },
+    "catalogue.py": {
+      "source_path": "insight/catalogue.py",
+      "source_sha256": "f9698c8aa5b5252129e5889c001c031c31bb1ae3c5d913d9b70e5109fe9f3ca8",
+      "vendored_sha256": "5b73a1d011ee119eb2ec88bb94bd674be6de064735b4561db52d040ecd0ed3a1"
+    }
+  }
+}
