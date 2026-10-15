@@ -10,8 +10,10 @@ sources:
       - autofit/non_linear/search/mle/bfgs/
       - autofit/non_linear/search/mle/drawer/
       - autofit/non_linear/search/mle/multi_start_gradient/
+      - autofit/non_linear/search/nest/nss/
+      - autofit/non_linear/search/mcmc/blackjax/
     pinned_commit: main
-last_updated: 2026-07-21
+last_updated: 2026-10-15
 ---
 
 # Non-linear search catalogue
@@ -19,6 +21,37 @@ last_updated: 2026-07-21
 The full menu of non-linear searches PyAutoFit ships. For the conceptual map (what
 nested sampling vs MCMC actually does), see
 [`../concepts/non_linear_search`](../concepts/non_linear_search.md).
+
+## The installed roster
+
+Generated from the installed release's search manifest
+(`python -m autofit search-manifest --json`) — regenerate with PyAutoHands
+`autohands regenerate_search_roster --root .`, never by hand; verify against the installed
+stack with `dir(af)`. `JAX: required` searches need `use_jax=True`; `experimental` ones may
+still change defaults. The full capability matrix:
+https://pyautofit.readthedocs.io/en/latest/searches/index.html. The sections below cover the
+searches lens modelling actually reaches for; the pick table at the end is hand-written.
+
+<!-- search-roster:begin style=table -->
+<!-- search-manifest@1 autofit 2026.10.12.1 -->
+| Search | Family | Status | JAX | Gradient | Evidence | Posterior | Example |
+|---|---|---|---|---|---|---|---|
+| `af.Emcee` | mcmc | stable | none | none | no | chain | `autofit_workspace:scripts/searches/mcmc.py` |
+| `af.Zeus` | mcmc | stable | none | none | no | chain | `autofit_workspace:scripts/searches/mcmc.py` |
+| `af.BlackJAXNUTS` | mcmc | stable | required | uses | no | chain | `autofit_workspace:scripts/searches/mcmc.py` |
+| `af.SMC` | mcmc | experimental | required | uses | yes | weighted | — |
+| `af.DynestyStatic` | nest | stable | optional | none | yes | weighted | `autofit_workspace:scripts/searches/nest.py` |
+| `af.DynestyDynamic` | nest | stable | optional | none | yes | weighted | `autofit_workspace:scripts/searches/nest.py` |
+| `af.Nautilus` | nest | stable | optional | none | yes | weighted | `autofit_workspace:scripts/searches/nest.py` |
+| `af.NSS` | nest | experimental | required | none | yes | weighted | — |
+| `af.Drawer` | mle | stable | none | none | no | point | `autofit_workspace:scripts/searches/mle.py` |
+| `af.BFGS` | mle | stable | optional | none | no | point | — |
+| `af.LBFGS` | mle | stable | optional | none | no | point | `autofit_workspace:scripts/searches/mle.py` |
+| `af.MultiStartAdam` | mle | stable | required | uses | no | point | `autofit_workspace:scripts/searches/mle.py` |
+| `af.MultiStartADABelief` | mle | experimental | required | uses | no | point | — |
+| `af.MultiStartLion` | mle | experimental | required | uses | no | point | — |
+| `af.MultiStartProdigy` | mle | stable | required | uses | no | point | — |
+<!-- search-roster:end -->
 
 ## Nested samplers (best default for lensing)
 
@@ -56,22 +89,6 @@ Source: `PyAutoFit:autofit/non_linear/search/nest/dynesty/`. Pinned: `dynesty==2
 
 Reference: Speagle (2020), arXiv:1904.02180 — see
 [`wiki/literature/sources/bayesian-inference-methods.md`](../../literature/sources/bayesian-inference-methods.md#speagle-2020--dynesty).
-
-### UltraNest
-
-UltraNest is not exposed as a public `autofit` search class, and its former
-`nest/ultranest/` module has been removed from `main` entirely. Prefer
-`af.Nautilus`, `af.DynestyStatic`, or `af.DynestyDynamic` for nested-sampling
-runs.
-
-```python
-af.Nautilus(path_prefix=..., name=..., n_live=200)
-```
-
-Reference: Buchner — algorithmic foundation in
-[`wiki/literature/concepts/nested-sampling.md`](../../literature/concepts/nested-sampling.md)
-(Skilling 2006); UltraNest itself is documented at
-https://johannesbuchner.github.io/UltraNest.
 
 ## MCMC
 
@@ -138,18 +155,6 @@ af.BFGS(path_prefix=..., name=...)
 ```
 
 Source: `PyAutoFit:autofit/non_linear/search/mle/bfgs/`.
-
-### Particle Swarm / MLE Searches
-
-PySwarms is not exposed as a public `autofit` search class, and its former
-`mle/pyswarms/` module has been removed from `main` entirely. Use the public
-MLE/debug searches instead.
-
-```python
-af.LBFGS(path_prefix=..., name=...)
-```
-
-Source: `PyAutoFit:autofit/non_linear/search/mle/`.
 
 ### `af.Drawer`
 

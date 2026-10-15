@@ -93,6 +93,11 @@ jobs:
           # Cone mode: directories only; root-level files (llms.txt, llms-full.txt,
           # workspace_index.json) are always included automatically.
           git -C sources/autolens_workspace sparse-checkout set scripts
+          # The search-roster generator (PyAutoHands): the roster blocks in skills/ and
+          # wiki/core/ are rendered from the installed release's search manifest and
+          # checked against it below. Cloned here so the PR-branch matching step
+          # pairs it with a not-yet-merged generator change.
+          git clone --quiet --depth 1 https://github.com/PyAutoLabs/PyAutoHands sources/PyAutoHands
           git clone --quiet --depth 1 --filter=blob:none --sparse \
             https://github.com/PyAutoLabs/autolens_profiling sources/autolens_profiling
           git -C sources/autolens_profiling sparse-checkout set catalogue
@@ -152,6 +157,20 @@ jobs:
           run "Idiom deny-list (--lint-idioms)"     --lint-idioms
           run "Provenance (--check-provenance)"     --check-provenance
           run "Citation paths (--check-citations)"  --check-citations
+
+          # Generated search rosters vs the installed release's search manifest
+          # (python -m autofit search-manifest --json): a changed roster fails; a
+          # stamp-only difference after a release that added no search is a note.
+          echo "## Search roster (check_search_roster)" >> "$REPORT"
+          echo '```' >> "$REPORT"
+          rc=0
+          python sources/PyAutoHands/autohands/check_search_roster.py --root . >> "$REPORT" 2>&1 || rc=$?
+          echo '```' >> "$REPORT"
+          if [ "$rc" -ne 0 ]; then
+            echo "**FAILED** — \`check_search_roster\` exited $rc" >> "$REPORT"
+            fail=1
+          fi
+          echo >> "$REPORT"
 
           cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
           if [ "$fail" -ne 0 ]; then

@@ -207,6 +207,17 @@ Source: `PyAutoFit:autofit/non_linear/search/mcmc/emcee/`.
 
 ## Branch — Other searches
 
+Every search PyAutoFit ships, generated from the installed release's search manifest
+(`python -m autofit search-manifest --json`; regenerate with PyAutoHands
+`autohands regenerate_search_roster --root .`, never by hand):
+
+<!-- search-roster:begin style=list -->
+<!-- search-manifest@1 autofit 2026.10.12.1 -->
+- **Markov chain Monte Carlo** (`mcmc`): `af.Emcee`, `af.Zeus`, `af.BlackJAXNUTS`, `af.SMC` (experimental) — example: `autofit_workspace:scripts/searches/mcmc.py`
+- **Nested sampling** (`nest`): `af.DynestyStatic`, `af.DynestyDynamic`, `af.Nautilus`, `af.NSS` (experimental) — example: `autofit_workspace:scripts/searches/nest.py`
+- **Maximum likelihood / maximum a posteriori** (`mle`): `af.Drawer`, `af.BFGS`, `af.LBFGS`, `af.MultiStartAdam`, `af.MultiStartADABelief` (experimental), `af.MultiStartLion` (experimental), `af.MultiStartProdigy` — example: `autofit_workspace:scripts/searches/mle.py`
+<!-- search-roster:end -->
+
 Zeus (ensemble slice MCMC), DynestyDynamic (dynamic nested sampling), NSS (JAX nested slice
 sampling), BlackJAXNUTS and SMC (JAX gradient MCMC; SMC also returns the evidence), BFGS / LBFGS
 (single-start gradient descent for MLE), Drawer (random prior draws — debugging only). NSS,
