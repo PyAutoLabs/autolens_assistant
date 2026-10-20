@@ -23,3 +23,36 @@ Credit: COWLS — Nightingale et al. 2025, *COSMOS-Web Lens Survey (COWLS) I*
 ([arXiv:2503.08777](https://arxiv.org/abs/2503.08777)); discovery of the COSMOS-Web Ring:
 Mercier et al. 2024 ([A&A 687, A61](https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract)).
 Imaging: JWST COSMOS-Web.
+
+## Teaching schematic
+
+| File | Source | Notes |
+|------|--------|-------|
+| `docs/images/strong_lens_schematic.png` | AI-generated image supplied by the maintainer (James Nightingale), 2000 x 667 pixels, RGBA | JWST-style hero schematic: the observer (JWST), two bent "Lensed Source Galaxy Light" rays around the "Lens galaxy", an "Extra Galaxy" and the "Source galaxy". Committed as a 1000 x 334 pixel Lanczos downscale (PIL, `optimize=True`, ~480 KB); the 2000-pixel original is kept by the maintainer and not committed. It does **not** show the rays becoming multiple images or a ring, so wherever it is used the text must make that link (two of infinitely many paths, arcs, a ring at perfect alignment) before the COSMOS-Web picture follows. `strong_gravitational_lensing_schematic.svg` (hand-drawn vector diagram) shows the image, lens and source planes, the lensed images and an Einstein-ring inset. |
+
+## Mercier et al. 2024 lens-model panels
+
+| File | Source | Notes |
+|------|--------|-------|
+| `mercier2024_F444W_data.png`, `mercier2024_F444W_model_image.png`, `mercier2024_F444W_normalized_residual_map.png`, `mercier2024_F444W_source.png` | [arXiv:2309.15986v1 HTML](https://arxiv.org/html/2309.15986v1/), the files of the same names without the `mercier2024_` prefix | The F444W row of Figure 5 (arXiv HTML numbering), "Results of the independent PyAutoLens lens model fits": observed image, lens model image, normalised residual map, source reconstruction. 770 x 726 pixels each, vendored unchanged. |
+
+`docs/images/mercier2024_lens_model_f444w.png` is the four panels in one row (each resampled to
+400 pixels wide) with the credit line drawn into the image, built by the "Published lens model"
+section of `docs/make_readme_figures.py`. It opens the Colab notebook's "What A Lens Model Looks
+Like" section.
+
+Credit and licence: Mercier et al. 2024, *The COSMOS-Web ring: in-depth characterisation of an
+Einstein ring lensing system at z ~ 2*, A&A 687, A61
+([ADS](https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract),
+[arXiv:2309.15986](https://arxiv.org/abs/2309.15986)), distributed on arXiv under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The panels and the composed row
+are shared under the same licence.
+
+## Colab model figures
+
+`docs/images/cosmos_web_ring_good_model.png` (the good model's plane subplot: data, ring with the
+lens light subtracted, lensed source model, source plane) and
+`docs/images/cosmos_web_ring_residuals_good_vs_bad.png` (normalised residuals of the good and the
+single-Sérsic-source models on one ±5σ scale) are computed from the committed models in
+`scripts/cosmos_web_ring/results/` by `docs/colab/make_colab_figures.py` (`make colab` runs it).
+They are this repository's own output, not third-party images.

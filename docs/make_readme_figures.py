@@ -23,6 +23,7 @@ __Contents__
 - **Load**: read the RGB composite and both single-band images.
 - **Plot**: render the three panels, arrow annotation and mask overlay.
 - **Web image**: a clean, annotation-free upscale of the RGB for the website.
+- **Published lens model**: the Mercier et al. 2024 PyAutoLens F444W row, with a credit line.
 """
 
 import numpy as np
@@ -36,7 +37,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from pathlib import Path
 from astropy.io import fits
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 """__Paths__
 
@@ -316,3 +317,65 @@ web_image().save(WEB_OUTPUT_PATH, optimize=True)
 
 print(f"Web image crop box (left, upper, right, lower): {web_crop_box()}")
 print(f"Web image written to: {WEB_OUTPUT_PATH.resolve()}")
+
+"""__Published lens model__
+
+The Colab notebook's "What A Lens Model Looks Like" section opens with what a
+publication-quality lens model of this system achieves: the F444W row of the
+PyAutoLens lens-model figure of Mercier et al. 2024 (A&A 687, A61; arXiv:2309.15986,
+Figure 5 of the arXiv HTML version) — observed image, lens model image, normalised
+residual map and source reconstruction, left to right.
+
+The four panels are vendored unchanged from the arXiv HTML rendering under
+`images/sources/` (see its README). The paper is distributed under CC BY-SA 4.0, so
+the composed row carries the credit and licence in the image itself, where it
+travels with the picture wherever it is shown, and is shared under the same licence.
+Each 770 x 726 panel is Lanczos-resampled to 400 pixels wide, keeping the row sharp
+at notebook width and the PNG small.
+"""
+
+MERCIER_PANELS = ["data", "model_image", "normalized_residual_map", "source"]
+MERCIER_PANEL_WIDTH = 400
+MERCIER_CREDIT = (
+    "Mercier et al. 2024, A&A 687, A61 (arXiv:2309.15986), Fig. 5, F444W row "
+    "\u2014 CC BY-SA 4.0"
+)
+MERCIER_OUTPUT_PATH = DOCS_PATH / "images" / "mercier2024_lens_model_f444w.png"
+
+
+def mercier_row():
+    panels = []
+    for name in MERCIER_PANELS:
+        panel = Image.open(
+            DOCS_PATH / "images" / "sources" / f"mercier2024_F444W_{name}.png"
+        ).convert("RGB")
+        height = round(panel.height * MERCIER_PANEL_WIDTH / panel.width)
+        panels.append(
+            panel.resize((MERCIER_PANEL_WIDTH, height), resample=Image.LANCZOS)
+        )
+    credit_height = 30
+    row_height = max(panel.height for panel in panels)
+    row = Image.new(
+        "RGB",
+        (MERCIER_PANEL_WIDTH * len(panels), row_height + credit_height),
+        "white",
+    )
+    for index, panel in enumerate(panels):
+        row.paste(panel, (index * MERCIER_PANEL_WIDTH, 0))
+    try:
+        font = ImageFont.truetype("DejaVuSans.ttf", 16)
+    except OSError:
+        font = ImageFont.load_default()
+    ImageDraw.Draw(row).text(
+        (row.width - 8, row_height + credit_height // 2),
+        MERCIER_CREDIT,
+        fill=(60, 60, 60),
+        font=font,
+        anchor="rm",
+    )
+    return row
+
+
+mercier_row().save(MERCIER_OUTPUT_PATH, optimize=True)
+
+print(f"Published lens model row written to: {MERCIER_OUTPUT_PATH.resolve()}")
