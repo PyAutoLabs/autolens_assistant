@@ -44,25 +44,26 @@ no panel label and no F277W / F444W panels, 900 x 900 pixels. It opens the Colab
 | File | Source | Notes |
 |------|--------|-------|
 | `mercier2024_F444W_data.png`, `mercier2024_F444W_model_image.png`, `mercier2024_F444W_normalized_residual_map.png`, `mercier2024_F444W_source.png` | [arXiv:2309.15986v1 HTML](https://arxiv.org/html/2309.15986v1/), the files of the same names without the `mercier2024_` prefix | The F444W row of Figure 5 (arXiv HTML numbering), "Results of the independent PyAutoLens lens model fits": observed image, lens model image, normalised residual map, source reconstruction. 770 x 726 pixels each, vendored unchanged. |
+| `mercier2024_F150W_data.png`, `mercier2024_F150W_model_image.png`, `mercier2024_F150W_normalized_residual_map.png`, `mercier2024_F150W_source.png` | [arXiv:2309.15986v1 HTML](https://arxiv.org/html/2309.15986v1/), the files of the same names without the `mercier2024_` prefix | The F150W row of Figure 5, in the same column order as F444W, vendored unchanged. |
 
-`docs/images/mercier2024_lens_model_f444w.png` is the four panels in one row (each resampled to
-400 pixels wide) with the credit line drawn into the image, built by the "Published lens model"
+`docs/images/mercier2024_lens_model_f150w_f444w.png` shows F150W above F444W, with four panels
+per row (each resampled to 400 pixels wide) and the credit line drawn into the image.
+It is built by the "Published lens model"
 section of `docs/make_readme_figures.py`. It opens the Colab notebook's "What A Lens Model Looks
-Like" section.
+Like" section. The earlier F444W-only image remains available as
+`docs/images/mercier2024_lens_model_f444w.png`.
 
 Credit and licence: Mercier et al. 2024, *The COSMOS-Web ring: in-depth characterisation of an
 Einstein ring lensing system at z ~ 2*, A&A 687, A61
 ([ADS](https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract),
 [arXiv:2309.15986](https://arxiv.org/abs/2309.15986)), distributed on arXiv under
-[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The panels and the composed row
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The panels and the composed figures
 are shared under the same licence.
 
 ## Colab model figures
 
 `docs/images/cosmos_web_ring_good_model.png` (the good model's plane subplot: data, ring with the
-lens light subtracted, lensed source model, source plane) and
-`docs/images/cosmos_web_ring_residuals_good_vs_bad.png` (normalised residuals of the good and the
-single-Sérsic-source models on one ±5σ scale) and `docs/images/cosmos_web_ring_einstein_radius.png`
+lens light subtracted, lensed source model, source plane) and `docs/images/cosmos_web_ring_einstein_radius.png`
 (the lens-light-subtracted ring with the good model's tangential critical curve) are computed from the committed models in
 `scripts/cosmos_web_ring/results/` by `docs/colab/make_colab_figures.py` (`make colab` runs it).
 They are this repository's own output, not third-party images.

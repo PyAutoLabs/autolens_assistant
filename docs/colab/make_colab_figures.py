@@ -4,8 +4,8 @@ COSMOS-Web Ring Colab Figures
 
 Builds the two static figures the Colab notebook (`docs/colab/cosmos_web_ring_colab.py`) shows
 *before* the code that computes them, so a reader sees the result of a section the moment they
-open it: the good lens model's pieces ("The Model") and the good-versus-not-great normalised
-residual maps ("Good Versus Not-Great"). Both come from evaluating the committed models under
+open it: the good lens model's pieces ("The Model") and its Einstein radius
+("The Mass Inside The Ring"). Both come from evaluating the committed model under
 `scripts/cosmos_web_ring/results/` exactly as the notebook does, so the pictures and the
 notebook's executed output agree. Run from the repository root (`make colab` runs it first)::
 
@@ -15,8 +15,8 @@ __Contents__
 
 - **Imports:** Import the required libraries.
 - **Dataset:** Load F444W and prepare it as the notebook does (noise scaling, 2.1" mask, over-sampling).
-- **Models:** Evaluate the good (cowls_ansofi) and not-great (single Sérsic source) tracers.
-- **Figures:** Save the good model's plane subplot, the residual comparison and the Einstein radius.
+- **Model:** Evaluate the good (cowls_ansofi) tracer.
+- **Figures:** Save the good model's plane subplot and Einstein radius.
 """
 
 """
@@ -80,11 +80,10 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
 """
-__Models__
+__Model__
 
 The good model needs its pixelization over-sampling, source adapt image and source mesh grid
-(see `scripts/cosmos_web_ring/results/README.md`); the not-great model is a light-profile-only
-tracer and is evaluated on the dataset as prepared.
+(see `scripts/cosmos_web_ring/results/README.md`).
 """
 
 
@@ -112,19 +111,14 @@ dataset_good = dataset.apply_over_sampling(
 )
 fit = al.FitImaging(dataset=dataset_good, tracer=tracer, adapt_images=adapt_images)
 
-tracer_sersic = al.from_json(file_path=RESULTS_PATH / "sersic_source" / "tracer.json")
-fit_sersic = al.FitImaging(dataset=dataset, tracer=tracer_sersic)
-
 print(f"Good model figure of merit: {float(fit.figure_of_merit):.2f}")
-print(f"Not-great model log likelihood: {float(fit_sersic.log_likelihood):.2f}")
 
 """
 __Figures__
 
 Both PNGs are Lanczos-resampled to 1600 pixels wide and palette-quantised, the convention of
 `scripts/cosmos_web_ring/results/`, so they stay small in the repository and sharp at notebook
-width. The residual comparison puts both maps on one colour scale (±5σ), so the good model reads
-as noise and the not-great model's saturated knots stand out.
+width. The editable model experiment is saved as executed output in the notebook.
 """
 
 
@@ -142,31 +136,6 @@ with tempfile.TemporaryDirectory() as tmp:
     )
     save_small(
         Path(tmp) / "fit_of_plane_1.png", IMAGES_PATH / "cosmos_web_ring_good_model.png"
-    )
-
-    figure, axes = plt.subplots(1, 2, figsize=(12, 5))
-    aplt.plot_array(
-        array=fit.normalized_residual_map,
-        title="Good model",
-        cb_unit=r"$\sigma$",
-        vmin=-5.0,
-        vmax=5.0,
-        ax=axes[0],
-    )
-    aplt.plot_array(
-        array=fit_sersic.normalized_residual_map,
-        title="Not-great model (smooth source)",
-        cb_unit=r"$\sigma$",
-        vmin=-5.0,
-        vmax=5.0,
-        ax=axes[1],
-    )
-    plt.tight_layout()
-    residuals_path = Path(tmp) / "residuals.png"
-    figure.savefig(residuals_path, dpi=150, facecolor="white")
-    plt.close(figure)
-    save_small(
-        residuals_path, IMAGES_PATH / "cosmos_web_ring_residuals_good_vs_bad.png"
     )
 
     """
