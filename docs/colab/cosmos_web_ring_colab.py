@@ -7,30 +7,18 @@ the **COSMOS-Web Ring**, a near-perfect circle of light imaged by the James Webb
 (JWST). By the end you will have seen how a lens model reproduces the picture, compared a good
 model with a not-so-good one, and measured how much mass sits inside the ring.
 
-**No fit is run in this notebook.** Finding a lens model takes minutes on a GPU and much longer
-on a CPU, so the two models shown here were fitted in advance and are loaded from the assistant
-repository; the notebook evaluates them on the data, which takes seconds. To run a fit yourself,
-see **Where Next** at the end.
-
-It is the second of two ways to start with the PyAutoLens Assistant
-(https://github.com/PyAutoLabs/autolens_assistant):
-
-- **The agent route.** Open Claude Code or Codex (in any folder) and paste the starting
-  prompt below; the AI agent shows you the ring, asks your background and walks you
-  through the same analysis in conversation.
-- **This notebook.** The same analysis, written out step by step with the PyAutoLens code
-  visible. It is the route to take if you are learning PyAutoLens and want to see the API.
-
-The assistant's starting prompt is:
+If you prefer, you can do all of this with an AI agent instead: open Claude Code or Codex (in
+any folder) and paste the starting prompt below; the agent shows you the ring, asks your
+background and walks you through the same analysis in conversation, using the PyAutoLens
+Assistant (https://github.com/PyAutoLabs/autolens_assistant).
 
 > I want to use the PyAutoLens Assistant: https://github.com/PyAutoLabs/autolens_assistant
 > First clone that repository, cd into it and follow its AGENTS.md.
 >
 > I'd like to understand how gravitational lensing works using the JWST image of the COSMOS-Web Ring that ships with the assistant. Show me the picture, explain what we are looking at, and walk me through fitting a lens model so we can measure the mass inside the ring and see how well the model reproduces the observations. Pitch it at my level: ask me what my background is first. Explain what we are doing as we go, and let me ask questions or change the analysis along the way.
 
-The notebook is written for a general reader first. Short **For the scientist** asides add
-the technical detail. Every section ends with a question you can ask Google Colab's built-in
-AI, Gemini (the sparkle button in the Colab toolbar), if you want to go deeper.
+Every section ends with a **🤖 Ask Gemini:** question you can put to Google Colab's built-in AI,
+Gemini (the sparkle button in the Colab toolbar), if you want to go deeper.
 
 <!-- Maintainers: this notebook is generated from docs/colab/cosmos_web_ring_colab.py and committed
 executed; rebuild it with `make colab` from the assistant repository root. The image URLs and the
@@ -81,9 +69,7 @@ _setup_colab.setup(
 """
 __Imports__
 
-`jax_wrapper` must be imported first: it configures JAX, the numerical library PyAutoLens
-uses for fast model fits. The other imports are the plotting library, NumPy, and PyAutoLens
-with its plotting module.
+The cell below imports the Python libraries this example uses.
 """
 from autolens import jax_wrapper  # noqa: F401  Sets the JAX environment before other imports
 
@@ -122,44 +108,31 @@ arrow, when we prepare the data.
 The size of the ring depends on how much mass the foreground galaxy holds. Measuring the
 ring therefore weighs the galaxy, including its dark matter, which gives off no light at all.
 
-**For the scientist.** The ring's angular radius is the Einstein radius, θ_E. For a
-circularly symmetric lens the mass inside it is M_E = Σ_crit π θ_E², where the critical surface
-density Σ_crit depends only on the angular-diameter distances to the lens and the source. Lens
-modelling fits a parametric mass profile and a model of the unlensed source to every pixel of
-the image, rather than measuring the ring by eye.
-
-Ask Gemini: "How does a galaxy's mass bend light, and why does perfect alignment make a ring?"
+**🤖 Ask Gemini:** "How does a galaxy's mass bend light, and why does perfect alignment make a ring?"
 """
 
 """
 __The Picture__
 
-![The COSMOS-Web Ring in JWST colour: a near-complete ring of light around a bright central galaxy](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/cosmos_web_ring_rgb.png)
+![The COSMOS-Web Ring in JWST colour, with arrows marking the lensed source galaxy, the lens galaxy and the extra galaxy](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/cosmos_web_ring_rgb_labelled.png)
 
-This is that ring. The data come from the COSMOS-Web survey, the largest JWST imaging programme
-of its first year, and the colour picture above combines several of its infrared bands:
+This is that ring, imaged by JWST in the COSMOS-Web survey, the largest JWST imaging programme of
+its first year. The arrows mark:
 
-- **The lens galaxy** is the bright blob at the centre. It is a massive galaxy seen when the
+- **The Lens Galaxy**, the bright blob at the centre. It is a massive galaxy seen when the
   Universe was about 3 billion years old (redshift z ≈ 2.0).
-- **The ring** is a single, much more distant galaxy (z ≈ 5.1, seen barely a billion years
-  after the Big Bang) whose light has been bent into an almost complete circle. Its two bright
-  knots are two views of the same bright region of that galaxy.
-- **The extra galaxy** from the schematic is the small blob just below and to the right of the
+- **The Lensed Source Galaxy**, the ring: a single, much more distant galaxy (z ≈ 5.1, seen
+  barely a billion years after the Big Bang) whose light has been bent into an almost complete
+  circle. Its two bright knots are two views of the same bright region of that galaxy.
+- **The Extra Galaxy** from the schematic, the small blob just below and to the right of the
   ring. It is unrelated to the lens, and we will stop it confusing the model below.
 
-A lens model is not fitted to a colour picture but to the image in one band. Each dataset has
-three parts: the image itself, a **noise-map** (how uncertain each pixel's brightness is) and the
-**PSF** (point spread function: how the telescope blurs a point of light). The cell below loads
-the F444W band (infrared light of about 4.4 microns) and plots all three. The code finds the data
-whether you are in Colab (inside `autolens_workspace`) or running from the root of the assistant
-repository.
-
-**For the scientist.** JWST/NIRCam imaging in four bands (F115W, F150W, F277W, F444W). F444W
-and F277W have 0.06" pixels. The redshifts are z_lens = 2.0 and z_source = 5.1043, from
-Mercier et al. 2024 (arXiv:2309.15986). `al.Imaging.from_fits` normalises the PSF to unit sum
-on load.
+JWST takes its pictures in several colours of infrared light, and the colour picture above
+combines them. To measure the mass we work with one colour at a time. Alongside the picture
+itself, the telescope tells us two more things that the model needs: how noisy each pixel is,
+and how much it blurs a point of light. The cell below loads all three and plots them.
 """
-dataset_root = Path("dataset") / "imaging" / "cosmos_web_ring"
+dataset_root = Path("dataset") / "imaging" / "cosmos_web_ring"  # Colab: autolens_workspace; else the assistant repo root.
 
 if not dataset_root.exists():
     raise FileNotFoundError(
@@ -197,7 +170,7 @@ dataset = load_band("F444W")
 aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
-Ask Gemini: "What is a redshift, and how do astronomers know the ring galaxy is at z = 5.1?"
+**🤖 Ask Gemini:** "What is a redshift, and how do astronomers know the ring galaxy is at z = 5.1?"
 
 __Four Colours, One Ring__
 
@@ -217,11 +190,6 @@ This is also something you can measure. Fitting the same model independently to 
 an Einstein radius of 0.803" in F444W and 0.801" in F277W (0.775" and 0.772" for the effective
 radius of the critical curve), the same to 0.2%, less than a twentieth of a pixel (recorded in
 `scripts/cosmos_web_ring/results/README.md` of the assistant repository).
-
-**For the scientist.** Achromaticity is why multi-band lens modelling can share one mass model
-across bands while each band gets its own lens-light and source-light model. Colour gradients
-in the source do change the ring's surface brightness from band to band, which is why the
-images differ in detail even though the lensing is identical.
 """
 dataset_f277w = load_band("F277W")
 
@@ -232,7 +200,7 @@ plt.tight_layout()
 plt.show()
 
 """
-Ask Gemini: "Why does the ring look the same in every colour, when the galaxies themselves change colour?"
+**🤖 Ask Gemini:** "Why does the ring look the same in every colour, when the galaxies themselves change colour?"
 
 __Preparing The Data__
 
@@ -253,12 +221,6 @@ Three steps get the image ready for a lens model.
 3. **Over-sampling.** The lens galaxy's light rises steeply towards its centre, so near the
    centre each pixel is evaluated on a finer grid of sub-pixels, and on a coarser one further out.
    This keeps the model accurate where it matters without slowing it down everywhere.
-
-**For the scientist.** `apply_noise_scaling` sets the noise of the flagged pixels to a large
-value (and their data to zero) so they carry no weight in the χ²; it is applied before the
-mask. `over_sample_size_via_radial_bins_from` uses 4×4 sub-pixels within 0.3" of the centre and
-2×2 beyond. These match the SLaM pipeline that produced the good model (the `cowls_ansofi`
-project, see `scripts/cosmos_web_ring/results/README.md`), which used the same 2.1" mask.
 """
 mask_radius = 2.1
 
@@ -289,15 +251,16 @@ print(f"Pixels inside the {mask_radius}\" mask: {n_masked_pixels}")
 aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
-Ask Gemini: "Why do astronomers mask out neighbouring galaxies before fitting a model to an image?"
+**🤖 Ask Gemini:** "Why do astronomers mask out neighbouring galaxies before fitting a model to an image?"
 
 __What A Lens Model Looks Like__
 
 ![The published PyAutoLens lens model of the COSMOS-Web Ring in F444W: observed image, lens model image, normalised residual map and source reconstruction (Mercier et al. 2024, CC BY-SA 4.0)](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/mercier2024_lens_model_f444w.png)
 
 Before building a model, it helps to see what a good one achieves. The figure above is from the
-first in-depth study of the COSMOS-Web Ring (Mercier et al. 2024), which modelled it with
-PyAutoLens. Its four panels, left to right:
+first in-depth study of the COSMOS-Web Ring (Mercier et al. 2024, published in Astronomy &
+Astrophysics: https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract), which modelled it
+with PyAutoLens. Its four panels, left to right:
 
 - **Data:** the observed F444W image, the ring around the lens galaxy.
 - **Model image:** what the lens model predicts the telescope should see. Side by side, it is
@@ -313,13 +276,7 @@ That is what a publication-quality lens model looks like, and the rest of this n
 the same thing on the same data. (The paper's panels are rotated so that north is up, so they
 sit at a slight angle to the images in this notebook.)
 
-**For the scientist.** Figure 5 of the arXiv HTML version of Mercier et al. 2024, A&A 687,
-A61 (https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract, arXiv:2309.15986, CC BY-SA
-4.0), F444W row: independent PyAutoLens fits to each band with a pixelized source. The ring
-is one of the lenses of COWLS, the COSMOS-Web Lens Survey (Nightingale et al. 2025,
-arXiv:2503.08777).
-
-Ask Gemini: "What is a caustic in gravitational lensing, and why does a source inside it make an Einstein ring?"
+**🤖 Ask Gemini:** "What is a caustic in gravitational lensing, and why does a source inside it make an Einstein ring?"
 """
 
 """
@@ -356,16 +313,8 @@ and saved to a file, `tracer.json`. A **tracer** is PyAutoLens's name for a lens
 numbers filled in: it traces light rays from the source, through the lens, to the telescope.
 The cell below loads it and prints its key numbers.
 
-The model files live in the assistant repository; when this notebook runs inside
-`autolens_workspace` (as in Colab), the cell downloads them from GitHub first.
+(In Colab, the cell first downloads the model files from GitHub.)
 
-**For the scientist.** The good model is the `mass_total[1]` result of a Source, Light and Mass
-(SLaM) pipeline with Nautilus at every stage (the `cowls_ansofi` project): lens light an MGE of
-2 × 20 Gaussians plus a 10-Gaussian point component, intensities solved linearly; mass
-`al.mp.PowerLaw` with `al.mp.ExternalShear` in an `al.MassField`; source an `al.Pixelization` with
-an `al.mesh.Delaunay` mesh (1,250 vertices from a Hilbert image mesh plus a 30-point zeroed edge
-ring) under `al.reg.AdaptSplit` regularization. Provenance and the reproduction check are in
-`scripts/cosmos_web_ring/results/README.md`.
 """
 RESULTS_URL = (
     "https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/"
@@ -404,7 +353,7 @@ print(f"Source:         a {type(source_galaxy.pixelization.mesh).__name__} pixel
       f"{source_galaxy.pixelization.mesh.pixels} pixels")
 
 """
-Ask Gemini: "What is a power-law mass profile, and what does its slope tell us about a galaxy?"
+**🤖 Ask Gemini:** "What is a power-law mass profile, and what does its slope tell us about a galaxy?"
 
 __Good Versus Not-Great__
 
@@ -417,7 +366,7 @@ not-great model on the right, on the same colour scale. Left: speckle. Right: th
 two bright knots, left behind.
 
 **The good model.** To evaluate a model, PyAutoLens bends the source's light through the lens,
-blurs it with the PSF, adds the lens galaxy's light and compares the result with every pixel
+blurs it the way the telescope does, adds the lens galaxy's light and compares the result with every pixel
 of the data. That comparison is a **fit**, and it takes a few seconds.
 
 A pixel-grid source needs two more ingredients saved alongside the model: where its pixels sit
@@ -426,15 +375,9 @@ are smoothed, both worked out from an earlier stage of the pipeline. The cell lo
 
 The panels show the data, the model image, the lens galaxy's light and the ring with it
 subtracted, the lensed source model, the **normalised residuals** (data minus model, divided by
-the noise: values within about ±3 are what noise alone produces), the χ² map and the
-reconstructed source at three zooms. The second figure shows the source plane on its own: the
+the noise: values within about ±3 are what noise alone produces), a map of how badly each pixel
+is fitted, and the reconstructed source at three zooms. The second figure shows the source plane on its own: the
 distant galaxy, unlensed.
-
-**For the scientist.** The source mesh grid and the source adapt image enter through
-`al.AdaptImages`; the pixelization over-sampling (4×4 where the earlier source S/N exceeds 3,
-2×2 elsewhere) is the pipeline's. With these the fit reproduces the pipeline's maximum
-likelihood, 3717.19, to better than 10⁻⁹ (for a pixelized source `figure_of_merit` is the
-Bayesian log evidence of the linear inversion, which is what the search maximised).
 """
 over_sample_size_pixelization = al.Array2D(
     values=al.Array2D.from_fits(
@@ -464,7 +407,7 @@ adapt_images = al.AdaptImages(
 fit = al.FitImaging(dataset=dataset_good, tracer=tracer, adapt_images=adapt_images)
 
 reduced_chi_squared = float(fit.chi_squared) / n_masked_pixels
-print(f"Good model: figure of merit {float(fit.figure_of_merit):.2f} (pipeline: 3717.19)")
+print(f"Good model: fit score {float(fit.figure_of_merit):.2f} (3717.19 when it was fitted)")
 print(f"Good model: reduced chi-squared {reduced_chi_squared:.2f}")
 
 aplt.subplot_fit_imaging(fit=fit)
@@ -486,12 +429,6 @@ loads and evaluates it in the same way.
 Look at its residuals. The model ring is smooth, and the **two bright knots** of the real source,
 together with structure around the ring, are left behind as bright and dark patches. The distant
 galaxy is clumpy, and a smooth profile cannot describe it.
-
-**For the scientist.** A smooth source needs no adapt images or pixelization over-sampling, so
-the bad tracer is evaluated on the light-profile over-sampling alone. Its reduced χ² is
-χ²/N_pixels with no degrees-of-freedom correction; the good model's is lower than 1 partly
-because a 1,250-pixel source has many effective degrees of freedom and partly because the bundled
-noise-map is somewhat conservative. Compare the residual maps, not only the numbers.
 """
 tracer_sersic = al.from_json(file_path=results_file("sersic_source/tracer.json"))
 fit_sersic = al.FitImaging(dataset=dataset, tracer=tracer_sersic)
@@ -510,19 +447,14 @@ print(f"Not-great model (Sersic source):   Einstein radius {einstein_radius_sers
 
 """
 The two Einstein radii are close, so judged by its headline number alone the not-great model
-looks fine. Its residuals say otherwise, and its reduced χ² is many times larger.
+looks fine. Its residuals say otherwise, and so does its **reduced chi-squared**, a single number
+for how far, on average, the model misses each pixel, in units of the noise (about 1 or less means
+the misses are just noise): it is more than ten times the good model's.
 
 That is the lesson: a plausible-looking Einstein radius is not enough. Residuals with structure
 mean the model is missing something real, and the numbers it gives may be biased.
 
-**For the scientist.** A mismatched source model is compensated by the mass model, which is
-why the Einstein radius shifts. Residuals that trace the ring point to the source (or the mass);
-residuals centred on the lens point to the lens-light model. The two models also differ in mass
-profile (power law versus isothermal), so the two `einstein_radius` parameters are not a
-like-for-like comparison; the effective Einstein radius of the critical curve, computed for both
-in the next section, is.
-
-Ask Gemini: "Why can a model with the right Einstein radius still be a bad fit, and how do residuals reveal it?"
+**🤖 Ask Gemini:** "Why can a model with the right Einstein radius still be a bad fit, and how do residuals reveal it?"
 
 __The Mass Inside The Ring__
 
@@ -535,13 +467,6 @@ much mass the lens holds.
 The Einstein radius is the ring's size in the sky. Combined with the distances to the two
 galaxies (which follow from their redshifts), it gives the mass enclosed by the ring, in units
 of the Sun's mass. The cell below works it out from the good model.
-
-**For the scientist.** We quote the effective Einstein radius of the tangential critical curve
-of the full tracer (mass plus shear), via `al.LensCalc.from_tracer`, and M_E = Σ_crit × the
-enclosed angular area, with Σ_crit from the Planck15 cosmology and the bundle's redshifts
-(z_lens = 2.0; the pipeline that produced the good model used 2.02, which changes the mass by
-1%). Mercier et al. 2024 (arXiv:2309.15986) find θ_E = 0.78 ± 0.04" (0.77" with PyAutoLens) and
-3.66–3.84 × 10¹¹ solar masses for z_source = 5.48–5.08.
 """
 cosmology = al.cosmo.Planck15()
 sigma_crit = float(
@@ -575,7 +500,7 @@ Einstein radius agrees with the published value to well within its error. The no
 ring is a few per cent smaller: close, which is exactly why its residuals, not its headline
 number, are what give it away.
 
-Ask Gemini: "How can a mass measurement from a lens include dark matter that we cannot see?"
+**🤖 Ask Gemini:** "How can a mass measurement from a lens include dark matter that we cannot see?"
 
 __Where Next__
 
@@ -584,9 +509,9 @@ __Where Next__
 - **Run a fit yourself.** Both models here were loaded, not fitted. To find a model from
   scratch, either ask the assistant ("fit a lens model to the COSMOS-Web Ring"; see the agent
   route below), or run the assistant's reference script,
-  `scripts/cosmos_web_ring/fit_cosmos_web_ring.py`: it fits an MGE lens light, an isothermal mass
-  with shear and an MGE source with a fast multi-start gradient optimiser in a few minutes on a
-  GPU (`--variant sersic_source --mask-radius 2.1` reproduces the not-great model above).
+  `scripts/cosmos_web_ring/fit_cosmos_web_ring.py`, which finds a simpler model than the good one
+  here in a few minutes on a GPU (with `--variant sersic_source --mask-radius 2.1` it finds the
+  not-great model above).
 - **The agent route.** Open https://github.com/PyAutoLabs/autolens_assistant in Claude Code or
   Codex and paste the assistant starting prompt quoted at the top of this notebook. You can then
   change this analysis in plain language: "fit F277W as well", "try a pixelized source",
@@ -595,13 +520,14 @@ __Where Next__
   strong lensing and PyAutoLens from first principles.
 - **COWLS**, the COSMOS-Web Lens Survey, of which this ring is one lens: Nightingale et al. 2025,
   arXiv:2503.08777.
-- **The discovery paper**: Mercier et al. 2024, A&A 687, A61, arXiv:2309.15986.
+- **The paper behind the published model**: Mercier et al. 2024, Astronomy & Astrophysics 687,
+  A61 (https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract).
 
 **A caveat on error bars.** Evaluating a model gives one set of numbers and no error bars. The
-good model was found with a nested sampler (Nautilus), which also measures uncertainties; the
-reference script's fast optimiser does not, and returns one best model only. To quote an Einstein
+good model was found with a method (a "nested sampler") that also measures how uncertain each
+number is; the reference script's fast method does not, and returns one best model only. To quote an Einstein
 radius with a range, such as the ±0.04" of Mercier et al., fit with a sampler, as shown in
 `scripts/imaging/modeling.py` of the `autolens_workspace`.
 
-Ask Gemini: "What is the difference between a maximum-likelihood fit and a posterior, and why do error bars need a sampler?"
+**🤖 Ask Gemini:** "What is the difference between a maximum-likelihood fit and a posterior, and why do error bars need a sampler?"
 """

@@ -24,6 +24,15 @@ Credit: COWLS — Nightingale et al. 2025, *COSMOS-Web Lens Survey (COWLS) I*
 Mercier et al. 2024 ([A&A 687, A61](https://ui.adsabs.harvard.edu/abs/2024A&A...687A..61M/abstract)).
 Imaging: JWST COSMOS-Web.
 
+## Labelled web image
+
+`docs/images/cosmos_web_ring_rgb_labelled.png` is the annotated RGB panel of
+`cosmos_web_ring_dataset.png` on its own: the full 167-pixel `cosmos_web_ring_6_rgb.png` frame
+above with the Lensed Source Galaxy / Lens Galaxy / Extra Galaxy arrows and the 1" scale bar,
+no panel label and no F277W / F444W panels, 900 x 900 pixels. It opens the Colab notebook's
+"The Picture" section and is built by the "Labelled web image" section of
+`docs/make_readme_figures.py`. Credit as for the derived web image above.
+
 ## Teaching schematic
 
 | File | Source | Notes |
