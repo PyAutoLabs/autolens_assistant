@@ -1,17 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Strong gravitational lensing side-view schematic">
 <defs>
-<radialGradient id="halo"><stop stop-color="#ffd77f" stop-opacity=".95"/><stop offset=".35" stop-color="#d39f5e" stop-opacity=".5"/><stop offset="1" stop-color="#6082af" stop-opacity="0"/></radialGradient>
-<radialGradient id="ell"><stop stop-color="#fff6d1"/><stop offset=".25" stop-color="#edc37b"/><stop offset=".7" stop-color="#8d9bb7"/><stop offset="1" stop-color="#7996b7" stop-opacity="0"/></radialGradient>
-<radialGradient id="spiral"><stop stop-color="#fff4c6"/><stop offset=".16" stop-color="#eac778"/><stop offset=".36" stop-color="#769bc4"/><stop offset="1" stop-color="#7eacd4" stop-opacity="0"/></radialGradient>
+<radialGradient id="halo"><stop stop-color="#ffb968" stop-opacity=".95"/><stop offset=".35" stop-color="#ea7293" stop-opacity=".5"/><stop offset="1" stop-color="#79349d" stop-opacity="0"/></radialGradient>
+<radialGradient id="ell"><stop stop-color="#fff0b8"/><stop offset=".25" stop-color="#ffae70"/><stop offset=".7" stop-color="#a34b98"/><stop offset="1" stop-color="#78328c" stop-opacity="0"/></radialGradient>
+<radialGradient id="spiral"><stop stop-color="#ffe9bd"/><stop offset=".16" stop-color="#fca46f"/><stop offset=".36" stop-color="#b35baa"/><stop offset="1" stop-color="#66349a" stop-opacity="0"/></radialGradient>
 <filter id="blur"><feGaussianBlur stdDeviation="7"/></filter>
-<style>text{font-family:Arial,Helvetica,sans-serif;fill:#172b49;font-size:26px;font-weight:500}.small{font-size:22px}.plane{stroke:#667991;stroke-width:2;stroke-dasharray:9 8}.ray{stroke:#f3b700;stroke-width:4;fill:none;stroke-linecap:round}.ghost{opacity:.36}</style>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#382043;font-size:26px;font-weight:500}.small{font-size:22px}.plane{stroke:#8b6b99;stroke-width:2;stroke-dasharray:9 8}.ray{stroke:#ffa12b;stroke-width:4;fill:none;stroke-linecap:round}.ghost{opacity:.36}</style>
 </defs>
 <rect width="1600" height="900" fill="white"/>
+<!-- Palette keyed to docs/images/cosmos_web_ring_dataset.png: JWST magenta/purple, warm lens light, cyan accents. -->
 <!-- distance planes -->
 <path class="plane" d="M145 132V795 M785 132V795 M1462 132V795"/>
 <text x="78" y="110">Image plane</text><text x="715" y="110">Lens plane</text><text x="1375" y="110">Source plane</text>
 <!-- curved spacetime, schematic cross-sectional grid -->
-<g stroke="#acc0d9" stroke-width="1.5" fill="none" opacity=".45">
+<g stroke="#9d61aa" stroke-width="1.5" fill="none" opacity=".45">
 <path d="M360 320 Q570 315 665 410 Q785 505 905 410 Q1020 312 1210 320"/>
 <path d="M360 365 Q570 350 665 425 Q785 525 905 425 Q1020 350 1210 365"/>
 <path d="M360 405 Q570 392 665 445 Q785 540 905 445 Q1020 392 1210 405"/>
@@ -23,44 +24,44 @@
 <!-- lens galaxy -->
 <ellipse cx="785" cy="450" rx="242" ry="210" fill="url(#halo)" opacity=".8"/>
 <ellipse cx="785" cy="450" rx="150" ry="110" fill="url(#ell)"/>
-<ellipse cx="785" cy="450" rx="80" ry="54" fill="#eac389" opacity=".35" filter="url(#blur)"/>
+<ellipse cx="785" cy="450" rx="80" ry="54" fill="#ff9b76" opacity=".35" filter="url(#blur)"/>
 <!-- true source position -->
-<path d="M185 450H1415" stroke="#6b7b8c" stroke-dasharray="13 11" stroke-width="2.5" fill="none"/>
+<path d="M185 450H1415" stroke="#7f698a" stroke-dasharray="13 11" stroke-width="2.5" fill="none"/>
 <rect x="1144" y="412" width="181" height="37" rx="7" fill="white" opacity=".86"/>
 <text class="small" x="1151" y="438">True position</text>
 <!-- rays, emitted from source passing both sides of lens and reaching observer -->
 <path class="ray" d="M1450 450 Q1160 400 985 345 Q810 286 650 340 Q370 375 175 432"/>
 <path class="ray" d="M1450 450 Q1160 500 985 555 Q810 614 650 560 Q370 525 175 468"/>
 <!-- backwards extrapolations -->
-<path d="M175 432L384 238 M175 468L384 662" stroke="#edb31c" stroke-width="3" stroke-dasharray="3 10" fill="none" stroke-linecap="round"/>
+<path d="M175 432L384 238 M175 468L384 662" stroke="#26c9d3" stroke-width="3" stroke-dasharray="3 10" fill="none" stroke-linecap="round"/>
 <!-- ghost images -->
 <g class="ghost">
-<circle cx="405" cy="218" r="62" fill="url(#spiral)"/><path d="M404 216c-24 -4 -37 25 -16 37 37 20 68 -29 30 -54 -45 -29 -87 26 -61 60" stroke="#4b77af" stroke-width="8" fill="none" opacity=".75"/>
-<circle cx="405" cy="682" r="62" fill="url(#spiral)"/><path d="M404 680c-24 -4 -37 25 -16 37 37 20 68 -29 30 -54 -45 -29 -87 26 -61 60" stroke="#4b77af" stroke-width="8" fill="none" opacity=".75"/>
+<circle cx="405" cy="218" r="62" fill="url(#spiral)"/><path d="M404 216c-24 -4 -37 25 -16 37 37 20 68 -29 30 -54 -45 -29 -87 26 -61 60" stroke="#a745a2" stroke-width="8" fill="none" opacity=".75"/>
+<circle cx="405" cy="682" r="62" fill="url(#spiral)"/><path d="M404 680c-24 -4 -37 25 -16 37 37 20 68 -29 30 -54 -45 -29 -87 26 -61 60" stroke="#a745a2" stroke-width="8" fill="none" opacity=".75"/>
 </g>
 <text x="310" y="139">Lensed images</text><text x="310" y="778">Lensed images</text>
 <!-- source spiral -->
 <circle cx="1450" cy="450" r="85" fill="url(#spiral)"/>
-<path d="M1450 450c-30 -35 -83 -5 -63 33 29 55 117 30 116 -36 -2 -82 -119 -104 -161 -17" stroke="#456f9f" stroke-width="16" fill="none" opacity=".65"/>
-<path d="M1450 450c18 21 43 2 35 -16 -15 -31 -69 -23 -72 13 -6 57 83 85 120 29" stroke="#d9e7f4" stroke-width="12" fill="none" opacity=".8"/>
+<path d="M1450 450c-30 -35 -83 -5 -63 33 29 55 117 30 116 -36 -2 -82 -119 -104 -161 -17" stroke="#a93b9b" stroke-width="16" fill="none" opacity=".65"/>
+<path d="M1450 450c18 21 43 2 35 -16 -15 -31 -69 -23 -72 13 -6 57 83 85 120 29" stroke="#fac4b6" stroke-width="12" fill="none" opacity=".8"/>
 <text x="1359" y="576">Source galaxy</text>
 <!-- lens label -->
 <text x="719" y="675">Lens galaxy</text>
 <!-- telescope icon -->
-<g transform="translate(110 449)" stroke="#203550" stroke-width="5" stroke-linejoin="round">
-<path d="M-50 -16L-15 -57L35 -43L15 7Z" fill="#364d69"/>
-<path d="M-30 -21L-12 -44L15 -35L6 -9Z" fill="#d5a22d"/>
-<path d="M-70 30L45 30L65 48L-85 48Z" fill="#70859b"/>
+<g transform="translate(110 449)" stroke="#43284f" stroke-width="5" stroke-linejoin="round">
+<path d="M-50 -16L-15 -57L35 -43L15 7Z" fill="#512860"/>
+<path d="M-30 -21L-12 -44L15 -35L6 -9Z" fill="#ffcc36"/>
+<path d="M-70 30L45 30L65 48L-85 48Z" fill="#9c7cad"/>
 <path d="M0 4V32M28 -8L45 30" fill="none"/>
 </g>
 <text class="small" x="35" y="563">Observer (JWST)</text>
 <!-- Einstein ring inset -->
 <g transform="translate(1200 22)">
-<rect width="252" height="244" rx="14" fill="#10243d"/>
-<circle cx="126" cy="103" r="75" stroke="#ffab20" stroke-width="8" fill="none"/>
-<circle cx="126" cy="103" r="80" stroke="#f7a525" stroke-opacity=".4" stroke-width="11" fill="none" filter="url(#blur)"/>
-<circle cx="126" cy="103" r="26" fill="#ffd37a" filter="url(#blur)"/>
-<circle cx="126" cy="103" r="13" fill="#fff0a6"/>
+<rect width="252" height="244" rx="14" fill="#321042"/>
+<circle cx="126" cy="103" r="75" stroke="#ffab41" stroke-width="8" fill="none"/>
+<circle cx="126" cy="103" r="80" stroke="#ed6b79" stroke-opacity=".4" stroke-width="11" fill="none" filter="url(#blur)"/>
+<circle cx="126" cy="103" r="26" fill="#ffac69" filter="url(#blur)"/>
+<circle cx="126" cy="103" r="13" fill="#fff2bb"/>
 <text x="46" y="214" fill="#ffffff">Einstein ring</text>
 </g>
 </svg>
