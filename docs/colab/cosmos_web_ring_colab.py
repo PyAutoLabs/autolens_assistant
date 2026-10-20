@@ -119,13 +119,6 @@ The picture also labels an **Extra Galaxy**, sitting near the lens but playing n
 lensing. Real images contain such galaxies, and this one will turn up again, marked with an
 arrow, when we prepare the data.
 
-The diagram below draws the same geometry the way lensing papers do. Light from the source's
-true position (bottom, in the source plane) is bent by the lens (middle, the lens plane), and the
-observer sees lensed images on either side of the lens (top, the image plane). The inset shows
-what the observer sees when the alignment is perfect: an Einstein ring.
-
-<img src="https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/strong_gravitational_lensing_schematic.svg" alt="Strong lensing geometry: source plane, lens plane and image plane, with the lensed images and an Einstein ring inset" width="700" />
-
 The size of the ring depends on how much mass the foreground galaxy holds. Measuring the
 ring therefore weighs the galaxy, including its dark matter, which gives off no light at all.
 
@@ -533,10 +526,11 @@ Ask Gemini: "Why can a model with the right Einstein radius still be a bad fit, 
 
 __The Mass Inside The Ring__
 
-<img src="https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/strong_gravitational_lensing_schematic.svg" alt="Strong lensing geometry with an Einstein ring inset: the ring's size is set by the lens galaxy's mass" width="700" />
+![The ring with the lens galaxy's light removed, and the good model's Einstein radius drawn on it as a white circle](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/cosmos_web_ring_einstein_radius.png)
 
-Back to the diagram from the start: the radius of the Einstein ring (the inset) is set by how much
-mass the lens holds.
+Above is the ring with the lens galaxy's light removed, and in white the circle the good model's
+mass bends light into: its **critical curve**, the ring's true size. Its radius is set by how
+much mass the lens holds.
 
 The Einstein radius is the ring's size in the sky. Combined with the distances to the two
 galaxies (which follow from their redshifts), it gives the mass enclosed by the ring, in units

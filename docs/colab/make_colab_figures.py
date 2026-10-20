@@ -16,7 +16,7 @@ __Contents__
 - **Imports:** Import the required libraries.
 - **Dataset:** Load F444W and prepare it as the notebook does (noise scaling, 2.1" mask, over-sampling).
 - **Models:** Evaluate the good (cowls_ansofi) and not-great (single Sérsic source) tracers.
-- **Figures:** Save the good model's plane subplot and the residual comparison.
+- **Figures:** Save the good model's plane subplot, the residual comparison and the Einstein radius.
 """
 
 """
@@ -167,5 +167,30 @@ with tempfile.TemporaryDirectory() as tmp:
     plt.close(figure)
     save_small(
         residuals_path, IMAGES_PATH / "cosmos_web_ring_residuals_good_vs_bad.png"
+    )
+
+    """
+    The ring with the lens galaxy's light subtracted, and the good model's tangential critical
+    curve on top: the curve the ring traces, whose effective radius is the Einstein radius the
+    notebook turns into a mass.
+    """
+    evaluation_grid = al.Grid2D.uniform(shape_native=(200, 200), pixel_scales=0.03)
+    lens_calc = al.LensCalc.from_tracer(tracer)
+    critical_curves = lens_calc.tangential_critical_curve_list_from(grid=evaluation_grid)
+    einstein_radius = float(lens_calc.einstein_radius_from(grid=evaluation_grid))
+    figure, ax = plt.subplots(1, 1, figsize=(6, 5))
+    aplt.plot_array(
+        array=fit.subtracted_images_of_planes_list[1],
+        title=f'Einstein radius {einstein_radius:.2f}"',
+        lines=[curve.array for curve in critical_curves],
+        line_colors=["white"] * len(critical_curves),
+        ax=ax,
+    )
+    plt.tight_layout()
+    einstein_path = Path(tmp) / "einstein.png"
+    figure.savefig(einstein_path, dpi=150, facecolor="white")
+    plt.close(figure)
+    save_small(
+        einstein_path, IMAGES_PATH / "cosmos_web_ring_einstein_radius.png", width=900
     )
 

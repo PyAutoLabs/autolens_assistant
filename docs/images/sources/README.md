@@ -28,7 +28,7 @@ Imaging: JWST COSMOS-Web.
 
 | File | Source | Notes |
 |------|--------|-------|
-| `docs/images/strong_lens_schematic.png` | AI-generated image supplied by the maintainer (James Nightingale), 2000 x 667 pixels, RGBA | JWST-style hero schematic: the observer (JWST), two bent "Lensed Source Galaxy Light" rays around the "Lens galaxy", an "Extra Galaxy" and the "Source galaxy". Committed as a 1000 x 334 pixel Lanczos downscale (PIL, `optimize=True`, ~480 KB); the 2000-pixel original is kept by the maintainer and not committed. It does **not** show the rays becoming multiple images or a ring, so wherever it is used the text must make that link (two of infinitely many paths, arcs, a ring at perfect alignment) before the COSMOS-Web picture follows. `strong_gravitational_lensing_schematic.svg` (hand-drawn vector diagram) shows the image, lens and source planes, the lensed images and an Einstein-ring inset. |
+| `docs/images/strong_lens_schematic.png` | AI-generated image supplied by the maintainer (James Nightingale), 2000 x 667 pixels, RGBA | JWST-style hero schematic: the observer (JWST), two bent "Lensed Source Galaxy Light" rays around the "Lens galaxy", an "Extra Galaxy" and the "Source galaxy". Committed as a 1000 x 334 pixel Lanczos downscale (PIL, `optimize=True`, ~480 KB); the 2000-pixel original is kept by the maintainer and not committed. It does **not** show the rays becoming multiple images or a ring, so wherever it is used the text must make that link (two of infinitely many paths, arcs, a ring at perfect alignment) before the COSMOS-Web picture follows. It is the repository's only lensing schematic. |
 
 ## Mercier et al. 2024 lens-model panels
 
@@ -53,6 +53,7 @@ are shared under the same licence.
 `docs/images/cosmos_web_ring_good_model.png` (the good model's plane subplot: data, ring with the
 lens light subtracted, lensed source model, source plane) and
 `docs/images/cosmos_web_ring_residuals_good_vs_bad.png` (normalised residuals of the good and the
-single-Sérsic-source models on one ±5σ scale) are computed from the committed models in
+single-Sérsic-source models on one ±5σ scale) and `docs/images/cosmos_web_ring_einstein_radius.png`
+(the lens-light-subtracted ring with the good model's tangential critical curve) are computed from the committed models in
 `scripts/cosmos_web_ring/results/` by `docs/colab/make_colab_figures.py` (`make colab` runs it).
 They are this repository's own output, not third-party images.
