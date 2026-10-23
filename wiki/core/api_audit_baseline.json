@@ -1,12 +1,12 @@
 {
   "_comment": "API baseline for autolens_assistant - see autoassistant/audit_skill_apis.py and skills/al_audit_skill_apis.md. Regenerate with --write-baseline.",
-  "generated": "2026-10-18",
+  "generated": "2026-10-23",
   "versions": {
-    "autonerves": "2026.10.18.1",
-    "autoarray": "2026.10.18.1",
-    "autofit": "2026.10.18.1",
-    "autogalaxy": "2026.10.18.1",
-    "autolens": "2026.10.18.1"
+    "autonerves": "2026.10.23.1",
+    "autoarray": "2026.10.23.1",
+    "autofit": "2026.10.23.1",
+    "autogalaxy": "2026.10.23.1",
+    "autolens": "2026.10.23.1"
   },
   "api_surface": {
     "autonerves": {
@@ -14,12 +14,12 @@
       "n_symbols": 33
     },
     "autoarray": {
-      "hash": "3c38eeac8fb100d7e0bc0d118dad9e69cc27891a745217dd933c603dd9759292",
-      "n_symbols": 125
+      "hash": "8897942adf05d2361d27cd4ddec231ef0e00098da41fd01f7322788729acc982",
+      "n_symbols": 126
     },
     "autofit": {
-      "hash": "468f6884a97332e3db9ee0afb998c3db609ec27ef003cd849cb1955a12e9a27e",
-      "n_symbols": 174
+      "hash": "97528408a22d1123615310897b6dd7d84628cb81d2b2081c75e7943f7fe9eb9d",
+      "n_symbols": 175
     },
     "autogalaxy": {
       "hash": "06aa0496b69a5919bdb3e7c5905a1340a0b5bd57819cb1ff72a6305ba1be8006",
@@ -30,8 +30,8 @@
       "n_symbols": 157
     },
     "autolens.plot": {
-      "hash": "96105508f5b61456eb8c533111b87c694c3529d916aae208865c282c31897e83",
-      "n_symbols": 65
+      "hash": "e910c7b81d2eb2e21380ac5db12d60954842a6161fcb977943b00d1ae006cd1b",
+      "n_symbols": 67
     }
   }
 }
