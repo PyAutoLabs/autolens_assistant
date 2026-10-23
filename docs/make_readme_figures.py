@@ -23,6 +23,8 @@ __Contents__
 - **Load**: read the RGB composite and both single-band images.
 - **Plot**: render the three panels, arrow annotation and mask overlay.
 - **Web image**: a clean, annotation-free upscale of the RGB for the website.
+- **Labelled web image**: the annotated RGB panel on its own, for the Colab notebook.
+- **Published lens model**: the Mercier et al. 2024 PyAutoLens F444W row, with a credit line.
 """
 
 import numpy as np
@@ -36,7 +38,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from pathlib import Path
 from astropy.io import fits
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 """__Paths__
 
@@ -192,36 +194,48 @@ point of the figure for a newcomer: both arcs are the *same* background galaxy,
 seen twice. They target the upper-left and upper-right of the ring, keeping clear
 of the south-east arc where the extra galaxy sits blended with the emission —
 measuring mean flux around the annulus, that sector is the brightest, but the
-excess is the interloper rather than the source."""
+excess is the interloper rather than the source.
 
-axes[0].annotate("", xy=ring_point(135.0), xytext=(82, 40), arrowprops=ARROW_STYLE)
-annotate_arrow(
-    axes[0], "Lensed Source Galaxy", tip=ring_point(45.0), anchor=(82, 34), va="top"
-)
-
-"""The lens arrow has to cross the ring to reach the galaxy inside it. It comes
+The lens arrow has to cross the ring to reach the galaxy inside it. It comes
 in from the south-west, the faintest sector of the annulus, so it cuts the ring
-where there is least emission to obscure."""
+where there is least emission to obscure.
 
-annotate_arrow(axes[0], "Lens Galaxy", tip=LENS_CENTRE[::-1], anchor=(30, 122))
+The extra-galaxy arrow points in from open sky to the south-east, so it never
+crosses the lensed emission it is drawing attention to.
 
-"""The extra-galaxy arrow points in from open sky to the south-east, so it never
-crosses the lensed emission it is drawing attention to."""
+The annotations live in one function because two figures carry them: this
+three-panel figure and the labelled web image below."""
 
-annotate_arrow(
-    axes[0],
-    "Extra Galaxy",
-    tip=(EXTRA_GALAXY_CENTRE[1] + 5, EXTRA_GALAXY_CENTRE[0] + 5),
-    anchor=(133, 141),
-)
 
-scale_bar_pixels = 1.0 / PIXEL_SCALE
-axes[0].plot(
-    [12, 12 + scale_bar_pixels], [158, 158], color="white", lw=2.5, solid_capstyle="butt"
-)
-axes[0].text(
-    12 + scale_bar_pixels / 2.0, 152, '1"', color="white", fontsize=12, ha="center"
-)
+def annotate_rgb_panel(ax):
+    ax.annotate("", xy=ring_point(135.0), xytext=(82, 40), arrowprops=ARROW_STYLE)
+    annotate_arrow(
+        ax, "Lensed Source Galaxy", tip=ring_point(45.0), anchor=(82, 34), va="top"
+    )
+
+    annotate_arrow(ax, "Lens Galaxy", tip=LENS_CENTRE[::-1], anchor=(30, 122))
+
+    annotate_arrow(
+        ax,
+        "Extra Galaxy",
+        tip=(EXTRA_GALAXY_CENTRE[1] + 5, EXTRA_GALAXY_CENTRE[0] + 5),
+        anchor=(133, 141),
+    )
+
+    scale_bar_pixels = 1.0 / PIXEL_SCALE
+    ax.plot(
+        [12, 12 + scale_bar_pixels],
+        [158, 158],
+        color="white",
+        lw=2.5,
+        solid_capstyle="butt",
+    )
+    ax.text(
+        12 + scale_bar_pixels / 2.0, 152, '1"', color="white", fontsize=12, ha="center"
+    )
+
+
+annotate_rgb_panel(axes[0])
 
 for ax, band in zip(axes[1:], BANDS):
 
@@ -316,3 +330,102 @@ web_image().save(WEB_OUTPUT_PATH, optimize=True)
 
 print(f"Web image crop box (left, upper, right, lower): {web_crop_box()}")
 print(f"Web image written to: {WEB_OUTPUT_PATH.resolve()}")
+
+"""__Labelled web image__
+
+The Colab notebook's "The Picture" section opens with the RGB panel of the
+three-panel figure on its own: the same 167-pixel frame and the same Lensed
+Source Galaxy / Lens Galaxy / Extra Galaxy arrows and 1" scale bar, without the
+panel label and without the F277W / F444W panels. The panel is drawn at the
+three-panel figure's panel size (4.5 inches) so the arrows and text keep their
+proportions, and saved at 200 dpi, 900 pixels square, a good width for a web
+page or notebook.
+"""
+
+LABELLED_OUTPUT_PATH = DOCS_PATH / "images" / "cosmos_web_ring_rgb_labelled.png"
+
+labelled_figure, labelled_ax = plt.subplots(1, 1, figsize=(PANEL_WIDTH, PANEL_WIDTH))
+labelled_ax.imshow(rgb, interpolation="bicubic")
+annotate_rgb_panel(labelled_ax)
+labelled_ax.set_xticks([])
+labelled_ax.set_yticks([])
+for spine in labelled_ax.spines.values():
+    spine.set_visible(False)
+labelled_figure.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0)
+labelled_figure.savefig(LABELLED_OUTPUT_PATH, dpi=200, facecolor="white")
+
+print(f"Labelled web image written to: {LABELLED_OUTPUT_PATH.resolve()}")
+
+"""__Published lens model__
+
+The Colab notebook's "What A Lens Model Looks Like" section opens with what a
+publication-quality lens model of this system achieves: the F150W and F444W rows of the
+PyAutoLens lens-model figure of Mercier et al. 2024 (A&A 687, A61; arXiv:2309.15986,
+Figure 5 of the arXiv HTML version) — observed image, lens model image, normalised
+residual map and source reconstruction, left to right.
+
+The eight panels are vendored unchanged from the arXiv HTML rendering under
+`images/sources/` (see its README). The paper is distributed under CC BY-SA 4.0, so
+the composed figure carries the credit and licence in the image itself, where it
+travels with the picture wherever it is shown, and is shared under the same licence.
+Each panel is Lanczos-resampled to 400 pixels wide, keeping the figure sharp
+at notebook width and the PNG small.
+"""
+
+MERCIER_PANELS = ["data", "model_image", "normalized_residual_map", "source"]
+MERCIER_BANDS = ["F150W", "F444W"]
+MERCIER_PANEL_WIDTH = 400
+MERCIER_CREDIT = (
+    "Mercier et al. 2024, A&A 687, A61 (arXiv:2309.15986), Fig. 5, F150W and F444W rows "
+    "\u2014 CC BY-SA 4.0"
+)
+MERCIER_OUTPUT_PATH = DOCS_PATH / "images" / "mercier2024_lens_model_f150w_f444w.png"
+
+
+def mercier_row(band):
+    panels = []
+    for name in MERCIER_PANELS:
+        panel = Image.open(
+            DOCS_PATH / "images" / "sources" / f"mercier2024_{band}_{name}.png"
+        ).convert("RGB")
+        height = round(panel.height * MERCIER_PANEL_WIDTH / panel.width)
+        panels.append(
+            panel.resize((MERCIER_PANEL_WIDTH, height), resample=Image.LANCZOS)
+        )
+    row_height = max(panel.height for panel in panels)
+    row = Image.new(
+        "RGB",
+        (MERCIER_PANEL_WIDTH * len(panels), row_height),
+        "white",
+    )
+    for index, panel in enumerate(panels):
+        row.paste(panel, (index * MERCIER_PANEL_WIDTH, 0))
+    return row
+
+
+def mercier_figure():
+    rows = [mercier_row(band) for band in MERCIER_BANDS]
+    credit_height = 30
+    image_height = sum(row.height for row in rows)
+    figure = Image.new("RGB", (rows[0].width, image_height + credit_height), "white")
+    offset = 0
+    for row in rows:
+        figure.paste(row, (0, offset))
+        offset += row.height
+    try:
+        font = ImageFont.truetype("DejaVuSans.ttf", 16)
+    except OSError:
+        font = ImageFont.load_default()
+    ImageDraw.Draw(figure).text(
+        (figure.width - 8, image_height + credit_height // 2),
+        MERCIER_CREDIT,
+        fill=(60, 60, 60),
+        font=font,
+        anchor="rm",
+    )
+    return figure
+
+
+mercier_figure().save(MERCIER_OUTPUT_PATH, optimize=True)
+
+print(f"Published lens model figure written to: {MERCIER_OUTPUT_PATH.resolve()}")

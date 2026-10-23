@@ -18,6 +18,7 @@ Usage (from the repository root)::
 
     python scripts/cosmos_web_ring/fit_cosmos_web_ring.py                       # good fit, F444W
     python scripts/cosmos_web_ring/fit_cosmos_web_ring.py --variant sersic_source
+    python scripts/cosmos_web_ring/fit_cosmos_web_ring.py --variant sersic_source --mask-radius 2.1  # Colab notebook
     python scripts/cosmos_web_ring/fit_cosmos_web_ring.py --band F277W          # achromatic check
     python scripts/cosmos_web_ring/fit_cosmos_web_ring.py --test-mode           # seconds, for tests
 
@@ -76,6 +77,12 @@ parser.add_argument(
     "--test-mode",
     action="store_true",
     help="Tiny search (4 starts x 20 steps) for tests; the numbers are not science.",
+)
+parser.add_argument(
+    "--mask-radius",
+    type=float,
+    default=1.8,
+    help='Circular mask radius in arcsec (1.8" default; the Colab notebook uses 2.1").',
 )
 parser.add_argument("--results-dir", type=Path, default=None)
 parser.add_argument("--output-dir", type=Path, default=SCRIPT_DIR / "output")
@@ -145,7 +152,7 @@ sky (the radius documented for this dataset in the assistant's README). Adaptive
 evaluates the light profiles on a finer sub-grid near the centre, where the lens light is
 steep, and coarser further out (`PyAutoArray:autoarray/operators/over_sampling/`).
 """
-mask_radius = 1.8
+mask_radius = args.mask_radius
 
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native,
@@ -387,6 +394,12 @@ summary = {
     "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
 }
 (results_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+
+"""
+The maximum-likelihood tracer is written too, so the fit can be re-evaluated without a search
+(`al.from_json`), as the Colab notebook does for the committed `sersic_source/tracer.json`.
+"""
+al.output_to_json(obj=tracer, file_path=results_dir / "tracer.json")
 
 """
 __Plots__

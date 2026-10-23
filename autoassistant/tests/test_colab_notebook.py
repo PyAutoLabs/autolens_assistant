@@ -1,8 +1,10 @@
 """Pin the tracked Colab-facing COSMOS-Web Ring notebook.
 
 `docs/colab/cosmos_web_ring_colab.ipynb` is generated from `docs/colab/cosmos_web_ring_colab.py`
-by `autoassistant.to_notebook`; these tests keep the two in step and check that the
-notebook still carries its Colab setup cell and the content the README promises.
+by `autoassistant.to_notebook` and committed **executed** (`make colab`), so a reader sees every
+figure before running anything. These tests keep the source and the notebook in step (outputs
+and execution metadata stripped), check that every code cell carries its output, and check that
+the notebook still carries its Colab setup cell and the content the README promises.
 Stdlib-only and fast: nothing is executed.
 """
 
@@ -59,10 +61,70 @@ def test_prose_covers_the_promised_content():
     assert STARTING_PROMPT_CLONE in prose
 
 
-def test_notebook_regenerates_byte_identically(tmp_path):
+def _stripped(notebook: dict) -> dict:
+    """The notebook with everything execution adds removed: outputs, execution counts,
+    per-cell execution metadata and the kernel's language_info."""
+    cells = []
+    for cell in notebook["cells"]:
+        cell = {key: value for key, value in cell.items() if key not in ("outputs", "execution_count")}
+        cell["metadata"] = {
+            key: value for key, value in cell.get("metadata", {}).items() if key != "execution"
+        }
+        cells.append(cell)
+    return {
+        "cells": cells,
+        "kernelspec": notebook["metadata"].get("kernelspec"),
+        "nbformat": notebook["nbformat"],
+        "nbformat_minor": notebook["nbformat_minor"],
+    }
+
+
+def test_notebook_matches_its_source(tmp_path):
     regenerated = convert(SOURCE, tmp_path / "regenerated.ipynb")
-    assert regenerated.read_bytes() == NOTEBOOK.read_bytes(), (
-        "docs/colab/cosmos_web_ring_colab.ipynb is stale: run "
-        "`python -m autoassistant.to_notebook docs/colab/cosmos_web_ring_colab.py "
-        "docs/colab/cosmos_web_ring_colab.ipynb`"
+    fresh = json.loads(regenerated.read_text(encoding="utf-8"))
+    committed = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
+    assert _stripped(fresh) == _stripped(committed), (
+        "docs/colab/cosmos_web_ring_colab.ipynb is stale: run `make colab` from the "
+        "repository root (it converts docs/colab/cosmos_web_ring_colab.py and executes it)"
     )
+
+
+def test_every_code_cell_is_executed():
+    unexecuted = [
+        index
+        for index, cell in enumerate(_cells())
+        if cell["cell_type"] == "code" and not cell.get("outputs")
+    ]
+    assert not unexecuted, (
+        f"code cells {unexecuted} have no outputs: the notebook must be committed executed "
+        "(`make colab`), so a Colab reader sees every figure before running anything"
+    )
+    errors = [
+        index
+        for index, cell in enumerate(_cells())
+        if cell["cell_type"] == "code"
+        and any(output.get("output_type") == "error" for output in cell["outputs"])
+    ]
+    assert not errors, f"code cells {errors} raised an error when the notebook was executed"
+
+
+def test_every_section_shows_an_image_before_its_code():
+    """Each `__Section__` markdown cell after the setup embeds a figure (raw GitHub URL), so a
+    reader sees a picture under every header before any code runs."""
+    missing = []
+    for cell in _cells():
+        if cell["cell_type"] != "markdown":
+            continue
+        text = "".join(cell["source"])
+        headers = [line for line in text.splitlines() if line.startswith("__") and line.endswith("__")]
+        if not headers or headers[0] in ("__Contents__", "__Imports__"):
+            continue
+        if "https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/" not in text:
+            missing.append(headers[0])
+    assert not missing, f"sections without an image: {missing}"
+
+
+def test_no_search_is_run():
+    code = "\n".join("".join(cell["source"]) for cell in _cells() if cell["cell_type"] == "code")
+    assert "search.fit" not in code
+    assert "MultiStartProdigy" not in code
