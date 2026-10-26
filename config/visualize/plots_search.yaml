@@ -1,26 +1,11 @@
-dynesty:
-  cornerplot: true         # Output Dynesty cornerplot figure during a non-linear search fit?
-  cornerpoints: false      # Output Dynesty cornerpoints figure during a non-linear search fit?
-  runplot: true            # Output Dynesty runplot figure during a non-linear search fit?
-  traceplot: true          # Output Dynesty traceplot figure during a non-linear search fit?
-emcee:
-  corner: true             # Output Emcee corner figure during a non-linear search fit?
-  likelihood_series: true  # Output Emcee likelihood series figure during a non-linear search fit?
-  time_series: true        # Output Emcee time series figure during a non-linear search fit?
-  trajectories: true       # Output Emcee trajectories figure during a non-linear search fit?
-nautilus:
-  cornerplot: true         # Output Nautilus cornerplot figure during a non-linear search fit?
-pyswarms:
-  contour: true            # Output PySwarms contour figure during a non-linear search fit?
-  cost_history: true       # Output PySwarms cost_history figure during a non-linear search fit?
-  time_series: true        # Output PySwarms time_series figure during a non-linear search fit?
-  trajectories: true       # Output PySwarms trajectories figure during a non-linear search fit?
-ultranest:
-  cornerplot: true         # Output Ultranest cornerplot figure during a non-linear search fit?
-  runplot: true            # Output Ultranest runplot figure during a non-linear search fit?
-  traceplot: true          # Output Ultranest traceplot figure during a non-linear search fit?
-zeus:
-  corner: true             # Output Zeus corner figure during a non-linear search fit?
-  likelihood_series: true  # Output Zeus likelihood series figure during a non-linear search fit?
-  time_series: true        # Output Zeus time series figure during a non-linear search fit?
-  trajectories: true       # Output Zeus trajectories figure during a non-linear search fit?
+nest:
+  corner_anesthetic: true   # Output corner figure (using anestetic) during a non-linear search fit?
+  corner_anesthetic_components: true   # Also output one corner figure per top-level model component (e.g. per galaxy), each named corner_anesthetic_<component>? Follows corner_anesthetic when absent.
+  corner_anesthetic_latent: false   # Output a corner figure of the latent parameters (e.g. a shear's magnitude and angle rather than gamma_1 / gamma_2), named corner_anesthetic_latent? Independent of the two above. Made after the fit like latent.csv (during it only if output.yaml's latent_during_fit is on).
+  corner_anesthetic_latent_components: true   # With corner_anesthetic_latent, also output one latent corner figure per top-level component that has a latent parameter, each named corner_anesthetic_latent_<component>? Follows corner_anesthetic_latent when absent.
+mcmc:
+  corner_cornerpy: true     # Output corner figure (using corner.py) during a non-linear search fit?
+mle:
+  subplot_parameters: true   # Output a subplot of the best-fit parameters of the model?
+  log_likelihood_vs_iteration: true  # Output a plot of the log likelihood versus iteration number?
+  figure_of_merit_vs_iteration: true  # Output the global-best figure-of-merit trace (auto-convergence gradient searches)?
