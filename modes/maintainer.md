@@ -113,8 +113,10 @@ worked prompts and dataset names are domain). Profiling query examples in
 content covered by the existing `docs/*` clone rule, not generic assistant defaults.
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
-`config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
-maintainer smoke tests below.
+`config/`, `benchmarks/README.md` (protocol generic, benchmark table domain),
+`colab/contexts.yaml` (preface and rules shape generic, skill mapping and lensing rules
+domain; a newborn remaps it to its own skills and workspace), the maintainer smoke tests
+below.
 
 Generated `.codex/skills/*/SKILL.md` wrappers are **domain** for cloning: their
 namespace and targets belong to this assistant, so they must never be copied

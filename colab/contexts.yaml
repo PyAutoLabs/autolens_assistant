@@ -1,0 +1,245 @@
+# Colab Gemini instructions — which assistant skills travel with which notebook.
+#
+# Colab's Gemini sidebar cannot read this repository, but it honours per-notebook
+# instructions stored in the notebook's metadata (`metadata.colab.aiContexts` +
+# `selectedAiContext`). At release time PyAutoHands (`autohands/build_util.py`,
+# `inject_gemini_instructions`) writes one such instruction into every generated
+# autolens_workspace and HowToLens notebook, assembled from this file:
+#
+#     preface  +  rules (with {notebook} and {repo} filled in)  +  each mapped skill's text
+#
+# The skills stay here (single source); notebooks carry a release-time snapshot only.
+#
+# Matching
+#   Each notebook is named "<repo>/<path relative to the repo root>", e.g.
+#   "autolens_workspace/notebooks/imaging/modeling.ipynb" or
+#   "HowToLens/notebooks/chapter_2_lens_modeling/tutorial_1_non_linear_search.ipynb".
+#   `match` is an fnmatch glob over that name (`*` also crosses `/`).
+#   The FIRST entry in `contexts` whose glob matches wins, so entries are written
+#   most specific first. A notebook no entry matches gets `default`.
+#
+# Limits
+#   Every assembled context must stay within 20,000 characters. Generation fails,
+#   naming the entry, rather than truncating; `python -m autoassistant.colab_contexts
+#   check` (CI: .github/workflows/colab-contexts.yml) checks every entry here first.
+#   Skills listed under `never_map` (maintainer and agent-infrastructure skills that
+#   only make sense with the repository checked out) may not be mapped.
+#
+# Upkeep: when a skill is added or renamed, or the workspace gains a folder, update
+# the entries here and rerun the check; `autohands gemini_context report` lists the
+# notebooks that only reach `default`.
+
+name: PyAutoLens assistant
+
+# The project key the assistant's own notebooks (docs/colab/) are stamped with. It
+# sets the instruction's id, so it matches the id PyAutoHands gives autolens_workspace.
+project: autolens
+
+preface: |
+  These instructions were prepared by the PyAutoLens assistant
+  (https://github.com/PyAutoLabs/autolens_assistant). The reference material at the
+  end was written for a coding agent working inside a checkout of that repository.
+  Here in Google Colab there is no checkout: ignore any step about repository files,
+  hooks, `scripts/` or `wiki/` paths, saving scripts, or terminal tools, and use the
+  PyAutoLens knowledge in that material to help with this notebook.
+
+rules: |
+  You are helping someone work through a PyAutoLens notebook ({notebook} in {repo}).
+  Explain what it does and help them adapt it to their own questions.
+
+  Core rules:
+  1. Stay with this notebook's API. Only use PyAutoLens calls that appear in the
+     notebook or in the reference material below. Never invent class names, functions
+     or arguments. If you are unsure whether something exists, say so and suggest
+     checking with `dir()` or the PyAutoLens docs (https://pyautolens.readthedocs.io).
+  2. Real data needs a check first. Before helping fit real observational data, ask the
+     user to plot it and confirm (a) whether extra galaxies, foreground stars or
+     artefacts need masking or noise-scaling, and (b) a mask radius that contains all
+     of the lensed emission. Never leave the mask radius at its default on real data.
+     Simulated data from the workspace is exempt.
+  3. Never claim a fit or a cell ran, or what it returned. Only the user's own outputs
+     tell you that; ask them to share what they see.
+  4. When the answer depends on something you do not know (their data, their goal, what
+     a cell printed), ask one focused question rather than guessing.
+  5. For multi-step projects (a new lens, a sample of lenses, a paper's analysis), point
+     them to the PyAutoLens assistant https://github.com/PyAutoLabs/autolens_assistant,
+     which runs in Claude Code or Codex with its full skills and safety checks.
+
+never_map:
+  - _bootstrap_skill
+  - _style
+  - al_audit_skill_apis
+  - al_ingest_paper
+  - al_inspect_results_mcp
+  - al_profiling_setup
+  - al_refresh_api_docs
+  - al_setup_environment
+  - al_to_notebook
+  - al_update_wiki
+  - contribute-upstream
+  - feedback
+  - init-slam
+  - start-new-project
+
+default:
+  skills: [al_build_imaging_model, al_run_search]
+
+contexts:
+
+  # --- This repository's own Colab notebook -------------------------------------
+  - match: autolens_assistant/docs/colab/cosmos_web_ring_colab.ipynb
+    skills: [al_greeting_cosmos_web_ring, al_inspect_source_reconstruction]
+
+  # --- autolens_workspace: root ---------------------------------------------------
+  - match: autolens_workspace/start_here.ipynb
+    skills: [al_build_imaging_model, al_run_search]
+
+  # --- autolens_workspace: features (most specific first) ------------------------
+  - match: autolens_workspace/notebooks/*/features/advanced/subhalo/sensitivity/*
+    skills: [al_sensitivity_mapping, al_subhalo_detect]
+  - match: autolens_workspace/notebooks/*/features/advanced/subhalo/*
+    skills: [al_subhalo_detect, al_chain_searches]
+  - match: autolens_workspace/notebooks/*/features/advanced/potential_correction/*
+    skills: [al_potential_correction]
+  - match: autolens_workspace/notebooks/*/features/advanced/shapelets/*
+    skills: [al_mge_decomposition, al_build_imaging_model]
+  - match: autolens_workspace/notebooks/*/features/advanced/double_source_plane_lens/*
+    skills: [al_build_imaging_model, al_chain_searches]
+  - match: autolens_workspace/notebooks/*/features/advanced/mass_stellar_dark/*
+    skills: [al_build_imaging_model, al_chain_searches]
+  - match: autolens_workspace/notebooks/*/features/advanced/*
+    skills: [al_build_imaging_model, al_debug_fit_failure]
+  - match: autolens_workspace/notebooks/*/features/pixelization/*
+    skills: [al_adaptive_pixelization, al_inspect_source_reconstruction]
+  - match: autolens_workspace/notebooks/*/features/multi_gaussian_expansion/*
+    skills: [al_mge_decomposition, al_build_imaging_model]
+  - match: autolens_workspace/notebooks/*/features/linear_light_profiles/*
+    skills: [al_build_imaging_model, al_mge_decomposition]
+  - match: autolens_workspace/notebooks/*/features/extra_galaxies/*
+    skills: [al_prepare_imaging_data, al_group_lensing]
+  - match: autolens_workspace/notebooks/*/features/scaling_relation/*
+    skills: [al_group_lensing, al_build_imaging_model]
+  - match: autolens_workspace/notebooks/*/features/no_lens_light/*
+    skills: [al_build_imaging_model, al_run_search]
+  - match: autolens_workspace/notebooks/interferometer/features/datacube/*
+    skills: [al_datacube_modeling, al_build_interferometer_model]
+  - match: autolens_workspace/notebooks/group/features/group_halo/*
+    skills: [al_group_lensing, al_build_imaging_model]
+  - match: autolens_workspace/notebooks/point_source/features/time_delays*
+    skills: [al_time_delay_cosmography, al_point_source]
+  - match: autolens_workspace/notebooks/multi_dataset/features/imaging_and_interferometer/*
+    skills: [al_multi_dataset, al_build_interferometer_model]
+  - match: autolens_workspace/notebooks/multi_dataset/features/imaging_and_point_source/*
+    skills: [al_multi_dataset, al_point_source]
+  - match: autolens_workspace/notebooks/multi_dataset/features/slam/*
+    skills: [al_multi_dataset, al_run_slam_pipeline]
+  - match: autolens_workspace/notebooks/weak/features/strong_lensing/*
+    skills: [al_weak_lensing, al_multi_dataset]
+
+  # --- autolens_workspace: data preparation ------------------------------------
+  - match: autolens_workspace/notebooks/imaging/data_preparation/*
+    skills: [al_prepare_imaging_data]
+  - match: autolens_workspace/notebooks/interferometer/data_preparation*
+    skills: [al_build_interferometer_model, al_simulate_dataset]
+  - match: autolens_workspace/notebooks/interferometer/casa_reduction*
+    skills: [al_build_interferometer_model, al_simulate_dataset]
+
+  # --- autolens_workspace: dataset types whose skills differ from imaging ---------
+  - match: autolens_workspace/notebooks/point_source/*
+    skills: [al_point_source, al_run_search]
+  - match: autolens_workspace/notebooks/weak/*
+    skills: [al_weak_lensing, al_simulate_dataset]
+  - match: autolens_workspace/notebooks/cluster/*
+    skills: [al_cluster_csv_api, al_point_source, al_group_lensing]
+
+  # --- autolens_workspace: notebook kinds shared by every dataset folder --------
+  - match: autolens_workspace/notebooks/*/slam*
+    skills: [al_run_slam_pipeline, al_chain_searches]
+  - match: autolens_workspace/notebooks/*/simulator*
+    skills: [al_simulate_dataset, al_plot_tracer]
+  - match: autolens_workspace/notebooks/*/plot.ipynb
+    skills: [al_plot_fit_residuals, al_plot_tracer]
+  - match: autolens_workspace/notebooks/*/fit.ipynb
+    skills: [al_plot_fit_residuals, al_plot_tracer]
+  - match: autolens_workspace/notebooks/*/likelihood_function.ipynb
+    skills: [al_custom_analysis, al_plot_fit_residuals]
+  - match: autolens_workspace/notebooks/*/source_science.ipynb
+    skills: [al_load_results, al_inspect_source_reconstruction]
+
+  # --- autolens_workspace: dataset folders ---------------------------------------
+  - match: autolens_workspace/notebooks/interferometer/*
+    skills: [al_build_interferometer_model, al_run_search]
+  - match: autolens_workspace/notebooks/group/*
+    skills: [al_group_lensing, al_build_imaging_model]
+  - match: autolens_workspace/notebooks/multi_galaxy/*
+    skills: [al_group_lensing, al_build_imaging_model]
+  - match: autolens_workspace/notebooks/multi_dataset/*
+    skills: [al_multi_dataset, al_build_imaging_model]
+  - match: autolens_workspace/notebooks/imaging/*
+    skills: [al_build_imaging_model, al_run_search]
+
+  # --- autolens_workspace: guides ------------------------------------------------
+  - match: autolens_workspace/notebooks/guides/results/aggregator/*
+    skills: [al_aggregator_bulk_analysis, al_load_results]
+  - match: autolens_workspace/notebooks/guides/results/database/*
+    skills: [al_aggregator_bulk_analysis, al_load_results]
+  - match: autolens_workspace/notebooks/guides/results/*
+    skills: [al_load_results, al_aggregator_bulk_analysis]
+  - match: autolens_workspace/notebooks/guides/modeling/advanced/*
+    skills: [al_hierarchical_inference, al_chain_searches]
+  - match: autolens_workspace/notebooks/guides/modeling/searches*
+    skills: [al_configure_search]
+  - match: autolens_workspace/notebooks/guides/modeling/chaining*
+    skills: [al_chain_searches, al_run_search]
+  - match: autolens_workspace/notebooks/guides/modeling/bug_fix*
+    skills: [al_debug_fit_failure, al_run_search]
+  - match: autolens_workspace/notebooks/guides/modeling/*
+    skills: [al_build_imaging_model, al_run_search]
+  - match: autolens_workspace/notebooks/guides/plot/searches*
+    skills: [al_load_results, al_plot_fit_residuals]
+  - match: autolens_workspace/notebooks/guides/plot/*
+    skills: [al_plot_tracer, al_plot_fit_residuals]
+  - match: autolens_workspace/notebooks/guides/point_solver/*
+    skills: [al_point_source]
+  - match: autolens_workspace/notebooks/guides/profiles/*
+    skills: [al_custom_profile, al_plot_tracer]
+  - match: autolens_workspace/notebooks/guides/advanced/add_a_profile*
+    skills: [al_custom_profile]
+  - match: autolens_workspace/notebooks/guides/advanced/custom_analysis*
+    skills: [al_custom_analysis, al_run_search]
+  - match: autolens_workspace/notebooks/guides/hpc/*
+    skills: [al_run_search, al_chain_searches]
+  - match: autolens_workspace/notebooks/guides/*
+    skills: [al_plot_tracer, al_build_imaging_model]
+
+  # --- HowToLens -----------------------------------------------------------------
+  - match: HowToLens/start_here.ipynb
+    skills: [al_plot_tracer, al_build_imaging_model]
+  - match: HowToLens/notebooks/chapter_1_introduction/*
+    skills: [al_plot_tracer, al_simulate_dataset]
+  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_4_*
+    skills: [al_debug_fit_failure, al_run_search]
+  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_9_*
+    skills: [al_chain_searches, al_run_search]
+  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_10_*
+    skills: [al_chain_searches, al_run_search]
+  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_11_*
+    skills: [al_run_slam_pipeline, al_chain_searches]
+  - match: HowToLens/notebooks/chapter_2_lens_modeling/*
+    skills: [al_build_imaging_model, al_run_search]
+  - match: HowToLens/notebooks/chapter_3_pixelizations/*
+    skills: [al_adaptive_pixelization, al_inspect_source_reconstruction]
+  - match: HowToLens/notebooks/chapter_4_scaling_up_lensing/tutorial_5_*
+    skills: [al_cluster_csv_api, al_point_source]
+  - match: HowToLens/notebooks/chapter_4_scaling_up_lensing/tutorial_6_*
+    skills: [al_weak_lensing]
+  - match: HowToLens/notebooks/chapter_4_scaling_up_lensing/*
+    skills: [al_group_lensing, al_build_imaging_model]
+  - match: HowToLens/notebooks/chapter_optional/*
+    skills: [al_configure_search]
+  - match: HowToLens/notebooks/simulator/weak_lensing*
+    skills: [al_weak_lensing, al_simulate_dataset]
+  - match: HowToLens/notebooks/simulator/cluster*
+    skills: [al_point_source, al_group_lensing]
+  - match: HowToLens/notebooks/simulator/*
+    skills: [al_simulate_dataset, al_plot_tracer]

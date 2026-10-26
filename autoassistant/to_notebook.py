@@ -20,6 +20,11 @@ Usage:
 
     python -m autoassistant.to_notebook scripts/imaging.py            # -> scripts/imaging.ipynb
     python -m autoassistant.to_notebook scripts/imaging.py out.ipynb
+    python -m autoassistant.to_notebook SRC OUT --gemini-context <repo>/<notebook path>
+
+``--gemini-context`` also writes the notebook's Colab Gemini instruction from
+``colab/contexts.yaml`` (see ``autoassistant/colab_contexts.py``), matched under the given
+name — e.g. ``autolens_assistant/docs/colab/cosmos_web_ring_colab.ipynb``.
 """
 
 from __future__ import annotations
@@ -104,6 +109,14 @@ def convert(script_path: Path, notebook_path: Path | None = None) -> Path:
 
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
+    gemini_name = None
+    if "--gemini-context" in args:
+        at = args.index("--gemini-context")
+        if at + 1 >= len(args):
+            print("--gemini-context needs a <repo>/<notebook path> name", file=sys.stderr)
+            return 1
+        gemini_name = args[at + 1]
+        del args[at : at + 2]
     if not 1 <= len(args) <= 2:
         print(__doc__.split("Usage:")[-1].strip(), file=sys.stderr)
         return 1
@@ -112,6 +125,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"not a file: {script}", file=sys.stderr)
         return 1
     out = convert(script, Path(args[1]) if len(args) == 2 else None)
+    if gemini_name is not None:
+        from autoassistant.colab_contexts import apply
+
+        apply(out, gemini_name)
     print(out.resolve())
     return 0
 
