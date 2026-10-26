@@ -27,7 +27,8 @@
 #
 # Upkeep: when a skill is added or renamed, or the workspace gains a folder, update
 # the entries here and rerun the check; `autohands gemini_context report` lists the
-# notebooks that only reach `default`.
+# notebooks that only reach `default`. The maintainer skill
+# skills/al_refresh_colab_contexts.md walks the whole refresh.
 
 name: PyAutoLens assistant
 
@@ -73,6 +74,7 @@ never_map:
   - al_inspect_results_mcp
   - al_profiling_setup
   - al_refresh_api_docs
+  - al_refresh_colab_contexts
   - al_setup_environment
   - al_to_notebook
   - al_update_wiki

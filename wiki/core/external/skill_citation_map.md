@@ -52,6 +52,7 @@ Pick notebook vs script per audience (default `.ipynb` for student-leaning users
 | al_update_wiki | _ | _ | _ |
 | al_audit_skill_apis | _ | _ | _ |
 | al_refresh_api_docs | _ | _ | _ |
+| al_refresh_colab_contexts | _ | _ | _ |
 | al_ingest_paper | _ | _ | _ |
 | al_point_source | chapter_1_introduction/tutorial_4_point_sources | overview/overview_3_features | point_source/start_here.py |
 | al_time_delay_cosmography | _ | overview/overview_3_features | point_source/features/time_delays.py |
