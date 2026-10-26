@@ -31,6 +31,7 @@ Use the existing skills, not new docs:
 - Authoring or evolving a skill → [`skills/_bootstrap_skill.md`](../skills/_bootstrap_skill.md).
 - Regenerating `wiki/core/` against pinned sources → `al_update_wiki`.
 - API gate / version baseline → [`skills/al_audit_skill_apis.md`](../skills/al_audit_skill_apis.md).
+- Colab Gemini skill map (`colab/contexts.yaml`) → [`skills/al_refresh_colab_contexts.md`](../skills/al_refresh_colab_contexts.md).
 
 ## Release-time wiki-currency check (two triggers, one check)
 

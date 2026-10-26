@@ -82,6 +82,9 @@ them.
 - [`al_refresh_api_docs.md`](./al_refresh_api_docs.md) — orchestrate a full maintenance
   sweep across skill recipes, wiki API pages, and pinned-source drift after a PyAuto\*
   upgrade or source refresh.
+- [`al_refresh_colab_contexts.md`](./al_refresh_colab_contexts.md) — refresh
+  `colab/contexts.yaml`, the map of which skills travel with which `autolens_workspace` /
+  HowToLens Colab notebook: run the coverage report, scan its gaps, open a PR.
 - [`al_ingest_paper.md`](./al_ingest_paper.md) — add a strong-lensing paper (local PDF
   or arxiv URL): project-local `wiki/project/bibliography.md` by default inside a science
   project; shared `wiki/literature/` in the assistant clone or on explicit promotion.
