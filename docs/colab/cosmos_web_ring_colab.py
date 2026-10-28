@@ -44,31 +44,13 @@ __Contents__
 
 __Google Colab Setup__
 
-Run the code cell below to install PyAutoLens and download the COSMOS-Web Ring data.
-
-If you are running this notebook on your own computer with PyAutoLens already installed,
-the cell simply checks your setup.
-
-You can use Google Colab's default settings. No GPU is needed, and each code cell runs in seconds.
+Run this cell to install PyAutoLens and download the files needed for this notebook on Google Colab.
+If you’re running locally or in HTML, it leaves your installation unchanged.
 """
 
-try:
-    import google.colab
-except ImportError:
-    from autolens import setup_colab as _setup_colab
-else:
-    import importlib
-    import subprocess
-    import sys
+from autolens import setup_colab
 
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "autonerves", "--no-deps"]
-    )
-    _setup_colab = importlib.import_module("autonerves.setup_colab")
-
-_setup_colab.setup(
-    "autolens", raise_error_if_not_gpu=False  # Set True to insist on a Colab GPU.
-)
+setup_colab.setup("autolens", raise_error_if_not_gpu=False)
 
 """
 __Imports__
