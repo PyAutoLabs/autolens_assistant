@@ -48,6 +48,11 @@ def test_first_code_cell_is_the_colab_setup_right_after_the_title():
     first_code = "".join(cells[1]["source"])
     assert "google.colab" in first_code
     assert "autonerves" in first_code
+    assert first_code.startswith('# @title Set up Google Colab { display-mode: "form" }')
+    assert cells[1]["metadata"]["cellView"] == "form"
+    assert cells[1]["metadata"]["jupyter"]["source_hidden"] is True
+    assert "raise_error_if_not_gpu=False" in first_code
+    assert "locally or in HTML" in "".join(cells[0]["source"])
     assert 'setup(\n    "autolens"' in first_code or 'setup("autolens"' in first_code
 
 
@@ -83,6 +88,18 @@ def test_notebook_matches_its_source(tmp_path):
     regenerated = convert(SOURCE, tmp_path / "regenerated.ipynb")
     fresh = json.loads(regenerated.read_text(encoding="utf-8"))
     committed = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
+    # The maintainer pipeline expands only the setup cell through PyAutoHands.
+    # Ordinary script conversion deliberately keeps the lightweight source call.
+    source_setup = "".join(fresh["cells"][1]["source"])
+    assert source_setup == (
+        'from autolens import setup_colab\n\n'
+        'setup_colab.setup("autolens", raise_error_if_not_gpu=False)'
+    )
+    assert "".join(fresh["cells"][0]["source"]).rstrip() == "".join(
+        committed["cells"][0]["source"]
+    ).rstrip()
+    fresh["cells"] = fresh["cells"][2:]
+    committed["cells"] = committed["cells"][2:]
     assert _stripped(fresh) == _stripped(committed), (
         "docs/colab/cosmos_web_ring_colab.ipynb is stale: run `make colab` from the "
         "repository root (it converts docs/colab/cosmos_web_ring_colab.py and executes it)"

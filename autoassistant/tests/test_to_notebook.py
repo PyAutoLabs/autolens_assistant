@@ -70,3 +70,60 @@ def test_convert_writes_valid_nbformat4(tmp_path):
     assert all("id" in c for c in nb["cells"])
     code = [c for c in nb["cells"] if c["cell_type"] == "code"]
     assert all(c["outputs"] == [] and c["execution_count"] is None for c in code)
+
+
+def test_ordinary_cli_does_not_load_hands(tmp_path, monkeypatch):
+    import builtins
+    from autoassistant.to_notebook import main
+
+    original_import = builtins.__import__
+
+    def guarded_import(name, *args, **kwargs):
+        assert "autohands" not in name and "build_util" not in name
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", guarded_import)
+    source = tmp_path / "example.py"
+    source.write_text(SCRIPT)
+    assert main([str(source)]) == 0
+
+
+def test_optional_hands_pipeline_bootstraps_fresh_colab(tmp_path, monkeypatch):
+    import builtins
+    import importlib
+    import os
+    import subprocess
+    from types import SimpleNamespace
+
+    import pytest
+    from autoassistant.to_notebook import main
+
+    hands = os.environ.get("PYAUTOHANDS_PATH")
+    if not hands:
+        pytest.skip("maintainer integration requires PYAUTOHANDS_PATH checkout")
+    source = tmp_path / "cosmos_web_ring_colab.py"
+    source.write_text(
+        '"""Title\n\n__Google Colab Setup__\n\nOld setup text.\n"""\n'
+        'from autolens import setup_colab\n'
+        'setup_colab.setup("autolens", raise_error_if_not_gpu=False)\n'
+    )
+    assert main([str(source), "--colab-setup", hands]) == 0
+    notebook = json.loads(source.with_suffix(".ipynb").read_text())
+    cell = notebook["cells"][1]
+    assert cell["metadata"]["cellView"] == "form"
+    events = []
+    setup = SimpleNamespace(setup=lambda *args, **kwargs: events.append((args, kwargs)))
+    original_import = builtins.__import__
+
+    def guarded_import(name, *args, **kwargs):
+        if name == "google.colab":
+            return SimpleNamespace()
+        assert name != "autolens", "fresh Colab must install before importing PyAutoLens"
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", guarded_import)
+    monkeypatch.setattr(subprocess, "check_call", lambda command: events.append(command))
+    monkeypatch.setattr(importlib, "import_module", lambda name: setup)
+    exec("".join(cell["source"]), {})
+    assert events[0][-3:] == ["install", "autonerves", "--no-deps"]
+    assert events[1] == (("autolens",), {"raise_error_if_not_gpu": False})
