@@ -166,6 +166,16 @@ inside the section docstring prose (see "Generated script style" above) — wove
 sentence that explains what the call does, never as a standalone `# source:` comment
 banner.
 
+## Introductory dataset figures
+
+For new assistant users and lensing introductions, show a four-panel dataset figure:
+Image, Noise map, Signal-to-noise map and PSF. Use `aplt.subplot_imaging_dataset_intro` as in
+`al_prepare_imaging_data.md`. Keep over-sampling active in the calculation but leave its
+maps out of the introductory figure. Explain what colours mean and distinguish masked
+areas from zero brightness. Offer an optional change of colormap or contrast after the
+initial background/inspection questions. Detailed workspace tutorial diagnostics remain
+appropriate when the reader reaches those topics.
+
 ## Adaptive depth
 
 Adaptive depth governs the conversation and teaching around a script; it does not reduce the

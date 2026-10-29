@@ -80,10 +80,18 @@ dataset = dataset.apply_mask(mask=mask)
 
 plot_dir = Path("scripts/scratch/cosmos_web_ring")
 plot_dir.mkdir(parents=True, exist_ok=True)
-aplt.subplot_imaging_dataset(
-    dataset=dataset, output_path=str(plot_dir), output_filename="dataset", output_format="png"
+aplt.subplot_imaging_dataset_intro(
+    dataset=dataset, stretch=0.01, radius=2.1,
+    output_path=plot_dir, output_filename="dataset", output_format="png",
+    excluded_pixels=~mask_extra_galaxies.array,
 )
 ```
+
+The colormap, fonts, titles and ticks inherit the PyAutoLens configuration.
+The four panels are Image, Noise map, Signal-to-noise map and PSF. Briefly identify these
+as the observation, its uncertainty, its significance and the telescope's blur. Explain
+that the image colours encode brightness, not physical colour. Blank space marks the mask exterior and the down-weighted neighbour.
+Keep over-sampling calculations internal; do not show their panels in this introduction.
 
 Show the image (quote the PNG path and view it yourself), then explain it in **two
 plain sentences**: a massive galaxy about 10 billion years back in time (redshift ≈ 2)
@@ -150,6 +158,13 @@ ring is roughly an arcsecond across so it does not waste time on absurd answers"
 - **Researcher who wants the code** → Assistant mode (`modes/assistant.md`): show the
   reference script, give the one-line pre-flight read-back, run it, and offer to change
   the model (e.g. a power-law mass, a pixelized source) or the search.
+
+Once the person has answered the background question, offer an optional visual experiment:
+"We can change the colours and contrast to bring out the ring — would you like to try?"
+Suggest: "Can you change the colour map and contrast so I can see the lens galaxy and the
+ring more clearly?" Change `colormap` (for example `cividis`) and `stretch` (0.01, 0.03,
+0.1) on `aplt.subplot_imaging_dataset_intro`, then show the result. Explain that only the display changed.
+Do not add this as another question to the first reply or require it before continuing.
 
 ## Numbers
 

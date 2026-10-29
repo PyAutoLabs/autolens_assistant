@@ -27,6 +27,25 @@ covers what a mask and an over-sample grid actually are; the canonical reference
 the loader is `PyAutoArray:autoarray/dataset/imaging/dataset.py` and the workspace
 example at `autolens_workspace:scripts/imaging/start_here.py`.
 
+## First-look presentation for newcomers
+
+For a new assistant user or a lensing introduction, use the four-panel view from
+`aplt.subplot_imaging_dataset_intro`: Image, Noise map, Signal-to-noise map, PSF.
+
+```python
+import autolens.plot as aplt
+aplt.subplot_imaging_dataset_intro(dataset, output_path=plot_dir, output_filename="dataset", output_format="png")
+```
+
+The colormap, ticks, fonts and titles inherit PyAutoLens configuration.
+This replaces the full `aplt.subplot_imaging_dataset` call in the recipes below for that
+audience. For COSMOS-Web, use `stretch=0.01, radius=2.5` to make the
+lens and ring visible. For other datasets, leave `radius=None` to inspect the full field
+before choosing the mask. Never let a display crop replace contamination inspection.
+Keep numerical over-sampling in the preparation, but introduce its meaning and diagnostic
+panels only when the user asks for technical detail. Workspace tutorials keep their existing
+plots. Offer colormap/contrast customization once the first-look questions are settled.
+
 ## Ask
 
 Before generating code, ask:

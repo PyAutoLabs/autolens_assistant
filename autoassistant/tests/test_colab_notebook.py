@@ -58,8 +58,11 @@ def test_first_code_cell_is_the_colab_setup_right_after_the_title():
 
 def test_prose_covers_the_promised_content():
     prose = _prose()
-    for band in ("F115W", "F150W", "F277W", "F444W"):
+    for band in ("F150W", "F444W"):
         assert band in prose, band
+    assert "__Two Colours, One Ring__" in prose
+    assert "Make The Image Your Own" not in prose
+    assert "**🤖 Ask AI:**" in prose
     assert "achromatic" in prose
     assert "Gemini" in prose
     assert STARTING_PROMPT_OPENING in prose
@@ -125,20 +128,31 @@ def test_every_code_cell_is_executed():
     assert not errors, f"code cells {errors} raised an error when the notebook was executed"
 
 
-def test_every_section_shows_an_image_before_its_code():
-    """Each `__Section__` markdown cell after the setup embeds a figure (raw GitHub URL), so a
-    reader sees a picture under every header before any code runs."""
+def test_every_section_has_an_illustration_or_executed_figure():
+    """Readers can inspect saved outputs without duplicate static illustrations."""
+    cells = _cells()
     missing = []
-    for cell in _cells():
+    for index, cell in enumerate(cells):
         if cell["cell_type"] != "markdown":
             continue
         text = "".join(cell["source"])
         headers = [line for line in text.splitlines() if line.startswith("__") and line.endswith("__")]
         if not headers or headers[0] in ("__Contents__", "__Imports__"):
             continue
-        if "https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/" not in text:
+        if "https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/" in text:
+            continue
+        following = cells[index + 1] if index + 1 < len(cells) else {}
+        has_figure = following.get("cell_type") == "code" and any(
+            any(mime.startswith("image/") for mime in output.get("data", {}))
+            for output in following.get("outputs", [])
+        )
+        if not has_figure:
             missing.append(headers[0])
-    assert not missing, f"sections without an image: {missing}"
+    assert not missing, f"sections without a figure: {missing}"
+
+    markdown = "\n".join("".join(c["source"]) for c in cells if c["cell_type"] == "markdown")
+    for filename in ("cosmos_web_ring_intro.png", "cosmos_web_ring_bands.png", "cosmos_web_ring_prepared.png"):
+        assert filename not in markdown, f"duplicate of executed figure: {filename}"
 
 
 def test_no_search_is_run():

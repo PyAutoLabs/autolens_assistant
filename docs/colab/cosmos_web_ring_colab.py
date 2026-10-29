@@ -20,7 +20,7 @@ background and guide you through the analysis.
 >
 > I'd like to understand how gravitational lensing works using the JWST image of the COSMOS-Web Ring that ships with the assistant. Show me the picture, explain what we are looking at, and walk me through fitting a lens model so we can measure the mass inside the ring and see how well the model reproduces the observations. Pitch it at my level: ask me what my background is first. Explain what we are doing as we go, and let me ask questions or change the analysis along the way.
 
-Each section ends with a **🤖 Ask Gemini:** question. If you would like to explore further,
+Each section ends with a **🤖 Ask AI:** question. If you would like to explore further,
 you can ask Google Colab's built-in AI, Gemini, using the sparkle button in the toolbar.
 
 <!-- Maintainers: this notebook is generated from docs/colab/cosmos_web_ring_colab.py and committed
@@ -34,7 +34,7 @@ __Contents__
 - **Imports:** Load the libraries.
 - **What Is A Strong Lens?:** How a galaxy's gravity bends light into arcs and rings.
 - **The Picture:** The JWST image of the ring, and the data we will work with.
-- **Four Colours, One Ring:** Why the ring looks the same in every JWST colour.
+- **Two Colours, One Ring:** Compare the ring in two infrared bands.
 - **Preparing The Data:** Remove a neighbouring galaxy's light from the analysis and choose the area to analyse.
 - **What A Lens Model Looks Like:** The published lens model of this ring, panel by panel.
 - **The Model:** The four pieces of a lens model, and the good model loaded from file.
@@ -96,7 +96,7 @@ image, and we will see it again when we prepare the data.
 The size of the ring depends on how much mass the foreground galaxy contains. Measuring the
 ring lets us weigh the galaxy, including its dark matter, which gives off no light.
 
-**🤖 Ask Gemini:** "How does a galaxy's mass bend light, and why does perfect alignment make a ring?"
+**🤖 Ask AI:** "How does a galaxy's mass bend light, and why does perfect alignment make a ring?"
 """
 
 """
@@ -119,9 +119,25 @@ imaging programme of its first year. The arrows mark:
 JWST takes pictures in several colours of infrared light. The colour image above combines
 these, but for our analysis we use one colour at a time.
 
-Alongside the image, we need two things: an estimate of the uncertainty in the brightness of
-each pixel, and a description of how the telescope blurs a point of light. The cell below
-loads and displays all three.
+The next cell shows four views of the F444W observation:
+
+- **Image (the data):** the measured brightness in each pixel. Look for the bright central
+  lens galaxy and the ring of light around it.
+- **Noise map:** the estimated uncertainty in each pixel's brightness. A larger value means
+  that pixel provides a less precise measurement; this is not a separate picture of the background.
+- **Signal-to-noise map:** the measured brightness divided by its uncertainty. A value of 10
+  means the brightness is ten times the estimated noise level. This helps us see where the
+  light is measured most clearly.
+- **Point spread function (PSF):** how the telescope spreads the light from a single point
+  across nearby pixels. We include this blurring when predicting what a lens model should
+  look like in the image.
+
+Each panel has its own colour scale. The image's brightness stretch lets us see the faint
+ring beside the bright centre; the colours represent measured brightness, not the galaxies'
+actual colours.
+
+The plots below use the dataset's coordinate orientation; the colour composite above has
+been flipped vertically for presentation, so the neighbouring galaxy appears on the opposite side.
 """
 dataset_root = Path("dataset") / "imaging" / "cosmos_web_ring"  # Colab: autolens_workspace; else the assistant repo root.
 
@@ -153,27 +169,25 @@ def load_band(band):
         data_path=path / "data.fits",
         psf_path=path / "psf.fits",
         noise_map_path=path / "noise_map.fits",
-        pixel_scales=pixel_scale,
+        pixel_scales=0.03 if band in ("F115W", "F150W") else pixel_scale,
     )
 
 
 dataset = load_band("F444W")
-aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.subplot_imaging_dataset_intro(dataset, stretch=0.01, radius=2.5)
 
 """
-**🤖 Ask Gemini:** "What is a redshift, and how do astronomers know the ring galaxy is at z = 5.1?"
+**🤖 Ask AI:** "What is a redshift, and how do astronomers know the ring galaxy is at z = 5.1?"
 
-__Four Colours, One Ring__
+__Two Colours, One Ring__
 
-![The COSMOS-Web Ring in colour and in the F277W and F444W bands, with the lens galaxy, lensed source galaxy and extra galaxy marked](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/cosmos_web_ring_dataset.png)
 
-JWST photographed the ring in four colours of infrared light: F115W, F150W, F277W and F444W.
-These names describe the wavelength of the light: the number is in hundredths of a micron,
-so F444W corresponds to about 4.4 microns.
+Here we compare two infrared bands: F150W, centred near 1.5 microns, and F444W, near
+4.4 microns. A band is the range of wavelengths recorded in one image.
 
 Run the cell below to compare F150W (1.5 microns) with F444W (4.4 microns). The lens galaxy
 and the ring have different brightnesses in each colour, but the ring has **the same shape
-and size**. The overview image above currently shows F277W and F444W beside the colour picture.
+and size**. The two bands are stretched independently to show their structure, so equal colours do not imply equal flux.
 
 This happens because gravity bends light of every wavelength by the same amount. Astronomers
 call this **achromatic** lensing. The colours tell us about what the galaxies are made of,
@@ -187,18 +201,25 @@ curve, was 0.775" and 0.772", respectively. These results are recorded in
 """
 dataset_f150w = load_band("F150W")
 
+display_mask = al.Mask2D.circular(
+    shape_native=dataset.shape_native, pixel_scales=pixel_scale, radius=2.5
+)
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-aplt.plot_array(array=dataset_f150w.data, title="F150W (1.5 microns)", ax=axes[0])
-aplt.plot_array(array=dataset.data, title="F444W (4.4 microns)", ax=axes[1])
+display_mask_f150w = al.Mask2D.circular(
+    shape_native=dataset_f150w.shape_native, pixel_scales=dataset_f150w.pixel_scales, radius=2.5
+)
+aplt.plot_array(dataset_f150w.apply_mask(mask=display_mask_f150w).data,
+                ax=axes[0], title="F150W (1.5 microns)", stretch=0.01)
+aplt.plot_array(dataset.apply_mask(mask=display_mask).data,
+                ax=axes[1], title="F444W (4.4 microns)", stretch=0.01)
 plt.tight_layout()
 plt.show()
 
 """
-**🤖 Ask Gemini:** "Why does the ring look the same in every colour, when the galaxies themselves change colour?"
+**🤖 Ask AI:** "Why does the ring look the same in every colour, when the galaxies themselves change colour?"
 
 __Preparing The Data__
 
-![The COSMOS-Web Ring with arrows marking the lensed source galaxy, the lens galaxy and the extra galaxy, and the circular mask](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/cosmos_web_ring_dataset.png)
 
 Two steps prepare the image for our analysis.
 
@@ -206,9 +227,8 @@ Two steps prepare the image for our analysis.
    the pixels covering the extra galaxy. We give these pixels very little weight, so their
    light does not influence the fit.
 2. **Choose the area to analyse.** We use a circle with a radius of 2.1 arcseconds, a tiny
-   angle on the sky. The picture shows a smaller circle of 1.8 arcseconds, which already
-   includes the lens galaxy and the ring. We use 2.1 here to match the area used when fitting
-   the model we will examine below.
+   angle on the sky. Blank space outside this circle marks pixels excluded from the analysis.
+   We use 2.1 here to match the area used when fitting the model we will examine below.
 """
 mask_radius = 2.1
 
@@ -238,10 +258,17 @@ dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
 n_masked_pixels = int(dataset.mask.pixels_in_mask)
 print(f"Pixels inside the {mask_radius}\" mask: {n_masked_pixels}")
-aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.subplot_imaging_dataset_intro(
+    dataset, stretch=0.01, radius=2.5,
+    excluded_pixels=~mask_extra_galaxies.array,
+)
 
 """
-**🤖 Ask Gemini:** "Why do astronomers mask out neighbouring galaxies before fitting a model to an image?"
+Blank regions mark the area outside our mask and the down-weighted neighbouring galaxy.
+The noise colourbar describes the retained pixels, rather than the artificially huge
+uncertainty assigned to that neighbour.
+
+**🤖 Ask AI:** "Why do astronomers mask out neighbouring galaxies before fitting a model to an image?"
 
 __What A Lens Model Looks Like__
 
@@ -266,7 +293,7 @@ In the following sections, we will examine a model fitted to the same F444W data
 images are rotated so that north is up, so they appear at a slightly different angle from the
 images in this notebook.
 
-**🤖 Ask Gemini:** "What is a caustic in gravitational lensing, and why does a source inside it make an Einstein ring?"
+**🤖 Ask AI:** "What is a caustic in gravitational lensing, and why does a source inside it make an Einstein ring?"
 """
 
 """
@@ -341,7 +368,7 @@ print(f"Source:         a {type(source_galaxy.pixelization.mesh).__name__} pixel
       f"{source_galaxy.pixelization.mesh.pixels} pixels")
 
 """
-**🤖 Ask Gemini:** "What is a power-law mass profile, and what does its slope tell us about a galaxy?"
+**🤖 Ask AI:** "What is a power-law mass profile, and what does its slope tell us about a galaxy?"
 
 __Explore The Model__
 
@@ -493,7 +520,7 @@ help us identify where a model needs improvement.
 The mass measurement in the next section uses the original good model, unaffected by your
 experiments here.
 
-**🤖 Ask Gemini:** "How do the residuals change when the lens mass is wrong, compared with when the foreground galaxy's light is too bright?"
+**🤖 Ask AI:** "How do the residuals change when the lens mass is wrong, compared with when the foreground galaxy's light is too bright?"
 
 __The Mass Inside The Ring__
 
@@ -535,7 +562,7 @@ The ring encloses about **400 billion times the mass of the Sun**, mostly in sta
 matter. Our measurement of the Einstein radius also agrees with the value reported in the
 discovery paper.
 
-**🤖 Ask Gemini:** "How can a mass measurement from a lens include dark matter that we cannot see?"
+**🤖 Ask AI:** "How can a mass measurement from a lens include dark matter that we cannot see?"
 
 __Where Next__
 
@@ -566,5 +593,5 @@ The analysis that produced our model did this, but the fast reference script ret
 best model. To calculate uncertainty ranges, such as the ±0.04 arcseconds quoted by Mercier et
 al., follow the example in `scripts/imaging/modeling.py` in `autolens_workspace`.
 
-**🤖 Ask Gemini:** "How do astronomers estimate the uncertainty in a lens model's mass measurement?"
+**🤖 Ask AI:** "How do astronomers estimate the uncertainty in a lens model's mass measurement?"
 """
