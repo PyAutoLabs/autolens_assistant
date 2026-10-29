@@ -127,15 +127,3 @@ def test_optional_hands_pipeline_bootstraps_fresh_colab(tmp_path, monkeypatch):
     exec("".join(cell["source"]), {})
     assert events[0][-3:] == ["install", "autonerves", "--no-deps"]
     assert events[1] == (("autolens",), {"raise_error_if_not_gpu": False})
-
-
-def test_intro_helper_is_embedded_for_standalone_colab(tmp_path):
-    """Run the embedded helper definitions without importing autoassistant in Colab."""
-    source = tmp_path / "intro.py"
-    source.write_text("from autoassistant.intro_plots import plot_intro_dataset, plot_intro_array\n")
-    nb = json.loads(convert(source).read_text())
-    code = "\n".join("".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code")
-    assert "from autoassistant" not in code
-    import ast
-    names = {n.name for n in ast.parse(code).body if isinstance(n, ast.FunctionDef)}
-    assert {"plot_intro_dataset", "plot_intro_array"} <= names

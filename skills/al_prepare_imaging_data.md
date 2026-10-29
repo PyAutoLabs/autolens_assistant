@@ -30,16 +30,16 @@ example at `autolens_workspace:scripts/imaging/start_here.py`.
 ## First-look presentation for newcomers
 
 For a new assistant user or a lensing introduction, use the four-panel view from
-`autoassistant/intro_plots.py`: Image, Noise map, Signal-to-noise map, PSF.
+`aplt.subplot_imaging_dataset_intro`: Image, Noise map, Signal-to-noise map, PSF.
 
 ```python
-from autoassistant.intro_plots import plot_intro_dataset
-plot_intro_dataset(dataset, output_path=plot_dir, output_filename="dataset")
+import autolens.plot as aplt
+aplt.subplot_imaging_dataset_intro(dataset, output_path=plot_dir, output_filename="dataset", output_format="png")
 ```
 
-Run saved scripts from the assistant root with `PYTHONPATH=. python scripts/<name>.py`.
+The colormap, ticks, fonts and titles inherit PyAutoLens configuration.
 This replaces the full `aplt.subplot_imaging_dataset` call in the recipes below for that
-audience. For COSMOS-Web, use `colormap="magma", stretch=0.01, radius=2.5` to make the
+audience. For COSMOS-Web, use `stretch=0.01, radius=2.5` to make the
 lens and ring visible. For other datasets, leave `radius=None` to inspect the full field
 before choosing the mask. Never let a display crop replace contamination inspection.
 Keep numerical over-sampling in the preparation, but introduce its meaning and diagnostic

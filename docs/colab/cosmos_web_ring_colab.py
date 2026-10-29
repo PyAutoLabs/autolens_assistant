@@ -58,7 +58,6 @@ __Imports__
 
 Run the cell below to load the Python tools we will use throughout the notebook.
 """
-# @title Load plotting tools { display-mode: "form" }
 from autolens import jax_wrapper  # noqa: F401  Sets the JAX environment before other imports
 
 import urllib.request
@@ -70,8 +69,6 @@ import numpy as np
 
 import autolens as al
 import autolens.plot as aplt
-
-from autoassistant.intro_plots import plot_intro_dataset, plot_intro_array
 
 print(f"PyAutoLens version {al.__version__}")
 
@@ -165,38 +162,37 @@ def load_band(band):
         data_path=path / "data.fits",
         psf_path=path / "psf.fits",
         noise_map_path=path / "noise_map.fits",
-        pixel_scales=pixel_scale,
+        pixel_scales=0.03 if band in ("F115W", "F150W") else pixel_scale,
     )
 
 
 dataset = load_band("F444W")
-fig = plot_intro_dataset(dataset, colormap="magma", stretch=0.01, radius=2.5)
-plt.show()
+aplt.subplot_imaging_dataset_intro(dataset, stretch=0.01, radius=2.5)
 
 """
 **🤖 Ask Gemini:** "What is a redshift, and how do astronomers know the ring galaxy is at z = 5.1?"
 
 __Make The Image Your Own__
 
-![Four panels for a first look at the COSMOS-Web Ring](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/96e49bac7edd75670067d0e077184c2480a56637/docs/images/cosmos_web_ring_intro.png)
+![Four panels for a first look at the COSMOS-Web Ring](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/deba4e452bc625611e9d61bf17fd7c93da5d3988/docs/images/cosmos_web_ring_intro.png)
 
 Try a different colour map or brightness stretch. A smaller `stretch` brings up faint
 light; a larger one makes the bright centre more prominent. These controls change only
-the display, never the data or the lens model. Try `"cividis"` for a blue-to-yellow scale,
-then return to `"magma"` for the rest of the walkthrough.
+the display, never the data or the lens model. The default colormap comes from your PyAutoLens configuration, just like the ticks,
+titles and fonts. Try `"cividis"` for a blue-to-yellow scale, or leave `None` to use
+the configured default. These are library plotting options, available on your own data too.
 
 **🤖 Ask Gemini:** "Can you change the colour map and contrast so I can see the lens galaxy
 and the ring more clearly? Explain what changed in the picture."
 """
-image_colormap = "cividis"  # Try "magma", "cividis" or "viridis".
-image_stretch = 0.03        # Try 0.01, 0.03 or 0.1.
-fig = plot_intro_dataset(dataset, colormap=image_colormap, stretch=image_stretch, radius=2.5)
-plt.show()
+image_colormap = None  # None uses PyAutoLens configuration; try "magma" or "cividis".
+image_stretch = 0.01        # Try 0.01, 0.03 or 0.1.
+aplt.subplot_imaging_dataset_intro(dataset, colormap=image_colormap, stretch=image_stretch, radius=2.5)
 
 """
 __Four Colours, One Ring__
 
-![The COSMOS-Web Ring in F150W and F444W, with brightness stretches that reveal the lens and ring](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/96e49bac7edd75670067d0e077184c2480a56637/docs/images/cosmos_web_ring_bands.png)
+![The COSMOS-Web Ring in F150W and F444W, with brightness stretches that reveal the lens and ring](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/deba4e452bc625611e9d61bf17fd7c93da5d3988/docs/images/cosmos_web_ring_bands.png)
 
 JWST photographed the ring in four colours of infrared light: F115W, F150W, F277W and F444W.
 These names describe the wavelength of the light: the number is in hundredths of a micron,
@@ -218,9 +214,17 @@ curve, was 0.775" and 0.772", respectively. These results are recorded in
 """
 dataset_f150w = load_band("F150W")
 
+display_mask = al.Mask2D.circular(
+    shape_native=dataset.shape_native, pixel_scales=pixel_scale, radius=2.5
+)
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-plot_intro_array(dataset_f150w.data, axes[0], "F150W (1.5 microns)", radius=2.5)
-plot_intro_array(dataset.data, axes[1], "F444W (4.4 microns)", radius=2.5)
+display_mask_f150w = al.Mask2D.circular(
+    shape_native=dataset_f150w.shape_native, pixel_scales=dataset_f150w.pixel_scales, radius=2.5
+)
+aplt.plot_array(dataset_f150w.apply_mask(mask=display_mask_f150w).data,
+                ax=axes[0], title="F150W (1.5 microns)", stretch=0.01)
+aplt.plot_array(dataset.apply_mask(mask=display_mask).data,
+                ax=axes[1], title="F444W (4.4 microns)", stretch=0.01)
 plt.tight_layout()
 plt.show()
 
@@ -229,7 +233,7 @@ plt.show()
 
 __Preparing The Data__
 
-![Four-panel inspection of the prepared data: image, noise, signal-to-noise and PSF; grey marks excluded pixels](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/96e49bac7edd75670067d0e077184c2480a56637/docs/images/cosmos_web_ring_prepared.png)
+![Four-panel inspection of the prepared data: image, noise, signal-to-noise and PSF; blank areas mark excluded pixels](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/deba4e452bc625611e9d61bf17fd7c93da5d3988/docs/images/cosmos_web_ring_prepared.png)
 
 Two steps prepare the image for our analysis.
 
@@ -237,7 +241,7 @@ Two steps prepare the image for our analysis.
    the pixels covering the extra galaxy. We give these pixels very little weight, so their
    light does not influence the fit.
 2. **Choose the area to analyse.** We use a circle with a radius of 2.1 arcseconds, a tiny
-   angle on the sky. Grey outside this circle marks pixels excluded from the analysis.
+   angle on the sky. Blank space outside this circle marks pixels excluded from the analysis.
    We use 2.1 here to match the area used when fitting the model we will examine below.
 """
 mask_radius = 2.1
@@ -268,14 +272,13 @@ dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
 n_masked_pixels = int(dataset.mask.pixels_in_mask)
 print(f"Pixels inside the {mask_radius}\" mask: {n_masked_pixels}")
-fig = plot_intro_dataset(
-    dataset, colormap="magma", stretch=0.01, radius=2.5,
+aplt.subplot_imaging_dataset_intro(
+    dataset, stretch=0.01, radius=2.5,
     excluded_pixels=~mask_extra_galaxies.array,
 )
-plt.show()
 
 """
-Grey regions mark the area outside our mask and the down-weighted neighbouring galaxy.
+Blank regions mark the area outside our mask and the down-weighted neighbouring galaxy.
 The noise colourbar describes the retained pixels, rather than the artificially huge
 uncertainty assigned to that neighbour.
 

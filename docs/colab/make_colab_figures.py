@@ -39,7 +39,6 @@ from PIL import Image
 
 import autolens as al
 import autolens.plot as aplt
-from autoassistant.intro_plots import plot_intro_dataset, plot_intro_array
 
 REPO_PATH = Path(__file__).resolve().parents[2]
 BAND_PATH = REPO_PATH / "dataset" / "imaging" / "cosmos_web_ring" / "wavebands" / "F444W"
@@ -62,13 +61,19 @@ dataset = al.Imaging.from_fits(
     noise_map_path=BAND_PATH / "noise_map.fits",
     pixel_scales=PIXEL_SCALE,
 )
-plot_intro_dataset(dataset, radius=2.5, output_path=IMAGES_PATH,
-                   output_filename="cosmos_web_ring_intro")
+aplt.subplot_imaging_dataset_intro(dataset, radius=2.5, output_path=IMAGES_PATH,
+                   output_filename="cosmos_web_ring_intro", output_format="png")
 comparison, comparison_axes = plt.subplots(1, 2, figsize=(11, 5), layout="constrained")
+display_mask = al.Mask2D.circular(shape_native=dataset.shape_native,
+                                  pixel_scales=PIXEL_SCALE, radius=2.5)
 f150w = al.Array2D.from_fits(file_path=BAND_PATH.parent / "F150W" / "data.fits",
-                           pixel_scales=PIXEL_SCALE)
-plot_intro_array(f150w, comparison_axes[0], "F150W (1.5 microns)", radius=2.5)
-plot_intro_array(dataset.data, comparison_axes[1], "F444W (4.4 microns)", radius=2.5)
+                           pixel_scales=0.03)
+f150w = f150w.apply_mask(mask=al.Mask2D.circular(
+    shape_native=f150w.shape_native, pixel_scales=f150w.pixel_scales, radius=2.5
+))
+aplt.plot_array(f150w, ax=comparison_axes[0], title="F150W (1.5 microns)", stretch=0.01)
+aplt.plot_array(dataset.apply_mask(mask=display_mask).data, ax=comparison_axes[1],
+                title="F444W (4.4 microns)", stretch=0.01)
 comparison.savefig(IMAGES_PATH / "cosmos_web_ring_bands.png", dpi=150)
 plt.close(comparison)
 
@@ -82,9 +87,9 @@ mask = al.Mask2D.circular(
     shape_native=dataset.shape_native, pixel_scales=PIXEL_SCALE, radius=MASK_RADIUS
 )
 dataset = dataset.apply_mask(mask=mask)
-plot_intro_dataset(dataset, radius=2.5, output_path=IMAGES_PATH,
+aplt.subplot_imaging_dataset_intro(dataset, radius=2.5, output_path=IMAGES_PATH,
                    output_filename="cosmos_web_ring_prepared",
-                   excluded_pixels=~mask_extra_galaxies.array)
+                   excluded_pixels=~mask_extra_galaxies.array, output_format="png")
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
     sub_size_list=[4, 2, 2],

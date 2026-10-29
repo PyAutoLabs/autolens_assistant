@@ -169,7 +169,7 @@ banner.
 ## Introductory dataset figures
 
 For new assistant users and lensing introductions, show a four-panel dataset figure:
-Image, Noise map, Signal-to-noise map and PSF. Use `autoassistant/intro_plots.py` as in
+Image, Noise map, Signal-to-noise map and PSF. Use `aplt.subplot_imaging_dataset_intro` as in
 `al_prepare_imaging_data.md`. Keep over-sampling active in the calculation but leave its
 maps out of the introductory figure. Explain what colours mean and distinguish masked
 areas from zero brightness. Offer an optional change of colormap or contrast after the

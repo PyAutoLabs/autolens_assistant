@@ -88,19 +88,9 @@ def convert(script_path: Path, notebook_path: Path | None = None) -> Path:
     script_path = Path(script_path)
     if notebook_path is None:
         notebook_path = script_path.with_suffix(".ipynb")
-    text = script_path.read_text(encoding="utf-8")
-    # This assistant-owned helper must also run in standalone Colab, which has
-    # autolens_workspace but no autoassistant package. Embed trusted local source.
-    intro_import = "from autoassistant.intro_plots import plot_intro_dataset, plot_intro_array"
-    if intro_import in text.splitlines():
-        helper = Path(__file__).with_name("intro_plots.py").read_text(encoding="utf-8")
-        helper = helper.split("# Notebook helper code\n", 1)[1]
-        text = text.replace(intro_import, helper.rstrip())
-    cells = script_to_cells(text)
+    cells = script_to_cells(script_path.read_text(encoding="utf-8"))
     for i, cell in enumerate(cells):
         cell["id"] = f"cell-{i}"
-        if cell["cell_type"] == "code" and "".join(cell["source"]).startswith("# @title Load plotting tools"):
-            cell["metadata"].update({"cellView": "form", "jupyter": {"source_hidden": True}})
     notebook = {
         "cells": cells,
         "metadata": {
