@@ -34,6 +34,7 @@ __Contents__
 - **Imports:** Load the libraries.
 - **What Is A Strong Lens?:** How a galaxy's gravity bends light into arcs and rings.
 - **The Picture:** The JWST image of the ring, and the data we will work with.
+- **Make The Image Your Own:** Change the colour map and contrast.
 - **Four Colours, One Ring:** Why the ring looks the same in every JWST colour.
 - **Preparing The Data:** Remove a neighbouring galaxy's light from the analysis and choose the area to analyse.
 - **What A Lens Model Looks Like:** The published lens model of this ring, panel by panel.
@@ -57,6 +58,7 @@ __Imports__
 
 Run the cell below to load the Python tools we will use throughout the notebook.
 """
+# @title Load plotting tools { display-mode: "form" }
 from autolens import jax_wrapper  # noqa: F401  Sets the JAX environment before other imports
 
 import urllib.request
@@ -68,6 +70,8 @@ import numpy as np
 
 import autolens as al
 import autolens.plot as aplt
+
+from autoassistant.intro_plots import plot_intro_dataset, plot_intro_array
 
 print(f"PyAutoLens version {al.__version__}")
 
@@ -121,7 +125,15 @@ these, but for our analysis we use one colour at a time.
 
 Alongside the image, we need two things: an estimate of the uncertainty in the brightness of
 each pixel, and a description of how the telescope blurs a point of light. The cell below
-loads and displays all three.
+shows four panels: the **image**, the **noise map** (uncertainty per pixel), the
+**signal-to-noise map** (brightness divided by uncertainty), and the **PSF** (the
+image the telescope would make of a point of light).
+
+The image uses a brightness stretch to show the faint ring and bright central galaxy
+together. Its colours represent brightness in F444W, not the galaxies' actual colours.
+Each panel has its own scale; the colourbars show the original values. The plots below
+use the dataset's coordinate orientation; the colour composite above has been flipped
+vertically for presentation, so the neighbouring galaxy appears on the opposite side.
 """
 dataset_root = Path("dataset") / "imaging" / "cosmos_web_ring"  # Colab: autolens_workspace; else the assistant repo root.
 
@@ -158,14 +170,33 @@ def load_band(band):
 
 
 dataset = load_band("F444W")
-aplt.subplot_imaging_dataset(dataset=dataset)
+fig = plot_intro_dataset(dataset, colormap="magma", stretch=0.01, radius=2.5)
+plt.show()
 
 """
 **🤖 Ask Gemini:** "What is a redshift, and how do astronomers know the ring galaxy is at z = 5.1?"
 
+__Make The Image Your Own__
+
+![Four panels for a first look at the COSMOS-Web Ring](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/96e49bac7edd75670067d0e077184c2480a56637/docs/images/cosmos_web_ring_intro.png)
+
+Try a different colour map or brightness stretch. A smaller `stretch` brings up faint
+light; a larger one makes the bright centre more prominent. These controls change only
+the display, never the data or the lens model. Try `"cividis"` for a blue-to-yellow scale,
+then return to `"magma"` for the rest of the walkthrough.
+
+**🤖 Ask Gemini:** "Can you change the colour map and contrast so I can see the lens galaxy
+and the ring more clearly? Explain what changed in the picture."
+"""
+image_colormap = "cividis"  # Try "magma", "cividis" or "viridis".
+image_stretch = 0.03        # Try 0.01, 0.03 or 0.1.
+fig = plot_intro_dataset(dataset, colormap=image_colormap, stretch=image_stretch, radius=2.5)
+plt.show()
+
+"""
 __Four Colours, One Ring__
 
-![The COSMOS-Web Ring in colour and in the F277W and F444W bands, with the lens galaxy, lensed source galaxy and extra galaxy marked](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/cosmos_web_ring_dataset.png)
+![The COSMOS-Web Ring in F150W and F444W, with brightness stretches that reveal the lens and ring](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/96e49bac7edd75670067d0e077184c2480a56637/docs/images/cosmos_web_ring_bands.png)
 
 JWST photographed the ring in four colours of infrared light: F115W, F150W, F277W and F444W.
 These names describe the wavelength of the light: the number is in hundredths of a micron,
@@ -173,7 +204,7 @@ so F444W corresponds to about 4.4 microns.
 
 Run the cell below to compare F150W (1.5 microns) with F444W (4.4 microns). The lens galaxy
 and the ring have different brightnesses in each colour, but the ring has **the same shape
-and size**. The overview image above currently shows F277W and F444W beside the colour picture.
+and size**. The two bands are stretched independently to show their structure, so equal colours do not imply equal flux.
 
 This happens because gravity bends light of every wavelength by the same amount. Astronomers
 call this **achromatic** lensing. The colours tell us about what the galaxies are made of,
@@ -188,8 +219,8 @@ curve, was 0.775" and 0.772", respectively. These results are recorded in
 dataset_f150w = load_band("F150W")
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-aplt.plot_array(array=dataset_f150w.data, title="F150W (1.5 microns)", ax=axes[0])
-aplt.plot_array(array=dataset.data, title="F444W (4.4 microns)", ax=axes[1])
+plot_intro_array(dataset_f150w.data, axes[0], "F150W (1.5 microns)", radius=2.5)
+plot_intro_array(dataset.data, axes[1], "F444W (4.4 microns)", radius=2.5)
 plt.tight_layout()
 plt.show()
 
@@ -198,7 +229,7 @@ plt.show()
 
 __Preparing The Data__
 
-![The COSMOS-Web Ring with arrows marking the lensed source galaxy, the lens galaxy and the extra galaxy, and the circular mask](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/images/cosmos_web_ring_dataset.png)
+![Four-panel inspection of the prepared data: image, noise, signal-to-noise and PSF; grey marks excluded pixels](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/96e49bac7edd75670067d0e077184c2480a56637/docs/images/cosmos_web_ring_prepared.png)
 
 Two steps prepare the image for our analysis.
 
@@ -206,9 +237,8 @@ Two steps prepare the image for our analysis.
    the pixels covering the extra galaxy. We give these pixels very little weight, so their
    light does not influence the fit.
 2. **Choose the area to analyse.** We use a circle with a radius of 2.1 arcseconds, a tiny
-   angle on the sky. The picture shows a smaller circle of 1.8 arcseconds, which already
-   includes the lens galaxy and the ring. We use 2.1 here to match the area used when fitting
-   the model we will examine below.
+   angle on the sky. Grey outside this circle marks pixels excluded from the analysis.
+   We use 2.1 here to match the area used when fitting the model we will examine below.
 """
 mask_radius = 2.1
 
@@ -238,9 +268,17 @@ dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
 n_masked_pixels = int(dataset.mask.pixels_in_mask)
 print(f"Pixels inside the {mask_radius}\" mask: {n_masked_pixels}")
-aplt.subplot_imaging_dataset(dataset=dataset)
+fig = plot_intro_dataset(
+    dataset, colormap="magma", stretch=0.01, radius=2.5,
+    excluded_pixels=~mask_extra_galaxies.array,
+)
+plt.show()
 
 """
+Grey regions mark the area outside our mask and the down-weighted neighbouring galaxy.
+The noise colourbar describes the retained pixels, rather than the artificially huge
+uncertainty assigned to that neighbour.
+
 **🤖 Ask Gemini:** "Why do astronomers mask out neighbouring galaxies before fitting a model to an image?"
 
 __What A Lens Model Looks Like__

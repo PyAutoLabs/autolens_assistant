@@ -2,10 +2,10 @@
 COSMOS-Web Ring Colab Figures
 =============================
 
-Builds the two static figures the Colab notebook (`docs/colab/cosmos_web_ring_colab.py`) shows
+Builds the introductory dataset and band-comparison figures, plus the two model figures the Colab notebook (`docs/colab/cosmos_web_ring_colab.py`) shows
 *before* the code that computes them, so a reader sees the result of a section the moment they
 open it: the good lens model's pieces ("The Model") and its Einstein radius
-("The Mass Inside The Ring"). Both come from evaluating the committed model under
+("The Mass Inside The Ring"). The model figures come from evaluating the committed model under
 `scripts/cosmos_web_ring/results/` exactly as the notebook does, so the pictures and the
 notebook's executed output agree. Run from the repository root (`make colab` runs it first)::
 
@@ -39,6 +39,7 @@ from PIL import Image
 
 import autolens as al
 import autolens.plot as aplt
+from autoassistant.intro_plots import plot_intro_dataset, plot_intro_array
 
 REPO_PATH = Path(__file__).resolve().parents[2]
 BAND_PATH = REPO_PATH / "dataset" / "imaging" / "cosmos_web_ring" / "wavebands" / "F444W"
@@ -61,6 +62,16 @@ dataset = al.Imaging.from_fits(
     noise_map_path=BAND_PATH / "noise_map.fits",
     pixel_scales=PIXEL_SCALE,
 )
+plot_intro_dataset(dataset, radius=2.5, output_path=IMAGES_PATH,
+                   output_filename="cosmos_web_ring_intro")
+comparison, comparison_axes = plt.subplots(1, 2, figsize=(11, 5), layout="constrained")
+f150w = al.Array2D.from_fits(file_path=BAND_PATH.parent / "F150W" / "data.fits",
+                           pixel_scales=PIXEL_SCALE)
+plot_intro_array(f150w, comparison_axes[0], "F150W (1.5 microns)", radius=2.5)
+plot_intro_array(dataset.data, comparison_axes[1], "F444W (4.4 microns)", radius=2.5)
+comparison.savefig(IMAGES_PATH / "cosmos_web_ring_bands.png", dpi=150)
+plt.close(comparison)
+
 mask_extra_galaxies = al.Mask2D.from_fits(
     file_path=BAND_PATH / "mask_extra_galaxies.fits",
     pixel_scales=PIXEL_SCALE,
@@ -71,6 +82,9 @@ mask = al.Mask2D.circular(
     shape_native=dataset.shape_native, pixel_scales=PIXEL_SCALE, radius=MASK_RADIUS
 )
 dataset = dataset.apply_mask(mask=mask)
+plot_intro_dataset(dataset, radius=2.5, output_path=IMAGES_PATH,
+                   output_filename="cosmos_web_ring_prepared",
+                   excluded_pixels=~mask_extra_galaxies.array)
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
     sub_size_list=[4, 2, 2],
