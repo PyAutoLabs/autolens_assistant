@@ -58,8 +58,11 @@ def test_first_code_cell_is_the_colab_setup_right_after_the_title():
 
 def test_prose_covers_the_promised_content():
     prose = _prose()
-    for band in ("F115W", "F150W", "F277W", "F444W"):
+    for band in ("F150W", "F444W"):
         assert band in prose, band
+    assert "__Two Colours, One Ring__" in prose
+    assert "Make The Image Your Own" not in prose
+    assert "**🤖 Ask AI:**" in prose
     assert "achromatic" in prose
     assert "Gemini" in prose
     assert STARTING_PROMPT_OPENING in prose
