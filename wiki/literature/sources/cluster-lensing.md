@@ -49,6 +49,35 @@ Millimeter Telescope. For this wiki, the important point is that some of
 the most luminous submillimetre sources are cluster-lensed DSFGs, making
 cluster lensing a route into high-redshift ISM and gas studies.
 
+## Abedi 2026 — LEGGOS II arc magnifications
+
+**Canonical BibTeX key:** `Abedi2026`
+**Reference:** arXiv:2606.20804; doi:10.48550/arXiv.2606.20804 (submitted to ApJ)
+**Concepts:** [[cluster-lensing]], [[lensed-source-science]]
+
+**Supports:**
+- The magnification of an extended arc can be computed as its image-plane area over the
+  source-plane area it maps from, with the source-plane area the sum over the arc's pixels
+  of pixel area divided by that pixel's magnification (their Eq. 6-7).
+- The magnification of a compact clump is taken as the lens model's magnification-map
+  value at the pixel containing the clump's centroid.
+- Arc masks are kept on the arc's own side of the critical curve, recomputed for each
+  posterior model, so that masks of separate images do not merge.
+- Magnification uncertainties are estimated from the spread over 300 models drawn from
+  the Lenstool MCMC posterior.
+- Applied to the JWST + HST model of the cluster SDSSJ1110+6459 and its giant arc at
+  z = 2.48.
+
+**Use when:**
+- Citing the area (pixel-inversion) definition of an arc's magnification, or the
+  map-value magnification of a clump, in cluster or giant-arc source science.
+- Motivating per-image segmentation by the critical curve and posterior-draw
+  magnification errors.
+
+**Do not use for:**
+- Galaxy-scale lens modelling methodology, or claims about PyAutoLens itself (the paper
+  uses Lenstool).
+
 ## See also
 
 - [[cluster-lensing]]
