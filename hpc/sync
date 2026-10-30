@@ -11,17 +11,17 @@
 # Transfer:
 #   hpc/sync push                    Push code and data to the HPC
 #   hpc/sync push --no-data          Push code only (skip dataset/)
-#   hpc/sync pull                    Download SLURM logs then results from the HPC
+#   hpc/sync pull [dir ...]          Download SLURM logs then results (only the named roots, if given)
 #   hpc/sync logs                    Download SLURM output/error logs only (fast, use mid-run)
 #   hpc/sync sync                    Push, then pull (default)
 #   hpc/sync sync --no-data          Push code only, then pull
 #   hpc/sync push-data-init          First-time dataset upload via tar pipe
 #   hpc/sync pull-full               Full output download via tar pipe
-#   hpc/sync status                  Dry run — show what would transfer
+#   hpc/sync status [dir ...]        Dry run — show what would transfer
 #
 # Jobs (no manual SSH required):
-#   hpc/sync submit [gpu|cpu] <script>   Submit a SLURM job
-#   hpc/sync push-submit [gpu|cpu] <script>  Push code then submit
+#   hpc/sync submit [gpu|cpu] <script> [sbatch arg ...]       Submit a SLURM job
+#   hpc/sync push-submit [gpu|cpu] <script> [sbatch arg ...]  Push code then submit
 #   hpc/sync jobs                    Show queued/running jobs (squeue)
 #   hpc/sync sacct                   Show job history and exit codes (sacct)
 #   hpc/sync cancel <job_id>         Cancel a job by ID
@@ -32,6 +32,8 @@
 #   hpc/sync du                      Show remote disk usage
 #   hpc/sync check                   Verify SSH connection and remote paths
 #   hpc/sync clear-logs [gpu|cpu]    Delete SLURM output/error log files
+#
+#   hpc/sync help                    Print the command list
 
 set -euo pipefail
 
@@ -39,13 +41,25 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 CONF="${SCRIPT_DIR}/sync.conf"
 
+# `help` is answered before the configuration below, which hard-fails when
+# HPC_HOST/HPC_BASE are unset — the command list has to be readable by someone
+# who has not written hpc/sync.conf yet.
+case "${1:-}" in
+    help|--help|-h) HELP_REQUESTED=1 ;;
+    *)              HELP_REQUESTED=0 ;;
+esac
+
 # ---------------------------------------------------------------------------
 # Configuration — loaded from hpc/sync.conf, with environment variable overrides
 # ---------------------------------------------------------------------------
 [[ -f "$CONF" ]] && source "$CONF"
 
-HPC_HOST="${HPC_HOST:?HPC_HOST not set. Copy hpc/sync.conf.example → hpc/sync.conf and edit it.}"
-HPC_BASE="${HPC_BASE:?HPC_BASE not set. Copy hpc/sync.conf.example → hpc/sync.conf and edit it.}"
+if [[ "$HELP_REQUESTED" -eq 0 ]]; then
+    HPC_HOST="${HPC_HOST:?HPC_HOST not set. Copy hpc/sync.conf.example → hpc/sync.conf and edit it.}"
+    HPC_BASE="${HPC_BASE:?HPC_BASE not set. Copy hpc/sync.conf.example → hpc/sync.conf and edit it.}"
+fi
+HPC_HOST="${HPC_HOST:-}"
+HPC_BASE="${HPC_BASE:-}"
 PROJECT_NAME="${PROJECT_NAME:-$(basename "$PROJECT_ROOT")}"
 
 REMOTE="${HPC_HOST}:${HPC_BASE}/${PROJECT_NAME}"
@@ -74,8 +88,50 @@ LOG_DIRS=(
     hpc/batch_cpu/error
 )
 
-# Pulled from the HPC after jobs finish.
+# Pulled from the HPC after jobs finish. A directory that does not exist on the
+# HPC is skipped rather than failing.
 PULL_DIRS=(output)
+
+# Extra roots the caller asks for, space-separated — e.g. a run written to a
+# custom PYAUTO_OUTPUT_DIR, or the `output*` roots a check-in passes — so they
+# are pulled without this list being edited by hand. The expansion is
+# deliberately unquoted: word-splitting is how the list is parsed. Appended,
+# never replacing; an unset variable leaves the pull exactly as it was.
+if [[ -n "${PYAUTO_PULL_DIRS:-}" ]]; then
+    for _extra in ${PYAUTO_PULL_DIRS}; do
+        [[ " ${PULL_DIRS[*]} " == *" ${_extra} "* ]] || PULL_DIRS+=("${_extra}")
+    done
+    unset _extra
+fi
+
+# Restrict PULL_DIRS to the roots named on the command line, for this call only.
+#
+# `pull` and `status` walk every root in PULL_DIRS, which for a large tree means
+# rsync stats tens of thousands of result files. Naming the roots skips that
+# walk. No argument leaves PULL_DIRS exactly as it was.
+#
+# A name is validated against the list built above, PYAUTO_PULL_DIRS included:
+# a typo pulls nothing silently, which on a several-hour transfer is worse than
+# an error.
+restrict_pull_dirs() {
+    [[ $# -eq 0 ]] && return 0
+
+    local selected=()
+    for requested in "$@"; do
+        # Global flags (`--no-data`) are consumed by the dispatcher below.
+        [[ "${requested}" == -* ]] && continue
+        if [[ " ${PULL_DIRS[*]} " == *" ${requested} "* ]]; then
+            selected+=("${requested}")
+        else
+            echo "ERROR: '${requested}' is not one of this project's result roots: ${PULL_DIRS[*]}"
+            echo "       (add one with PYAUTO_PULL_DIRS='<name> ...')"
+            exit 1
+        fi
+    done
+
+    [[ ${#selected[@]} -gt 0 ]] && PULL_DIRS=("${selected[@]}")
+    return 0
+}
 
 # ---------------------------------------------------------------------------
 # rsync options
@@ -223,7 +279,8 @@ pull_logs() {
         mkdir -p "$local_dir"
         echo "    ${dir}/"
         "${RSYNC[@]}" "${EXCLUDES[@]}" --update ${dryrun} \
-            "${remote_dir}" "${local_dir}" || true
+            "${remote_dir}" "${local_dir}" \
+            || echo "    skip: ${dir}/ not present on the HPC"
     done
 }
 
@@ -236,21 +293,19 @@ pull() {
     local zip_count=0
     for dir in "${PULL_DIRS[@]}"; do
         echo "    ${dir}/"
-        # Ensure the remote directory exists before pulling; if jobs haven't run
-        # yet the directory may be absent and rsync would abort with exit code 23.
-        if [[ -z "$dryrun" ]]; then
-            ssh "${HPC_HOST}" "mkdir -p '${HPC_BASE}/${PROJECT_NAME}/${dir}'" 2>/dev/null || true
-        fi
+        mkdir -p "${PROJECT_ROOT}/${dir}"
         # --update          skip local files that are newer than the remote copy
         # --exclude         omit search_internal (large sampler state, not needed locally)
-        # Tolerate rsync partial-transfer warnings (exit 23/24) which are
-        # normal when jobs are still writing files on the remote side.
+        # A root that is not on the HPC (no job has written it yet) is skipped,
+        # not created there; rsync partial-transfer warnings (exit 23/24) while
+        # jobs are still writing are tolerated the same way.
         "${RSYNC[@]}" "${EXCLUDES[@]}" \
             --update \
             --exclude='search_internal' \
             ${dryrun} \
             "${REMOTE}/${dir}/" \
-            "${PROJECT_ROOT}/${dir}/" || true
+            "${PROJECT_ROOT}/${dir}/" \
+            || echo "    skip: ${dir}/ not present on the HPC"
 
         # Unzip any new .zip files immediately after rsync
         if [[ -z "$dryrun" ]]; then
@@ -314,13 +369,23 @@ status() {
 # Job commands
 # ---------------------------------------------------------------------------
 
+submit_usage() {
+    local verb="${1}"
+    echo "Usage: $(basename "$0") ${verb} [gpu|cpu] <script_name> [sbatch arg ...]"
+    echo "  e.g. hpc/sync ${verb} gpu template"
+    echo ""
+    echo "  Anything after <script_name> is passed straight to sbatch, which is how a"
+    echo "  submit script's variables are overridden — sbatch does not carry your"
+    echo "  login shell's exports into the job:"
+    echo "    hpc/sync ${verb} cpu template --export=ALL,SAMPLE=my_sample"
+}
+
 submit() {
     local batch_type="${1:-}"
     local script_name="${2:-}"
 
     if [[ -z "$batch_type" || -z "$script_name" ]]; then
-        echo "Usage: $(basename "$0") submit [gpu|cpu] <script_name>"
-        echo "  e.g. hpc/sync submit gpu template"
+        submit_usage submit
         exit 1
     fi
     if [[ "$batch_type" != "gpu" && "$batch_type" != "cpu" ]]; then
@@ -328,10 +393,21 @@ submit() {
         exit 1
     fi
 
+    # Everything after the script name is an sbatch argument (`--export=...`,
+    # `--array=...`, a different `--time`). They go *before* the script name,
+    # where sbatch expects its own options, and each is shell-quoted for the
+    # remote shell ssh runs the command line through, so an argument containing
+    # spaces arrives as one.
+    local sbatch_args=""
+    local arg
+    for arg in "${@:3}"; do
+        sbatch_args+="$(printf '%q' "${arg}") "
+    done
+
     local remote_dir="${HPC_BASE}/${PROJECT_NAME}/hpc/batch_${batch_type}"
-    echo "==> [submit] sbatch ${script_name}  (batch_${batch_type})  @  ${HPC_HOST}"
+    echo "==> [submit] sbatch ${*:3} ${script_name}  (batch_${batch_type})  @  ${HPC_HOST}"
     echo ""
-    ssh "${HPC_HOST}" "cd '${remote_dir}' && sbatch '${script_name}'"
+    ssh "${HPC_HOST}" "cd '${remote_dir}' && sbatch ${sbatch_args}'${script_name}'"
 }
 
 push_submit() {
@@ -339,14 +415,13 @@ push_submit() {
     local script_name="${2:-}"
 
     if [[ -z "$batch_type" || -z "$script_name" ]]; then
-        echo "Usage: $(basename "$0") push-submit [gpu|cpu] <script_name>"
-        echo "  e.g. hpc/sync push-submit gpu template"
+        submit_usage push-submit
         exit 1
     fi
 
     push
     echo ""
-    submit "$batch_type" "$script_name"
+    submit "$@"
 }
 
 jobs_cmd() {
@@ -541,16 +616,19 @@ print_help() {
     echo "Transfer:"
     echo "  push                         Upload code, config, and data to the HPC"
     echo "  push --no-data               Upload code only"
-    echo "  pull                         Download SLURM logs then results"
+    echo "  pull [dir ...]               Download SLURM logs then results"
+    echo "                               (name result roots to pull only those)"
     echo "  logs                         Download SLURM logs only (fast, use mid-run)"
     echo "  sync                         push then pull (default)"
     echo "  push-data-init               First-time dataset upload via tar pipe"
     echo "  pull-full                    Full output download via tar pipe"
-    echo "  status                       Dry run — show what would transfer"
+    echo "  status [dir ...]             Dry run — show what would transfer"
     echo ""
     echo "Jobs:"
-    echo "  submit [gpu|cpu] <script>    Submit a SLURM job"
-    echo "  push-submit [gpu|cpu] <script>  Push code then submit"
+    echo "  submit [gpu|cpu] <script> [sbatch arg ...]"
+    echo "                               Submit a SLURM job; extra arguments go to sbatch"
+    echo "  push-submit [gpu|cpu] <script> [sbatch arg ...]"
+    echo "                               Push code then submit"
     echo "  jobs                         Show queued/running jobs (squeue)"
     echo "  sacct                        Show job history and exit codes"
     echo "  cancel <job_id>              Cancel a job by ID"
@@ -567,7 +645,15 @@ print_help() {
 
 # ---------------------------------------------------------------------------
 cmd="${1:-sync}"
-[[ "${2:-}" == "--no-data" ]] && SKIP_DATA=1
+
+if [[ "$HELP_REQUESTED" -eq 1 ]]; then
+    print_help
+    exit 0
+fi
+
+if [[ "${2:-}" == "--no-data" ]]; then
+    SKIP_DATA=1
+fi
 
 echo ""
 echo "Project : ${PROJECT_NAME}"
@@ -576,14 +662,14 @@ echo ""
 
 case "$cmd" in
     push)            push ;;
-    pull)            pull ;;
+    pull)            restrict_pull_dirs "${@:2}" && pull ;;
     logs)            pull_logs ;;
     sync)            push && echo "" && pull ;;
     push-data-init)  push_data_init ;;
     pull-full)       pull_full ;;
-    status)          status ;;
-    submit)          submit "${2:-}" "${3:-}" ;;
-    push-submit)     push_submit "${2:-}" "${3:-}" ;;
+    status)          restrict_pull_dirs "${@:2}" && status ;;
+    submit)          submit "${@:2}" ;;
+    push-submit)     push_submit "${@:2}" ;;
     jobs)            jobs_cmd ;;
     sacct)           sacct_cmd ;;
     cancel)          cancel "${2:-}" ;;
@@ -592,8 +678,12 @@ case "$cmd" in
     du)              du_cmd ;;
     check)           check_cmd ;;
     clear-logs)      clear_logs "${2:-}" ;;
-    help)            print_help; exit 0 ;;
-    *)               print_help; exit 1 ;;
+    *)
+        echo "Unknown command: ${cmd}"
+        echo ""
+        print_help
+        exit 1
+        ;;
 esac
 
 echo ""
