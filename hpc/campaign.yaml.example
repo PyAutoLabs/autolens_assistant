@@ -1,0 +1,59 @@
+# campaign.yaml — one declaration for a modelling campaign on the HPC.
+# ─────────────────────────────────────────────────────────────────────────────
+# Copy to hpc/campaign.yaml and edit. `hpc/sync push` sends it with the rest of hpc/;
+# every campaign verb (`hpc/sync status|plan|resubmit|report|act`) then runs
+# `python -m autofit.campaign` on the cluster against it. See
+# skills/hpc_campaign.md for the walk-through and wiki/core/operations/hpc.md for the
+# ideas behind it.
+#
+# The manifest lists one object per line ("<sample> <dataset>" here); its 0-based line
+# number is the object's campaign index, the same in every stage. Each stage runs
+# hpc/batch_cpu/stage for every index, which calls scripts/<STAGE_SCRIPT> with
+# --sample=... --dataset=... and records the task for the collector.
+# ─────────────────────────────────────────────────────────────────────────────
+
+campaign: my_sample_slam
+# Must be the project's path on the cluster: $HPC_BASE/$PROJECT_NAME from hpc/sync.conf.
+project_root: /path/to/hpc/scratch/autolens_assistant
+manifest: hpc/manifest.txt
+manifest_fields: [sample, dataset]
+chunk: 1000            # tasks per array; at most the site's MaxArraySize
+site: ral              # PyAutoNerves site file: partitions, limits, power and carbon constants
+scheduler: slurm
+status_root: output    # where fits write <output_path>.status.json
+log_dir: hpc/batch_cpu/output
+
+stages:
+  source_lp:
+    script: hpc/batch_cpu/stage
+    env: {STAGE_SCRIPT: slam_source_lp.py}
+    resources: {cpus: 4, mem_per_cpu_mb: 3072, time: "04:00:00",
+                partition: ral, throttle: 200, nice: 1000}
+    success: {zip_complete: "output/{sample}/{dataset}/source_lp",
+              members: [files/samples_summary.json]}
+    retry: {timeout: {time: "p95+25%", max: 1}, oom: {mem: "peak*1.5", max: 1}}
+    evidence:
+      keys: {dataset_type: imaging, variant: mge, instrument: hst}
+
+  source_pix:
+    after: {source_lp: aftercorr}   # index i starts when source_lp index i has succeeded
+    script: hpc/batch_cpu/stage
+    env: {STAGE_SCRIPT: slam_source_pix.py}
+    resources: {cpus: 8, mem_per_cpu_mb: 2048, time: "10:00:00",
+                partition: ral, throttle: 100, nice: 1000}
+    success: {zip_complete: "output/{sample}/{dataset}/source_pix",
+              members: [files/samples_summary.json]}
+    retry: {timeout: {time: "p95+25%", max: 1}, oom: {mem: "peak*1.5", max: 1}}
+    evidence:
+      keys: {dataset_type: imaging, variant: delaunay, instrument: hst}
+
+  mass_total:
+    after: {source_pix: aftercorr}
+    script: hpc/batch_cpu/stage
+    env: {STAGE_SCRIPT: slam_mass_total.py}
+    resources: {cpus: 8, mem_per_cpu_mb: 2048, time: "10:00:00",
+                partition: ral, throttle: 100, nice: 1000}
+    success: {zip_complete: "output/{sample}/{dataset}/mass_total",
+              members: [files/samples_summary.json]}
+    evidence:
+      keys: {dataset_type: imaging, variant: delaunay, instrument: hst}

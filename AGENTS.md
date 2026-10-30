@@ -275,7 +275,11 @@ Load operational references on demand, not every session:
 - **Dataset layout + `info.json`** → [`wiki/core/operations/dataset.md`](./wiki/core/operations/dataset.md).
 - **HPC science** (cores, JAX/GPU, SLURM concepts) → [`wiki/core/operations/hpc.md`](./wiki/core/operations/hpc.md);
   **HPC infrastructure shipped here** (`hpc/template.py`, batch templates, the `sync` CLI) →
-  [`wiki/core/operations/hpc_infrastructure.md`](./wiki/core/operations/hpc_infrastructure.md).
+  [`wiki/core/operations/hpc_infrastructure.md`](./wiki/core/operations/hpc_infrastructure.md);
+  **a sample through several stages on a cluster** (`hpc/campaign.yaml`, `hpc/sync
+  status|plan|resubmit|report|act`) → [`hpc_campaign`](./skills/hpc_campaign.md). Queue
+  changes go only through `hpc/sync act` (logged) and jobs start only through `hpc/sync
+  submit`; never run `sbatch`/`scontrol`/`scancel` over ssh directly.
 - **Installation** → [`wiki/core/operations/installation.md`](./wiki/core/operations/installation.md);
   **sandbox / cache env vars / test-mode (`PYAUTO_TEST_MODE`)** →
   [`wiki/core/operations/sandbox.md`](./wiki/core/operations/sandbox.md).
