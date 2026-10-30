@@ -38,6 +38,10 @@ magnification at every position behind it.
 - **High-z science** — clusters magnify galaxies at z > 6 by factors of
   10–100, enabling JWST observations of otherwise undetectable sources
   ([[hubble-frontier-fields]], Atek 2015).
+- **Arc magnifications** — the magnification of a giant arc is commonly its
+  image-plane area over the source-plane area it maps from, summing pixel
+  area divided by the local magnification, with images separated by the
+  critical curve and errors from posterior draws (Abedi 2026, LEGGOS II).
 - **Cosmography** — geometric constraints from multiple sources at
   different z_s give independent constraints on Ω_m, w (Jullo 2008,
   Caminha 2022).
