@@ -7,7 +7,7 @@ sources:
       - scripts/guides/hpc/example_cpu_and_gpu.py
       - scripts/imaging/features/pixelization/cpu_fast_modeling.py
     pinned_commit: main
-last_updated: 2026-07-15
+last_updated: 2026-10-30
 ---
 
 # HPC and cluster runs
@@ -76,7 +76,12 @@ all available VRAM.
 
 ## Batch submission
 
-Most HPC sites use SLURM. A skeleton `submit.sbatch`:
+Most HPC sites use SLURM. One lens is one job; a sample is a **job array**, one lens per
+array task, because lenses are independent and every pipeline stage takes
+`--sample`/`--dataset` arguments. The assistant ships array templates
+(`hpc/batch_cpu/template`, `hpc/batch_gpu/template`) for that.
+
+A skeleton job script, for reference:
 
 ```bash
 #!/bin/bash
@@ -84,26 +89,49 @@ Most HPC sites use SLURM. A skeleton `submit.sbatch`:
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G
 #SBATCH --time=24:00:00
-#SBATCH --output=slurm-%j.out
+#SBATCH --array=0-99
+#SBATCH --output=slurm-%A_%a.out
 
 source /path/to/venv/bin/activate
 export NUMBA_CACHE_DIR=$TMPDIR/numba_cache
 export MPLCONFIGDIR=$TMPDIR/matplotlib
 
-python scripts/run_fit.py
+python scripts/run_fit.py --lens-index=$SLURM_ARRAY_TASK_ID
 ```
 
 Cache dirs go to `$TMPDIR` so each job gets its own scratch space.
 
-For per-lens batches:
+## Running a campaign
 
-```bash
-#SBATCH --array=0-99
-python scripts/run_fit.py --lens-index=$SLURM_ARRAY_TASK_ID
-```
+Once a sample runs through several stages (SOURCE LP → SOURCE PIX → MASS) with hundreds of
+lenses, the hard part is no longer one job script. It is knowing what to ask for, what
+failed and why, what to resubmit, and what it all cost. A **campaign** handles that: one
+`hpc/campaign.yaml` declares the manifest, the stages, their resources and how each stage
+waits for the one before, and `hpc/sync` drives PyAutoFit's campaign tools on the cluster.
 
-The workspace `scripts/guides/hpc/batch_cpu/` and `scripts/guides/hpc/batch_gpu/` folders
-have fuller templates.
+1. **Plan before you submit.** `hpc/sync plan hpc/campaign.yaml` proposes CPUs, memory,
+   wall time and an ETA per stage from profiling evidence and, once you have one, a pilot.
+   Every number carries a grade saying how good its evidence is.
+2. **Pilot a small slice first** (1–2 % of the manifest, spread over object sizes), then
+   plan again from what the pilot measured. Most failures of a big campaign (memory asked
+   for and never used, wall times too short) show up in a pilot.
+3. **Submit** the campaign once the plan is agreed.
+4. **Check in** with `hpc/sync status hpc/campaign.yaml`: a short digest of counts, wall
+   time and memory against what was asked, timeouts, out-of-memory kills and other
+   failures, each failed task listed by class.
+5. **Triage**: `hpc/sync resubmit ... --stage S --class timeout` writes a resubmit
+   *proposal* sized from the failed tasks' own measurements (a timeout gets p95 + 25 % wall
+   time, an out-of-memory kill 1.5× its peak). Nothing is resubmitted until someone
+   approves it and runs `hpc/sync act resubmit`.
+6. **Report**: `hpc/sync report hpc/campaign.yaml --site ral` writes the compute, failure
+   census and an energy and carbon *estimate* (Green Algorithms model, with a range) with a
+   paragraph you can put in a paper.
+
+Every change to jobs already queued (`hold`, `release`, `throttle`, `update-pending`,
+`resubmit`, `cancel`) goes through `hpc/sync act` and is written to the campaign's
+`actions.log`. The machinery is documented in
+[`operations/hpc_infrastructure`](./hpc_infrastructure.md); the
+[`hpc_campaign`](../../../skills/hpc_campaign.md) skill walks through it.
 
 ## Persisting outputs
 
@@ -134,5 +162,7 @@ single-node multi-core; see the workspace HPC guide for the exact incantation.
 ## See also
 
 - `autolens_workspace:scripts/guides/hpc/` — canonical recipes and batch templates.
+- [`operations/hpc_infrastructure`](./hpc_infrastructure.md) — the `hpc/` kit and `hpc/sync`
+  commands shipped with the assistant.
 - [`operations/sandbox`](./sandbox.md) — env vars to set.
 - [`operations/installation`](./installation.md) — JAX with GPU support.

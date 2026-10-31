@@ -103,6 +103,10 @@ them.
 - [`init-slam.md`](./init-slam.md) — populate an empty `scripts/` folder with SLaM
   pipeline script(s) copied from `autolens_workspace` and tailored to the chosen data
   type.
+- [`hpc_campaign.md`](./hpc_campaign.md) — run a lens sample on an HPC cluster as a
+  campaign: one `hpc/campaign.yaml`, plan resources from evidence, pilot, submit (on your
+  go), check in on the digest, turn failures into approved resubmits, and report compute
+  and an energy/carbon estimate, all through `hpc/sync`.
 
 ### Euclid mode (pipeline-paired)
 
