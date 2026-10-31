@@ -508,9 +508,11 @@ wait_and_pull() {
 # Campaign commands
 #
 # Each runs `python -m autofit.campaign <verb>` in the remote project directory over
-# one ssh call, then pulls only the campaign's small files (digest, failure lists,
-# proposals, plan, report, the action log) from <project_root>/campaign/<name>/ into
-# hpc/campaign/<name>/ — never tasks.jsonl or results. The campaign file's
+# one ssh call, then pulls only the campaign's own files (digest, its tasks.jsonl,
+# failure lists, proposals, plan, report, the action log) from
+# <project_root>/campaign/<name>/ into hpc/campaign/<name>/ — never results. The
+# digest is read with its tasks.jsonl (one short row per task): `cortex sync-runs`
+# refuses a digest without it. The campaign file's
 # project_root must be this project's path on the cluster ($HPC_BASE/$PROJECT_NAME).
 #
 # `act` is the only verb that starts or changes a campaign's jobs: `act submit` (the
@@ -572,7 +574,7 @@ pull_campaign() {
     echo ""
     echo "<== [campaign] ${name}: digest, lists, proposals, plan, report  →  hpc/campaign/${name}/"
     rsync_pull "campaign/${name}/" \
-        --include='*.md' --include='*.json' --include='failed_*.txt' --include='actions.log' \
+        --include='*.md' --include='*.json' --include='failed_*.txt' --include='actions.log' --include='tasks.jsonl' \
         --exclude='*' \
         "${REMOTE}/campaign/${name}/" "${local_dir}/"
 }

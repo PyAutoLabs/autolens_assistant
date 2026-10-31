@@ -103,6 +103,8 @@ def test_status_with_a_campaign_file_collects_and_pulls_the_digest(cluster):
     assert len(ssh_calls) == 1
     (pull,) = [c for c in cluster["calls"]() if c.startswith("rsync")]
     assert "--include=*.md" in pull and "--exclude=*" in pull
+    # cortex sync-runs reads the digest together with the tasks.jsonl beside it.
+    assert "--include=tasks.jsonl" in pull
     assert pull.endswith(f"fakehost:{cluster['remote']}/campaign/demo/ {cluster['project']}/hpc/campaign/demo/")
 
 
