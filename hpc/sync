@@ -155,6 +155,23 @@ EXCLUDES=(
     --exclude='sync.conf'          # never push the local HPC config
 )
 
+# Pull with rsync, telling a missing or still-being-written directory (rsync exit
+# 23/24: tolerated, the pull carries on) apart from a real failure — a dropped
+# connection (255), a full disk — which is reported, not passed off as a skip.
+rsync_pull() {
+    local what="${1}"
+    shift
+    local rc=0
+    "${RSYNC[@]}" "$@" || rc=$?
+    case "${rc}" in
+        0) ;;
+        23|24) echo "    skip: ${what} not on the HPC yet, or still being written (rsync exit ${rc})" ;;
+        255) echo "    WARNING: ${what} not pulled — the ssh connection failed (rsync exit 255)" >&2 ;;
+        *) echo "    WARNING: ${what} not pulled — rsync exit ${rc}" >&2 ;;
+    esac
+    return 0
+}
+
 # ---------------------------------------------------------------------------
 push() {
     local dryrun="${1:-}"
@@ -278,9 +295,8 @@ pull_logs() {
         fi
         mkdir -p "$local_dir"
         echo "    ${dir}/"
-        "${RSYNC[@]}" "${EXCLUDES[@]}" --update ${dryrun} \
-            "${remote_dir}" "${local_dir}" \
-            || echo "    skip: ${dir}/ not present on the HPC"
+        rsync_pull "${dir}/" "${EXCLUDES[@]}" --update ${dryrun} \
+            "${remote_dir}" "${local_dir}"
     done
 }
 
@@ -298,14 +314,13 @@ pull() {
         # --exclude         omit search_internal (large sampler state, not needed locally)
         # A root that is not on the HPC (no job has written it yet) is skipped,
         # not created there; rsync partial-transfer warnings (exit 23/24) while
-        # jobs are still writing are tolerated the same way.
-        "${RSYNC[@]}" "${EXCLUDES[@]}" \
+        # jobs are still writing are tolerated the same way (see rsync_pull).
+        rsync_pull "${dir}/" "${EXCLUDES[@]}" \
             --update \
             --exclude='search_internal' \
             ${dryrun} \
             "${REMOTE}/${dir}/" \
-            "${PROJECT_ROOT}/${dir}/" \
-            || echo "    skip: ${dir}/ not present on the HPC"
+            "${PROJECT_ROOT}/${dir}/"
 
         # Unzip any new .zip files immediately after rsync
         if [[ -z "$dryrun" ]]; then
