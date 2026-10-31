@@ -30,12 +30,14 @@
 # Campaigns (python -m autofit.campaign on the cluster; one ssh call each):
 #   hpc/sync status <campaign.yaml>              Collect the campaign, pull its digest, print it
 #   hpc/sync plan <campaign.yaml> [plan arg ...] Propose resources from evidence (submits nothing)
+#   hpc/sync pilot <campaign.yaml> [pilot arg ...]
+#                                                Choose a stratified pilot slice (submits nothing)
 #   hpc/sync resubmit <campaign.yaml> --stage S --class C
 #                                                Write a resubmit proposal (submits nothing)
 #   hpc/sync report <campaign.yaml> [arg ...]    End-of-campaign report, energy and carbon
 #   hpc/sync act <action> <campaign.yaml|name> <arg ...>
-#                                                Change the queue, and log it: hold, release,
-#                                                throttle, update-pending, resubmit, cancel
+#                                                Start or change campaign jobs, and log it: submit,
+#                                                resubmit, hold, release, throttle, update-pending, cancel
 #
 # Inspect:
 #   hpc/sync tail [gpu|cpu]          Stream live SLURM log output (Ctrl+C to stop)
@@ -511,10 +513,12 @@ wait_and_pull() {
 # hpc/campaign/<name>/ — never tasks.jsonl or results. The campaign file's
 # project_root must be this project's path on the cluster ($HPC_BASE/$PROJECT_NAME).
 #
-# `act` is the only verb that changes the queue (scontrol, scancel, an approved
-# resubmit); `submit` and `push-submit` are the only ones that start jobs. Every act
-# appends one JSON line {utc, user, campaign, action, args, exit} to
-# <project_root>/campaign/<name>/actions.log on the cluster and prints it.
+# `act` is the only verb that starts or changes a campaign's jobs: `act submit` (the
+# campaign's stages, a pilot slice with --indices), `act resubmit` (an approved
+# proposal), and scontrol / scancel. Every act appends one JSON line {utc, user,
+# campaign, action, args, exit} to <project_root>/campaign/<name>/actions.log on the
+# cluster and prints it. (`submit` / `push-submit` above sbatch one hand-written
+# script, outside any campaign.)
 # ---------------------------------------------------------------------------
 
 # The campaign name declared in a campaign.yaml (its `campaign:` line).
@@ -567,11 +571,10 @@ pull_campaign() {
     mkdir -p "${local_dir}"
     echo ""
     echo "<== [campaign] ${name}: digest, lists, proposals, plan, report  →  hpc/campaign/${name}/"
-    "${RSYNC[@]}" \
+    rsync_pull "campaign/${name}/" \
         --include='*.md' --include='*.json' --include='failed_*.txt' --include='actions.log' \
         --exclude='*' \
-        "${REMOTE}/campaign/${name}/" "${local_dir}/" \
-        || echo "    skip: campaign/${name}/ not present on the HPC yet"
+        "${REMOTE}/campaign/${name}/" "${local_dir}/"
 }
 
 require_campaign_file() {
@@ -607,6 +610,19 @@ campaign_plan() {
     return "${rc}"
 }
 
+campaign_pilot() {
+    require_campaign_file pilot "${1:-}"
+    local file name rc=0
+    file="$(campaign_path "${1}")"
+    name="$(campaign_name "${1}")"
+    echo "==> [pilot] choose a pilot slice of campaign ${name}  @  ${HPC_HOST}   (nothing is submitted)"
+    echo "    Approve it, then: $(basename "$0") act submit ${1} --indices <the pilot's indices>"
+    echo ""
+    campaign_remote pilot "${file}" "${@:2}" || rc=$?
+    pull_campaign "${name}"
+    return "${rc}"
+}
+
 campaign_resubmit() {
     require_campaign_file resubmit "${1:-}"
     local file name rc=0
@@ -632,7 +648,7 @@ campaign_report() {
     return "${rc}"
 }
 
-ACT_ACTIONS="hold release throttle update-pending resubmit cancel"
+ACT_ACTIONS="submit resubmit hold release throttle update-pending cancel"
 
 # The scontrol fields `act update-pending` may change. A partition is not among them:
 # a partition change goes through `python -m autofit.campaign`, whose lint keeps
@@ -642,6 +658,9 @@ ACT_UPDATE_FIELDS="TimeLimit MinMemoryCPU ArrayTaskThrottle Nice"
 act_usage() {
     echo "Usage: $(basename "$0") act <action> <campaign.yaml|campaign-name> <arg ...>"
     echo ""
+    echo "  submit [--stage S ...] [--indices SPEC] [--dry-run]"
+    echo "                                       submit the campaign (needs the .yaml); a pilot"
+    echo "                                       is --indices with the pilot's slice"
     echo "  hold <job_id>                        scontrol hold"
     echo "  release <job_id>                     scontrol release"
     echo "  throttle <job_id> <N>                at most N array tasks running at once"
@@ -710,12 +729,19 @@ act() {
             done
             command="scontrol update JobId=${args[0]} ${args[*]:1}"
             ;;
+        submit)
+            [[ -n "${file}" ]] || act_fail "submit needs the campaign.yaml, not just its name"
+            for arg in "${args[@]}"; do
+                [[ "${arg}" != --proposal* ]] || act_fail "an approved proposal goes through 'act resubmit'"
+            done
+            command="{ ${HPC_ENV}; } && ${HPC_PYTHON} -m autofit.campaign submit $(printf '%q' "${file}") ${args[*]}"
+            ;;
         resubmit)
             [[ -n "${file}" ]] || act_fail "resubmit needs the campaign.yaml, not just its name"
             [[ ${#args[@]} -eq 1 ]] || act_fail "resubmit takes one approved proposal file"
             local proposal="${args[0]}"
             [[ "${proposal}" == */* ]] || proposal="campaign/${name}/${proposal}"
-            command="{ ${HPC_ENV}; } && ${HPC_PYTHON} -m autofit.campaign submit ${file} --proposal ${proposal}"
+            command="{ ${HPC_ENV}; } && ${HPC_PYTHON} -m autofit.campaign submit $(printf '%q' "${file}") --proposal ${proposal}"
             ;;
     esac
 
@@ -731,10 +757,14 @@ act() {
 
     echo "==> [act] ${action} ${args[*]}  (campaign ${name})  @  ${HPC_HOST}"
     echo ""
-    # One ssh call: run the command, then append the log line with its exit status.
-    # The values are plain words (checked above), so single quotes carry them intact.
+    # One ssh call: check the log can be written, run the command, then append the log
+    # line with its exit status. A log that cannot be written stops the action before
+    # it runs, so nothing changes on the queue unrecorded. The values are plain words
+    # (checked above), so single quotes carry them intact.
     local remote
-    remote="cd '${REMOTE_PATH}' && mkdir -p 'campaign/${name}' && { ${command}; }; rc=\$?; "
+    remote="cd '${REMOTE_PATH}' && mkdir -p 'campaign/${name}' && : >> '${log}' "
+    remote+="|| { echo 'ERROR: cannot write ${log}; nothing was done' >&2; exit 1; }; "
+    remote+="{ ${command}; }; rc=\$?; "
     remote+="line=\$(printf '{\"utc\": \"%s\", \"user\": \"%s\", \"campaign\": \"%s\", \"action\": \"%s\", \"args\": [%s], \"exit\": %s}' "
     remote+="\"\$(date -u +%Y-%m-%dT%H:%M:%SZ)\" '${user}' '${name}' '${action}' '${json_args}' \"\$rc\"); "
     remote+="echo \"\$line\" >> '${log}'; echo \"\$line\"; exit \$rc"
@@ -912,12 +942,13 @@ print_help() {
     echo "Campaigns (python -m autofit.campaign on the cluster):"
     echo "  status <campaign.yaml>       Collect the campaign, pull and print its digest"
     echo "  plan <campaign.yaml> [...]   Propose resources from evidence (submits nothing)"
+    echo "  pilot <campaign.yaml> [...]  Choose a stratified pilot slice (submits nothing)"
     echo "  resubmit <campaign.yaml> --stage S --class C"
     echo "                               Write a resubmit proposal (submits nothing)"
     echo "  report <campaign.yaml> [...] End-of-campaign report, energy and carbon"
     echo "  act <action> <campaign.yaml|name> <arg ...>"
-    echo "                               Change the queue and log it: hold, release,"
-    echo "                               throttle, update-pending, resubmit, cancel"
+    echo "                               Start or change campaign jobs and log it: submit,"
+    echo "                               resubmit, hold, release, throttle, update-pending, cancel"
     echo ""
     echo "Inspect:"
     echo "  tail [gpu|cpu]               Stream live SLURM log output (default: gpu)"
@@ -961,6 +992,7 @@ case "$cmd" in
         fi
         ;;
     plan)            campaign_plan "${@:2}" ;;
+    pilot)           campaign_pilot "${@:2}" ;;
     resubmit)        campaign_resubmit "${@:2}" ;;
     report)          campaign_report "${@:2}" ;;
     act)             act "${@:2}" ;;

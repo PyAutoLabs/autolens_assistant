@@ -1,7 +1,7 @@
 # campaign.yaml — one declaration for a modelling campaign on the HPC.
 # ─────────────────────────────────────────────────────────────────────────────
 # Copy to hpc/campaign.yaml and edit. `hpc/sync push` sends it with the rest of hpc/;
-# every campaign verb (`hpc/sync status|plan|resubmit|report|act`) then runs
+# every campaign verb (`hpc/sync status|plan|pilot|resubmit|report|act`) then runs
 # `python -m autofit.campaign` on the cluster against it. See
 # skills/hpc_campaign.md for the walk-through and wiki/core/operations/hpc.md for the
 # ideas behind it.
@@ -10,6 +10,9 @@
 # number is the object's campaign index, the same in every stage. Each stage runs
 # hpc/batch_cpu/stage for every index, which calls scripts/<STAGE_SCRIPT> with
 # --sample=... --dataset=... and records the task for the collector.
+#
+# The site and partitions below are an example (RAL); use your cluster's site file and
+# partition names.
 # ─────────────────────────────────────────────────────────────────────────────
 
 campaign: my_sample_slam

@@ -150,12 +150,13 @@ pull of the campaign's small files into `hpc/campaign/<name>/`):
 |---|---|---|
 | `status hpc/campaign.yaml` | collect accounting + status records, print the digest | no |
 | `plan hpc/campaign.yaml [--evidence ... --idle-cpus ral=N]` | propose CPUs, memory, wall time, throttle, ETA from a pilot and profiling evidence, every number graded | no |
+| `pilot hpc/campaign.yaml [--fraction 0.02]` | choose a stratified pilot slice, written as a Slurm array spec | no |
 | `resubmit hpc/campaign.yaml --stage S --class C` | write a resubmit proposal sized from the failed tasks' own measurements | no |
 | `report hpc/campaign.yaml [--site ral]` | end-of-campaign report: compute, energy and carbon estimate, failures, a paper paragraph | no |
-| `act <action> <campaign.yaml\|name> <arg ...>` | `hold`, `release`, `throttle`, `update-pending`, `resubmit <proposal>`, `cancel` | **yes** |
+| `act <action> <campaign.yaml\|name> <arg ...>` | `submit [--stage S] [--indices SPEC] [--dry-run]`, `resubmit <proposal>`, `hold`, `release`, `throttle`, `update-pending`, `cancel` | **yes** |
 
-`act` is the only verb that changes jobs already in the queue, and `submit`/`push-submit`
-are the only ones that start jobs. Every `act` (and the old `cancel`, which is `act cancel`
+`act` is the only verb that starts or changes a campaign's jobs. (`submit`/`push-submit`
+under **Jobs** sbatch one hand-written script, outside any campaign.) Every `act` (and the old `cancel`, which is `act cancel`
 under the campaign `adhoc`) appends one JSON line `{utc, user, campaign, action, args,
 exit}` to `campaign/<name>/actions.log` on the cluster and prints it. It refuses anything
 outside its list: `update-pending` may change only `TimeLimit`, `MinMemoryCPU`,

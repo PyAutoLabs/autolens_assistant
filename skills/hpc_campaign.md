@@ -75,10 +75,11 @@ evidence on exactly these keys; `provisional`, `analogue` (another instrument or
 `estimated` and `unsupported` are progressively weaker. Never call a setting "optimal"
 unless the plan says a designation exists.
 
-Before the full submit, propose a **pilot**: `python -m autofit.campaign pilot` on the
-cluster (run it through `hpc/sync` by asking the user) writes a stratified 1–2 % of the
-manifest, spread over lens sizes. Submit only that slice, wait for it, then plan again with
-the pilot's measurements (`plan ... --pilot campaign/<name>/tasks.jsonl`). This is where
+Before the full submit, propose a **pilot**: `hpc/sync pilot hpc/campaign.yaml` chooses a
+stratified 1–2 % of the manifest, spread over lens sizes, and writes it to
+`hpc/campaign/<name>/pilot.json` as a Slurm array spec. On the user's yes, submit only that
+slice (`hpc/sync act submit hpc/campaign.yaml --indices <spec>`), wait for it, then plan
+again with the pilot's measurements (`plan ... --pilot campaign/<name>/tasks.jsonl`). This is where
 memory and wall-time mistakes are caught for the price of a few dozen fits.
 
 ## Branch — submit (only on the user's go)
@@ -87,12 +88,13 @@ Show the user the final plan and the exact command, and wait for a yes:
 
 ```bash
 hpc/sync push
-ssh <host> 'cd $HPC_BASE/$PROJECT_NAME && python -m autofit.campaign submit hpc/campaign.yaml --dry-run'
+hpc/sync act submit hpc/campaign.yaml --dry-run
 ```
 
 The dry run prints every batch script with the partition check's verdict. The real submit
 is the same command without `--dry-run`, run by the user or by you after their explicit
-yes. Every stage runs `hpc/batch_cpu/stage`, which writes a small task record before the
+yes; add `--stage S` to submit one stage. Like every `act`, it is written to
+`campaign/<name>/actions.log`. Every stage runs `hpc/batch_cpu/stage`, which writes a small task record before the
 fit starts, so a lens that fails before Python runs is still counted.
 
 ## Branch — check in
@@ -136,8 +138,8 @@ Other changes to queued jobs go the same way, each logged to
 `campaign/<name>/actions.log` with who, when and the exit status:
 `act hold|release <job>`, `act throttle <array_job> <N>`,
 `act update-pending <job> TimeLimit=... MinMemoryCPU=...`, `act cancel <job>`. Never run
-`sbatch`, `scontrol` or `scancel` over ssh yourself; `hpc/sync act` and `submit` are the
-only ways in.
+`sbatch`, `scontrol`, `scancel` or `autofit.campaign submit` over ssh yourself: `hpc/sync act`
+is the only way a campaign's jobs start or change.
 
 ## Branch — report
 

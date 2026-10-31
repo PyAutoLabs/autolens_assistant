@@ -119,6 +119,8 @@ def test_status_without_a_campaign_file_is_still_the_dry_run(cluster):
     [
         (["plan", "hpc/campaign.yaml", "--idle-cpus", "ral=100"],
          "python -m autofit.campaign plan hpc/campaign.yaml --idle-cpus ral=100"),
+        (["pilot", "hpc/campaign.yaml", "--fraction", "0.05"],
+         "python -m autofit.campaign pilot hpc/campaign.yaml --fraction 0.05"),
         (["resubmit", "hpc/campaign.yaml", "--stage", "source_lp", "--class", "timeout"],
          "python -m autofit.campaign resubmit hpc/campaign.yaml --stage source_lp --class timeout"),
         (["report", "hpc/campaign.yaml", "--site", "ral"],
@@ -148,6 +150,8 @@ def test_campaign_verbs_need_a_campaign_file(cluster):
         (["update-pending", "demo", "123_4", "TimeLimit=10:00:00", "MinMemoryCPU=4096"],
          "scontrol update JobId=123_4 TimeLimit=10:00:00 MinMemoryCPU=4096"),
         (["cancel", "demo", "123"], "scancel 123"),
+        (["submit", "hpc/campaign.yaml", "--stage", "source_lp", "--indices", "0-9%5"],
+         "python -m autofit.campaign submit hpc/campaign.yaml --stage source_lp --indices 0-9%5"),
         (["resubmit", "hpc/campaign.yaml", "resubmit_source_lp_timeout.json"],
          "python -m autofit.campaign submit hpc/campaign.yaml "
          "--proposal campaign/demo/resubmit_source_lp_timeout.json"),
@@ -178,6 +182,16 @@ def test_act_logs_a_failed_command_with_its_exit_status(cluster):
     assert _actions(cluster)[0]["exit"] == 3
 
 
+def test_act_does_nothing_when_its_log_cannot_be_written(cluster):
+    (cluster["remote"] / "campaign" / "demo" / "actions.log").mkdir(parents=True)
+
+    process = cluster["run"]("act", "hold", "demo", "123")
+
+    assert process.returncode == 1
+    assert "nothing was done" in process.stderr
+    assert cluster["cluster"]() == []
+
+
 @pytest.mark.parametrize(
     "args, message",
     [
@@ -189,6 +203,8 @@ def test_act_logs_a_failed_command_with_its_exit_status(cluster):
         (["update-pending", "demo", "123", "TimeLimit"], "may change only"),
         (["throttle", "demo", "123"], "throttle takes"),
         (["resubmit", "demo", "p.json"], "needs the campaign.yaml"),
+        (["submit", "demo"], "needs the campaign.yaml"),
+        (["submit", "hpc/campaign.yaml", "--proposal=p.json"], "act resubmit"),
         (["hold", "bad name!", "1"], "campaign name"),
     ],
 )
@@ -226,6 +242,21 @@ def test_pull_rejects_an_unknown_result_root(cluster):
     assert "not one of this project's result roots" in process.stdout
 
 
+@pytest.mark.parametrize(
+    "rsync_exit, message",
+    [(23, "not on the HPC yet, or still being written (rsync exit 23)"), (255, "ssh connection failed"), (11, "rsync exit 11")],
+)
+def test_logs_tell_a_missing_directory_from_a_failed_pull(cluster, rsync_exit, message):
+    _fake(cluster["bin"] / "rsync", f"exit {rsync_exit}\n")
+
+    process = cluster["run"]("logs")
+
+    assert process.returncode == 0
+    assert message in process.stdout + process.stderr
+    if rsync_exit != 23:
+        assert "not on the HPC yet" not in process.stdout
+
+
 @pytest.fixture
 def stage_project(tmp_path):
     """A project for the stage entry: a manifest and a stand-in pipeline script."""
@@ -234,13 +265,20 @@ def stage_project(tmp_path):
     (project / "scripts").mkdir()
     (project / "hpc" / "manifest.txt").write_text("imaging lens_a\nimaging lens_b\n")
     (project / "scripts" / "fit.py").write_text(
-        "import os, sys\n"
+        "import os, signal, sys, time\n"
         "open(os.environ['ARGS_OUT'], 'w').write(' '.join(sys.argv[1:]))\n"
+        "if os.environ.get('FIT_WAIT_USR1'):\n"
+        "    got = []\n"
+        "    signal.signal(signal.SIGUSR1, lambda *_: got.append(1))\n"
+        "    open(os.environ['FIT_WAIT_USR1'], 'w').close()\n"
+        "    while not got:\n"
+        "        time.sleep(0.05)\n"
+        "    time.sleep(0.2)  # the checkpoint flush, after the stage's first wait returned\n"
         "sys.exit(int(os.environ.get('FIT_EXIT', '0')))\n"
     )
 
-    def run(index, fit_exit=0, **extra):
-        env = {
+    def environment(index, fit_exit=0, **extra):
+        return {
             **os.environ,
             "STAGE": "source_lp",
             "STAGE_SCRIPT": "fit.py",
@@ -254,10 +292,14 @@ def stage_project(tmp_path):
             "FIT_EXIT": str(fit_exit),
             **extra,
         }
+
+    def run(index, fit_exit=0, **extra):
         return subprocess.run(
-            ["bash", str(STAGE)], cwd=project, env=env, capture_output=True, text=True, timeout=60
+            ["bash", str(STAGE)], cwd=project, env=environment(index, fit_exit, **extra),
+            capture_output=True, text=True, timeout=60,
         )
 
+    run.environment = environment
     return project, tmp_path, run
 
 
@@ -312,3 +354,30 @@ def test_stage_task_record_is_read_by_the_autofit_collector(stage_project):
     index = autofit.scan_status(project / "output")
 
     assert index[("777", 0)]["state"] == "failed"
+
+
+def test_stage_that_checkpoints_on_usr1_and_then_finishes_is_a_success(stage_project):
+    """The pre-timeout USR1 interrupts the stage's wait; the fit's own exit 0 must win."""
+    import signal
+    import time
+
+    project, tmp_path, run = stage_project
+    ready = tmp_path / "fit_ready"
+    process = subprocess.Popen(
+        [str(STAGE)], cwd=project, env=run.environment(0, FIT_WAIT_USR1=str(ready)),
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    )
+    deadline = time.time() + 30
+    while not ready.exists() and time.time() < deadline:
+        time.sleep(0.05)
+    process.send_signal(signal.SIGUSR1)
+    stdout, stderr = process.communicate(timeout=60)
+
+    assert process.returncode == 0, stdout + stderr
+    assert "Finished: exit 0" in stdout
+    assert not _record(project, 0).exists()
+
+
+def test_stage_is_not_a_login_shell():
+    """A login shell runs ~/.bash_logout after the EXIT trap and can overwrite the status."""
+    assert STAGE.read_text().splitlines()[0] == "#!/bin/bash"

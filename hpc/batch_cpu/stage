@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/bash
 
 #SBATCH -J stage
 #SBATCH -n 1
@@ -45,6 +45,11 @@
 # for itself (with its failure class) always wins over this one. A failure before the
 # fit could record anything (a missing manifest line, a broken environment) is then
 # still visible to the collector.
+#
+# Not a login shell (`#!/bin/bash`, no -l): the EXIT trap below must have the last word
+# on the exit status, and a login shell runs ~/.bash_logout after it, which on some
+# nodes returns non-zero and turns every success into a failure. The environment comes
+# from activate.sh, sourced explicitly below.
 # -------------------------------
 
 set -euo pipefail
@@ -166,9 +171,11 @@ date
 child=$!
 trap 'kill -USR1 "${child}" 2>/dev/null || true' USR1
 trap 'kill -TERM "${child}" 2>/dev/null || true' TERM
-status=0
-until wait "${child}"; do
-    status=$?
+# `wait` returns early (128 + signal) when a trapped signal arrives; wait again until
+# the fit itself has exited, and keep only its own exit status.
+while true; do
+    status=0
+    wait "${child}" || status=$?
     kill -0 "${child}" 2>/dev/null || break
 done
 
