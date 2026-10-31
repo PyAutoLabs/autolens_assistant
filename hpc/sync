@@ -731,9 +731,22 @@ act() {
             ;;
         submit)
             [[ -n "${file}" ]] || act_fail "submit needs the campaign.yaml, not just its name"
+            # Only these flags, spelled out in full: argparse would take an abbreviation
+            # of any other (`--prop` for --proposal, which belongs to `act resubmit`).
+            local value_next=0
             for arg in "${args[@]}"; do
-                [[ "${arg}" != --proposal* ]] || act_fail "an approved proposal goes through 'act resubmit'"
+                if (( value_next )); then
+                    [[ "${arg}" != -* ]] || act_fail "${args[*]}: a flag is missing its value"
+                    value_next=0
+                    continue
+                fi
+                case "${arg}" in
+                    --stage|--indices) value_next=1 ;;
+                    --stage=?*|--indices=?*|--dry-run) ;;
+                    *) act_fail "submit takes only --stage S, --indices SPEC and --dry-run (got '${arg}'); an approved proposal goes through 'act resubmit'" ;;
+                esac
             done
+            (( ! value_next )) || act_fail "${args[*]}: a flag is missing its value"
             command="{ ${HPC_ENV}; } && ${HPC_PYTHON} -m autofit.campaign submit $(printf '%q' "${file}") ${args[*]}"
             ;;
         resubmit)

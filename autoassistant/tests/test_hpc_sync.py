@@ -205,6 +205,9 @@ def test_act_does_nothing_when_its_log_cannot_be_written(cluster):
         (["resubmit", "demo", "p.json"], "needs the campaign.yaml"),
         (["submit", "demo"], "needs the campaign.yaml"),
         (["submit", "hpc/campaign.yaml", "--proposal=p.json"], "act resubmit"),
+        (["submit", "hpc/campaign.yaml", "--prop", "campaign/demo/p.json"], "act resubmit"),
+        (["submit", "hpc/campaign.yaml", "--stage"], "missing its value"),
+        (["submit", "hpc/campaign.yaml", "--stage", "--dry-run"], "missing its value"),
         (["hold", "bad name!", "1"], "campaign name"),
     ],
 )
