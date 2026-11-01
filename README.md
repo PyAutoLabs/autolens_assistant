@@ -66,6 +66,26 @@ The `autolens_assistant` adapts its behaviour to suit your prompt:
 
 - Want it to complete a task end-to-end without consulting you? Tell it to **one-shot** the task.
 
+### Start Here Guide
+
+The [PyAutoLens Start Here page](https://pyautolens.readthedocs.io/en/latest/overview/overview_1_start_here.html)
+introduces grids, light and mass profiles, ray-tracing, simulating a strong lens and fitting it. The assistant can
+walk you through the same steps as a guided conversation, one step at a time, with you typing each request in plain
+English, before helping you find the right starting point for your own lenses:
+
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
+I want to do strong lensing science with PyAutoLens (https://github.com/PyAutoLabs/PyAutoLens) and the
+autolens_assistant (https://github.com/PyAutoLabs/autolens_assistant). First clone that repository,
+cd into it and follow its AGENTS.md.
+
+Begin the "start here" guide for a new user.
+```
+
+Every step saves the PyAutoLens Python it ran under `scripts/start_here/`, so you can read, run and change the code
+yourself. See [`modes/start_here.md`](modes/start_here.md).
+
 ### Teacher Mode
 
 If you are new to gravitational lensing, particularly an undergraduate or early-stage PhD student, ask the assistant 
