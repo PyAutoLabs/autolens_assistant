@@ -137,11 +137,18 @@ how it paces the work, not which workflows exist:
   multi-session run, scale up: clarify the goal, plan in phases, execute with checkpoints —
   proactive but not silent; state in `wiki/project/`. Full posture, opt-out list and the
   autonomy dial: [`modes/assistant.md`](./modes/assistant.md).
+- **Start here** — *the guided tour*: the PyAutoLens Start Here tour (grids, light and mass
+  profiles, ray-tracing, simulating and fitting a lens) as a conversation, then the user's own
+  lens. One step per turn; the user types each prompt themselves. It adds no capability — it
+  scripts the existing skills at newcomer depth — and hands off to assistant (or teacher) mode
+  when it ends. See [`modes/start_here.md`](./modes/start_here.md).
 
-Select (first match): explicit instruction → `profile.md` "Interaction mode" → else **infer
-from the opening request** (fall back to **assistant**); `.maintainer` outranks both. There
-are exactly two mode names — a value that isn't one of them (e.g. `agent`, removed in July
-2026) is **not** a mode: ignore it, say so in one line, and fall through to inference rather
+Select (first match): the **published start-here prompt** (RTD Start Here page, PyAutoLens
+README, `autolens_workspace:start_here.py`) or "start here" / "start_here" → explicit
+instruction → `profile.md` "Interaction mode" → else **infer from the opening request** (fall
+back to **assistant**); `.maintainer` outranks all of them. The mode names are exactly
+`teacher`, `assistant` and `start_here` — a value that isn't one of them (e.g. `agent`, removed
+in July 2026) is **not** a mode: ignore it, say so in one line, and fall through to inference rather
 than improvising. State an inferred mode in one line and invite correction; acknowledge an
 explicit one only if it changes behavior. Read `modes/<mode>.md`; depth still follows
 `skills/_style.md` "Adaptive depth".
