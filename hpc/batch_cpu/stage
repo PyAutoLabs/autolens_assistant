@@ -1,0 +1,184 @@
+#!/bin/bash
+
+#SBATCH -J stage
+#SBATCH -n 1
+#SBATCH --cpus-per-task=4
+#SBATCH -o output/%x_%A_%a.out
+#SBATCH -e error/%x_%A_%a.err
+#SBATCH --partition=cpu
+# NEVER add gpu here: CPU arrays on the gpu partition fill both A100 nodes' CPUs and idle all 8 GPUs. (On RAL use --partition=ral.)
+#SBATCH -t 04:00:00
+#SBATCH --mem-per-cpu=3G
+#SBATCH --array=0-0
+#SBATCH --signal=B:USR1@600
+
+# -------------------------------
+# One stage of a campaign, for one object of its manifest.
+#
+# This is the script a `campaign.yaml` stage points at (`script: hpc/batch_cpu/stage`,
+# see hpc/campaign.yaml.example): `python -m autofit.campaign submit` writes the batch
+# script that runs it, with the resources from campaign.yaml, and exports STAGE,
+# MANIFEST, CAMPAIGN and CAMPAIGN_OFFSET. The #SBATCH lines above are only defaults for
+# submitting it by hand:
+#
+#   hpc/sync submit cpu stage --array=0-9 \
+#       --export=ALL,STAGE=imaging,STAGE_SCRIPT=imaging.py,MANIFEST=hpc/manifest.txt
+#
+# Variables:
+#   STAGE            stage name (required)
+#   MANIFEST         manifest file, one object per line, relative to the project root
+#                    (required); the 0-based line number is the campaign index
+#   STAGE_SCRIPT     the pipeline in scripts/ to run (default: <STAGE>.py)
+#   STAGE_ARGS       extra arguments for it (default: --use_cpu --number_of_cores=<cpus>)
+#   MANIFEST_FIELDS  names of a line's whitespace-separated fields, passed as
+#                    --<name>=<value> (default: "sample dataset")
+#   CAMPAIGN_INDEX   set directly, or CAMPAIGN_OFFSET + SLURM_ARRAY_TASK_ID
+#   CAMPAIGN         campaign name, for the task record (default: adhoc)
+#   STATUS_ROOT      where fits write *.status.json (default: output)
+#
+# Task record: before Python starts this writes
+#   <STATUS_ROOT>/.campaign_tasks/<CAMPAIGN>/<STAGE>/<CAMPAIGN_INDEX>.status.json
+# in the fit's own status-record format, state `pending`. The campaign collector reads
+# it beside the fits' records and joins it to the job by its job and task ids. On exit
+# the record is removed if the stage succeeded, and rewritten as `failed` if it did
+# not. A failed record keeps the start time as `updated`, so a failure the fit recorded
+# for itself (with its failure class) always wins over this one. A failure before the
+# fit could record anything (a missing manifest line, a broken environment) is then
+# still visible to the collector.
+#
+# Not a login shell (`#!/bin/bash`, no -l): the EXIT trap below must have the last word
+# on the exit status, and a login shell runs ~/.bash_logout after it, which on some
+# nodes returns non-zero and turns every success into a failure. The environment comes
+# from activate.sh, sourced explicitly below.
+# -------------------------------
+
+set -euo pipefail
+export PYTHONUNBUFFERED=1
+
+# The project root: the directory the batch script cd'd into (a generated campaign
+# script does), or two levels up from hpc/batch_cpu when submitted from there.
+if [[ -n "${PROJECT_PATH:-}" ]]; then
+    ROOT="${PROJECT_PATH}"
+elif [[ -d hpc && -d scripts ]]; then
+    ROOT="${PWD}"
+elif [[ "$(basename "$(dirname "${PWD}")")" == "hpc" ]]; then
+    ROOT="$(cd ../.. && pwd)"
+else
+    ROOT="${PWD}"
+fi
+cd "${ROOT}"
+
+STAGE="${STAGE:?STAGE is not set (export it, or set it in campaign.yaml env)}"
+MANIFEST="${MANIFEST:?MANIFEST is not set}"
+CAMPAIGN="${CAMPAIGN:-adhoc}"
+STATUS_ROOT="${STATUS_ROOT:-output}"
+STAGE_SCRIPT="${STAGE_SCRIPT:-${STAGE}.py}"
+MANIFEST_FIELDS="${MANIFEST_FIELDS:-sample dataset}"
+CAMPAIGN_INDEX="${CAMPAIGN_INDEX:-$(( ${CAMPAIGN_OFFSET:-0} + ${SLURM_ARRAY_TASK_ID:-0} ))}"
+THREADS="${SLURM_CPUS_PER_TASK:-1}"
+STAGE_ARGS="${STAGE_ARGS:---use_cpu --number_of_cores=${THREADS}}"
+
+for name in "${CAMPAIGN}" "${STAGE}"; do
+    if [[ ! "${name}" =~ ^[A-Za-z0-9_.-]+$ ]]; then
+        echo "ERROR: campaign and stage names may use only letters, digits, _ . - (got '${name}')" >&2
+        exit 2
+    fi
+done
+
+RECORD_DIR="${STATUS_ROOT}/.campaign_tasks/${CAMPAIGN}/${STAGE}"
+RECORD="${RECORD_DIR}/${CAMPAIGN_INDEX}.status.json"
+STARTED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"  # the format fits write (record._now), compared as text
+
+json_or_null() {
+    if [[ -z "${1}" ]]; then echo null; else echo "\"${1}\""; fi
+}
+
+# The fit's status-record format (schema 1), with what a shell knows: state, attempt,
+# failure class and the scheduler ids the collector joins on.
+write_record() {
+    local state="${1}" failure_class="${2}" exit_code="${3}"
+    local job_id="${SLURM_ARRAY_JOB_ID:-${SLURM_JOB_ID:-}}"
+    local task_id="${SLURM_ARRAY_TASK_ID:-}"
+    mkdir -p "${RECORD_DIR}"
+    local tmp="${RECORD}.$$.tmp"
+    cat > "${tmp}" <<EOF
+{
+  "schema": 1,
+  "source": "batch",
+  "campaign": "${CAMPAIGN}",
+  "stage": "${STAGE}",
+  "index": ${CAMPAIGN_INDEX},
+  "state": "${state}",
+  "attempt": $(( ${SLURM_RESTART_COUNT:-0} + 1 )),
+  "failure_class": $(json_or_null "${failure_class}"),
+  "exit": ${exit_code:-null},
+  "job": {"job_id": $(json_or_null "${job_id}"), "task_id": ${task_id:-null}, "node": $(json_or_null "${SLURMD_NODENAME:-}")},
+  "updated": "${STARTED}",
+  "started": "${STARTED}"
+}
+EOF
+    mv -f "${tmp}" "${RECORD}"
+}
+
+on_exit() {
+    local code=$?
+    if [[ "${code}" -eq 0 ]]; then
+        rm -f "${RECORD}"
+    else
+        write_record failed "${FAILURE_CLASS:-exception}" "${code}" || true
+    fi
+    exit "${code}"
+}
+
+write_record pending "" ""
+trap on_exit EXIT
+
+line="$(sed -n "$(( CAMPAIGN_INDEX + 1 ))p" "${MANIFEST}" 2>/dev/null || true)"
+if [[ -z "${line}" ]]; then
+    echo "ERROR: ${MANIFEST} has no line for campaign index ${CAMPAIGN_INDEX}" >&2
+    FAILURE_CLASS=bad_input
+    exit 2
+fi
+
+read -r -a values <<< "${line}"
+read -r -a names <<< "${MANIFEST_FIELDS}"
+field_args=()
+for i in "${!names[@]}"; do
+    field_args+=("--${names[$i]}=${values[$i]:-}")
+done
+
+[[ -f "${ROOT}/activate.sh" ]] && source "${ROOT}/activate.sh"
+
+# Force JAX onto the CPU and pin thread counts to the allocated cores.
+export JAX_PLATFORM_NAME=cpu
+export JAX_PLATFORMS=cpu
+export OPENBLAS_NUM_THREADS=${THREADS}
+export MKL_NUM_THREADS=${THREADS}
+export OMP_NUM_THREADS=${THREADS}
+export VECLIB_MAXIMUM_THREADS=${THREADS}
+export NUMEXPR_NUM_THREADS=${THREADS}
+export NPROC=${THREADS}
+
+echo "=========================================="
+echo "Campaign ${CAMPAIGN}  stage ${STAGE}  index ${CAMPAIGN_INDEX}: ${line}"
+date
+
+# The fit runs in the background so this shell can forward the scheduler's
+# pre-timeout USR1 (--signal=B:USR1@600) to it: the fit flushes its checkpoint and
+# writes `timeout_pending`, so a resubmit resumes rather than restarts.
+# shellcheck disable=SC2086
+"${PYTHON:-python3}" "scripts/${STAGE_SCRIPT}" "${field_args[@]}" ${STAGE_ARGS} &
+child=$!
+trap 'kill -USR1 "${child}" 2>/dev/null || true' USR1
+trap 'kill -TERM "${child}" 2>/dev/null || true' TERM
+# `wait` returns early (128 + signal) when a trapped signal arrives; wait again until
+# the fit itself has exited, and keep only its own exit status.
+while true; do
+    status=0
+    wait "${child}" || status=$?
+    kill -0 "${child}" 2>/dev/null || break
+done
+
+echo "Finished: exit ${status}"
+date
+exit "${status}"

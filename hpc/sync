@@ -24,8 +24,20 @@
 #   hpc/sync push-submit [gpu|cpu] <script> [sbatch arg ...]  Push code then submit
 #   hpc/sync jobs                    Show queued/running jobs (squeue)
 #   hpc/sync sacct                   Show job history and exit codes (sacct)
-#   hpc/sync cancel <job_id>         Cancel a job by ID
+#   hpc/sync cancel <job_id>         Cancel a job by ID (recorded like `act cancel`)
 #   hpc/sync wait-and-pull [secs]    Poll until all jobs finish, then pull (default: 60s)
+#
+# Campaigns (python -m autofit.campaign on the cluster; one ssh call each):
+#   hpc/sync status <campaign.yaml>              Collect the campaign, pull its digest, print it
+#   hpc/sync plan <campaign.yaml> [plan arg ...] Propose resources from evidence (submits nothing)
+#   hpc/sync pilot <campaign.yaml> [pilot arg ...]
+#                                                Choose a stratified pilot slice (submits nothing)
+#   hpc/sync resubmit <campaign.yaml> --stage S --class C
+#                                                Write a resubmit proposal (submits nothing)
+#   hpc/sync report <campaign.yaml> [arg ...]    End-of-campaign report, energy and carbon
+#   hpc/sync act <action> <campaign.yaml|name> <arg ...>
+#                                                Start or change campaign jobs, and log it: submit,
+#                                                resubmit, hold, release, throttle, update-pending, cancel
 #
 # Inspect:
 #   hpc/sync tail [gpu|cpu]          Stream live SLURM log output (Ctrl+C to stop)
@@ -63,6 +75,13 @@ HPC_BASE="${HPC_BASE:-}"
 PROJECT_NAME="${PROJECT_NAME:-$(basename "$PROJECT_ROOT")}"
 
 REMOTE="${HPC_HOST}:${HPC_BASE}/${PROJECT_NAME}"
+REMOTE_PATH="${HPC_BASE}/${PROJECT_NAME}"
+
+# How the campaign verbs get a Python with PyAutoFit on the cluster: a command run in
+# the remote project directory before `python -m autofit.campaign`. The default sources
+# the project's activate.sh (pushed with the code). HPC_PYTHON names the interpreter.
+HPC_ENV="${HPC_ENV:-[ -f activate.sh ] && source activate.sh >/dev/null 2>&1; true}"
+HPC_PYTHON="${HPC_PYTHON:-python}"
 
 # ---------------------------------------------------------------------------
 # Transfer lists
@@ -451,14 +470,15 @@ sacct_cmd() {
     ssh "${HPC_HOST}" "sacct -u \"\$(id -un)\""
 }
 
+# Kept for the old command line; it is `act cancel` under the campaign name in
+# $CAMPAIGN (default `adhoc`), so it is logged like every other queue change.
 cancel() {
     local job_id="${1:-}"
     if [[ -z "$job_id" ]]; then
         echo "Usage: $(basename "$0") cancel <job_id>"
         exit 1
     fi
-    echo "==> [cancel] scancel ${job_id}  @  ${HPC_HOST}"
-    ssh "${HPC_HOST}" "scancel '${job_id}'"
+    act cancel "${CAMPAIGN:-adhoc}" "${job_id}"
     echo "    Job ${job_id} cancelled."
 }
 
@@ -481,6 +501,291 @@ wait_and_pull() {
             sleep "${interval}"
         fi
     done
+}
+
+
+# ---------------------------------------------------------------------------
+# Campaign commands
+#
+# Each runs `python -m autofit.campaign <verb>` in the remote project directory over
+# one ssh call, then pulls only the campaign's own files (digest, its tasks.jsonl,
+# failure lists, proposals, plan, report, the action log) from
+# <project_root>/campaign/<name>/ into hpc/campaign/<name>/ — never results. The
+# digest is read with its tasks.jsonl (one short row per task): `cortex sync-runs`
+# refuses a digest without it. The campaign file's
+# project_root must be this project's path on the cluster ($HPC_BASE/$PROJECT_NAME).
+#
+# `act` is the only verb that starts or changes a campaign's jobs: `act submit` (the
+# campaign's stages, a pilot slice with --indices), `act resubmit` (an approved
+# proposal), and scontrol / scancel. Every act appends one JSON line {utc, user,
+# campaign, action, args, exit} to <project_root>/campaign/<name>/actions.log on the
+# cluster and prints it. (`submit` / `push-submit` above sbatch one hand-written
+# script, outside any campaign.)
+# ---------------------------------------------------------------------------
+
+# The campaign name declared in a campaign.yaml (its `campaign:` line).
+campaign_name() {
+    local file="${1}"
+    local local_file="${PROJECT_ROOT}/${file}"
+    [[ -f "${file}" ]] && local_file="${file}"
+    if [[ ! -f "${local_file}" ]]; then
+        echo "ERROR: no campaign file ${file} (paths are relative to the project root)" >&2
+        exit 1
+    fi
+    local name
+    name="$(sed -n 's/^campaign:[[:space:]]*\([A-Za-z0-9_.-]*\).*/\1/p' "${local_file}" | head -1)"
+    if [[ -z "${name}" ]]; then
+        echo "ERROR: ${file} has no 'campaign: <name>' line" >&2
+        exit 1
+    fi
+    echo "${name}"
+}
+
+# The campaign file as the cluster sees it: relative to the remote project root.
+campaign_path() {
+    local file="${1}"
+    if [[ "${file}" == "${PROJECT_ROOT}/"* ]]; then
+        file="${file#"${PROJECT_ROOT}/"}"
+    fi
+    echo "${file}"
+}
+
+# An argument passed to the cluster: one shell word, quoted for the remote shell.
+quote_args() {
+    local quoted="" arg
+    for arg in "$@"; do
+        quoted+="$(printf '%q' "${arg}") "
+    done
+    echo "${quoted}"
+}
+
+# Run `python -m autofit.campaign <verb> <args>` on the cluster (one ssh call).
+campaign_remote() {
+    local verb="${1}"
+    shift
+    ssh "${HPC_HOST}" "cd '${REMOTE_PATH}' && { ${HPC_ENV}; } && ${HPC_PYTHON} -m autofit.campaign ${verb} $(quote_args "$@")"
+}
+
+# Pull the campaign's small files into hpc/campaign/<name>/.
+pull_campaign() {
+    local name="${1}"
+    local local_dir="${PROJECT_ROOT}/hpc/campaign/${name}"
+    mkdir -p "${local_dir}"
+    echo ""
+    echo "<== [campaign] ${name}: digest, lists, proposals, plan, report  →  hpc/campaign/${name}/"
+    rsync_pull "campaign/${name}/" \
+        --include='*.md' --include='*.json' --include='failed_*.txt' --include='actions.log' --include='tasks.jsonl' \
+        --exclude='*' \
+        "${REMOTE}/campaign/${name}/" "${local_dir}/"
+}
+
+require_campaign_file() {
+    local verb="${1}" file="${2:-}"
+    if [[ -z "${file}" || "${file}" != *.y*ml ]]; then
+        echo "Usage: $(basename "$0") ${verb} <campaign.yaml> [arg ...]"
+        echo "  e.g. $(basename "$0") ${verb} hpc/campaign.yaml"
+        exit 1
+    fi
+}
+
+campaign_status() {
+    require_campaign_file status "${1:-}"
+    local file name rc=0
+    file="$(campaign_path "${1}")"
+    name="$(campaign_name "${1}")"
+    echo "==> [status] collect campaign ${name}  @  ${HPC_HOST}"
+    echo ""
+    campaign_remote status "${file}" || rc=$?
+    pull_campaign "${name}"
+    return "${rc}"
+}
+
+campaign_plan() {
+    require_campaign_file plan "${1:-}"
+    local file name rc=0
+    file="$(campaign_path "${1}")"
+    name="$(campaign_name "${1}")"
+    echo "==> [plan] campaign ${name}  @  ${HPC_HOST}   (nothing is submitted)"
+    echo ""
+    campaign_remote plan "${file}" "${@:2}" || rc=$?
+    pull_campaign "${name}"
+    return "${rc}"
+}
+
+campaign_pilot() {
+    require_campaign_file pilot "${1:-}"
+    local file name rc=0
+    file="$(campaign_path "${1}")"
+    name="$(campaign_name "${1}")"
+    echo "==> [pilot] choose a pilot slice of campaign ${name}  @  ${HPC_HOST}   (nothing is submitted)"
+    echo "    Approve it, then: $(basename "$0") act submit ${1} --indices <the pilot's indices>"
+    echo ""
+    campaign_remote pilot "${file}" "${@:2}" || rc=$?
+    pull_campaign "${name}"
+    return "${rc}"
+}
+
+campaign_resubmit() {
+    require_campaign_file resubmit "${1:-}"
+    local file name rc=0
+    file="$(campaign_path "${1}")"
+    name="$(campaign_name "${1}")"
+    echo "==> [resubmit] proposal for campaign ${name}  @  ${HPC_HOST}   (nothing is submitted)"
+    echo "    Approve it, then: $(basename "$0") act resubmit ${1} <proposal file>"
+    echo ""
+    campaign_remote resubmit "${file}" "${@:2}" || rc=$?
+    pull_campaign "${name}"
+    return "${rc}"
+}
+
+campaign_report() {
+    require_campaign_file report "${1:-}"
+    local file name rc=0
+    file="$(campaign_path "${1}")"
+    name="$(campaign_name "${1}")"
+    echo "==> [report] campaign ${name}  @  ${HPC_HOST}"
+    echo ""
+    campaign_remote report "${file}" "${@:2}" || rc=$?
+    pull_campaign "${name}"
+    return "${rc}"
+}
+
+ACT_ACTIONS="submit resubmit hold release throttle update-pending cancel"
+
+# The scontrol fields `act update-pending` may change. A partition is not among them:
+# a partition change goes through `python -m autofit.campaign`, whose lint keeps
+# CPU-only work off GPU partitions.
+ACT_UPDATE_FIELDS="TimeLimit MinMemoryCPU ArrayTaskThrottle Nice"
+
+act_usage() {
+    echo "Usage: $(basename "$0") act <action> <campaign.yaml|campaign-name> <arg ...>"
+    echo ""
+    echo "  submit [--stage S ...] [--indices SPEC] [--dry-run]"
+    echo "                                       submit the campaign (needs the .yaml); a pilot"
+    echo "                                       is --indices with the pilot's slice"
+    echo "  hold <job_id>                        scontrol hold"
+    echo "  release <job_id>                     scontrol release"
+    echo "  throttle <job_id> <N>                at most N array tasks running at once"
+    echo "  update-pending <job_id> <Field=Value ...>"
+    echo "                                       change a pending job: ${ACT_UPDATE_FIELDS}"
+    echo "  resubmit <proposal.json>             submit an approved proposal (needs the .yaml)"
+    echo "  cancel <job_id>                      scancel"
+    echo ""
+    echo "  Every action is appended to campaign/<name>/actions.log on the cluster."
+}
+
+act_fail() {
+    echo "ERROR: $*" >&2
+    echo "" >&2
+    act_usage >&2
+    exit 1
+}
+
+act() {
+    local action="${1:-}" target="${2:-}"
+    [[ -n "${action}" && -n "${target}" ]] || act_fail "act needs an action and a campaign"
+    [[ " ${ACT_ACTIONS} " == *" ${action} "* ]] || act_fail "unknown action '${action}' (one of: ${ACT_ACTIONS})"
+    shift 2
+    local args=("$@")
+
+    local name file=""
+    if [[ "${target}" == *.y*ml ]]; then
+        file="$(campaign_path "${target}")"
+        name="$(campaign_name "${target}")"
+    else
+        name="${target}"
+    fi
+    [[ "${name}" =~ ^[A-Za-z0-9_.-]+$ ]] || act_fail "campaign name '${name}' may use only letters, digits, _ . -"
+
+    # Every argument is one plain word, so the log line needs no escaping and the
+    # remote shell sees exactly what was asked for.
+    local arg
+    for arg in "${args[@]}"; do
+        [[ "${arg}" =~ ^[A-Za-z0-9_=:.,/+@%-]+$ ]] || act_fail "argument '${arg}' has characters act does not pass on"
+    done
+
+    local job_pattern='^[0-9]+(_[0-9]+)?$'
+    local command
+    case "${action}" in
+        hold|release|cancel)
+            [[ ${#args[@]} -eq 1 && "${args[0]}" =~ ${job_pattern} ]] || act_fail "${action} takes one job id"
+            if [[ "${action}" == cancel ]]; then
+                command="scancel ${args[0]}"
+            else
+                command="scontrol ${action} ${args[0]}"
+            fi
+            ;;
+        throttle)
+            [[ ${#args[@]} -eq 2 && "${args[0]}" =~ ^[0-9]+$ && "${args[1]}" =~ ^[0-9]+$ ]] \
+                || act_fail "throttle takes an array job id and a number"
+            command="scontrol update JobId=${args[0]} ArrayTaskThrottle=${args[1]}"
+            ;;
+        update-pending)
+            [[ ${#args[@]} -ge 2 && "${args[0]}" =~ ${job_pattern} ]] \
+                || act_fail "update-pending takes a job id and at least one Field=Value"
+            local field
+            for arg in "${args[@]:1}"; do
+                field="${arg%%=*}"
+                [[ "${arg}" == *=* && " ${ACT_UPDATE_FIELDS} " == *" ${field} "* ]] \
+                    || act_fail "update-pending may change only ${ACT_UPDATE_FIELDS} (got '${arg}')"
+            done
+            command="scontrol update JobId=${args[0]} ${args[*]:1}"
+            ;;
+        submit)
+            [[ -n "${file}" ]] || act_fail "submit needs the campaign.yaml, not just its name"
+            # Only these flags, spelled out in full: argparse would take an abbreviation
+            # of any other (`--prop` for --proposal, which belongs to `act resubmit`).
+            local value_next=0
+            for arg in "${args[@]}"; do
+                if (( value_next )); then
+                    [[ "${arg}" != -* ]] || act_fail "${args[*]}: a flag is missing its value"
+                    value_next=0
+                    continue
+                fi
+                case "${arg}" in
+                    --stage|--indices) value_next=1 ;;
+                    --stage=?*|--indices=?*|--dry-run) ;;
+                    *) act_fail "submit takes only --stage S, --indices SPEC and --dry-run (got '${arg}'); an approved proposal goes through 'act resubmit'" ;;
+                esac
+            done
+            (( ! value_next )) || act_fail "${args[*]}: a flag is missing its value"
+            command="{ ${HPC_ENV}; } && ${HPC_PYTHON} -m autofit.campaign submit $(printf '%q' "${file}") ${args[*]}"
+            ;;
+        resubmit)
+            [[ -n "${file}" ]] || act_fail "resubmit needs the campaign.yaml, not just its name"
+            [[ ${#args[@]} -eq 1 ]] || act_fail "resubmit takes one approved proposal file"
+            local proposal="${args[0]}"
+            [[ "${proposal}" == */* ]] || proposal="campaign/${name}/${proposal}"
+            command="{ ${HPC_ENV}; } && ${HPC_PYTHON} -m autofit.campaign submit $(printf '%q' "${file}") --proposal ${proposal}"
+            ;;
+    esac
+
+    local user="${USER:-$(id -un)}"
+    [[ "${user}" =~ ^[A-Za-z0-9_.-]+$ ]] || user="unknown"
+    local json_args="" first=1
+    for arg in "${args[@]}"; do
+        (( first )) || json_args+=", "
+        json_args+="\"${arg}\""
+        first=0
+    done
+    local log="campaign/${name}/actions.log"
+
+    echo "==> [act] ${action} ${args[*]}  (campaign ${name})  @  ${HPC_HOST}"
+    echo ""
+    # One ssh call: check the log can be written, run the command, then append the log
+    # line with its exit status. A log that cannot be written stops the action before
+    # it runs, so nothing changes on the queue unrecorded. The values are plain words
+    # (checked above), so single quotes carry them intact.
+    local remote
+    remote="cd '${REMOTE_PATH}' && mkdir -p 'campaign/${name}' && : >> '${log}' "
+    remote+="|| { echo 'ERROR: cannot write ${log}; nothing was done' >&2; exit 1; }; "
+    remote+="{ ${command}; }; rc=\$?; "
+    remote+="line=\$(printf '{\"utc\": \"%s\", \"user\": \"%s\", \"campaign\": \"%s\", \"action\": \"%s\", \"args\": [%s], \"exit\": %s}' "
+    remote+="\"\$(date -u +%Y-%m-%dT%H:%M:%SZ)\" '${user}' '${name}' '${action}' '${json_args}' \"\$rc\"); "
+    remote+="echo \"\$line\" >> '${log}'; echo \"\$line\"; exit \$rc"
+    local rc=0
+    ssh "${HPC_HOST}" "${remote}" || rc=$?
+    return "${rc}"
 }
 
 # ---------------------------------------------------------------------------
@@ -646,8 +951,19 @@ print_help() {
     echo "                               Push code then submit"
     echo "  jobs                         Show queued/running jobs (squeue)"
     echo "  sacct                        Show job history and exit codes"
-    echo "  cancel <job_id>              Cancel a job by ID"
+    echo "  cancel <job_id>              Cancel a job by ID (logged like act cancel)"
     echo "  wait-and-pull [secs]         Poll until all jobs finish, then pull (default: 60s)"
+    echo ""
+    echo "Campaigns (python -m autofit.campaign on the cluster):"
+    echo "  status <campaign.yaml>       Collect the campaign, pull and print its digest"
+    echo "  plan <campaign.yaml> [...]   Propose resources from evidence (submits nothing)"
+    echo "  pilot <campaign.yaml> [...]  Choose a stratified pilot slice (submits nothing)"
+    echo "  resubmit <campaign.yaml> --stage S --class C"
+    echo "                               Write a resubmit proposal (submits nothing)"
+    echo "  report <campaign.yaml> [...] End-of-campaign report, energy and carbon"
+    echo "  act <action> <campaign.yaml|name> <arg ...>"
+    echo "                               Start or change campaign jobs and log it: submit,"
+    echo "                               resubmit, hold, release, throttle, update-pending, cancel"
     echo ""
     echo "Inspect:"
     echo "  tail [gpu|cpu]               Stream live SLURM log output (default: gpu)"
@@ -682,7 +998,19 @@ case "$cmd" in
     sync)            push && echo "" && pull ;;
     push-data-init)  push_data_init ;;
     pull-full)       pull_full ;;
-    status)          restrict_pull_dirs "${@:2}" && status ;;
+    status)
+        # `status <campaign.yaml>` is the campaign digest; `status [dir ...]` the dry run.
+        if [[ "${2:-}" == *.y*ml ]]; then
+            campaign_status "${@:2}"
+        else
+            restrict_pull_dirs "${@:2}" && status
+        fi
+        ;;
+    plan)            campaign_plan "${@:2}" ;;
+    pilot)           campaign_pilot "${@:2}" ;;
+    resubmit)        campaign_resubmit "${@:2}" ;;
+    report)          campaign_report "${@:2}" ;;
+    act)             act "${@:2}" ;;
     submit)          submit "${@:2}" ;;
     push-submit)     push_submit "${@:2}" ;;
     jobs)            jobs_cmd ;;
