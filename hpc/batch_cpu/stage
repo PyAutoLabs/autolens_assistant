@@ -134,6 +134,9 @@ write_record pending "" ""
 trap on_exit EXIT
 
 line="$(sed -n "$(( CAMPAIGN_INDEX + 1 ))p" "${MANIFEST}" 2>/dev/null || true)"
+# A manifest saved on Windows ends each line with \r: left on, it becomes part of the
+# last field (`Tile001\r`), whose paths then silently do not exist.
+line="${line%$'\r'}"
 if [[ -z "${line}" ]]; then
     echo "ERROR: ${MANIFEST} has no line for campaign index ${CAMPAIGN_INDEX}" >&2
     FAILURE_CLASS=bad_input

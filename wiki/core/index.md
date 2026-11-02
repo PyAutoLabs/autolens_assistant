@@ -99,6 +99,8 @@ Task-oriented catalogues — comprehensive lists of what's available, with one-l
   JAX/GPU, SLURM).
 - [HPC infrastructure](./operations/hpc_infrastructure.md) — the `hpc/` template,
   batch scripts and the `sync` CLI shipped with this workspace.
+- [Results libraries](./operations/results_library.md) — index thousands of finished
+  fits, list what is missing and why, export, package and verify a catalogue release.
 
 ## External resources
 
