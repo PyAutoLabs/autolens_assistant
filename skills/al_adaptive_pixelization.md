@@ -174,8 +174,9 @@ image as the adapt source.
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: chapter_3 tutorial_8 adaptive](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_pixelizations/tutorial_8_adaptive_pixelization.ipynb):
-  pedagogical adaptive-pixelisation walkthrough.
+- **Student / new to lensing** — [HowToLens: Adaptive Reconstruction](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_pixelizations/tutorial_6_adaptive_reconstruction.ipynb):
+  Delaunay meshes, Hilbert brightness adaptation and adaptive Split regularization,
+  motivated by compact-source fit problems and combined in a chained lens-model fit.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   pixelisation feature section.
 - **Experienced PyAutoLens user** — [workspace/lens: imaging/features/pixelization/adaptive.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/features/pixelization/adaptive.py):

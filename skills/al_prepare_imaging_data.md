@@ -211,7 +211,7 @@ If you're new to *what* this dataset represents physically, read
 ## Further reading
 
 - **Student / new to lensing** — [HowToLens: Real telescope imaging and
-  instrumental effects](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_6_data.ipynb):
+  instrumental effects](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_5_data.ipynb):
   CCD imaging from instruments like HST, telescope optics, exposure, detector noise.
 - **General reference** — [RTD: New user guide](https://pyautolens.readthedocs.io/en/latest/overview/overview_2_new_user_guide.html):
   decision-tree routing by lens scale and data type — orients a new PyAutoLens user

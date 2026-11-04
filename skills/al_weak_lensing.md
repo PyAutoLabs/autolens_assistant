@@ -45,8 +45,8 @@ the inner profile and the shear field pins the outer.
 
 ## Further reading
 
-- **Student / new to lensing** — _ (HowToLens focuses on strong lensing;
-  weak is covered only in passing).
+- **Student / new to lensing** — [HowToLens: Weak Lensing](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_4_scaling_up_lensing/tutorial_6_weak_lensing.ipynb):
+  simulate a shear catalogue, inspect the fit and infer a cluster mass model.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   weak lensing in the feature tour.
 - **Experienced PyAutoLens user** — [workspace/lens: weak/fit.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/weak/fit.py):

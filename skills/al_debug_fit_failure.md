@@ -120,8 +120,8 @@ inputs — [`al_run_search`](./al_run_search.md) — and re-loading the new resu
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: Recovering from local maxima](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_4_dealing_with_failure.ipynb):
-  the three canonical recoveries — prior tuning, multi-start, model simplification.
+- **Student / new to lensing** — [HowToLens: Recovering from local maxima](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_3_why_modeling_is_hard.ipynb):
+  prior tuning, simpler models and more thorough searches, with their benefits and limitations.
 - **General reference** — [RTD: Demagnified solutions](https://pyautolens.readthedocs.io/en/latest/general/demagnified_solutions.html):
   how unphysical demagnified-source reconstructions arise in pixelised fits, and how
   `PositionsLH` penalties prevent them.

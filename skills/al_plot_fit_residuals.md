@@ -135,7 +135,7 @@ what each residual pattern usually means physically. Common cases:
 ## Further reading
 
 - **Student / new to lensing** — [HowToLens: Fitting lens models to observational
-  data](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_7_fitting.ipynb):
+  data](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_6_fitting.ipynb):
   introduces the fit object, residuals, and chi-squared — what each diagnostic plot
   is *telling* you.
 - **General reference** — [RTD: Likelihood function](https://pyautolens.readthedocs.io/en/latest/general/likelihood_function.html):

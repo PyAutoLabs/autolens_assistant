@@ -64,8 +64,9 @@ fit.
 
 ## Further reading
 
-- **Student / new to lensing** — _ (no HowToLens equivalent; cluster
-  lensing is research-grade).
+- **Student / new to lensing** — [HowToLens: Cluster Scale](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_4_scaling_up_lensing/tutorial_5_cluster_scale.ipynb):
+  cluster lens models and multiply imaged sources; use the workspace example below
+  for the CSV interface.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   cluster lensing in the feature tour.
 - **Experienced PyAutoLens user** — [workspace/lens: cluster/csv_api.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/cluster/csv_api.py):

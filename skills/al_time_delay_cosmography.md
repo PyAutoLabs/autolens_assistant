@@ -57,8 +57,9 @@ mass-sheet degeneracy. Adds a custom likelihood term — see
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: chapter_5_point_source](https://github.com/PyAutoLabs/HowToLens/tree/main/notebooks/chapter_5_point_source):
-  point-source lensing tutorials, foundation for time-delay analyses.
+- **Student / new to lensing** — [HowToLens: Point Sources](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_1_introduction/tutorial_4_point_sources.ipynb):
+  image positions, magnifications and time delays provide the foundations; the
+  workspace time-delay example below develops the modeling workflow.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   feature tour — point-source / time-delay section.
 - **Experienced PyAutoLens user** — [workspace/lens: point_source/features/time_delays.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/point_source/features/time_delays.py):
