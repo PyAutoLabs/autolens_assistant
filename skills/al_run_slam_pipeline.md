@@ -143,10 +143,9 @@ all 4+ phases will short-circuit, but you'll catch import / config errors fast.
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: Standard Lens Analysis Method
-  (SLaM)](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_11_slam.ipynb):
-  what SLaM is and why it works — best-practice multi-stage chaining encoded as a
-  ready-made pipeline.
+- **Student / new to lensing** — [HowToLens: Search Chaining and SLaM](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_2_lens_modeling/tutorial_6_search_chaining.ipynb):
+  a worked chain introduces SLaM (Source, Light and Mass) and why its stages need
+  checks before passing information forward. Use the workspace guide below to run SLaM.
 - **General reference** — [RTD: Features overview](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   SLaM sits alongside pixelization, MGE, subhalo detection and multi-wavelength on
   the feature tour.

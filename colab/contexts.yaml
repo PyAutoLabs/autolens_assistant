@@ -219,14 +219,10 @@ contexts:
     skills: [al_plot_tracer, al_build_imaging_model]
   - match: HowToLens/notebooks/chapter_1_introduction/*
     skills: [al_plot_tracer, al_simulate_dataset]
-  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_4_*
+  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_3_*
     skills: [al_debug_fit_failure, al_run_search]
-  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_9_*
-    skills: [al_chain_searches, al_run_search]
-  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_10_*
-    skills: [al_chain_searches, al_run_search]
-  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_11_*
-    skills: [al_run_slam_pipeline, al_chain_searches]
+  - match: HowToLens/notebooks/chapter_2_lens_modeling/tutorial_6_*
+    skills: [al_chain_searches, al_run_slam_pipeline]
   - match: HowToLens/notebooks/chapter_2_lens_modeling/*
     skills: [al_build_imaging_model, al_run_search]
   - match: HowToLens/notebooks/chapter_3_pixelizations/*
