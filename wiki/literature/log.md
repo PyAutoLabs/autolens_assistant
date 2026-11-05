@@ -239,3 +239,15 @@ Added canonical bibliography and claim-support entries for Maresca 2021,
 Nightingale 2025 COWLS, and Bolton 2008. This resolves manuscript citation
 review items for automated source-reconstruction checks, JWST lens-finding
 with modelling, and SLACS mass-measurement context.
+
+---
+
+## 2026-10-30 — Added LEGGOS II (Abedi 2026) for arc area magnification
+
+**By:** Claude Code.
+
+Added canonical BibTeX (`Abedi2026`, arXiv:2606.20804) and a claim-support section in
+`sources/cluster-lensing.md` for the area definition of arc magnification (their Eq. 6-7),
+map-value clump magnifications, critical-curve segmentation and posterior-draw errors,
+verified against the arXiv full text. Linked from the cluster-lensing concept page.
+

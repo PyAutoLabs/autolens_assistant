@@ -1,0 +1,36 @@
+# Colab-contexts check — colab/contexts.yaml stays loadable by the release.
+#
+# At release time PyAutoHands stamps every autolens_workspace and HowToLens notebook
+# with a Colab Gemini instruction assembled from colab/contexts.yaml (preface + core
+# rules + the mapped skills), and fails generation if a mapped skill is missing or an
+# instruction exceeds 20,000 characters. This job runs the same checks on every PR, so
+# renaming a skill or growing one past the cap fails here, beside the change, rather
+# than in the release. It also checks that the committed COSMOS-Web Ring notebook
+# carries the current instruction. See autoassistant/colab_contexts.py.
+name: colab-contexts
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  colab-contexts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML + pytest
+        run: python -m pip install PyYAML pytest
+
+      - name: Every mapped skill exists and every entry fits the cap
+        run: python -m autoassistant.colab_contexts check
+
+      - name: Mapping and the stamped COSMOS-Web Ring notebook agree
+        run: python -m pytest -q autoassistant/tests/test_colab_contexts.py

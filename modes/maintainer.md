@@ -31,6 +31,7 @@ Use the existing skills, not new docs:
 - Authoring or evolving a skill → [`skills/_bootstrap_skill.md`](../skills/_bootstrap_skill.md).
 - Regenerating `wiki/core/` against pinned sources → `al_update_wiki`.
 - API gate / version baseline → [`skills/al_audit_skill_apis.md`](../skills/al_audit_skill_apis.md).
+- Colab Gemini skill map (`colab/contexts.yaml`) → [`skills/al_refresh_colab_contexts.md`](../skills/al_refresh_colab_contexts.md).
 
 ## Release-time wiki-currency check (two triggers, one check)
 
@@ -113,8 +114,10 @@ worked prompts and dataset names are domain). Profiling query examples in
 content covered by the existing `docs/*` clone rule, not generic assistant defaults.
 
 **Mixed** (structure generic, values domain-specific): `llms.txt` read-order,
-`config/`, `benchmarks/README.md` (protocol generic, benchmark table domain), the
-maintainer smoke tests below.
+`config/`, `benchmarks/README.md` (protocol generic, benchmark table domain),
+`colab/contexts.yaml` (preface and rules shape generic, skill mapping and lensing rules
+domain; a newborn remaps it to its own skills and workspace), the maintainer smoke tests
+below.
 
 Generated `.codex/skills/*/SKILL.md` wrappers are **domain** for cloning: their
 namespace and targets belong to this assistant, so they must never be copied

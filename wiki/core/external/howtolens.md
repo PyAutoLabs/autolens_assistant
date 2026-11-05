@@ -12,6 +12,12 @@ astronomy or statistics knowledge — four chapters of tutorials (plus an option
 chapter), delivered as parallel Jupyter notebooks and Python scripts. Primary
 audience: students new to gravitational lensing or to Bayesian inference.
 
+Chapter 3 progresses from pixelizations, mappers and inversions through Bayesian
+regularization, borders and lens modeling. Fit Problems motivates the final Adaptive
+Reconstruction tutorial, which combines mesh adaptation, adaptive regularization and
+a chained fit. Chapter 2 covers search practicalities and chaining; Chapter 4 extends
+the examples to groups, clusters and weak lensing.
+
 ## Use HowToLens's own generated catalogue as the source of truth
 
 Do **not** recite per-tutorial titles or paths from this page or from memory — they

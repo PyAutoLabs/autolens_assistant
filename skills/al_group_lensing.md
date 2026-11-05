@@ -57,8 +57,8 @@ the scaling relation. Composed in one model.
 
 ## Further reading
 
-- **Student / new to lensing** — _ (no direct HowToLens chapter; group
-  lensing is an advanced topic).
+- **Student / new to lensing** — [HowToLens: Group Scale](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_4_scaling_up_lensing/tutorial_4_group_scale.ipynb):
+  member galaxies, scaling relations and comparing models with and without a shared halo.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   group lensing in the feature tour.
 - **Experienced PyAutoLens user** — [workspace/lens: group/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/group/start_here.py):

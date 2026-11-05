@@ -20,6 +20,14 @@ Usage:
 
     python -m autoassistant.to_notebook scripts/imaging.py            # -> scripts/imaging.ipynb
     python -m autoassistant.to_notebook scripts/imaging.py out.ipynb
+    python -m autoassistant.to_notebook SRC OUT --gemini-context <repo>/<notebook path>
+
+``--colab-setup <PyAutoHands checkout>`` optionally applies the shared compact Colab
+bootstrap during maintainer builds; ordinary conversion needs no PyAutoHands.
+
+``--gemini-context`` also writes the notebook's Colab Gemini instruction from
+``colab/contexts.yaml`` (see ``autoassistant/colab_contexts.py``), matched under the given
+name — e.g. ``autolens_assistant/docs/colab/cosmos_web_ring_colab.ipynb``.
 """
 
 from __future__ import annotations
@@ -102,8 +110,38 @@ def convert(script_path: Path, notebook_path: Path | None = None) -> Path:
     return Path(notebook_path)
 
 
+def apply_colab_setup(notebook_path: Path, hands_path: Path) -> None:
+    """Maintainer-only postprocessing using the shared PyAutoHands generator.
+
+    Ordinary conversion remains stdlib-only and needs no Hands checkout.
+    """
+    import importlib.util
+
+    module_path = Path(hands_path) / "autohands" / "build_util.py"
+    spec = importlib.util.spec_from_file_location("_colab_build_util", module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.inject_colab_setup(notebook_path, "autolens")
+
+
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
+    hands_path = None
+    if "--colab-setup" in args:
+        at = args.index("--colab-setup")
+        if at + 1 >= len(args):
+            print("--colab-setup needs a PyAutoHands checkout path", file=sys.stderr)
+            return 1
+        hands_path = Path(args[at + 1])
+        del args[at : at + 2]
+    gemini_name = None
+    if "--gemini-context" in args:
+        at = args.index("--gemini-context")
+        if at + 1 >= len(args):
+            print("--gemini-context needs a <repo>/<notebook path> name", file=sys.stderr)
+            return 1
+        gemini_name = args[at + 1]
+        del args[at : at + 2]
     if not 1 <= len(args) <= 2:
         print(__doc__.split("Usage:")[-1].strip(), file=sys.stderr)
         return 1
@@ -112,6 +150,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"not a file: {script}", file=sys.stderr)
         return 1
     out = convert(script, Path(args[1]) if len(args) == 2 else None)
+    if hands_path is not None:
+        apply_colab_setup(out, hands_path)
+    if gemini_name is not None:
+        from autoassistant.colab_contexts import apply
+
+        apply(out, gemini_name)
     print(out.resolve())
     return 0
 

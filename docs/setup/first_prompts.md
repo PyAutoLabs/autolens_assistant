@@ -56,4 +56,4 @@ and a suggested question for Colab's Gemini at the end of each section. It is th
 if you are learning PyAutoLens and want to see the API.
 
 More ambitious examples — dark-matter subhalo detection, joint imaging + interferometer +
-weak-lensing fits — are in the [README](../../README.md).
+weak-lensing fits — are in [Advanced example prompts](../advanced_examples.md).

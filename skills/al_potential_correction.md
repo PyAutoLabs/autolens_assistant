@@ -317,8 +317,9 @@ inferred and under which regularization, and the configuration choices that matt
 
 ## Further reading
 
-- **Student / new to lensing** — [HowToLens: chapter_3_pixelizations/tutorial_3_inversions](https://pyautolens.readthedocs.io/en/latest/howtolens/chapter_3_pixelizations/tutorial_3_inversions.html):
-  the linear inversion and its evidence, which the corrections extend to the potential.
+- **Student / new to lensing** — [HowToLens: Pixelizations, Mappers and Inversions](https://github.com/PyAutoLabs/HowToLens/blob/main/notebooks/chapter_3_pixelizations/tutorial_1_pixelizations.ipynb):
+  source reconstruction by linear inversion; Chapter 3 Tutorial 2 then explains
+  Bayesian regularization and choosing its coefficient using log evidence.
 - **General reference** — [RTD: overview_3_features](https://pyautolens.readthedocs.io/en/latest/overview/overview_3_features.html):
   where potential corrections sit among the advanced features.
 - **Experienced PyAutoLens user** — [workspace/lens: imaging/features/advanced/potential_correction/start_here.py](https://github.com/PyAutoLabs/autolens_workspace/blob/main/scripts/imaging/features/advanced/potential_correction/start_here.py):
