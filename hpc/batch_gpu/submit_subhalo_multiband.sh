@@ -33,8 +33,15 @@
 #   sbatch submit_subhalo_multiband.sh jwst_pl_sersic_two_band
 #   sbatch submit_subhalo_multiband.sh jwst_pl_sersic_two_band subhalo_m10
 #
+# From your local machine, through hpc/sync (which places sbatch options before
+# the script name, so the dataset is passed as an environment variable instead):
+#   hpc/sync push-submit gpu submit_subhalo_multiband.sh --export=ALL,DATASET=jwst_pl_sersic_two_band
+#
 # Optional environment overrides (pass with `sbatch --export=ALL,NAME=...` or
 # set them before `bash`):
+#   DATASET         dataset name, used when no positional argument is given
+#   DATASET_TYPES   space-separated dataset types, used when none are given as
+#                   arguments (default: every subdirectory with a wavebands/ folder)
 #   BAND_SETS       space-separated band sets, the first band of each set being its
 #                   astrometric reference, e.g. "F150W F444W F150W,F444W"
 #   EXTRA_ARGS      options passed to every arm, e.g. "--max_rotation=5" or
@@ -44,14 +51,22 @@
 #
 set -euo pipefail
 
-if [ $# -lt 1 ]; then
-    echo "Usage: $0 <dataset_name> [dataset_type ...]"
+if [ $# -ge 1 ]; then
+    DATASET="${1%/}"
+    shift
+elif [ -n "${DATASET:-}" ]; then
+    DATASET="${DATASET%/}"
+    # Dataset types from the environment, when submitted through hpc/sync.
+    if [ -n "${DATASET_TYPES:-}" ]; then
+        read -r -a _types <<< "$DATASET_TYPES"
+        set -- "${_types[@]}"
+    fi
+else
+    echo "Usage: $0 <dataset_name> [dataset_type ...]   (or set DATASET / DATASET_TYPES)"
     echo "  e.g. $0 jwst_pl_sersic_two_band"
     exit 1
 fi
 
-DATASET="${1%/}"
-shift
 if [ $# -gt 0 ]; then
     set -- "${@%/}"
 fi
