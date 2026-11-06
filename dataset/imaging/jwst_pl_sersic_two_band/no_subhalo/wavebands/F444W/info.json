@@ -1,0 +1,14 @@
+{
+    "pixel_scale": 0.06,
+    "mask_radius": 3.5,
+    "redshift_lens": 0.5,
+    "redshift_source": 1.0,
+    "waveband": "F444W",
+    "exposure_time": 1500.0,
+    "background_sky_level": 0.9,
+    "subhalo_mass_at_200": 1e-08,
+    "subhalo_centre": [
+        -0.1,
+        -1.9
+    ]
+}
