@@ -24,6 +24,7 @@ __Contents__
 **The Experiment:** The six runs that measure whether multi-band data raises the detection evidence.
 **Literature:** The papers this pipeline builds on and how they shaped it.
 **Shared And Per-Band Components:** Which parameters are common to every band and which are not.
+**Band Alignment:** The free offset and rotation of every band relative to the reference band.
 **Evidence Bookkeeping:** Which evidences are compared, and why the comparison is fair.
 **Pipeline Constants:** Pixelization, over-sampling and subhalo grid settings.
 **Helpers:** Factor-graph fitting, adapt images, band container and the grid-search result wrapper.
@@ -89,17 +90,29 @@ appears in several factors' models is *one* parameter of the joint fit. Every sh
 therefore built once, outside the per-band loop, and the same object is placed in every factor:
 
 - **Shared:** lens mass (`Isothermal`, then `PowerLaw`) and external shear (lensing is achromatic),
-  the lens-light MGE geometry (centre, ellipticity — the simulated lens has the same centre and
-  ellipticity in both bands) and the dark matter subhalo.
-- **Per band:** lens-light MGE amplitudes (they are linear light profiles, solved by each band's own
-  inversion), the source (an MGE in `source_lp`, then a Delaunay pixelization with its own image mesh
-  and `AdaptSplit` regularization per band — the red source is larger, offset and rotated relative to
-  the blue one), the adapt images and over-sampling, and an astrometric offset.
+  and the dark matter subhalo.
+- **Per band:** the lens light (a full MGE per band: its centre, ellipticity and, being linear light
+  profiles, its amplitudes are independent in every band, because the stellar light need not have the
+  same centroid or shape at every wavelength), the source (an MGE in `source_lp`, then a Delaunay
+  pixelization with its own image mesh and `AdaptSplit` regularization per band), the adapt images and
+  over-sampling, and the band's alignment to the reference band.
 
-The first band in `--bands` is the astrometric reference; every other band carries a free
-`DatasetModel.grid_offset` (y, x) in every stage, unless `--fixed_offsets` is passed. The simulated
-bands have no offset, so a free offset is a nuisance parameter that costs a little evidence; it keeps
-the pipeline honest for real data.
+__Band Alignment__
+
+The first band in `--bands` is the astrometric reference. Every other band carries a free
+`al.DatasetModel` (`PyAutoArray:autoarray/dataset/dataset_model.py`) with three parameters in every
+stage: a grid offset (y, x) in arcsec and a grid rotation angle in degrees. The fit subtracts the
+offset from the band's grids and rotates them counter-clockwise by the angle about the offset point
+(`FitDataset.grids`, `PyAutoArray:autoarray/fit/fit_dataset.py`); each band's cached image-plane source
+mesh is moved into the same frame (`AdaptImages.updated_via_instance_from`,
+`PyAutoGalaxy:autogalaxy/analysis/adapt_images/adapt_images.py`), so the pixelized source stays aligned.
+The priors are uniform over +-`--max_offset` arcsec (default 0.5") and +-`--max_rotation` degrees
+(default 10 deg); `--fixed_alignment` fixes every band to the reference frame.
+
+Because the lens light is free per band, a band's lens-light centre no longer pins its alignment. The
+offset and rotation are constrained by the lensed arcs, which every band must reproduce through the one
+shared mass model. Free alignment parameters are nuisance parameters common to the no-subhalo and
+subhalo fits, so they cost both models the same Occam penalty.
 
 __Evidence Bookkeeping__
 
@@ -124,7 +137,7 @@ from autolens import jax_wrapper  # Sets JAX environment before other imports
 import argparse
 import json
 from pathlib import Path
-from typing import List, NamedTuple, Optional, Sequence
+from typing import List, NamedTuple, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -142,8 +155,10 @@ follows Nightingale et al. 2024: a 5 x 5 grid over (-3", 3") in y and x, so each
 the simulated subhalo at (-0.10", -1.90") falls in the cell spanning x = (-3.0", -1.8").
 
 `N_LIVE_SUBHALO` is shared by `subhalo[1]` and every grid cell so the two evidences come from
-identically configured samplers. Each extra band adds one `AdaptSplit` regularization (three
-parameters) and an offset (two), so the per-band `n_live` increments scale the budgets accordingly.
+identically configured samplers. Each extra band adds its own parameters to the joint fit: in
+`source_lp[1]` a lens-light MGE (six) and a source MGE (four), in `light[1]` a lens-light MGE, in
+the pixelized stages one `AdaptSplit` regularization (three), and in every stage its alignment (three).
+The per-band `n_live` increments scale the budgets accordingly.
 """
 
 HILBERT_WEIGHT_POWER = 3.5
@@ -182,13 +197,18 @@ model (`PyAutoFit:autofit/graphical/declarative/collection.py`, `FactorGraphMode
 
 
 class Band(NamedTuple):
-    """One waveband: its name, masked dataset, mask and pixel scale."""
+    """
+    One waveband: its name, masked dataset, mask, pixel scale, light-profile over-sampling and mask
+    centre. `mask_centre` is kept as plain Python floats from `info.json` because it sets prior means,
+    which are hashed into each search's identifier.
+    """
 
     name: str
     dataset: al.Imaging
     mask: al.Mask2D
     pixel_scale: float
     over_sample_size: al.Array2D
+    mask_centre: Tuple[float, float]
 
 
 def _fit_factor_graph(
@@ -221,25 +241,37 @@ def _fit_factor_graph(
     )
 
 
-def _dataset_model_list_from(n_bands: int, free_offsets: bool) -> list:
+def _dataset_model_list_from(
+    n_bands: int,
+    free_alignment: bool,
+    max_offset: float = 0.5,
+    max_rotation: float = 10.0,
+) -> list:
     """
-    The `source_lp` dataset models: the reference band is a fixed `al.DatasetModel()` instance
-    (zero offset, no free parameters), every other band a model with a free (y, x) grid offset of up
-    to 0.5" (more than eight F444W pixels), as in `simultaneous.py`.
+    The `source_lp` dataset models (see __Band Alignment__). The reference band is a fixed
+    `al.DatasetModel()` instance: zero offset, zero rotation, no free parameters. Every other band is a
+    model with a free (y, x) grid offset, uniform on +-`max_offset` arcsec, and a free grid rotation
+    angle, uniform on +-`max_rotation` degrees. Later stages chain these through each band's result.
+
+    `af.Model(al.DatasetModel)` makes nothing free by default, so only the three priors set here are
+    fitted; the background sky level stays fixed at zero.
     """
     dataset_model_list = [al.DatasetModel()]
 
     for _ in range(1, n_bands):
-        if not free_offsets:
+        if not free_alignment:
             dataset_model_list.append(al.DatasetModel())
             continue
 
         dataset_model = af.Model(al.DatasetModel)
         dataset_model.grid_offset.grid_offset_0 = af.UniformPrior(
-            lower_limit=-0.5, upper_limit=0.5
+            lower_limit=-max_offset, upper_limit=max_offset
         )
         dataset_model.grid_offset.grid_offset_1 = af.UniformPrior(
-            lower_limit=-0.5, upper_limit=0.5
+            lower_limit=-max_offset, upper_limit=max_offset
+        )
+        dataset_model.grid_rotation_angle = af.UniformPrior(
+            lower_limit=-max_rotation, upper_limit=max_rotation
         )
         dataset_model_list.append(dataset_model)
 
@@ -311,7 +343,7 @@ def _adapt_from(
 
     image_plane_mesh_grid = al.image_mesh.append_with_circle_edge_points(
         image_plane_mesh_grid=image_plane_mesh_grid,
-        centre=band.mask.mask_centre,
+        centre=band.mask_centre,
         radius=mask_radius + band.mask.pixel_scale / 2.0,
         n_points=EDGE_PIXELS_TOTAL,
     )
@@ -457,15 +489,14 @@ def _subhalo_model_from(redshift_lens: float, redshift_source: float) -> af.Mode
 """
 __SOURCE LP PIPELINE__
 
-The first search, as in `slam_start_here.py` but multi-band. One lens galaxy — a 30-Gaussian MGE bulge
-(`al.model_util.mge_model_from`), an `Isothermal` and an `ExternalShear` — is built once and shared by
-every band, and each band gets its own 30-Gaussian MGE source. In the mgl pipeline the lens light is
-fitted first by its own LENS LIGHT PIPELINE; with a single, isolated lens galaxy that stage is not
-needed and the lens light is fitted here jointly with mass and source, as in the standard SLaM.
+The first search, as in `slam_start_here.py` but multi-band. The lens mass (`Isothermal`) and
+`ExternalShear` are built once and shared by every band. Each band gets its own lens galaxy built
+around them, carrying its own 30-Gaussian MGE lens-light bulge (`al.model_util.mge_model_from`; free
+centre and ellipticity per band), and its own 30-Gaussian MGE source. In the mgl pipeline the lens
+light is fitted first by its own LENS LIGHT PIPELINE; with a single, isolated lens galaxy that stage
+is not needed and the lens light is fitted here jointly with mass and source, as in the standard SLaM.
 
-The MGE amplitudes are linear and solved per band, so one shared MGE geometry still describes a lens
-that is brighter or more compact in one band. The source geometry is per band because the simulated
-red source is larger, offset and rotated relative to the blue one.
+The mass centre is a free parameter of its own, not tied to any band's lens-light centre.
 
 The position penalty uses the multiple-image positions supplied with the data and a 0.3" source-plane
 threshold, as in `mgl_slam_pipeline.py`.
@@ -483,40 +514,42 @@ def source_lp(
     source_mge_radius: float = 1.0,
     n_batch: int = 20,
 ):
-    sigma_min = min(band.pixel_scale for band in bands) / 10.0
-
-    lens_bulge = al.model_util.mge_model_from(
-        mask_radius=mask_radius,
-        total_gaussians=30,
-        gaussian_per_basis=2,
-        centre_prior_is_uniform=True,
-        ell_comps_prior_is_uniform=True,
-        ell_comps_uniform_width=0.5,
-        sigma_min=sigma_min,
-    )
-
     mass = af.Model(al.mp.Isothermal)
     mass.einstein_radius = af.UniformPrior(lower_limit=0.0, upper_limit=mask_radius)
 
-    lens = af.Model(
-        al.Galaxy,
-        redshift=redshift_lens,
-        bulge=lens_bulge,
-        disk=None,
-        mass=mass,
-        shear=af.Model(al.mp.ExternalShear),
-    )
+    shear = af.Model(al.mp.ExternalShear)
 
     positions_likelihood = al.PositionsLH(positions=positions, threshold=0.3)
 
     model_list, analysis_list = [], []
 
     for i, band in enumerate(bands):
+        lens_bulge = al.model_util.mge_model_from(
+            mask_radius=mask_radius,
+            total_gaussians=30,
+            gaussian_per_basis=2,
+            centre_prior_is_uniform=True,
+            centre=band.mask_centre,
+            ell_comps_prior_is_uniform=True,
+            ell_comps_uniform_width=0.5,
+            sigma_min=band.pixel_scale / 10.0,
+        )
+
+        lens = af.Model(
+            al.Galaxy,
+            redshift=redshift_lens,
+            bulge=lens_bulge,
+            disk=None,
+            mass=mass,
+            shear=shear,
+        )
+
         source_bulge = al.model_util.mge_model_from(
             mask_radius=source_mge_radius,
             total_gaussians=30,
             gaussian_per_basis=1,
             centre_prior_is_uniform=False,
+            centre=band.mask_centre,
             centre_sigma=0.6,
             sigma_min=band.pixel_scale / 10.0,
         )
@@ -543,7 +576,7 @@ def source_lp(
         model_list=model_list,
         analysis_list=analysis_list,
         settings_search=settings_search,
-        n_live=200 + 50 * (len(bands) - 1),
+        n_live=200 + 80 * (len(bands) - 1),
         n_batch=n_batch,
         n_like_max=200000,
     )
@@ -556,7 +589,8 @@ Equivalent to `source_pix_1` in `mgl_slam_pipeline.py`. Each band's source becom
 pixelization built from that band's own `source_lp[1]` source image, and each band is re-sampled with
 S/N-adaptive pixelization over-sampling. The shared mass is re-initialized once from the reference
 band's child result (`al.util.chaining.mass_from`, `PyAutoGalaxy:autogalaxy/analysis/chaining_util.py`)
-with its centre freed; the shared shear and each band's offset carry their posterior priors forward.
+with its centre freed; the shared shear and each band's alignment (offset and rotation) carry their
+posterior priors forward.
 Lens light is fixed.
 
 Every band's dataset and adapt images are returned, because every later stage reuses them.
@@ -710,10 +744,12 @@ def source_pix_2(
 """
 __LIGHT LP PIPELINE__
 
-Equivalent to `light_lp` in `mgl_slam_pipeline.py`: a fresh 30-Gaussian MGE lens bulge, shared by all
-bands and centred on the `source_lp[1]` lens-light centre, is fitted against each band's pixelized
-source, which is fixed (mesh and regularization) from `source_pix[2]`
-(`al.util.chaining.source_custom_model_from`). Mass, shear and offsets are fixed from `source_pix[1]`.
+Equivalent to `light_lp` in `mgl_slam_pipeline.py`: each band gets a fresh 30-Gaussian MGE lens bulge,
+centred on that band's `source_lp[1]` lens-light centre, fitted against the band's pixelized source,
+which is fixed (mesh and regularization) from `source_pix[2]`
+(`al.util.chaining.source_custom_model_from`). Mass, shear and band alignment are fixed from
+`source_pix[1]`, so the bands share no free parameter here and the joint fit is equivalent to
+independent per-band lens-light fits.
 """
 
 
@@ -728,19 +764,21 @@ def light_lp(
     mask_radius: float,
     n_batch: int = 20,
 ):
-    lens_bulge = al.model_util.mge_model_from(
-        mask_radius=mask_radius,
-        total_gaussians=30,
-        gaussian_per_basis=2,
-        centre_prior_is_uniform=True,
-        centre=source_lp_result[0].instance.galaxies.lens.bulge.centre,
-        sigma_min=min(band.pixel_scale for band in bands) / 10.0,
-    )
-
     model_list, analysis_list = [], []
 
-    for i in range(len(bands)):
+    for i, band in enumerate(bands):
         pix1_child = source_pix_result_1[i]
+
+        lens_bulge = al.model_util.mge_model_from(
+            mask_radius=mask_radius,
+            total_gaussians=30,
+            gaussian_per_basis=2,
+            centre_prior_is_uniform=True,
+            centre=tuple(
+                float(c) for c in source_lp_result[i].instance.galaxies.lens.bulge.centre
+            ),
+            sigma_min=band.pixel_scale / 10.0,
+        )
 
         model_list.append(
             af.Collection(
@@ -770,7 +808,7 @@ def light_lp(
         model_list=model_list,
         analysis_list=analysis_list,
         settings_search=settings_search,
-        n_live=300,
+        n_live=300 + 100 * (len(bands) - 1),
         n_batch=n_batch,
         n_like_max=200000,
     )
@@ -782,9 +820,9 @@ __MASS TOTAL PIPELINE__
 Equivalent to `mass_total` in `mgl_slam_pipeline.py`: the shared lens mass becomes an elliptical
 `PowerLaw`, initialized from the `source_pix[1]` `Isothermal` (`al.util.chaining.mass_from`), with the
 lens light fixed from `light[1]` and each band's pixelized source fixed from `source_pix[2]`
-(`al.util.chaining.source_from`). The shear and offsets carry their `source_pix[1]` posterior priors.
-The simulated lens is a power law (slope 2.073), so this is the correct smooth model and the SUBHALO
-PIPELINE tests the subhalo against it.
+(`al.util.chaining.source_from`). The shear and band alignments carry their `source_pix[1]` posterior
+priors. The SUBHALO PIPELINE tests the subhalo against this smooth model; if a simulation's lens is not
+a power law, the `no_subhalo` control measures how much evidence that mismatch alone gives a subhalo.
 
 The analyses built here are returned, because the SUBHALO PIPELINE refits on exactly these.
 """
@@ -1182,12 +1220,16 @@ __Dataset__
 
 Each band is loaded from `dataset/imaging/<dataset_name>/<dataset_type>/wavebands/<band>/` — the
 layout written by the simulator and described in `wiki/core/operations/dataset.md` — with its pixel
-scale, mask radius and redshifts from `info.json`. Every band gets the same 3.5" circular mask centred
-on (0", 0"), so the bands cover the same sky.
+scale, mask radius and redshifts from `info.json`, and optionally a `mask_centre` (default (0", 0")),
+which is given in that band's own pixel frame. Each band gets a circular mask of its `mask_radius`
+about its `mask_centre`; give the bands the same radius so they cover the same sky.
 
-Light profiles are over-sampled in radial bins around the lens centre: sub-size 4 within 0.3", 2
-within 0.6" and 2 beyond, which keeps the compact F150W source core (r_e = 0.05") over-sampled at the
-arcs during `source_lp[1]` (as in `autolens_workspace:scripts/imaging/features/advanced/subhalo/detect/start_here.py`).
+`info.json` may also record the true subhalo of a simulation (`subhalo_centre`, `subhalo_mass_at_200`),
+which is copied into the detection summary for reference; it is optional.
+
+Light profiles are over-sampled in radial bins around the mask centre, which is taken to be the lens
+centre: sub-size 4 within 0.3", 2 within 0.6" and 2 beyond, which keeps a compact source over-sampled
+at the arcs during `source_lp[1]` (as in `autolens_workspace:scripts/imaging/features/advanced/subhalo/detect/start_here.py`).
 
 The simulated data are exempt from the real-data inspection gate. For real data, plot every band, check
 for contaminants and set each band's mask from that inspection (`skills/al_prepare_imaging_data.md`).
@@ -1204,6 +1246,7 @@ def bands_from(dataset_path: Path, band_names: Sequence[str]):
             info = json.load(f)
 
         pixel_scale = info["pixel_scale"]
+        mask_centre = tuple(float(c) for c in info.get("mask_centre", (0.0, 0.0)))
 
         dataset = al.Imaging.from_fits(
             data_path=band_path / "data.fits",
@@ -1216,6 +1259,7 @@ def bands_from(dataset_path: Path, band_names: Sequence[str]):
             shape_native=dataset.shape_native,
             pixel_scales=dataset.pixel_scales,
             radius=info["mask_radius"],
+            centre=mask_centre,
         )
 
         dataset = dataset.apply_mask(mask=mask)
@@ -1224,7 +1268,7 @@ def bands_from(dataset_path: Path, band_names: Sequence[str]):
             grid=dataset.grid,
             sub_size_list=[4, 2, 2],
             radial_list=[0.3, 0.6],
-            centre_list=[(0.0, 0.0)],
+            centre_list=[mask_centre],
         )
 
         dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
@@ -1236,6 +1280,7 @@ def bands_from(dataset_path: Path, band_names: Sequence[str]):
                 mask=mask,
                 pixel_scale=pixel_scale,
                 over_sample_size=over_sample_size,
+                mask_centre=mask_centre,
             )
         )
         info_list.append(info)
@@ -1250,9 +1295,10 @@ Executes every stage for one dataset type and one band set. `path_prefix` is
 `subhalo_multiband/<dataset_name>/<dataset_type>` and `unique_tag` the band set (e.g. `F150W_F444W`),
 so each arm of the experiment writes to its own folder of `output/` and resumes independently.
 
-The multiple-image positions are read from the reference band; lensing is achromatic and the simulator
-writes the same positions to every band. They are solved from the *true* tracer, so for
-`subhalo_m10` they already include the subhalo's small image-position shift. The penalty threshold is
+The multiple-image positions are read from the reference band's `positions.json`; they must be in the
+reference band's frame, because the position penalty is attached to that band only. The two-band
+simulator solves them from the *true* tracer, so for `subhalo_m10` they already include the subhalo's
+small image-position shift. The penalty threshold is
 set from the smooth model's own spread (x 2, at least 0.2"), so it removes unphysical mass models but
 is inactive for every model compared in the SUBHALO PIPELINE.
 """
@@ -1266,7 +1312,9 @@ def run(
     dataset_name: str = "jwst_pl_sersic_two_band",
     dataset_type: str = "subhalo_m10",
     band_names: Sequence[str] = ("F150W", "F444W"),
-    free_offsets: bool = True,
+    free_alignment: bool = True,
+    max_offset: float = 0.5,
+    max_rotation: float = 10.0,
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: int = 5,
     n_batch: int = 20,
@@ -1294,7 +1342,12 @@ def run(
     source_lp_result = source_lp(
         settings_search=settings_search,
         bands=bands,
-        dataset_model_list=_dataset_model_list_from(len(bands), free_offsets),
+        dataset_model_list=_dataset_model_list_from(
+            n_bands=len(bands),
+            free_alignment=free_alignment,
+            max_offset=max_offset,
+            max_rotation=max_rotation,
+        ),
         positions=positions,
         mask_radius=mask_radius,
         redshift_lens=redshift_lens,
@@ -1392,8 +1445,8 @@ def run(
         grid_search_result=grid_search_result,
         result_refine=result_refine,
         truth=dict(
-            centre=reference_info["subhalo_centre"],
-            mass_at_200=reference_info["subhalo_mass_at_200"],
+            centre=reference_info.get("subhalo_centre"),
+            mass_at_200=reference_info.get("subhalo_mass_at_200"),
         ),
         output_path=output_path_from(settings_search) / "detection",
     )
@@ -1443,7 +1496,9 @@ __Command Line__
 
     --dataset_type   subhalo_m10 (default) or no_subhalo
     --bands          comma-separated band list; the first is the astrometric reference
-    --fixed_offsets  fix every band's grid offset at (0", 0") instead of fitting it
+    --fixed_alignment fix every band's offset and rotation to the reference frame instead of fitting them
+    --max_offset     half-width of the uniform grid-offset prior, arcsec (default 0.5)
+    --max_rotation   half-width of the uniform grid-rotation prior, degrees (default 10.0)
     --grid_steps     subhalo grid cells per dimension (default 5)
     --grid_dimension half-width of the subhalo grid in arcsec (default 3.0)
     --compare        print the table of completed runs and exit
@@ -1454,7 +1509,9 @@ if __name__ == "__main__":
     parser.add_argument("--dataset", default="jwst_pl_sersic_two_band")
     parser.add_argument("--dataset_type", default="subhalo_m10")
     parser.add_argument("--bands", default="F150W,F444W")
-    parser.add_argument("--fixed_offsets", action="store_true")
+    parser.add_argument("--fixed_alignment", action="store_true")
+    parser.add_argument("--max_offset", type=float, default=0.5)
+    parser.add_argument("--max_rotation", type=float, default=10.0)
     parser.add_argument("--grid_steps", type=int, default=5)
     parser.add_argument("--grid_dimension", type=float, default=3.0)
     parser.add_argument("--n_batch", type=int, default=20)
@@ -1468,7 +1525,9 @@ if __name__ == "__main__":
             dataset_name=args.dataset,
             dataset_type=args.dataset_type,
             band_names=[band.strip() for band in args.bands.split(",")],
-            free_offsets=not args.fixed_offsets,
+            free_alignment=not args.fixed_alignment,
+            max_offset=args.max_offset,
+            max_rotation=args.max_rotation,
             grid_dimension_arcsec=args.grid_dimension,
             number_of_steps=args.grid_steps,
             n_batch=args.n_batch,
