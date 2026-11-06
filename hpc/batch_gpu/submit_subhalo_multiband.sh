@@ -83,6 +83,17 @@ if [ ! -d "$DATASET_ROOT" ]; then
     exit 1
 fi
 
+# The PyAuto source requires Python >= 3.12. Check the venv the tasks will use
+# before submitting anything, rather than failing every array task on import.
+VENV="${VENV:-/mnt/ral/c4072114/venvs/PyAuto_JAX}"
+if ! "$VENV/bin/python" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else 1)' 2>/dev/null; then
+    echo "The venv $VENV has $("$VENV/bin/python" --version 2>&1 || echo 'no python');"
+    echo "PyAuto needs Python >= 3.12. Rebuild it once on the login node with:"
+    echo "  bash $PROJECT_DIR/hpc/setup_venv_ral.sh"
+    exit 1
+fi
+export VENV
+
 mkdir -p "$LIST_DIR" "$LOG_DIR/output" "$LOG_DIR/error"
 
 # -------------------------------
