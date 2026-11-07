@@ -12,13 +12,16 @@
 #   1. Finds a Python >= 3.12: $PYTHON if set, else python3.12/3.13 on PATH (load a module
 #      first if the cluster provides one), else installs a standalone 3.12 with uv under
 #      /mnt/ral/c4072114/.local (no root needed).
-#   2. Moves the old venv aside to <venv>_py<old version>_backup and creates a new venv at
-#      the SAME path, so mgl_batch.sh, submit_mgl and subhalo_multiband_batch.sh need no edits.
+#   2. If the venv already runs Python >= 3.12 it is reused (a re-run only tops up packages,
+#      from the pip cache). Otherwise the old venv is moved aside to
+#      <venv>_py<old version>_backup and a new one is created at the SAME path, so
+#      mgl_batch.sh, submit_mgl and subhalo_multiband_batch.sh need no edits.
 #   3. Installs the third-party dependencies read from the five PyAuto pyproject.toml files
 #      (the PyAuto packages themselves stay on PYTHONPATH as source checkouts, as before),
 #      plus JAX with CUDA 12 GPU support and numba.
-#   4. Appends the PYTHONPATH block to the new venv's bin/activate.
-#   5. Imports autolens and prints the JAX version as a check.
+#   4. Appends the PYTHONPATH block to the venv's bin/activate (once).
+#   5. Imports autolens and JAX on the CPU as a check. The first import reads thousands of
+#      files from the network disk and can take several minutes; let it finish.
 #
 # Every cache and temporary file goes to the shared disk, never to /home or /tmp.
 #
@@ -53,11 +56,18 @@ is_new_enough() {
     "$1" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else 1)' 2>/dev/null
 }
 
+REUSE_VENV=0
+if [ -x "$VENV/bin/python" ] && is_new_enough "$VENV/bin/python"; then
+    REUSE_VENV=1
+fi
+
 # -------------------------------
-# 1. A Python >= 3.12
+# 1. A Python >= 3.12 (only needed when the venv has to be created)
 # -------------------------------
 PY=""
-if [ -n "${PYTHON:-}" ]; then
+if [ "$REUSE_VENV" -eq 1 ]; then
+    PY="$VENV/bin/python"
+elif [ -n "${PYTHON:-}" ]; then
     PY="$PYTHON"
 else
     for candidate in python3.12 python3.13 python3.14; do
@@ -87,9 +97,11 @@ fi
 echo "Using $PY ($("$PY" --version 2>&1))"
 
 # -------------------------------
-# 2. Move the old venv aside and create the new one at the same path
+# 2. Reuse a Python >= 3.12 venv, or move the old venv aside and create a new one
 # -------------------------------
-if [ -d "$VENV" ]; then
+if [ "$REUSE_VENV" -eq 1 ]; then
+    echo "Reusing the existing Python >= 3.12 venv at $VENV"
+elif [ -d "$VENV" ]; then
     old_version="$("$VENV/bin/python" -c 'import sys; print(f"{sys.version_info[0]}{sys.version_info[1]}")' 2>/dev/null || echo old)"
     backup="${VENV}_py${old_version}_backup"
     if [ -e "$backup" ]; then
@@ -99,7 +111,9 @@ if [ -d "$VENV" ]; then
     mv "$VENV" "$backup"
 fi
 
-"$PY" -m venv "$VENV"
+if [ "$REUSE_VENV" -eq 0 ]; then
+    "$PY" -m venv "$VENV"
+fi
 "$VENV/bin/python" -m pip install --upgrade pip
 
 # -------------------------------
@@ -129,24 +143,31 @@ EOF
 # -------------------------------
 # 4. PYTHONPATH block in bin/activate (the PyAuto packages run from the source checkouts)
 # -------------------------------
-cat >> "$VENV/bin/activate" <<EOF
+if ! grep -q "added by hpc/setup_venv_ral.sh" "$VENV/bin/activate"; then
+    cat >> "$VENV/bin/activate" <<EOF
 
 # PyAuto source checkouts (added by hpc/setup_venv_ral.sh)
 export PYTHONPATH=$PYAUTO_SRC/autolens_workspace:$PYAUTO_SRC/PyAutoNerves:$PYAUTO_SRC/PyAutoFit:$PYAUTO_SRC/PyAutoArray:$PYAUTO_SRC/PyAutoGalaxy:$PYAUTO_SRC/PyAutoLens
 EOF
+fi
 
 # -------------------------------
-# 5. Check
+# 5. Check, on the CPU: the login node has no GPU, and JAX_PLATFORMS=cpu stops the CUDA plugin
+#    searching for one. The first import reads thousands of files (numpy, scipy, JAX and its
+#    CUDA libraries, the PyAuto source) from the network disk and can take several minutes.
 # -------------------------------
 # shellcheck disable=SC1091
 source "$VENV/bin/activate"
-python - <<'EOF'
+echo "Checking the install (the first import on the shared disk can take several minutes)..."
+SECONDS=0
+JAX_PLATFORMS=cpu python - <<'EOF'
 import sys
 import jax
 import autolens as al
 print(f"Python {sys.version.split()[0]}, autolens {al.__version__}, jax {jax.__version__}")
-print("JAX devices here (CPU on the login node; a GPU node lists cuda devices):", jax.devices())
+print("JAX devices (CPU-only check):", jax.devices())
 EOF
+echo "Import check took ${SECONDS}s"
 
 echo "Done. New venv: $VENV"
 echo "Check JAX sees the GPU on a GPU node with:"
