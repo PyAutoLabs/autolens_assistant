@@ -2,20 +2,25 @@
 #
 # setup_venv_ral.sh — rebuild the PyAuto_JAX virtual environment on RAL with Python 3.12
 #
-# Why: the PyAuto source checkouts under /mnt/ral/c4072114/PyAuto require Python >= 3.12
-# (every pyproject.toml declares requires-python >= 3.12 and the code uses `int | None`
-# annotations), but /mnt/ral/c4072114/venvs/PyAuto_JAX was built with Python 3.9, so every
-# job failed on `import autolens` with
+# Why: the PyAuto source checkouts declare requires-python >= 3.12. On the old Python 3.9 venv
+# every job failed on `import autolens` with
 #     TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+# from PyAutoArray/autoarray/inversion/mesh/mesh/delaunay_nn.py:52 (`zeroed_pixels: int | None`,
+# added 2026-08-09, commit ab5cc66d) — currently the only construct in the five repos that
+# Python 3.9 cannot import, but the project now targets 3.12 and more will follow.
+#
+# The interpreter must live on the SHARED disk. A venv's bin/python is only a link to the
+# Python it was built from; a venv built from the login node's /usr/bin/python3.12 works on
+# the login node, but on the GPU nodes that file does not exist, bash falls through to the
+# node's system python, and every job fails with `No module named 'jax'`.
 #
 # What it does (run ONCE, on the LOGIN node, which has internet access):
-#   1. Finds a Python >= 3.12: $PYTHON if set, else python3.12/3.13 on PATH (load a module
-#      first if the cluster provides one), else installs a standalone 3.12 with uv under
-#      /mnt/ral/c4072114/.local (no root needed).
-#   2. If the venv already runs Python >= 3.12 it is reused (a re-run only tops up packages,
-#      from the pip cache). Otherwise the old venv is moved aside to
-#      <venv>_py<old version>_backup and a new one is created at the SAME path, so
-#      mgl_batch.sh, submit_mgl and subhalo_multiband_batch.sh need no edits.
+#   1. Installs a standalone Python 3.12 with uv under /mnt/ral/c4072114/.local/python (no
+#      root needed; visible from every node), or uses $PYTHON if that is on the shared disk.
+#   2. If the venv already runs Python >= 3.12 from an interpreter on the shared disk it is
+#      reused (a re-run only tops up packages, from the pip cache). Otherwise the old venv is
+#      moved aside to <venv>_py<old version>_backup and a new one is created at the SAME path,
+#      so mgl_batch.sh, submit_mgl and subhalo_multiband_batch.sh need no edits.
 #   3. Installs the third-party dependencies read from the five PyAuto pyproject.toml files
 #      (the PyAuto packages themselves stay on PYTHONPATH as source checkouts, as before),
 #      plus JAX with CUDA 12 GPU support and numba.
@@ -27,11 +32,11 @@
 #
 # Usage:
 #   bash hpc/setup_venv_ral.sh
-#   PYTHON=/path/to/python3.12 bash hpc/setup_venv_ral.sh    # use a specific interpreter
+#   PYTHON=/mnt/ral/.../python3.12 bash hpc/setup_venv_ral.sh   # a specific shared-disk Python
 #
 set -euo pipefail
 
-BASE=/mnt/ral/c4072114
+BASE="${BASE:-/mnt/ral/c4072114}"
 PYAUTO_SRC="${PYAUTO_SRC:-$BASE/PyAuto}"
 VENV="${VENV:-$BASE/venvs/PyAuto_JAX}"
 CACHE_ROOT="${CACHE_ROOT:-$BASE/.cache}"
@@ -56,36 +61,43 @@ is_new_enough() {
     "$1" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else 1)' 2>/dev/null
 }
 
+# True when the interpreter a path finally resolves to (following the venv's symlinks) is on
+# the shared disk, i.e. reachable from the GPU nodes as well as the login node.
+on_shared_disk() {
+    case "$(readlink -f "$1")" in
+        "$BASE"/*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 REUSE_VENV=0
-if [ -x "$VENV/bin/python" ] && is_new_enough "$VENV/bin/python"; then
+if [ -x "$VENV/bin/python" ] && is_new_enough "$VENV/bin/python" && on_shared_disk "$VENV/bin/python"; then
     REUSE_VENV=1
 fi
 
 # -------------------------------
-# 1. A Python >= 3.12 (only needed when the venv has to be created)
+# 1. A Python >= 3.12 on the shared disk (only needed when the venv has to be created)
 # -------------------------------
 PY=""
 if [ "$REUSE_VENV" -eq 1 ]; then
     PY="$VENV/bin/python"
 elif [ -n "${PYTHON:-}" ]; then
     PY="$PYTHON"
+    if ! on_shared_disk "$PY"; then
+        echo "$PY resolves to $(readlink -f "$PY"), which is not under $BASE."
+        echo "The GPU nodes cannot run it. Unset PYTHON to install a standalone Python with uv."
+        exit 1
+    fi
 else
-    for candidate in python3.12 python3.13 python3.14; do
-        if command -v "$candidate" >/dev/null 2>&1; then
-            PY="$(command -v "$candidate")"
-            break
-        fi
-    done
-fi
-
-if [ -z "$PY" ]; then
-    echo "No python3.12+ on PATH; installing a standalone Python $PY_VERSION with uv under $BASE/.local"
+    echo "Installing a standalone Python $PY_VERSION with uv under $BASE/.local/python"
     UV="$BASE/.local/bin/uv"
     if [ ! -x "$UV" ]; then
         curl -LsSf https://astral.sh/uv/install.sh | \
             env UV_INSTALL_DIR="$BASE/.local/bin" UV_NO_MODIFY_PATH=1 sh
     fi
     export UV_PYTHON_INSTALL_DIR="$BASE/.local/python"
+    # only-managed: never pick the login node's /usr/bin/python3.12.
+    export UV_PYTHON_PREFERENCE=only-managed
     "$UV" python install "$PY_VERSION"
     PY="$("$UV" python find "$PY_VERSION")"
 fi
@@ -94,14 +106,21 @@ if ! is_new_enough "$PY"; then
     echo "$PY is $("$PY" --version 2>&1); Python >= 3.12 is required."
     exit 1
 fi
-echo "Using $PY ($("$PY" --version 2>&1))"
+if ! on_shared_disk "$PY"; then
+    echo "$PY resolves to $(readlink -f "$PY"), which is not under $BASE; the GPU nodes cannot run it."
+    exit 1
+fi
+echo "Using $PY -> $(readlink -f "$PY") ($("$PY" --version 2>&1))"
 
 # -------------------------------
-# 2. Reuse a Python >= 3.12 venv, or move the old venv aside and create a new one
+# 2. Reuse a shared-disk Python >= 3.12 venv, or move the old venv aside and create a new one
 # -------------------------------
 if [ "$REUSE_VENV" -eq 1 ]; then
-    echo "Reusing the existing Python >= 3.12 venv at $VENV"
+    echo "Reusing the existing venv at $VENV (Python >= 3.12 on the shared disk)"
 elif [ -d "$VENV" ]; then
+    if [ -x "$VENV/bin/python" ] && is_new_enough "$VENV/bin/python"; then
+        echo "The existing venv uses $(readlink -f "$VENV/bin/python"), which the GPU nodes cannot run; rebuilding it."
+    fi
     old_version="$("$VENV/bin/python" -c 'import sys; print(f"{sys.version_info[0]}{sys.version_info[1]}")' 2>/dev/null || echo old)"
     backup="${VENV}_py${old_version}_backup"
     if [ -e "$backup" ]; then

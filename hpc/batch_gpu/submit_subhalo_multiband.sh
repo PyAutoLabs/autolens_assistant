@@ -83,12 +83,19 @@ if [ ! -d "$DATASET_ROOT" ]; then
     exit 1
 fi
 
-# The PyAuto source requires Python >= 3.12. Check the venv the tasks will use
-# before submitting anything, rather than failing every array task on import.
+# Check the venv the tasks will use before submitting anything, rather than
+# failing every array task on import. PyAuto requires Python >= 3.12, and the
+# venv's interpreter must live on the shared disk: a venv built from the login
+# node's /usr/bin/python3.12 links to a file the GPU nodes do not have.
 VENV="${VENV:-/mnt/ral/c4072114/venvs/PyAuto_JAX}"
-if ! "$VENV/bin/python" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else 1)' 2>/dev/null; then
-    echo "The venv $VENV has $("$VENV/bin/python" --version 2>&1 || echo 'no python');"
-    echo "PyAuto needs Python >= 3.12. Rebuild it once on the login node with:"
+SHARED_DISK="${SHARED_DISK:-/mnt/ral/}"
+venv_python="$(readlink -f "$VENV/bin/python" 2>/dev/null || true)"
+if [[ "$venv_python" != "$SHARED_DISK"* ]] || \
+    ! "$VENV/bin/python" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 12) else 1)' 2>/dev/null; then
+    venv_version="$( { "$VENV/bin/python" --version; } 2>/dev/null )" || venv_version="cannot run on this node"
+    echo "The venv $VENV is not usable on the GPU nodes:"
+    echo "  its python resolves to ${venv_python:-<a missing file>} (${venv_version})."
+    echo "PyAuto needs Python >= 3.12 from an interpreter under $SHARED_DISK. Rebuild it once on the login node with:"
     echo "  bash $PROJECT_DIR/hpc/setup_venv_ral.sh"
     exit 1
 fi
