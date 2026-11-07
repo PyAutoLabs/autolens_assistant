@@ -39,6 +39,12 @@
 #                                                Start or change campaign jobs, and log it: submit,
 #                                                resubmit, hold, release, throttle, update-pending, cancel
 #
+# Results library (python -m autofit.results on the cluster; one ssh call each):
+#   hpc/sync results [root ...]                  Index the result roots on the cluster, print
+#                                                their states, pull only the index + inspect/
+#   hpc/sync results check <library.yaml>        Completeness of a declared library on the
+#                                                cluster; pulls <name>.missing.csv
+#
 # Inspect:
 #   hpc/sync tail [gpu|cpu]          Stream live SLURM log output (Ctrl+C to stop)
 #   hpc/sync du                      Show remote disk usage
@@ -566,6 +572,78 @@ campaign_remote() {
     ssh "${HPC_HOST}" "cd '${REMOTE_PATH}' && { ${HPC_ENV}; } && ${HPC_PYTHON} -m autofit.campaign ${verb} $(quote_args "$@")"
 }
 
+# ---------------------------------------------------------------------------
+# Results library: index the result roots where the results are, pull back only the
+# index (a few KB per result) and inspect/, never output/ itself.
+#
+# The pulled index lands in hpc/results/<root>/, apart from the local output roots:
+# its records name the cluster's paths, so it is read with --index-dir and never
+# re-indexed locally (a local `index` would drop every record as missing):
+#   python -m autofit.results status <root> --index-dir hpc/results/<root>
+# ---------------------------------------------------------------------------
+
+results_remote() {
+    ssh "${HPC_HOST}" "cd '${REMOTE_PATH}' && { ${HPC_ENV}; } && $*"
+}
+
+results_index() {
+    restrict_pull_dirs "$@"
+    local commands=() root
+    for root in "${PULL_DIRS[@]}"; do
+        commands+=("${HPC_PYTHON} -m autofit.results index $(quote_args "${root}")")
+        commands+=("${HPC_PYTHON} -m autofit.results status $(quote_args "${root}")")
+    done
+    local joined
+    joined="$(printf ' && %s' "${commands[@]}")"
+    echo "==> [results] index ${PULL_DIRS[*]}  @  ${HPC_HOST}"
+    echo ""
+    local rc=0
+    results_remote "${joined# && }" || rc=$?
+    for root in "${PULL_DIRS[@]}"; do
+        mkdir -p "${PROJECT_ROOT}/hpc/results/${root}"
+        echo ""
+        echo "<== [results] ${root}: the index  →  hpc/results/${root}/"
+        rsync_pull "${root}/.autofit_index/" \
+            "${REMOTE}/${root}/.autofit_index/" "${PROJECT_ROOT}/hpc/results/${root}/"
+    done
+    echo ""
+    echo "<== [results] inspect/  →  inspect/"
+    rsync_pull "inspect/" "${REMOTE}/inspect/" "${PROJECT_ROOT}/inspect/"
+    echo ""
+    echo "    Read the pulled index with --index-dir, e.g.:"
+    echo "    python -m autofit.results status ${PULL_DIRS[0]} --index-dir hpc/results/${PULL_DIRS[0]}"
+    return "${rc}"
+}
+
+results_check() {
+    local file="${1:-}"
+    if [[ -z "${file}" || "${file}" != *.y*ml ]]; then
+        echo "Usage: $(basename "$0") results check <library.yaml>"
+        echo "  e.g. $(basename "$0") results check hpc/library.yaml"
+        exit 1
+    fi
+    file="$(campaign_path "${file}")"
+    echo "==> [results] check ${file}  @  ${HPC_HOST}"
+    echo ""
+    local rc=0
+    results_remote "${HPC_PYTHON} -m autofit.results check $(quote_args "${file}") --output-dir hpc/results" || rc=$?
+    mkdir -p "${PROJECT_ROOT}/hpc/results"
+    echo ""
+    echo "<== [results] gaps (*.missing.csv)  →  hpc/results/"
+    rsync_pull "hpc/results/" --include='*.missing.csv' --exclude='*' \
+        "${REMOTE}/hpc/results/" "${PROJECT_ROOT}/hpc/results/"
+    # 1 = something expected is not done (the gaps were pulled); 2 = the check failed.
+    return "${rc}"
+}
+
+results_cmd() {
+    if [[ "${1:-}" == "check" ]]; then
+        results_check "${@:2}"
+    else
+        results_index "$@"
+    fi
+}
+
 # Pull the campaign's small files into hpc/campaign/<name>/.
 pull_campaign() {
     local name="${1}"
@@ -965,6 +1043,11 @@ print_help() {
     echo "                               Start or change campaign jobs and log it: submit,"
     echo "                               resubmit, hold, release, throttle, update-pending, cancel"
     echo ""
+    echo "Results library (python -m autofit.results on the cluster):"
+    echo "  results [root ...]           Index result roots on the cluster, print their"
+    echo "                               states, pull only the index + inspect/"
+    echo "  results check <library.yaml> Completeness of a declared library; pulls the gaps"
+    echo ""
     echo "Inspect:"
     echo "  tail [gpu|cpu]               Stream live SLURM log output (default: gpu)"
     echo "  du                           Show remote disk usage"
@@ -1011,6 +1094,7 @@ case "$cmd" in
     resubmit)        campaign_resubmit "${@:2}" ;;
     report)          campaign_report "${@:2}" ;;
     act)             act "${@:2}" ;;
+    results)         results_cmd "${@:2}" ;;
     submit)          submit "${@:2}" ;;
     push-submit)     push_submit "${@:2}" ;;
     jobs)            jobs_cmd ;;

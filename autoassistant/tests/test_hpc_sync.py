@@ -386,3 +386,73 @@ def test_stage_that_checkpoints_on_usr1_and_then_finishes_is_a_success(stage_pro
 def test_stage_is_not_a_login_shell():
     """A login shell runs ~/.bash_logout after the EXIT trap and can overwrite the status."""
     assert STAGE.read_text().splitlines()[0] == "#!/bin/bash"
+
+
+def test_results_indexes_on_the_cluster_and_pulls_only_the_index(cluster):
+    process = cluster["run"]("results")
+
+    assert process.returncode == 0, process.stderr
+    assert cluster["cluster"]() == [
+        "python -m autofit.results index output",
+        "python -m autofit.results status output",
+    ]
+    assert len([c for c in cluster["calls"]() if c.startswith("ssh")]) == 1
+    pulls = [c for c in cluster["calls"]() if c.startswith("rsync")]
+    assert len(pulls) == 2
+    assert pulls[0].endswith(
+        f"fakehost:{cluster['remote']}/output/.autofit_index/ {cluster['project']}/hpc/results/output/"
+    )
+    assert pulls[1].endswith(f"fakehost:{cluster['remote']}/inspect/ {cluster['project']}/inspect/")
+    # The whole result tree is never pulled.
+    assert not any(f"fakehost:{cluster['remote']}/output/ " in c for c in pulls)
+    assert "--index-dir hpc/results/output" in process.stdout
+
+
+def test_results_names_roots_and_rejects_unknown_ones(cluster):
+    process = cluster["run"]("results", "output_sed", extra_env={"PYAUTO_PULL_DIRS": "output_sed"})
+    assert process.returncode == 0, process.stderr
+    assert cluster["cluster"]() == [
+        "python -m autofit.results index output_sed",
+        "python -m autofit.results status output_sed",
+    ]
+
+    process = cluster["run"]("results", "typo")
+    assert process.returncode == 1
+    assert "not one of this project's result roots" in process.stdout
+
+
+def test_results_check_runs_on_the_cluster_and_pulls_the_gaps(cluster):
+    (cluster["project"] / "hpc" / "library.yaml").write_text("name: lib\n")
+    process = cluster["run"]("results", "check", "hpc/library.yaml")
+
+    assert process.returncode == 0, process.stderr
+    assert cluster["cluster"]() == [
+        "python -m autofit.results check hpc/library.yaml --output-dir hpc/results"
+    ]
+    (pull,) = [c for c in cluster["calls"]() if c.startswith("rsync")]
+    assert "--include=*.missing.csv" in pull and "--exclude=*" in pull
+    assert pull.endswith(f"fakehost:{cluster['remote']}/hpc/results/ {cluster['project']}/hpc/results/")
+
+
+def test_results_check_reports_gaps_with_exit_1_after_pulling(cluster):
+    _fake(cluster["bin"] / "python", "exit 1\n")
+    process = cluster["run"]("results", "check", "hpc/library.yaml")
+    assert process.returncode == 1
+    assert [c for c in cluster["calls"]() if c.startswith("rsync")]
+
+
+def test_results_check_needs_a_library_file(cluster):
+    process = cluster["run"]("results", "check")
+    assert process.returncode == 1
+    assert "results check <library.yaml>" in process.stdout
+
+
+def test_stage_reads_a_windows_manifest(stage_project):
+    project, tmp_path, run = stage_project
+    (project / "hpc" / "manifest.txt").write_bytes(b"imaging lens_a\r\nimaging lens_b\r\n")
+
+    process = run(1)
+
+    assert process.returncode == 0, process.stderr
+    args = (tmp_path / "args.txt").read_text()
+    assert args == "--sample=imaging --dataset=lens_b --use_cpu --number_of_cores=4"
