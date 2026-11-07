@@ -1231,12 +1231,34 @@ Light profiles are over-sampled in radial bins around the mask centre, which is 
 centre: sub-size 4 within 0.3", 2 within 0.6" and 2 beyond, which keeps a compact source over-sampled
 at the arcs during `source_lp[1]` (as in `autolens_workspace:scripts/imaging/features/advanced/subhalo/detect/start_here.py`).
 
+__GPU Memory: The Sparse Operator__
+
+A pixelized inversion built with the default mapping-matrix formalism holds a dense
+(sub-pixels x source pixels) matrix for every likelihood evaluation, and Nautilus evaluates `n_batch`
+points in one compiled call (`jax.vmap` over a chunk of `n_batch`, `PyAutoFit:autofit/non_linear/
+fitness.py`). For F150W at 0.03" with the S/N-adaptive 4 / 2 over-sampling that is ~270,000
+sub-pixels x 1,530 source pixels = 3.1 GiB, and with F444W ~4.1 GiB per joint evaluation, so
+`n_batch=20` asks for ~82 GiB — more than an 80 GB A100 holds (the RAL jobs failed allocating 75 GiB
+in `source_pix[1]`).
+
+Each band's dataset therefore gets the sparse (w-tilde) operator, `Imaging.apply_sparse_operator()`
+(`PyAutoArray:autoarray/dataset/imaging/dataset.py`). It precomputes the PSF-weighted noise
+products once, and the inversion then builds its curvature matrix from the mapper's sparse triplets
+(about three entries per sub-pixel for a Delaunay mesh) in blocks of source pixels
+(`InversionImagingSparse`, `PyAutoArray:autoarray/inversion/inversion/imaging/sparse.py`), so the
+over-sampling no longer multiplies the memory. It is the same likelihood computed differently: for
+F444W at the true mass with a linear lens-light MGE, the Delaunay / `AdaptSplit` source, 4 / 2
+over-sampling and a band offset + rotation, both formalisms give log L = -3057.503746. Stages without
+a pixelization (`source_lp[1]`) keep the mapping formalism automatically. The operator is applied
+after masking (masking discards it) and survives the later `apply_over_sampling` calls.
+`--no_sparse_operator` turns it off; `--n_batch` lowers the batch if memory is still short.
+
 The simulated data are exempt from the real-data inspection gate. For real data, plot every band, check
 for contaminants and set each band's mask from that inspection (`skills/al_prepare_imaging_data.md`).
 """
 
 
-def bands_from(dataset_path: Path, band_names: Sequence[str]):
+def bands_from(dataset_path: Path, band_names: Sequence[str], use_sparse_operator: bool = True):
     bands, info_list = [], []
 
     for name in band_names:
@@ -1272,6 +1294,9 @@ def bands_from(dataset_path: Path, band_names: Sequence[str]):
         )
 
         dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
+
+        if use_sparse_operator:
+            dataset = dataset.apply_sparse_operator()
 
         bands.append(
             Band(
@@ -1318,10 +1343,15 @@ def run(
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: int = 5,
     n_batch: int = 20,
+    use_sparse_operator: bool = True,
 ) -> dict:
     dataset_path = Path("dataset") / "imaging" / dataset_name / dataset_type
 
-    bands, info_list = bands_from(dataset_path=dataset_path, band_names=band_names)
+    bands, info_list = bands_from(
+        dataset_path=dataset_path,
+        band_names=band_names,
+        use_sparse_operator=use_sparse_operator,
+    )
 
     reference_info = info_list[0]
     mask_radius = reference_info["mask_radius"]
@@ -1499,6 +1529,8 @@ __Command Line__
     --fixed_alignment fix every band's offset and rotation to the reference frame instead of fitting them
     --max_offset     half-width of the uniform grid-offset prior, arcsec (default 0.5)
     --max_rotation   half-width of the uniform grid-rotation prior, degrees (default 10.0)
+    --no_sparse_operator  use the dense mapping-matrix inversion (needs far more GPU memory)
+    --n_batch        points per compiled likelihood batch (default 20; lower it to save GPU memory)
     --grid_steps     subhalo grid cells per dimension (default 5)
     --grid_dimension half-width of the subhalo grid in arcsec (default 3.0)
     --compare        print the table of completed runs and exit
@@ -1512,6 +1544,7 @@ if __name__ == "__main__":
     parser.add_argument("--fixed_alignment", action="store_true")
     parser.add_argument("--max_offset", type=float, default=0.5)
     parser.add_argument("--max_rotation", type=float, default=10.0)
+    parser.add_argument("--no_sparse_operator", action="store_true")
     parser.add_argument("--grid_steps", type=int, default=5)
     parser.add_argument("--grid_dimension", type=float, default=3.0)
     parser.add_argument("--n_batch", type=int, default=20)
@@ -1528,6 +1561,7 @@ if __name__ == "__main__":
             free_alignment=not args.fixed_alignment,
             max_offset=args.max_offset,
             max_rotation=args.max_rotation,
+            use_sparse_operator=not args.no_sparse_operator,
             grid_dimension_arcsec=args.grid_dimension,
             number_of_steps=args.grid_steps,
             n_batch=args.n_batch,
