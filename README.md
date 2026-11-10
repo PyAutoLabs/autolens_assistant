@@ -89,7 +89,7 @@ yourself. See [`modes/start_here.md`](modes/start_here.md).
 ### Teacher Mode
 
 If you are new to gravitational lensing, particularly an undergraduate or early-stage PhD student, ask the assistant 
-to use **Teacher Mode**. It will explain the fundamentals of lensing and lens analysis in greater detail, while providing direct links to relevant, human-readable documentation so that you can understand what **PyAutoLens** is doing.
+to use **Teacher Mode**. It will explain the fundamentals of lensing and lens analysis in greater detail, while providing direct links to relevant guides and examples so that you can understand what **PyAutoLens** is doing.
 
 <sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
 
