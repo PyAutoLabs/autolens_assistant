@@ -1,0 +1,249 @@
+% Pipeline choices of scripts/subhalo_multiband/subhalo_multiband_real_data_slam.py (real data) and
+% scripts/subhalo_multiband/subhalo_multiband_mock_data_slam.py (mock data). Every number below is the
+% value in the code as committed; update both together.
+
+This section lists every choice made in the lens-modelling pipeline, stage by stage. It describes the
+real-data pipeline; Section~\ref{sc:pipeline_mock} lists what differs for the mock data. The pipeline
+is a Source, Light and Mass (SLaM) chain fitted with \texttt{PyAutoLens}~\citep{Nightingale2021},
+followed by the subhalo search of \citet{Nightingale2024}. Every stage is sampled with the nested
+sampler \texttt{Nautilus}~\citep{nautilus}.
+
+\subsection{\label{sc:pipeline_general}General set-up}
+
+\paragraph{Joint multi-band fitting.} Each waveband is one factor of a factor graph and all bands are
+fitted simultaneously by one non-linear search per stage. A prior object placed in several bands'
+models is a single parameter of the joint fit. The same code fits one band or several, so the
+single-band and joint-band arms of the experiment differ only in their data.
+\begin{itemize}
+    \item \textbf{Shared by all bands:} the lens mass (\texttt{Isothermal}, later a
+    \texttt{PowerLaw}), the external shear and the dark matter subhalo, because lensing is achromatic.
+    \item \textbf{Per band:} the lens light (its own multi-Gaussian expansion, MGE, with its own
+    centre and ellipticity, because the stellar light need not have the same centroid or shape at
+    every wavelength), the source (an MGE, later a pixelized source with its own mesh and
+    regularization), the adapt images, the over-sampling, and the band's alignment to the
+    reference band.
+\end{itemize}
+
+\paragraph{Reference band and alignment.} The first band given is the astrometric reference. Its
+alignment is fixed (zero offset, zero rotation). Every other band has three free alignment
+parameters in every stage in which the alignment is free: a $(y, x)$ grid offset, each with a uniform
+prior on $\pm 0.5''$, and a grid rotation angle with a uniform prior on $\pm 10^\circ$. The rotation
+is about the offset point. The background sky level is fixed at zero in every band. Alignment can be
+fixed for all bands with \texttt{--fixed\_alignment}.
+
+\paragraph{Prior chaining.} When a later stage takes a component from an earlier one as a
+\emph{model} (free), the installed \texttt{PyAutoFit} reuses the earlier stage's \emph{original}
+prior unchanged; the prior is not narrowed by the earlier posterior. A component taken as an
+\emph{instance} is fixed at the earlier stage's maximum-likelihood value. The linear light profiles
+of a fixed lens-light MGE keep their geometry (centre, ellipticity), but their amplitudes are still
+solved linearly in every likelihood evaluation.
+
+\paragraph{Data preparation.} Each band is loaded with its own pixel scale and given a circular mask
+of radius $3.5''$ (the \texttt{mask\_radius} of the band's \texttt{info.json}), centred on the
+band's \texttt{mask\_centre} (default $(0'', 0'')$). Light profiles are over-sampled in radial bins
+about the mask centre: sub-grid size 4 within $0.3''$, 2 between $0.3''$ and $0.6''$, and 2 beyond.
+Pixelized sources use the sparse (w-tilde) inversion operator to fit in GPU memory; it gives the same
+likelihood as the dense formalism. For real data, every band is plotted and inspected for
+contaminating galaxies, stars and artefacts before fitting, and its mask is set from that inspection.
+
+\paragraph{Position penalty.} The multiple-image positions of the lensed source are supplied in the
+reference band's frame. The penalty is attached to the reference band's factor only. It constrains
+the shared mass model, so one copy suffices, and a copy per band would penalize single- and
+multi-band fits differently. Where the threshold is computed from an earlier result, it is twice the
+largest source-plane separation of the positions traced through that result's maximum-likelihood
+model, clipped to $[0.2'', 0.8'']$.
+
+\paragraph{Sampler settings.} Every search uses \texttt{Nautilus} on one GPU with
+\texttt{n\_batch} $= 10$ (the command-line default, applied to every stage; \texttt{--n\_batch}
+overrides it) and one core. All other \texttt{Nautilus} settings are the library defaults
+(\texttt{enlarge\_per\_dim} $= 1.1$, \texttt{split\_threshold} $= 100$, \texttt{n\_networks} $= 4$,
+\texttt{f\_live} $= 0.01$, \texttt{n\_eff} $= 500$, \texttt{n\_shell} $= 1$, no fixed seed).
+JAX runs in double precision. The number of live points grows by a fixed increment for each band
+beyond the first, scaled to the parameters each band adds to that stage. Early stages are capped with
+\texttt{n\_like\_max}; the no-subhalo baseline and the subhalo searches are not, because a search
+stopped before convergence returns a biased evidence.
+
+Table~\ref{tab:pipeline_stages} summarizes the stages; $N$ is the number of bands.
+
+\begin{table}
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \caption{\label{tab:pipeline_stages}Stages of the real-data pipeline, for $N$ bands. Free
+    parameters are given for one and for two bands. Every stage uses \texttt{n\_batch} $= 10$. The
+    position-penalty threshold is either fixed or computed from \texttt{source\_lp[1]}.}
+    \begin{tabular}{lcccc}
+        \hline
+        Stage & Free (1 / 2) & $n_\mathrm{live}$ & $n_\mathrm{like,max}$ & Pos.\ threshold \\
+        \hline
+        \texttt{source\_lp[1]}  & 17 / 30 & $200 + 80(N-1)$  & $2 \times 10^5$ & fixed, $0.3''$ \\
+        \texttt{source\_pix[1]} & 10 / 16 & $150 + 50(N-1)$  & $4 \times 10^5$ & computed \\
+        \texttt{source\_pix[2]} & 3 / 6   & $75 + 25(N-1)$   & $5 \times 10^4$ & none \\
+        \texttt{light[1]}       & 6 / 12  & $300 + 100(N-1)$ & $2 \times 10^5$ & none \\
+        \texttt{mass\_total[1]} & 8 / 11  & $200 + 50(N-1)$  & none            & computed \\
+        \texttt{subhalo[1]}, per cell & 11 / 14 & 600      & none            & computed \\
+        \texttt{subhalo[2]}     & 11 / 14 & 600              & none            & computed \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{\label{sc:pipeline_source_lp}\texttt{source\_lp[1]}: parametric source}
+
+The lens light, lens mass and a parametric source are fitted together.
+\begin{itemize}
+    \item \textbf{Lens mass (shared):} an elliptical \texttt{Isothermal}. Centre: Gaussian priors,
+    mean $0''$, $\sigma = 0.1''$. Elliptical components: truncated Gaussian priors, mean 0,
+    $\sigma = 0.3$, truncated to $[-1, 1]$. Einstein radius: uniform on $[0'', 3.5'']$ (zero to the
+    mask radius). The mass centre is free and is not tied to any band's lens-light centre.
+    \item \textbf{External shear (shared):} $\gamma_1$ and $\gamma_2$ uniform on $[-0.3, 0.3]$.
+    \item \textbf{Lens light (per band):} an MGE of two bases of 30 linear Gaussians each. The
+    Gaussian widths are fixed and log-spaced from one tenth of the band's pixel scale to the mask
+    radius. Both bases share one centre, with uniform priors of $\pm 0.1''$ about the band's mask
+    centre. Each basis has its own elliptical components, with uniform priors on $[-0.5, 0.5]$. This
+    gives six non-linear parameters per band.
+    \item \textbf{Source (per band):} an MGE of one basis of 30 linear Gaussians, with widths
+    log-spaced from one tenth of the pixel scale to $1.0''$. Centre: Gaussian priors on the mask
+    centre with $\sigma = 0.6''$. Elliptical components: truncated Gaussian priors as for the mass.
+    This gives four non-linear parameters per band.
+    \item \textbf{Alignment:} free for every non-reference band, with the priors of
+    Section~\ref{sc:pipeline_general}.
+    \item \textbf{Position penalty:} a fixed source-plane threshold of $0.3''$.
+\end{itemize}
+A separate lens-light stage is not run first, because the lens is a single isolated galaxy.
+
+\subsection{\label{sc:pipeline_source_pix_1}\texttt{source\_pix[1]}: first pixelized source}
+
+Each band's parametric source is replaced by a pixelized source.
+\begin{itemize}
+    \item \textbf{Source (per band):} a Delaunay mesh whose image-plane vertices come from a Hilbert
+    image mesh. The Hilbert mesh has 1500 points at a $0.03''$ pixel scale and 1250 at $0.06''$, with
+    a weight power of 3.5 and a weight floor of 0.01. Its adapt data is the band's
+    lens-subtracted source signal-to-noise map from \texttt{source\_lp[1]}, uncapped. Thirty further
+    points are placed on a circle just outside the mask (radius: mask radius plus half a pixel), and
+    the 30 Delaunay pixels they form are zeroed so that they carry no source flux.
+    \item \textbf{Regularization (per band):} \texttt{AdaptSplit}, driven by the same signal-to-noise
+    map. Inner and outer coefficients: log-uniform priors on $[10^{-6}, 10^6]$. Signal scale: uniform
+    on $[0, 1]$. This gives three parameters per band.
+    \item \textbf{Over-sampling of the pixelized source (per band):} sub-grid size 4 in pixels whose
+    source signal-to-noise exceeds 3, and 2 elsewhere.
+    \item \textbf{Lens mass (shared):} \texttt{Isothermal}, free with the \texttt{source\_lp[1]}
+    priors.
+    \item \textbf{External shear (shared):} free with the \texttt{source\_lp[1]} priors.
+    \item \textbf{Lens light (per band):} fixed at its \texttt{source\_lp[1]} maximum-likelihood
+    geometry.
+    \item \textbf{Alignment:} free with the \texttt{source\_lp[1]} priors.
+    \item \textbf{Position penalty:} threshold computed from \texttt{source\_lp[1]}.
+\end{itemize}
+
+\subsection{\label{sc:pipeline_source_pix_2}\texttt{source\_pix[2]}: refined pixelized source}
+
+Each band's image mesh, adapt images and pixelization over-sampling are rebuilt from its
+\texttt{source\_pix[1]} reconstruction. The adapt data fed to the image mesh is capped at a
+signal-to-noise of 3, so that the brightest source pixels do not take most of the mesh. The adapt
+images used by the regularization and the over-sampling remain uncapped. The datasets and adapt
+images built here are reused by every later stage.
+\begin{itemize}
+    \item \textbf{Free:} only each band's \texttt{AdaptSplit} parameters, with the priors above.
+    \item \textbf{Fixed:} the lens mass, shear and alignment at their \texttt{source\_pix[1]}
+    maximum-likelihood values, and the lens light at its \texttt{source\_lp[1]} values.
+    \item \textbf{Position penalty:} none.
+\end{itemize}
+The bands share no free parameter, so this joint fit is equivalent to independent per-band fits.
+
+\subsection{\label{sc:pipeline_light}\texttt{light[1]}: lens light}
+
+The lens light is refitted against the pixelized sources.
+\begin{itemize}
+    \item \textbf{Lens light (per band):} a fresh MGE of two bases of 30 linear Gaussians, with the
+    same widths as in \texttt{source\_lp[1]}. Centre: uniform priors of $\pm 0.1''$ about that band's
+    \texttt{source\_lp[1]} lens-light centre. Elliptical components: truncated Gaussian priors, mean
+    0, $\sigma = 0.3$, truncated to $[-1, 1]$; these differ from the uniform $\pm 0.5$ priors of
+    \texttt{source\_lp[1]}.
+    \item \textbf{Fixed:} each band's pixelized source (mesh and regularization) from
+    \texttt{source\_pix[2]}, and the lens mass, shear and alignment from \texttt{source\_pix[1]}.
+    \item \textbf{Position penalty:} none.
+\end{itemize}
+The bands again share no free parameter.
+
+\subsection{\label{sc:pipeline_mass}\texttt{mass\_total[1]}: total mass and the no-subhalo baseline}
+
+The shared lens mass becomes an elliptical \texttt{PowerLaw}.
+\begin{itemize}
+    \item \textbf{Lens mass (shared):} \texttt{PowerLaw}. Its centre, elliptical components and
+    Einstein radius take the \texttt{source\_pix[1]} \texttt{Isothermal} priors. Density slope:
+    uniform on $[1.5, 3.0]$.
+    \item \textbf{External shear (shared):} free with its original priors.
+    \item \textbf{Alignment:} free with its original priors.
+    \item \textbf{Lens light (per band):} fixed from \texttt{light[1]}.
+    \item \textbf{Source (per band):} fixed from \texttt{source\_pix[2]} (mesh, image-plane mesh
+    and regularization).
+    \item \textbf{Position penalty:} threshold computed from \texttt{source\_lp[1]}.
+    \item \textbf{Sampling:} uncapped, because the evidence of this fit is the no-subhalo baseline
+    of the detection.
+\end{itemize}
+This fit is not repeated before the subhalo search. A refit without a subhalo, on the same analyses
+and with the same priors, would reproduce it, because chaining reuses the original priors.
+
+\subsection{\label{sc:pipeline_subhalo}Subhalo search}
+
+The two subhalo stages compose their models from \texttt{mass\_total[1]}. The lens mass, shear and
+alignment are free with the same priors as in \texttt{mass\_total[1]}. The lens light and pixelized
+source of each band are fixed at their \texttt{mass\_total[1]} values. The fits run on the very
+analysis objects used by \texttt{mass\_total[1]}: the same datasets, adapt images and position
+penalty. They therefore differ from the baseline only by one subhalo, shared by all bands.
+
+\paragraph{Subhalo model.} A spherical NFW halo at the lens redshift, whose concentration follows
+the mass--concentration relation of \citet{Ludlow2016} (\texttt{NFWMCRLudlowSph}). Its only mass
+parameter is $M_{200}$, with a log-uniform prior on $[10^6, 10^{11}]\,\mathrm{M}_\odot$. The lens
+and source redshifts in the profile are fixed to those of the system.
+
+\paragraph{\texttt{subhalo[1]}: grid search.} The subhalo centre is searched on a $2 \times 2$ grid
+over $(-3'', 3'')$ in $y$ and $x$. Each cell is a separate joint fit of all bands, with uniform
+priors on its $3'' \times 3''$ cell for the centre. \citet{Nightingale2024} used $5 \times 5$ over
+the same region; $2 \times 2$ is chosen to cut the cost of the grid. The cells run one after another
+on one GPU. The grid can be changed with \texttt{--grid\_steps} and \texttt{--grid\_dimension}.
+
+\paragraph{\texttt{subhalo[2]}: refinement.} The subhalo is refitted with its centre free across the
+image plane. The centre's priors are Gaussian, centred on the maximum-likelihood subhalo centre of the
+highest-\emph{evidence} grid cell, with $\sigma$ equal to half a cell width ($1.5''$ for the
+$2 \times 2$ grid). $M_{200}$ keeps its full log-uniform prior. The best cell is chosen by evidence
+rather than likelihood, because the evidence is the detection statistic.
+
+\paragraph{Detection statistic.} Two increases relative to \texttt{mass\_total[1]} are reported:
+\begin{align}
+    \Delta \ln Z_\mathrm{grid} &= \ln Z_\mathrm{best\ cell} - \ln Z_{\texttt{mass\_total[1]}}, \\
+    \Delta \ln Z_\mathrm{refine} &= \ln Z_{\texttt{subhalo[2]}} - \ln Z_{\texttt{mass\_total[1]}}.
+\end{align}
+Both depend on the centre prior through its Occam factor. A $3'' \times 3''$ cell is $\ln 4 \approx
+1.4$ denser at the subhalo than a uniform prior over the whole $6'' \times 6''$ region. Taking the
+best of $N_\mathrm{cells}$ cells is a look-elsewhere selection, so
+$\Delta \ln Z_\mathrm{grid} - \ln N_\mathrm{cells}$ approximates the evidence for a subhalo whose
+position is unknown. The refined value is typically about 0.5 below the grid value, but its prior is
+centred using the same data, which favours the subhalo model. The two are read together. Absolute
+evidences of different band sets are never compared, because they are evidences of different data.
+
+\subsection{\label{sc:pipeline_mock}Differences for mock data}
+
+The mock data are fitted with the same pipeline up to and including \texttt{mass\_total[1]}. Every
+stage up to that point has the same model, priors and sampler settings, so the two pipelines share
+those fits. The differences are:
+\begin{itemize}
+    \item \textbf{No grid search.} \texttt{subhalo[1]} is not run, because on a simulation the
+    subhalo's position is known.
+    \item \textbf{Truth-centred subhalo prior.} In \texttt{subhalo[2]} the subhalo-centre priors are
+    Gaussians centred on the true subhalo centre of the simulation ($(-0.10'', -1.90'')$, read from
+    \texttt{info.json}), with $\sigma = 1.5''$ (\texttt{--centre\_sigma}). This is the width of the
+    real-data \texttt{subhalo[2]} prior with the $2 \times 2$ grid. $M_{200}$, the sampler settings
+    ($n_\mathrm{live} = 600$, uncapped, \texttt{n\_batch} $= 10$) and every other prior are unchanged.
+    \item \textbf{One detection statistic},
+    $\Delta \ln Z = \ln Z_{\texttt{subhalo[2]}} - \ln Z_{\texttt{mass\_total[1]}}$. Narrowing the centre
+    prior by a factor two raises it by about $2 \ln 2 \approx 1.4$ while the prior is much wider
+    than the posterior. This shift is the same in every band set, so the single- versus joint-band
+    comparison does not depend on $\sigma$. The \texttt{no\_subhalo} control constrains no centre and
+    barely responds to $\sigma$, so it is compared with \texttt{subhalo\_m10} at the same $\sigma$
+    only. The values are not directly comparable with the real-data grid values.
+    \item \textbf{Positions.} The multiple-image positions are solved from the true lens model of the
+    simulation, so for \texttt{subhalo\_m10} they include the subhalo's small image-position shift.
+    \item \textbf{Data inspection.} The simulated data have no contaminants, and every band uses the
+    simulation's $3.5''$ mask about $(0'', 0'')$. The inspection step for real data is not needed.
+\end{itemize}
