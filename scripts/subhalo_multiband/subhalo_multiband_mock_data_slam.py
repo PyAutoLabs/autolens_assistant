@@ -133,10 +133,28 @@ biased evidence.
 
 One increase is reported, `delta_log_evidence`: `subhalo[2]` versus `mass_total[1]`. Its centre prior
 is a Gaussian on the true centre, which is information a real-data search does not have. The
-evidence's Occam penalty for the centre is therefore set by `--centre_sigma`: a narrower prior wastes
-less prior volume and gives a larger `Delta ln Z`. Values from this script measure detectability at a
-known position, and are not directly comparable with the grid-search values of the real-data script.
-The `no_subhalo` control uses the same prior, so it is the fair threshold for these numbers.
+centre's Occam factor enters `Delta ln Z` directly and is set by `--centre_sigma`. For a centre
+localized to a width sigma_L, best fit a distance d from the truth,
+
+    ln(Occam_centre) = ln[sigma_L^2 / (sigma_L^2 + sigma^2)] - d^2 / [2 (sigma_L^2 + sigma^2)],
+
+about -2 ln(sigma / sigma_L) when sigma >> sigma_L. Each halving of sigma therefore adds about
+2 ln 2 = 1.4 to `Delta ln Z` (1.5" -> 0.5" adds 2.2), until sigma approaches sigma_L or the d term
+takes over.
+
+- **Comparing band sets.** Every arm uses the same sigma, and while sigma >> sigma_L in every arm,
+  changing it shifts every arm's `Delta ln Z` by the same amount. The single- vs joint-band
+  comparison does not depend on it.
+- **Comparing with the `no_subhalo` control or with a threshold.** In the control the fit drives
+  M_200 low and leaves the centre unconstrained (posterior = prior), so it pays no centre penalty
+  and its `Delta ln Z` barely depends on sigma, while the `subhalo_m10` value grows as sigma shrinks.
+  A narrow sigma therefore widens the signal-control gap beyond what a search for an unknown
+  position would see, and the control only tests spurious evidence at the true position.
+- **Comparing with the real-data script.** The default 1.5" equals the width of that script's
+  `subhalo[2]` refine prior with the 2 x 2 grid, so the two agree when its grid finds the subhalo
+  (one prior is centred on the truth, the other on the grid's estimate). Its best-cell value is
+  typically about 0.5 higher (a 3" x 3" cell is denser at the subhalo, 1/9 against 1/14 arcsec^-2),
+  and a uniform prior over the whole 6" x 6" region would give about 0.9 less than this script.
 """
 
 from autolens import jax_wrapper  # Sets JAX environment before other imports

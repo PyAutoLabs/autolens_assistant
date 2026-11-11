@@ -129,13 +129,28 @@ subhalo differs, so `mass_total[1]` itself is the no-subhalo baseline and is not
 the subhalo searches is capped with `n_like_max`, because a search stopped before convergence returns
 a biased evidence.
 
-Two increases are reported:
+Two increases are reported. Both depend on the subhalo-centre prior, because the centre's Occam
+factor enters `Delta ln Z` directly: for a centre localized to a width sigma_L much smaller than the
+prior, it is about ln(sigma_L^2 x prior density at the subhalo x 2 pi), so a prior that is denser at
+the subhalo gives a larger `Delta ln Z` from the same data.
 
-- `delta_log_evidence_grid`: the best grid cell versus `mass_total[1]`. Its subhalo-centre prior is a
-  uniform cell of the full grid, so this is the most conservative and directly comparable number.
+- `delta_log_evidence_grid`: the best grid cell versus `mass_total[1]`. Its centre prior is uniform
+  over one cell and is not centred using the data. It is not, however, the most conservative number.
+  With the default 2 x 2 grid a 3" x 3" cell has a density of 1/9 arcsec^-2, against 1/36 arcsec^-2
+  for a uniform prior over the whole 6" x 6" region, so the cell is worth about ln 4 = 1.4 more. Taking
+  the best of N cells is also a look-elsewhere selection. The evidence of a uniform prior over the
+  whole region is the mean over cells, ln Z_region = ln[(1/N) sum_cells Z_cell], which is about
+  ln Z_best - ln N when one cell dominates. Subtract ln N (1.4 for 2 x 2) for the position-blind
+  number.
 - `delta_log_evidence_refine`: `subhalo[2]` versus `mass_total[1]`. Its centre prior is a Gaussian
-  placed on the best cell by the data, which slightly favours the subhalo model. It is the number
-  usually quoted, but it should be read alongside the grid value.
+  of width half a cell (1.5" for 2 x 2) placed on the best cell's maximum-likelihood centre. Its
+  density at the subhalo, 1/(2 pi 1.5^2) = 1/14 arcsec^-2, is below a cell's, so it is typically
+  about 0.5 below the grid value. But its prior is centred using the same data it is then fitted to,
+  which favours the subhalo model. It is the number usually quoted, and should be read alongside
+  the grid value and the grid value minus ln N.
+
+Evidence thresholds calibrated on one prior setup (e.g. the 5 x 5 grid of Nightingale et al. 2024)
+carry over to another only after accounting for these prior-density differences.
 """
 
 from autolens import jax_wrapper  # Sets JAX environment before other imports
