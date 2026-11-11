@@ -6,7 +6,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32gb
-#SBATCH --time=70:00:00
+#SBATCH --time=100:00:00
 #SBATCH -o output/output.%A_%a.out
 #SBATCH -e error/error.%A_%a.err
 #SBATCH --mail-type=END,FAIL
@@ -15,7 +15,7 @@
 # One arm of the multi-band subhalo experiment per SLURM array task:
 # scripts/subhalo_multiband/subhalo_multiband_slam.py runs every stage for one
 # (dataset type, band set) — source_lp[1], source_pix[1], source_pix[2], light[1],
-# mass_total[1], subhalo[1], the subhalo[2] grid search and subhalo[3] — and writes
+# mass_total[1] (the no-subhalo baseline), the subhalo[1] grid search and subhalo[2] — and writes
 # output/subhalo_multiband/<dataset>/<dataset_type>/<bands>/detection/detection_summary.json.
 #
 # Don't sbatch this file directly. submit_subhalo_multiband.sh writes the arm list

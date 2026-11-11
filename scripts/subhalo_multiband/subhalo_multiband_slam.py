@@ -4,9 +4,9 @@ SLaM + Subhalo Detection: Multi-Band (Simultaneous) Imaging
 
 Fits a galaxy-scale strong lens observed in one or more imaging wavebands *simultaneously* with a
 Source, Light and Mass (SLaM) pipeline, then runs the SUBHALO PIPELINE of Nightingale et al. 2024
-(arXiv:2209.10566) — a no-subhalo baseline, a grid search of non-linear searches over the subhalo's
-image-plane position and a refined subhalo fit — and reports the Bayesian evidence gained by adding a
-dark matter subhalo.
+(arXiv:2209.10566) — a grid search of non-linear searches over the subhalo's image-plane position and
+a refined subhalo fit — and reports the Bayesian evidence gained by adding a dark matter subhalo,
+relative to the smooth `mass_total[1]` fit, which serves as the no-subhalo baseline.
 
 It is built to answer one question on the simulated JWST two-band lens
 (`scripts/simulators/jwst_pl_sersic_two_band.py`): *does fitting F150W and F444W jointly give a larger
@@ -32,10 +32,9 @@ __Contents__
 **SOURCE PIX PIPELINE 1:** Swaps each band's parametric source for a Hilbert / Delaunay pixelization.
 **SOURCE PIX PIPELINE 2:** Refits only the pixelizations, with the image-mesh adapt data S/N-capped.
 **LIGHT LP PIPELINE:** Refits the shared lens light against the pixelized sources.
-**MASS TOTAL PIPELINE:** Upgrades the lens mass to a `PowerLaw`.
-**SUBHALO PIPELINE 1:** Refits the `mass_total` model without a subhalo: the evidence baseline.
-**SUBHALO PIPELINE 2:** Grid search of non-linear searches over the subhalo's (y, x) position.
-**SUBHALO PIPELINE 3:** Refines the subhalo from the highest-evidence grid cell.
+**MASS TOTAL PIPELINE:** Upgrades the lens mass to a `PowerLaw`; its evidence is the no-subhalo baseline.
+**SUBHALO PIPELINE 1:** Grid search of non-linear searches over the subhalo's (y, x) position.
+**SUBHALO PIPELINE 2:** Refines the subhalo from the highest-evidence grid cell.
 **Detection Summary:** Evidence and likelihood increases, written to JSON and plotted.
 **Dataset:** Loads, masks and over-samples each band.
 **Run:** Executes every stage in order for one dataset type and one band set.
@@ -116,20 +115,23 @@ subhalo fits, so they cost both models the same Occam penalty.
 
 __Evidence Bookkeeping__
 
-For `Delta ln Z` to measure the subhalo and nothing else, the three SUBHALO PIPELINE searches use
-*identical* analyses (same masked, over-sampled datasets, adapt images, fixed source pixelizations,
-regularization and position penalty) and *identical* priors on every non-subhalo parameter (posterior
-priors chained from `mass_total[1]`). Only the subhalo differs. They also share the Nautilus settings
-and are not capped with `n_like_max`, because a search stopped before convergence returns a biased
-evidence.
+For `Delta ln Z` to measure the subhalo and nothing else, the no-subhalo baseline and the two
+SUBHALO PIPELINE searches fit the same masked, over-sampled datasets, adapt images, fixed lens light,
+fixed source pixelizations, regularization and position penalty — they share `mass_total[1]`'s
+analysis objects — with the same priors on every non-subhalo parameter:
+`result.model` returns a search's own priors (`PyAutoFit:autofit/non_linear/result.py`), so the
+subhalo stages inherit exactly the lens mass, shear and alignment priors of `mass_total[1]`. Only the
+subhalo differs, so `mass_total[1]` itself is the no-subhalo baseline and is not refitted. Neither it nor
+the subhalo searches is capped with `n_like_max`, because a search stopped before convergence returns
+a biased evidence.
 
 Two increases are reported:
 
-- `delta_log_evidence_grid`: the best grid cell versus `subhalo[1]`. Its subhalo-centre prior is a
+- `delta_log_evidence_grid`: the best grid cell versus `mass_total[1]`. Its subhalo-centre prior is a
   uniform cell of the full grid, so this is the most conservative and directly comparable number.
-- `delta_log_evidence_refine`: `subhalo[3]` versus `subhalo[1]`. Its centre prior is a Gaussian placed
-  on the best cell by the data, which slightly favours the subhalo model. It is the number usually
-  quoted, but it should be read alongside the grid value.
+- `delta_log_evidence_refine`: `subhalo[2]` versus `mass_total[1]`. Its centre prior is a Gaussian
+  placed on the best cell by the data, which slightly favours the subhalo model. It is the number
+  usually quoted, but it should be read alongside the grid value.
 """
 
 from autolens import jax_wrapper  # Sets JAX environment before other imports
@@ -151,10 +153,11 @@ from autonerves import conf
 __Pipeline Constants__
 
 The pixelization constants are those of the mgl pipeline (`mgl_slam_pipeline.py`); the subhalo grid
-follows Nightingale et al. 2024: a 5 x 5 grid over (-3", 3") in y and x, so each cell is 1.2" wide and
-the simulated subhalo at (-0.10", -1.90") falls in the cell spanning x = (-3.0", -1.8").
+spans (-3", 3") in y and x as in Nightingale et al. 2024, but defaults to 2 x 2 cells rather than their
+5 x 5 to cut the cost of the grid search. Each cell is then 3" wide, and the simulated subhalo at
+(-0.10", -1.90") falls in the cell spanning y = (-3.0", 0.0"), x = (-3.0", 0.0").
 
-`N_LIVE_SUBHALO` is shared by `subhalo[1]` and every grid cell so the two evidences come from
+`N_LIVE_SUBHALO` is shared by every grid cell and the refined fit, so the subhalo evidences come from
 identically configured samplers. Each extra band adds its own parameters to the joint fit: in
 `source_lp[1]` a lens-light MGE (six) and a source MGE (four), in `light[1]` a lens-light MGE, in
 the pixelized stages one `AdaptSplit` regularization (three), and in every stage its alignment (three).
@@ -177,8 +180,7 @@ SOURCE_ADAPT_KEY = "('galaxies', 'source')"
 SUBHALO_MASS_LOWER = 1.0e6
 SUBHALO_MASS_UPPER = 1.0e11
 
-N_LIVE_SUBHALO = 200
-N_LIVE_SUBHALO_REFINE = 600
+N_LIVE_SUBHALO = 600
 
 
 """
@@ -603,7 +605,7 @@ def source_pix_1(
     source_lp_result,
     positions: al.Grid2DIrregular,
     mask_radius: float,
-    n_batch: int = 20,
+    n_batch: int = 10,
 ):
     reference = source_lp_result[0]
 
@@ -687,7 +689,7 @@ def source_pix_2(
     source_lp_result,
     source_pix_result_1,
     mask_radius: float,
-    n_batch: int = 20,
+    n_batch: int = 10,
 ):
     model_list, analysis_list, dataset_list, adapt_images_list = [], [], [], []
 
@@ -762,7 +764,7 @@ def light_lp(
     source_pix_result_1,
     source_pix_result_2,
     mask_radius: float,
-    n_batch: int = 20,
+    n_batch: int = 10,
 ):
     model_list, analysis_list = [], []
 
@@ -824,7 +826,10 @@ lens light fixed from `light[1]` and each band's pixelized source fixed from `so
 priors. The SUBHALO PIPELINE tests the subhalo against this smooth model; if a simulation's lens is not
 a power law, the `no_subhalo` control measures how much evidence that mismatch alone gives a subhalo.
 
-The analyses built here are returned, because the SUBHALO PIPELINE refits on exactly these.
+`mass_total[1]` is the no-subhalo baseline of the detection, so it is not capped with `n_like_max`
+(a search stopped before convergence returns a biased evidence). The analyses built here are returned,
+because the SUBHALO PIPELINE refits on exactly these objects: the same datasets, adapt images and
+position penalty, whose threshold is computed once, from `source_lp[1]`.
 """
 
 
@@ -838,7 +843,7 @@ def mass_total(
     source_pix_result_2,
     light_result,
     positions: al.Grid2DIrregular,
-    n_batch: int = 20,
+    n_batch: int = 10,
 ):
     reference = source_pix_result_1[0]
 
@@ -883,26 +888,27 @@ def mass_total(
             )
         )
 
-    return _fit_factor_graph(
+    result = _fit_factor_graph(
         name="mass_total[1]",
         model_list=model_list,
         analysis_list=analysis_list,
         settings_search=settings_search,
         n_live=200 + 50 * (len(bands) - 1),
         n_batch=n_batch,
-        n_like_max=200000,
     )
+
+    return result, analysis_list
 
 
 """
 __SUBHALO PIPELINE__
 
-The three searches of Nightingale et al. 2024. Each composes its per-band models through
+The subhalo searches of Nightingale et al. 2024. Each composes its per-band models through
 `_subhalo_stage_models_from`, which builds the shared lens mass and shear once from the `mass_total[1]`
-reference-band posterior and fixes each band's lens light and pixelized source from `mass_total[1]`.
-The three stages therefore differ *only* in the `subhalo` entry, which is `None` for `subhalo[1]` and
-one shared `af.Model` for `subhalo[2]` and `subhalo[3]`. The analyses are the same objects for all
-three, carrying the `mass_total[1]` position penalty on the reference band.
+reference-band model and fixes each band's lens light and pixelized source from `mass_total[1]`. The
+two stages therefore differ from `mass_total[1]` *only* by one shared subhalo `af.Model`. Their
+analyses are the very objects `mass_total` fitted, so the reference band's position penalty (the
+`source_lp[1]` threshold) is identical in the baseline and in every subhalo fit.
 """
 
 
@@ -942,53 +948,8 @@ def _subhalo_stage_models_from(mass_result, n_bands: int, subhalo) -> list:
     return model_list
 
 
-def subhalo_analysis_list_from(
-    dataset_list: Sequence[al.Imaging],
-    adapt_images_list: Sequence[al.AdaptImages],
-    mass_result,
-    positions: al.Grid2DIrregular,
-) -> list:
-    positions_likelihood = mass_result[0].positions_likelihood_from(
-        factor=2.0, positions=positions, minimum_threshold=0.2, maximum_threshold=0.8
-    )
-
-    return [
-        al.AnalysisImaging(
-            dataset=dataset,
-            adapt_images=adapt_images,
-            positions_likelihood_list=_positions_list(i, positions_likelihood),
-        )
-        for i, (dataset, adapt_images) in enumerate(zip(dataset_list, adapt_images_list))
-    ]
-
-
 """
 __SUBHALO PIPELINE 1__
-
-The `mass_total[1]` model refitted without a subhalo, on the subhalo analyses, with the subhalo
-searches' Nautilus settings. Its evidence is the baseline every subhalo evidence is compared to.
-"""
-
-
-def subhalo_no_subhalo(
-    settings_search: af.SettingsSearch,
-    analysis_list: Sequence[al.AnalysisImaging],
-    mass_result,
-    n_bands: int,
-    n_batch: int = 20,
-):
-    return _fit_factor_graph(
-        name="subhalo[1]",
-        model_list=_subhalo_stage_models_from(mass_result, n_bands, subhalo=None),
-        analysis_list=analysis_list,
-        settings_search=settings_search,
-        n_live=N_LIVE_SUBHALO,
-        n_batch=n_batch,
-    )
-
-
-"""
-__SUBHALO PIPELINE 2__
 
 A `number_of_steps` x `number_of_steps` grid of searches (`af.SearchGridSearch`,
 `PyAutoFit:autofit/non_linear/grid/grid_search/__init__.py`). Each cell confines the shared subhalo's
@@ -1015,8 +976,8 @@ def subhalo_grid_search(
     redshift_lens: float,
     redshift_source: float,
     grid_dimension_arcsec: float = 3.0,
-    number_of_steps: int = 5,
-    n_batch: int = 20,
+    number_of_steps: int = 2,
+    n_batch: int = 10,
 ):
     subhalo = _subhalo_model_from(redshift_lens=redshift_lens, redshift_source=redshift_source)
 
@@ -1038,7 +999,7 @@ def subhalo_grid_search(
     )
 
     search = af.Nautilus(
-        name="subhalo[2]_[search_lens_plane]",
+        name="subhalo[1]_[search_lens_plane]",
         **settings_search.search_dict,
         n_live=N_LIVE_SUBHALO,
         n_batch=n_batch,
@@ -1055,12 +1016,12 @@ def subhalo_grid_search(
 
 
 """
-__SUBHALO PIPELINE 3__
+__SUBHALO PIPELINE 2__
 
 The subhalo refitted with its centre free across the image plane but initialized on the
 highest-*evidence* grid cell: a Gaussian prior centred on that cell's maximum-likelihood subhalo centre,
 with a width of half a cell. M_200 keeps the full log-uniform prior and the lens priors are those of
-`subhalo[1]`, so only the subhalo-centre prior differs from the grid cells.
+`mass_total[1]`, so only the subhalo-centre prior differs from the grid cells.
 
 The canonical scripts take the cell with the highest *likelihood* (`model_centred_absolute`, via
 `GridSearchResult.best_samples`); the detection statistic is the evidence, so the best-evidence cell is
@@ -1095,7 +1056,7 @@ def subhalo_refine(
     redshift_source: float,
     grid_dimension_arcsec: float,
     number_of_steps: int,
-    n_batch: int = 20,
+    n_batch: int = 10,
 ):
     best_cell = best_cell_from(grid_search_result)
     cell_width = 2.0 * grid_dimension_arcsec / number_of_steps
@@ -1106,11 +1067,11 @@ def subhalo_refine(
     subhalo.mass.centre_1 = af.GaussianPrior(mean=best_cell["centre"][1], sigma=cell_width / 2.0)
 
     return _fit_factor_graph(
-        name="subhalo[3]_[single_plane_refine]",
+        name="subhalo[2]_[single_plane_refine]",
         model_list=_subhalo_stage_models_from(mass_result, n_bands, subhalo=subhalo),
         analysis_list=analysis_list,
         settings_search=settings_search,
-        n_live=N_LIVE_SUBHALO_REFINE,
+        n_live=N_LIVE_SUBHALO,
         n_batch=n_batch,
     )
 
@@ -1119,7 +1080,8 @@ def subhalo_refine(
 __Detection Summary__
 
 The evidences are read from each search's top-level `CombinedResult`, i.e. the joint evidence over all
-bands. The grid's evidence-increase map is computed relative to `subhalo[1]`
+bands. The no-subhalo evidence is that of `mass_total[1]`. The grid's evidence-increase map is computed
+relative to it
 (`SubhaloGridSearchResult.figure_of_merit_array`) and plotted with `aplt.plot_array`; per band, the
 no-subhalo and refined fits are compared with `aplt.subplot_detection_fits`, and the evidence and
 subhalo-mass maps are overlaid on the band's data with `aplt.subplot_detection_imaging`
@@ -1341,7 +1303,7 @@ def run(
     max_offset: float = 0.5,
     max_rotation: float = 10.0,
     grid_dimension_arcsec: float = 3.0,
-    number_of_steps: int = 5,
+    number_of_steps: int = 2,
     n_batch: int = 20,
     use_sparse_operator: bool = True,
 ) -> dict:
@@ -1415,7 +1377,7 @@ def run(
         n_batch=n_batch,
     )
 
-    mass_result = mass_total(
+    mass_result, analysis_list = mass_total(
         settings_search=settings_search,
         bands=bands,
         dataset_list=dataset_list,
@@ -1425,21 +1387,6 @@ def run(
         source_pix_result_2=source_pix_result_2,
         light_result=light_result,
         positions=positions,
-        n_batch=n_batch,
-    )
-
-    analysis_list = subhalo_analysis_list_from(
-        dataset_list=dataset_list,
-        adapt_images_list=adapt_images_list,
-        mass_result=mass_result,
-        positions=positions,
-    )
-
-    result_no_subhalo = subhalo_no_subhalo(
-        settings_search=settings_search,
-        analysis_list=analysis_list,
-        mass_result=mass_result,
-        n_bands=len(bands),
         n_batch=n_batch,
     )
 
@@ -1471,7 +1418,7 @@ def run(
     return detection_summary_from(
         bands=bands,
         dataset_type=dataset_type,
-        result_no_subhalo=result_no_subhalo,
+        result_no_subhalo=mass_result,
         grid_search_result=grid_search_result,
         result_refine=result_refine,
         truth=dict(
@@ -1531,7 +1478,7 @@ __Command Line__
     --max_rotation   half-width of the uniform grid-rotation prior, degrees (default 10.0)
     --no_sparse_operator  use the dense mapping-matrix inversion (needs far more GPU memory)
     --n_batch        points per compiled likelihood batch (default 20; lower it to save GPU memory)
-    --grid_steps     subhalo grid cells per dimension (default 5)
+    --grid_steps     subhalo grid cells per dimension (default 2)
     --grid_dimension half-width of the subhalo grid in arcsec (default 3.0)
     --compare        print the table of completed runs and exit
 """
@@ -1545,7 +1492,7 @@ if __name__ == "__main__":
     parser.add_argument("--max_offset", type=float, default=0.5)
     parser.add_argument("--max_rotation", type=float, default=10.0)
     parser.add_argument("--no_sparse_operator", action="store_true")
-    parser.add_argument("--grid_steps", type=int, default=5)
+    parser.add_argument("--grid_steps", type=int, default=2)
     parser.add_argument("--grid_dimension", type=float, default=3.0)
     parser.add_argument("--n_batch", type=int, default=20)
     parser.add_argument("--compare", action="store_true")
