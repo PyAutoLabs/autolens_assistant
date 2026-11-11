@@ -1,0 +1,12 @@
+/mnt/ral/c4072114/PyAuto/PyAutoNerves/autonerves/workspace.py:31: UserWarning: The workspace at /mnt/ral/c4072114/PyAuto/autolens_assistant records release version 2026.7.9.1, but the installed library is 2026.8.17.1 — more than 30 days newer. The workspace examples and configs may lag the installed API. Pull the latest workspace:
+
+    cd /mnt/ral/c4072114/PyAuto/autolens_assistant && git pull origin main
+
+To bypass this check, edit config/general.yaml:
+
+    version:
+      workspace_version_check: False
+
+You can also set the environment variable PYAUTO_SKIP_WORKSPACE_VERSION_CHECK=1 to disable temporarily.
+  warnings.warn(message)
+slurmstepd: error: *** JOB 414511 ON euclid-ral-gpu-2 CANCELLED AT 2026-11-10T15:25:07 DUE TO TIME LIMIT ***

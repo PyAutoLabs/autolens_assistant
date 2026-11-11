@@ -1,0 +1,107 @@
+/mnt/ral/c4072114/PyAuto/PyAutoNerves/autonerves/workspace.py:31: UserWarning: The workspace at /mnt/ral/c4072114/PyAuto/autolens_assistant records release version 2026.7.9.1, but the installed library is 2026.8.17.1 — more than 30 days newer. The workspace examples and configs may lag the installed API. Pull the latest workspace:
+
+    cd /mnt/ral/c4072114/PyAuto/autolens_assistant && git pull origin main
+
+To bypass this check, edit config/general.yaml:
+
+    version:
+      workspace_version_check: False
+
+You can also set the environment variable PYAUTO_SKIP_WORKSPACE_VERSION_CHECK=1 to disable temporarily.
+  warnings.warn(message)
+slurmstepd: error: *** JOB 414513 ON euclid-ral-gpu-2 CANCELLED AT 2026-11-10T15:25:07 DUE TO TIME LIMIT ***
+Traceback (most recent call last):
+  File "/mnt/ral/c4072114/PyAuto/autolens_assistant/scripts/subhalo_multiband/subhalo_multiband_slam.py", line 1557, in <module>
+    run(
+  File "/mnt/ral/c4072114/PyAuto/autolens_assistant/scripts/subhalo_multiband/subhalo_multiband_slam.py", line 1446, in run
+    grid_search_result = subhalo_grid_search(
+                         ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/autolens_assistant/scripts/subhalo_multiband/subhalo_multiband_slam.py", line 1049, in subhalo_grid_search
+    return grid_search.fit(
+           ^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/grid/grid_search/__init__.py", line 195, in fit
+    return self._fit(
+           ^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/grid/grid_search/__init__.py", line 273, in _fit
+    for i, job_result in enumerate(
+                         ^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/grid/grid_search/__init__.py", line 22, in run_jobs
+    yield job_.perform()
+          ^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/grid/grid_search/job.py", line 55, in perform
+    result = self.search_instance.fit(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/abstract_search.py", line 296, in fit
+    return self._fit_and_output(model=model, analysis=analysis, info=info)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/abstract_search.py", line 333, in _fit_and_output
+    result = self.start_resume_fit(analysis=analysis, model=model)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/runtime.py", line 234, in decorated
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/abstract_search.py", line 434, in start_resume_fit
+    search_internal, fitness = self._fit(model=model, analysis=analysis)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/abstract_search.py", line 591, in _fit
+    return self._run_bridge(model=model, analysis=analysis)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/execution.py", line 113, in _run_bridge
+    search_internal = self.run(ctx)
+                      ^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/nest/nautilus/search.py", line 559, in run
+    return self._run_sampler(ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/nest/nautilus/search.py", line 571, in _run_sampler
+    return self.fit_x1_cpu(
+           ^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/nest/nautilus/search.py", line 663, in fit_x1_cpu
+    return self.call_search(
+           ^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/nest/nautilus/search.py", line 844, in call_search
+    converged = search_internal.run(
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/nautilus/sampler.py", line 441, in run
+    self.n_update_iter += self.add_samples(-1, verbose=verbose)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/nautilus/sampler.py", line 1119, in add_samples
+    log_l, blobs = self.evaluate_likelihood(points)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/nautilus/sampler.py", line 885, in evaluate_likelihood
+    log_l = np.array(result)
+            ^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/jax/_src/array.py", line 409, in __array__
+    return np.asarray(self._value, dtype=dtype, **kwds)  # pyrefly: ignore[no-matching-overload]
+                      ^^^^^^^^^^^
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/jax/_src/profiler.py", line 420, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/jax/_src/array.py", line 637, in _value
+    npy_value, did_copy = self._single_device_array_to_np_array_did_copy()
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax.errors.JaxRuntimeError: INTERNAL: CpuCallback error calling callback: Traceback (most recent call last):
+  File "/mnt/ral/c4072114/PyAuto/autolens_assistant/scripts/subhalo_multiband/subhalo_multiband_slam.py", line 1557, in <module>
+  File "/mnt/ral/c4072114/PyAuto/autolens_assistant/scripts/subhalo_multiband/subhalo_multiband_slam.py", line 1446, in run
+  File "/mnt/ral/c4072114/PyAuto/autolens_assistant/scripts/subhalo_multiband/subhalo_multiband_slam.py", line 1049, in subhalo_grid_search
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/grid/grid_search/__init__.py", line 195, in fit
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/grid/grid_search/__init__.py", line 273, in _fit
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/grid/grid_search/__init__.py", line 22, in run_jobs
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/grid/grid_search/job.py", line 55, in perform
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/abstract_search.py", line 296, in fit
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/abstract_search.py", line 333, in _fit_and_output
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/runtime.py", line 234, in decorated
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/abstract_search.py", line 434, in start_resume_fit
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/abstract_search.py", line 591, in _fit
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/execution.py", line 113, in _run_bridge
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/nest/nautilus/search.py", line 559, in run
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/nest/nautilus/search.py", line 571, in _run_sampler
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/nest/nautilus/search.py", line 663, in fit_x1_cpu
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/search/nest/nautilus/search.py", line 844, in call_search
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/nautilus/sampler.py", line 441, in run
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/nautilus/sampler.py", line 1119, in add_samples
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/nautilus/sampler.py", line 865, in evaluate_likelihood
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/fitness.py", line 699, in call_wrap
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/jax_compile.py", line 307, in wrapper
+  File "/mnt/ral/c4072114/venvs/PyAuto_JAX/lib/python3.12/site-packages/jax/_src/callback.py", line 815, in _wrapped_callback
+  File "/mnt/ral/c4072114/PyAuto/PyAutoFit/autofit/non_linear/status/signals.py", line 80, in handler
+SystemExit: 143 [executable_name='jit_call']
