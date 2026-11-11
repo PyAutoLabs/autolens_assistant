@@ -6,6 +6,20 @@
 
 % Packages
 \usepackage{amsmath}
+\usepackage{natbib}
+
+% AAS journal macros used in the journal fields of bib/paper.bib (entries copied from ADS).
+\providecommand{\mnras}{MNRAS}
+\providecommand{\apj}{ApJ}
+\providecommand{\apjl}{ApJL}
+\providecommand{\apjs}{ApJS}
+\providecommand{\aj}{AJ}
+\providecommand{\aap}{A\&A}
+\providecommand{\araa}{ARA\&A}
+\providecommand{\pasp}{PASP}
+\providecommand{\nat}{Nature}
+\providecommand{\jcap}{JCAP}
+\providecommand{\prd}{Phys.~Rev.~D}
 
 % Document
 \begin{document}
@@ -18,6 +32,7 @@
     \section{\label{sc:pipeline}Pipeline choices}
     \input{sections/pipeline}
 
+    \bibliographystyle{plainnat}
     \bibliography{bib/paper}
 
 \end{document}
