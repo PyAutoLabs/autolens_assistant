@@ -10,7 +10,9 @@
 #
 # submit_subhalo_multiband.sh
 #
-# Submits the whole multi-band subhalo experiment for one simulated dataset:
+# Submits the whole multi-band subhalo experiment for one dataset, with either
+# pipeline (PIPELINE=mock, the default, or PIPELINE=real; see
+# subhalo_multiband_batch.sh):
 #
 #   1. Lists every arm = (dataset type) x (band set) into an arm-list file. By
 #      default the dataset types are every subdirectory of
@@ -18,7 +20,7 @@
 #      subhalo_m10, no_subhalo), and the band sets are each band on its own plus
 #      all bands jointly (e.g. F150W, F444W, F150W,F444W).
 #   2. Submits subhalo_multiband_batch.sh as a SLURM array, one GPU task per arm.
-#      Each task runs every pipeline stage (SLaM + SUBHALO PIPELINE) for its arm.
+#      Each task runs every stage of the chosen pipeline (SLaM + subhalo) for its arm.
 #   3. Queues one MODE=compare task with --dependency=afterany on the array, which
 #      prints the Delta ln Z table of every arm that completed.
 #
@@ -36,16 +38,21 @@
 # From your local machine, through hpc/sync (which places sbatch options before
 # the script name, so the dataset is passed as an environment variable instead):
 #   hpc/sync push-submit gpu submit_subhalo_multiband.sh --export=ALL,DATASET=jwst_pl_sersic_two_band
+#   hpc/sync push-submit gpu submit_subhalo_multiband.sh --export=ALL,DATASET=<real_dataset>,PIPELINE=real
 #
 # Optional environment overrides (pass with `sbatch --export=ALL,NAME=...` or
 # set them before `bash`):
 #   DATASET         dataset name, used when no positional argument is given
+#   PIPELINE        mock (default: subhalo_multiband_mock_data_slam.py, subhalo
+#                   prior centred on info.json subhalo_centre) or real
+#                   (subhalo_multiband_real_data_slam.py, grid search + refine)
 #   DATASET_TYPES   space-separated dataset types, used when none are given as
 #                   arguments (default: every subdirectory with a wavebands/ folder)
 #   BAND_SETS       space-separated band sets, the first band of each set being its
 #                   astrometric reference, e.g. "F150W F444W F150W,F444W"
-#   EXTRA_ARGS      options passed to every arm, e.g. "--max_rotation=5" or
-#                   "--fixed_alignment --grid_steps=4"
+#   EXTRA_ARGS      options passed to every arm, e.g. "--max_rotation=5",
+#                   "--fixed_alignment --centre_sigma=0.5" (mock) or
+#                   "--fixed_alignment --grid_steps=4" (real)
 #   MAX_CONCURRENT  maximum arms running at once (default 6)
 #   PROJECT_DIR     project root on the cluster
 #
@@ -72,6 +79,11 @@ if [ $# -gt 0 ]; then
 fi
 
 PROJECT_DIR="${PROJECT_DIR:-/mnt/ral/c4072114/PyAuto/autolens_assistant}"
+PIPELINE="${PIPELINE:-mock}"
+if [ "$PIPELINE" != "mock" ] && [ "$PIPELINE" != "real" ]; then
+    echo "PIPELINE must be mock or real, not '$PIPELINE'"
+    exit 1
+fi
 DATASET_ROOT="$PROJECT_DIR/dataset/imaging/$DATASET"
 LIST_DIR="$PROJECT_DIR/hpc/batch_gpu/output/arm_lists"
 ARRAY_SCRIPT="$PROJECT_DIR/hpc/batch_gpu/subhalo_multiband_batch.sh"
@@ -139,9 +151,10 @@ fi
 
 # -------------------------------
 # Arm list. An arm is kept only if every band of its set has the files the
-# pipeline loads; the reference (first) band also needs positions.json.
+# pipeline loads; the reference (first) band also needs positions.json and, for
+# the mock pipeline, a subhalo_centre in its info.json.
 # -------------------------------
-TAG="$DATASET$(printf "_%s" "${DATASET_TYPES[@]}")"
+TAG="${PIPELINE}_$DATASET$(printf "_%s" "${DATASET_TYPES[@]}")"
 LIST_FILE="$LIST_DIR/${TAG}_arms.txt"
 : > "$LIST_FILE"
 
@@ -155,12 +168,18 @@ for dataset_type in "${DATASET_TYPES[@]}"; do
                 [ -f "$band_dir/$f" ] || ok=0
             done
         done
-        [ -f "$DATASET_ROOT/$dataset_type/wavebands/${set_bands[0]}/positions.json" ] || ok=0
+        reference_dir="$DATASET_ROOT/$dataset_type/wavebands/${set_bands[0]}"
+        [ -f "$reference_dir/positions.json" ] || ok=0
+        if [ "$PIPELINE" = "mock" ] && [ $ok -eq 1 ] && \
+            ! grep -q '"subhalo_centre"' "$reference_dir/info.json"; then
+            ok=0
+        fi
 
         if [ $ok -eq 1 ]; then
             echo "$dataset_type $band_set" >> "$LIST_FILE"
         else
-            echo "Skipping $dataset_type $band_set: missing data/noise_map/psf/info.json or positions.json"
+            echo "Skipping $dataset_type $band_set: missing data/noise_map/psf/info.json or positions.json" \
+                "(or, for PIPELINE=mock, subhalo_centre in ${set_bands[0]}/info.json)"
         fi
     done
 done
@@ -172,6 +191,7 @@ if [ "$N" -eq 0 ]; then
     exit 1
 fi
 
+echo "Pipeline: $PIPELINE"
 echo "Arms for $DATASET (see $LIST_FILE):"
 cat "$LIST_FILE"
 echo "Extra arguments: ${EXTRA_ARGS:-<none>}"
@@ -186,7 +206,7 @@ ARRAY_JOB_ID=$(sbatch --parsable \
     --array=0-$((N - 1))%${MAX_CONCURRENT} \
     --output="$LOG_DIR/output/output.%A_%a.out" \
     --error="$LOG_DIR/error/error.%A_%a.err" \
-    --export=ALL,PROJECT_DIR="$PROJECT_DIR",DATASET="$DATASET",ARM_LIST="$LIST_FILE",MODE=arm \
+    --export=ALL,PROJECT_DIR="$PROJECT_DIR",DATASET="$DATASET",ARM_LIST="$LIST_FILE",PIPELINE="$PIPELINE",MODE=arm \
     "$ARRAY_SCRIPT")
 
 ARRAY_JOB_ID="${ARRAY_JOB_ID%%;*}"
@@ -202,7 +222,7 @@ COMPARE_JOB_ID=$(sbatch --parsable \
     --mem=4gb \
     --output="$LOG_DIR/output/compare.%j.out" \
     --error="$LOG_DIR/error/compare.%j.err" \
-    --export=ALL,PROJECT_DIR="$PROJECT_DIR",DATASET="$DATASET",MODE=compare \
+    --export=ALL,PROJECT_DIR="$PROJECT_DIR",DATASET="$DATASET",PIPELINE="$PIPELINE",MODE=compare \
     "$ARRAY_SCRIPT")
 
 echo "Compare job: ${COMPARE_JOB_ID%%;*} (runs after array $ARRAY_JOB_ID; table in $LOG_DIR/output/compare.${COMPARE_JOB_ID%%;*}.out)"

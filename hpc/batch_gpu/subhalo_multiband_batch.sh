@@ -12,11 +12,22 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=c4072114@newcastle.ac.uk
 
-# One arm of the multi-band subhalo experiment per SLURM array task:
-# scripts/subhalo_multiband/subhalo_multiband_slam.py runs every stage for one
-# (dataset type, band set) — source_lp[1], source_pix[1], source_pix[2], light[1],
-# mass_total[1] (the no-subhalo baseline), the subhalo[1] grid search and subhalo[2] — and writes
-# output/subhalo_multiband/<dataset>/<dataset_type>/<bands>/detection/detection_summary.json.
+# One arm of the multi-band subhalo experiment per SLURM array task. PIPELINE
+# selects the script (default mock); both run every stage for one (dataset type,
+# band set):
+#
+#   PIPELINE=mock  scripts/subhalo_multiband/subhalo_multiband_mock_data_slam.py
+#                  source_lp[1], source_pix[1], source_pix[2], light[1], mass_total[1]
+#                  (the no-subhalo baseline) and subhalo[2] with its centre prior on
+#                  the simulation's true subhalo (info.json subhalo_centre). Writes
+#                  .../<bands>/detection_truth_centred/detection_summary.json.
+#   PIPELINE=real  scripts/subhalo_multiband/subhalo_multiband_real_data_slam.py
+#                  the same SLaM stages, then the subhalo[1] grid search and the
+#                  subhalo[2] refine. Writes .../<bands>/detection/detection_summary.json.
+#
+# Both write under output/subhalo_multiband/<dataset>/<dataset_type>/<bands>/ and
+# share the SLaM searches, so an arm run with one pipeline resumes those stages
+# when run with the other.
 #
 # Don't sbatch this file directly. submit_subhalo_multiband.sh writes the arm list
 # and submits this script with `--array` and `--export=...,DATASET=...,ARM_LIST=...`,
@@ -28,7 +39,16 @@
 PROJECT_DIR="${PROJECT_DIR:-/mnt/ral/c4072114/PyAuto/autolens_assistant}"
 VENV="${VENV:-/mnt/ral/c4072114/venvs/PyAuto_JAX}"
 CACHE_ROOT="${CACHE_ROOT:-/mnt/ral/c4072114/.cache}"
-SCRIPT="$PROJECT_DIR/scripts/subhalo_multiband/subhalo_multiband_slam.py"
+PIPELINE="${PIPELINE:-mock}"
+
+case "$PIPELINE" in
+    mock) SCRIPT="$PROJECT_DIR/scripts/subhalo_multiband/subhalo_multiband_mock_data_slam.py" ;;
+    real) SCRIPT="$PROJECT_DIR/scripts/subhalo_multiband/subhalo_multiband_real_data_slam.py" ;;
+    *)
+        echo "PIPELINE must be mock or real, not '$PIPELINE'"
+        exit 1
+        ;;
+esac
 
 # The pipeline reads dataset/, config/ and writes output/ relative to the project root.
 cd "$PROJECT_DIR"
@@ -71,7 +91,7 @@ DATASET="${DATASET:-jwst_pl_sersic_two_band}"
 # Compare task: tabulate every completed arm and exit.
 # -------------------------------
 if [ "${MODE:-arm}" = "compare" ]; then
-    echo "Comparing detection summaries for $DATASET"
+    echo "Comparing $PIPELINE-pipeline detection summaries for $DATASET"
     python3 "$SCRIPT" --dataset="$DATASET" --compare
     exit $?
 fi
@@ -97,6 +117,7 @@ read -r dataset_type bands <<< "$entry"
 
 echo "=========================================="
 echo "Array job index: $SLURM_ARRAY_TASK_ID"
+echo "Pipeline: $PIPELINE ($SCRIPT)"
 echo "Dataset: $DATASET"
 echo "Dataset type: $dataset_type"
 echo "Bands: $bands"
@@ -109,7 +130,8 @@ nvidia-smi
 scontrol update JobId="${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}" \
     JobName="${dataset_type}-${bands//,/+}" || true
 
-# EXTRA_ARGS passes options such as --max_rotation=5 or --fixed_alignment through
+# EXTRA_ARGS passes options such as --max_rotation=5, --fixed_alignment,
+# --centre_sigma=0.5 (mock) or --grid_steps=4 (real) through
 # to the pipeline, identically for every arm. It is deliberately unquoted so that
 # several options split into separate arguments.
 # shellcheck disable=SC2086
