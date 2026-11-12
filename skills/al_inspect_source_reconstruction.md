@@ -91,21 +91,21 @@ Source: `PyAutoArray:autoarray/inversion/inversion/`.
 
 ## Branch — mesh + regularisation diagnostics
 
-The previous object-oriented inversion plotter API is removed.
-The closest current entry point is `aplt.subplot_basis_image`, which renders
-the mapper's pixelisation overlaid on the image:
+`aa.plot.subplot_of_mapper` draws a 3×4 panel for one mapper: mesh over the
+image, source plane, noise map, regularization weights, pixel counts:
 
 ```python
-aplt.subplot_basis_image(
-    inversion=fit.inversion,
+import autoarray as aa
+
+aa.plot.subplot_of_mapper(
+    inversion=fit.inversion, mapper_index=0,
     output_path=str(PLOT_DIR), output_format="png",
-)
+)  # writes inversion_0.png
 
 print(f"Saved to: {PLOT_DIR.resolve()}")
 ```
 
-The mesh-triangulation and regularisation-neighbour graphs no longer have
-direct plot helpers; build them with NumPy and `aplt.plot_grid` if needed.
+(`aplt.subplot_basis_image` plots an MGE `Basis`, not an inversion.)
 
 ## Branch — double source-plane lens (DSPL) / multi-plane pixelisations
 
