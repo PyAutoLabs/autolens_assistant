@@ -395,3 +395,33 @@ def test_validator_checks_markdown_code_with_file_line_numbers(tmp_path):
 def test_hook_denies_unknown_keyword_argument():
     snippet = CALL_BAD_KWARG.replace("\n", "; ").replace('"', "'")
     assert _decision(_run_hook(f'python3 -c "{snippet}"')) == "deny"
+
+
+# --- region opt-out + AGENTS.md scope ----------------------------------------------------
+REGION_OFF = (
+    "import autolens as al\n"
+    "# pyauto-api-gate: off  (deliberate removed-API example)\n"
+    "al.FitImagingPlotter\n"
+    "# pyauto-api-gate: on\n"
+)
+
+
+def test_gate_off_region_is_not_checked():
+    assert _run_validator("--code", REGION_OFF).returncode == 0
+
+
+def test_code_after_gate_on_is_checked_again():
+    proc = _run_validator("--code", REGION_OFF + "al.FitImagingPlotter\n")
+    assert proc.returncode == 2
+    assert "FitImagingPlotter" in proc.stderr
+
+
+def test_agents_md_is_in_scope_and_clean(tmp_path):
+    """AGENTS.md is the most-copied file in the repo: `--scope instructions` (and so
+    `--scope all`, which CI runs) audits it, and its only removed-API names sit inside
+    the "Wrong:" example's off/on region."""
+    proc = _run_validator("--scope", "instructions", "--out", str(tmp_path / "r.md"))
+    assert proc.returncode == 0, proc.stderr
+    assert "scanned 1 files" in proc.stderr
+    text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert "<!-- pyauto-api-gate: off -->" in text and "<!-- pyauto-api-gate: on -->" in text

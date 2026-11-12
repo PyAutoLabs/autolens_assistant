@@ -68,8 +68,10 @@ versions, loaded `autolens` path, and likely install type. Route exits 2/3 to
 python autoassistant/audit_skill_apis.py --scope all
 ```
 
-Use `--scope skills`, `--scope wiki`, or `--scope scripts` to narrow; `--scope all`
-(default) covers skills + wiki/core/api+stack + generated `scripts/` `.py` files.
+Use `--scope instructions` (`AGENTS.md`), `--scope skills`, `--scope wiki`, or
+`--scope scripts` to narrow; `--scope all` (default) covers `AGENTS.md` + skills +
+wiki/core/api+stack + generated `scripts/` `.py` files. `AGENTS.md` is in scope because every
+harness loads it first and agents copy its examples verbatim. The idiom lint scans it too.
 The **scripts scope** is what catches stale symbols in generated pipelines and exploration
 scripts — the place an old removed PyAutoLens symbol actually executes — and it skips this repo's
 own committed tooling (`audit_skill_apis.py`, `refresh_api_docs.py`). The report lands at
@@ -130,7 +132,10 @@ It scans `skills/` + `wiki/` (all of it, including `concepts/`) + `scripts/`, is
 (no installed stack needed), and is also run inside the code gate, so a snippet or `.py` file the
 agent is about to execute is checked for these idioms too. **Add an entry whenever a fix is
 "rewrite the construction", not "rename the symbol"** — the two audits are complementary. A file
-of intentional fixtures opts out with the `pyauto-api-gate: skip` marker.
+of intentional fixtures opts out with the `pyauto-api-gate: skip` marker; a file that must name
+removed API in one place but stays audited elsewhere (`AGENTS.md`'s "Wrong:" plotter example)
+wraps just those lines in `pyauto-api-gate: off` … `pyauto-api-gate: on` (inline
+`<!-- … -->` comments in Markdown). The region is skipped by the symbol, call and idiom checks.
 
 **Call arguments — the third blind spot.** A symbol can resolve and a construction be current
 while the *call* is still wrong: `aplt.subplot_fit_imaging(fit=fit, output_filename="fit")`

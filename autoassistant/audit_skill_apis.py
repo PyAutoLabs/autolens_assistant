@@ -1,4 +1,5 @@
-"""Audit PyAuto* API references in skills/ and wiki/core/ against the installed stack.
+"""Audit PyAuto* API references in AGENTS.md, skills/, wiki/core/ and scripts/ against the
+installed stack.
 
 Walks every Markdown file in scope, extracts fully-qualified symbols cited under
 the standard aliases (`al`, `aplt`, `af`, `ag`, `aa` and the bare module names),
@@ -15,7 +16,7 @@ Usage:
 
     source activate.sh
     python autoassistant/audit_skill_apis.py --check-install
-    python autoassistant/audit_skill_apis.py --scope all   # skills + wiki/core/api + wiki/core/stack
+    python autoassistant/audit_skill_apis.py --scope all   # AGENTS.md + skills + wiki/core/api + wiki/core/stack + scripts
     python autoassistant/audit_skill_apis.py --scope skills
     python autoassistant/audit_skill_apis.py --scope wiki
 
@@ -127,6 +128,33 @@ INLINE_CODE_RE = re.compile(r"`([^`\n]+)`")
 # ---------------------------------------------------------------------------
 IDIOM_SKIP_MARKER = "pyauto-api-gate: skip"
 
+# Region opt-out, finer than the whole-file marker above: every line from one containing
+# `pyauto-api-gate: off` through one containing `pyauto-api-gate: on` (both inclusive) is
+# blanked before the symbol, call and idiom scans, keeping line numbers intact. For
+# documents that must name removed API on purpose (AGENTS.md's "Wrong:" plotter
+# example) while the rest of the file stays audited. In Markdown, put the markers in
+# inline HTML comments (`<!-- pyauto-api-gate: off -->`) so they do not render.
+GATE_OFF_MARKER = "pyauto-api-gate: off"
+GATE_ON_MARKER = "pyauto-api-gate: on"
+
+
+def mask_gate_off_regions(text: str) -> str:
+    """Blank every line inside an off/on region (an unclosed region runs to EOF)."""
+    if GATE_OFF_MARKER not in text:
+        return text
+    out: list[str] = []
+    off = False
+    for line in text.split("\n"):
+        if not off and GATE_OFF_MARKER in line:
+            off = True
+        if off:
+            out.append("")
+            if GATE_ON_MARKER in line:
+                off = False
+            continue
+        out.append(line)
+    return "\n".join(out)
+
 
 @dataclass(frozen=True)
 class IdiomRule:
@@ -208,7 +236,7 @@ def lint_idioms(text: str) -> list[IdiomHit]:
     if IDIOM_SKIP_MARKER in text:
         return []
     hits: list[IdiomHit] = []
-    for i, line in enumerate(text.splitlines(), start=1):
+    for i, line in enumerate(mask_gate_off_regions(text).splitlines(), start=1):
         for rule in DENY_LIST:
             if rule.regex.search(line):
                 hits.append(IdiomHit(rule=rule, line_no=i, line=line.strip()))
@@ -606,6 +634,11 @@ def select_files(root: Path, scope: str) -> list[Path]:
     # The MCP server (autoassistant/mcp/) is the one part of autoassistant/ with
     # real API usage rather than alias-pattern text, so it joins the scan.
     scripts += sorted((root / "autoassistant" / "mcp").glob("*.py"))
+    # The agent instructions every harness loads first: their examples are copied
+    # verbatim, so a stale call there is the most-copied stale call of all.
+    instructions = [p for p in (root / "AGENTS.md",) if p.exists()]
+    if scope == "instructions":
+        return instructions
     if scope == "skills":
         return skills
     if scope == "wiki":
@@ -613,7 +646,7 @@ def select_files(root: Path, scope: str) -> list[Path]:
     if scope == "scripts":
         return scripts
     if scope == "all":
-        return skills + wiki_api + wiki_stack + scripts
+        return instructions + skills + wiki_api + wiki_stack + scripts
     raise SystemExit(f"unknown scope: {scope!r}")
 
 
@@ -626,7 +659,8 @@ def select_idiom_files(root: Path) -> list[Path]:
     API tables under `wiki/core/api`+`stack`. This script's own tooling is excluded —
     it holds the deny-list regex strings as text, not as executed/ documented idioms."""
     tooling = {"audit_skill_apis.py", "refresh_api_docs.py", "test_api_gate.py"}
-    md = sorted((root / "skills").glob("*.md")) + sorted((root / "wiki").rglob("*.md"))
+    md = [p for p in (root / "AGENTS.md",) if p.exists()]
+    md += sorted((root / "skills").glob("*.md")) + sorted((root / "wiki").rglob("*.md"))
     py = [p for p in sorted((root / "scripts").rglob("*.py")) if p.name not in tooling]
     py += sorted((root / "autoassistant" / "mcp").glob("*.py"))
     return md + py
@@ -1628,6 +1662,7 @@ def run_code_gate(*, code: str | None, file: str | None) -> int:
             return 2
         text, label = p.read_text(encoding="utf-8"), str(p)
 
+    text = mask_gate_off_regions(text)
     n_stale, report, import_failed = validate_source(text)
 
     # Idiom lint runs alongside symbol resolution: the gate must catch a dead
@@ -1693,7 +1728,10 @@ def main() -> int:
         description="Audit PyAuto* API references in skills + wiki + scripts."
     )
     parser.add_argument(
-        "--scope", choices=["skills", "wiki", "scripts", "all"], default="all"
+        "--scope",
+        choices=["instructions", "skills", "wiki", "scripts", "all"],
+        default="all",
+        help="instructions = AGENTS.md; all = instructions + skills + wiki + scripts.",
     )
     parser.add_argument("--out", default=None)
     parser.add_argument("--root", default=None)
@@ -1831,6 +1869,7 @@ def main() -> int:
         if IDIOM_SKIP_MARKER in text:
             skipped.append(f)
             continue
+        text = mask_gate_off_regions(text)
         # `.py` files (scripts scope) are code throughout; Markdown is split into
         # code/prose segments by extract_symbols.
         per_file = (

@@ -254,11 +254,11 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
   `subplot_fit_*` functions do not take it and write a fixed name
   (`subplot_fit_imaging` → `fit.png`), so give each such plot its own `output_path` or rename
   the file afterwards. Check with `inspect.signature(aplt.<function>)` when unsure.
-  **The object-oriented plotters (`aplt.FitImagingPlotter`, `ImagingPlotter`, `TracerPlotter`,
+  **The object-oriented plotters (`aplt.FitImagingPlotter`, `ImagingPlotter`, `TracerPlotter`, <!-- pyauto-api-gate: off -->
   …) and the `aplt.MatPlot2D` / `aplt.Output` objects have been removed — do not use them.
   They are the #1 stale-from-memory API error, especially on a harness without the code-gate
   hook.** Wrong:
-  `aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(...)).subplot_fit_imaging()`.
+  `aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(...)).subplot_fit_imaging()`. <!-- pyauto-api-gate: on -->
   Right:
   `aplt.subplot_fit_imaging(fit=fit, output_path="scripts/scratch/ring/", output_format="png")`
   (writes `scripts/scratch/ring/fit.png`).
