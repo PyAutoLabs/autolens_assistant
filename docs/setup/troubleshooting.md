@@ -47,7 +47,8 @@ That is a model limitation, not a bug in the assistant: see
 [OpenCode — what "free" does and does not mean](opencode_cli.md). Switch to a model with image
 input and reliable tool use, and report the configuration you tried.
 
-**You were using a browser chat (ChatGPT / Claude with a GitHub connector, the custom GPT, a
-pasted bundle).**
-Those routes are no longer supported (retired 2026-09-10). Their old pages are archived under
-[`docs/archive/`](../archive/README.md); the supported path is a coding agent, above.
+**You were using a browser chat or an old knowledge bundle.**
+A browser chat with a GitHub connector can read the repository for questions, planning and
+discussion. To execute code, inspect local data or fit a lens, open the repository in a coding
+agent. See the shared [AI options page](https://github.com/PyAutoLabs/PyAutoScientist/blob/main/AI_OPTIONS.md#chat-instead-of-an-agent)
+for chat setup. The former custom GPT and pasted knowledge bundles remain retired.

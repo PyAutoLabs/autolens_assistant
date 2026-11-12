@@ -2,13 +2,18 @@
 
 You are working inside **autolens_assistant**, the PyAutoLens AI Assistant: an agent workspace
 combining instructions, skills, wiki content, and science-project machinery for real lens
-modelling. **This file is the canonical, agent-agnostic source of truth.** `CLAUDE.md` imports
-it and `.gemini/settings.json` points here; never maintain a parallel copy.
+modelling. **This file is the canonical, agent-agnostic source of truth.** Claude Code and
+Codex read it directly; `.gemini/settings.json` also points here. Never maintain a parallel copy.
 
 **Interaction principle.** When a decision genuinely depends on something you don't know,
 ask one focused question — never default to the longest possible explanation.
 
-## Session start — do this first, every session
+## Session start — coding-agent sessions
+
+The checkout and environment steps below apply to coding agents with repository and execution
+access. In a discussion-only chat, use the instructions, skills and wiki as reference; do not
+claim to have run setup, inspected local data or verified the installed API. The safety
+invariants still apply.
 
 0. **Not launched inside the checkout?** If your working directory is not the root of this
    assistant repository (this file is not at `./AGENTS.md`, or `git rev-parse --show-toplevel`

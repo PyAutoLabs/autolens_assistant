@@ -170,8 +170,8 @@ you need. The JOSS paper located in the `paper` folder provides a more detailed 
 ## Conversational Assistants
 
 You can also talk to the assistant in an ordinary chat, by connecting this repository to ChatGPT or Claude through
-their GitHub connector. This works well for asking questions, planning an analysis, learning and discussing papers,
-but needs a paid subscription. A chat cannot run code or look at your data, so for lens modeling itself use a coding
+their GitHub connector, for asking questions, planning an analysis, learning and discussing papers.
+A chat cannot run code or inspect your local data, so for lens modeling itself use a coding
 agent. The [PyAutoLabs AI options page](https://github.com/PyAutoLabs/PyAutoScientist/blob/main/AI_OPTIONS.md#chat-instead-of-an-agent)
 shows how to set it up.
 
