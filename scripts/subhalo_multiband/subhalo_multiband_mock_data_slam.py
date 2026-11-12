@@ -1302,7 +1302,7 @@ if __name__ == "__main__":
     parser.add_argument("--max_rotation", type=float, default=10.0)
     parser.add_argument("--no_sparse_operator", action="store_true")
     parser.add_argument("--centre_sigma", type=float, default=SUBHALO_CENTRE_SIGMA)
-    parser.add_argument("--n_batch", type=int, default=20)
+    parser.add_argument("--n_batch", type=int, default=10)
     parser.add_argument("--compare", action="store_true")
     args = parser.parse_args()
 

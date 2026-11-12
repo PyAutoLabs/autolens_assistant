@@ -1,0 +1,50 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[{Lange}(2023)]{nautilus}
+Johannes~U. {Lange}.
+\newblock {NAUTILUS: boosting Bayesian importance nested sampling with deep
+  learning}.
+\newblock \emph{\mnras}, 525\penalty0 (2):\penalty0 3181--3194, October 2023.
+\newblock \doi{10.1093/mnras/stad2441}.
+
+\bibitem[Ludlow et~al.(2016)Ludlow, Bose, Angulo, Wang, Hellwing, Navarro,
+  Cole, and Frenk]{Ludlow2016}
+Aaron~D. Ludlow, Sownak Bose, Ra{\'{u}}l~E. Angulo, Lan Wang, Wojciech~A.
+  Hellwing, Julio~F. Navarro, Shaun Cole, and Carlos~S. Frenk.
+\newblock {The mass-concentration-redshift relation of cold and warm dark
+  matter haloes}.
+\newblock \emph{MNRAS}, 460\penalty0 (2):\penalty0 1214--1232, 2016.
+\newblock ISSN 13652966.
+\newblock \doi{10.1093/mnras/stw1046}.
+
+\bibitem[Nightingale et~al.(2021)Nightingale, Hayes, Kelly, Amvrosiadis,
+  Etherington, He, Li, Cao, Frawley, Cole, Enia, Frenk, Harvey, Li, Massey,
+  Negrello, and Robertson]{Nightingale2021}
+J.~W. Nightingale, Richard Hayes, Ashley Kelly, Aristeidis Amvrosiadis, Amy
+  Etherington, Qiuhan He, Nan Li, XiaoYue Cao, Jonathan Frawley, Shaun Cole,
+  Andrea Enia, Carlos Frenk, David Harvey, Ran Li, Richard Massey, Mattia
+  Negrello, and Andrew Robertson.
+\newblock {PyAutoLens: Open-Source Strong Gravitational Lensing}.
+\newblock \emph{J. Open Source Softw.}, 6\penalty0 (58):\penalty0 2825, 2021.
+\newblock ISSN 2475-9066.
+\newblock \doi{10.21105/joss.02825}.
+
+\bibitem[Nightingale et~al.(2024)Nightingale, He, Cao, Amvrosiadis,
+  Etherington, Frenk, Hayes, Robertson, Cole, Lange, Li, and
+  Massey]{Nightingale2024}
+James~W. Nightingale, Qiuhan He, Xiaoyue Cao, Aristeidis Amvrosiadis, Amy
+  Etherington, Carlos~S. Frenk, Richard~G. Hayes, Andrew Robertson, Shaun Cole,
+  Samuel Lange, Ran Li, and Richard Massey.
+\newblock {Scanning for dark matter subhaloes in Hubble Space Telescope imaging
+  of 54 strong lenses}.
+\newblock \emph{MNRAS}, 527\penalty0 (4):\penalty0 10480--10506, 2024.
+\newblock ISSN 13652966.
+\newblock \doi{10.1093/mnras/stad3694}.
+\newblock URL \url{http://arxiv.org/abs/2209.10566}.
+
+\end{thebibliography}

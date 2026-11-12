@@ -1513,7 +1513,7 @@ if __name__ == "__main__":
     parser.add_argument("--no_sparse_operator", action="store_true")
     parser.add_argument("--grid_steps", type=int, default=2)
     parser.add_argument("--grid_dimension", type=float, default=3.0)
-    parser.add_argument("--n_batch", type=int, default=20)
+    parser.add_argument("--n_batch", type=int, default=10)
     parser.add_argument("--compare", action="store_true")
     args = parser.parse_args()
 

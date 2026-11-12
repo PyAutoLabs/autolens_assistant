@@ -21,8 +21,12 @@ for a dark matter subhalo on the lensed arc, compared with single-band fits (cf.
 
 ## Where we are now
 
-- Pipeline written: `scripts/subhalo_multiband/subhalo_multiband_slam.py` (SLaM + SUBHALO PIPELINE,
-  factor graph per band set). Shared across bands: mass, shear, subhalo. Per band: full lens-light MGE
+- Pipeline split (2026-11-11) into `scripts/subhalo_multiband/subhalo_multiband_real_data_slam.py`
+  (SLaM, then the `subhalo[1]` 2 x 2 grid search and the `subhalo[2]` refine) and
+  `subhalo_multiband_mock_data_slam.py` (same SLaM stages, then only `subhalo[2]`, its centre prior a
+  Gaussian of width `--centre_sigma` 1.5" on `info.json` `subhalo_centre`). Both use
+  `mass_total[1]` as the no-subhalo baseline. HPC: `PIPELINE=mock` (default) or `real`. Both are
+  factor graphs per band set. Shared across bands: mass, shear, subhalo. Per band: full lens-light MGE
   (centre + ellipticity), source, and alignment (offset y/x + rotation, `--max_offset` 0.5",
   `--max_rotation` 10 deg, `--fixed_alignment`). Meant for any simulated multi-band dataset in the
   `wavebands/` layout, not only the JWST two-band one. Smoke-tested in `PYAUTO_TEST_MODE=2`; no real
