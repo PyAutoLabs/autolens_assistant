@@ -247,15 +247,21 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
 - **Working directories.** Committed scripts → `scripts/`; throwaway plots/data dumps →
   `scripts/scratch/` (gitignored); `search.fit(...)` output → `./output/`.
 - **Plot path announcement.** The plot API is **functional-only**: pass
-  `output_path="scripts/scratch/<context>/"`, `output_filename=...`, `output_format="png"`
-  straight to the `aplt.*` call (e.g. `aplt.subplot_imaging_dataset`, `aplt.subplot_fit_imaging`).
+  `output_path="scripts/scratch/<context>/"` and `output_format="png"` straight to the
+  `aplt.*` call (e.g. `aplt.subplot_imaging_dataset`, `aplt.subplot_fit_imaging`).
+  `output_filename=...` is accepted only by some functions (`plot_array`,
+  `subplot_imaging_dataset`, `subplot_imaging_dataset_intro`); `subplot_tracer` and most
+  `subplot_fit_*` functions do not take it and write a fixed name
+  (`subplot_fit_imaging` → `fit.png`), so give each such plot its own `output_path` or rename
+  the file afterwards. Check with `inspect.signature(aplt.<function>)` when unsure.
   **The object-oriented plotters (`aplt.FitImagingPlotter`, `ImagingPlotter`, `TracerPlotter`,
   …) and the `aplt.MatPlot2D` / `aplt.Output` objects have been removed — do not use them.
   They are the #1 stale-from-memory API error, especially on a harness without the code-gate
   hook.** Wrong:
   `aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(...)).subplot_fit_imaging()`.
   Right:
-  `aplt.subplot_fit_imaging(fit=fit, output_path="scripts/scratch/ring/", output_filename="fit", output_format="png")`.
+  `aplt.subplot_fit_imaging(fit=fit, output_path="scripts/scratch/ring/", output_format="png")`
+  (writes `scripts/scratch/ring/fit.png`).
   If unsure a PyAuto* symbol exists, ground it against `skills/` or `dir(aplt)` — never write it
   from memory. Then `print(...)` the absolute path, and after running **quote that absolute path**
   and offer to open it (platform opener: `open` on macOS, `xdg-open` on Linux,
