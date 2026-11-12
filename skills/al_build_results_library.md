@@ -101,9 +101,9 @@ products).
 import autofit as af
 
 library = af.ResultsLibrary.from_yaml("hpc/library.yaml")
-report = library.check()
-print(report.summary())
-report.write_missing_csv("hpc/results")
+completeness_report = library.check()
+print(completeness_report.summary())
+completeness_report.write_missing_csv("hpc/results")
 ```
 
 `python -m autofit.results check hpc/library.yaml` does the same and exits 1 while
@@ -123,8 +123,8 @@ def einstein_radius_record(search_output):
     return {"einstein_radius": instance.galaxies.lens.mass.einstein_radius}
 
 agg = Aggregator.from_index("output")
-report = agg.enrich(einstein_radius_record, name="einstein_radius")   # files/einstein_radius.json
-print(report)
+enrich_report = agg.enrich(einstein_radius_record, name="einstein_radius")   # files/einstein_radius.json
+print(enrich_report)
 ```
 
 Atomic per result (a killed job leaves every zip whole), skips results that already
@@ -138,6 +138,8 @@ Source: `PyAutoFit:autofit/results/enrich.py`.
 from autofit.aggregator import Aggregator
 from autofit.aggregator.summary.aggregate_csv import AggregateCSV, ValueType
 
+# Recheck completeness so any products added by enrichment are reflected.
+completeness_report = library.check()
 summary = AggregateCSV(Aggregator.from_index("output"), strict=False)
 summary.add_variable(
     "galaxies.lens.mass.einstein_radius",
@@ -149,7 +151,7 @@ summary.add_variable(
 summary.save(
     "catalogue/lens_mass.csv",
     cache=True,              # re-reads only new or changed results
-    expected=report,         # a row with a reason for every expected lens not done
+    expected=completeness_report,  # a row with a reason for every expected lens not done
     on_error="row",          # a result that cannot be summarised gets a reason, not a crash
     sort_by="dataset",
     columns_json=True,       # catalogue/lens_mass.columns.json describes each column
