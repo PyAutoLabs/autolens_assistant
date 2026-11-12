@@ -335,3 +335,63 @@ def test_hook_allows_grep_piped_into_python(tmp_path):
     script.write_text(f"import autolens as al\n{STALE_PLOTTER}\n", encoding="utf-8")
     proc = _run_hook(f'grep -n autolens {script} | {sys.executable} -c "import io"')
     assert _decision(proc) is None
+
+
+# --- call-signature checks -------------------------------------------------------------
+# Every symbol resolves, yet the call passes a keyword the installed function does not
+# take: the `output_filename=` example once shipped in AGENTS.md and crashed at run time.
+CALL_BAD_KWARG = (
+    "import autolens.plot as aplt\n"
+    'aplt.subplot_fit_imaging(fit=fit, output_path="out", output_filename="fit")'
+)
+CALL_GOOD_KWARGS = (
+    "import autolens.plot as aplt\n"
+    'aplt.subplot_fit_imaging(fit=fit, output_path="out", output_format="png")'
+)
+# Never judged: `**mapping` unpacking, and callees that accept **kwargs (al.Galaxy).
+CALL_UNPACKED = "import autolens.plot as aplt\naplt.subplot_fit_imaging(fit=fit, **opts)"
+CALL_VAR_KWARGS = "import autolens as al\ng = al.Galaxy(redshift=0.5, anything_goes=1)"
+CALL_TOO_MANY_POSITIONAL = (
+    "import autolens.plot as aplt\naplt.subplot_fit_imaging(" + ", ".join(["x"] * 60) + ")"
+)
+
+
+def test_validator_flags_unknown_keyword_argument():
+    proc = _run_validator("--code", CALL_BAD_KWARG)
+    assert proc.returncode == 2
+    assert "STALE-CALL" in proc.stderr
+    assert "output_filename" in proc.stderr
+    assert "output_path" in proc.stderr  # the accepted names are listed as the hint
+
+
+def test_validator_passes_accepted_keyword_arguments():
+    assert _run_validator("--code", CALL_GOOD_KWARGS).returncode == 0
+
+
+def test_validator_does_not_judge_unpacking_or_var_kwargs():
+    assert _run_validator("--code", CALL_UNPACKED).returncode == 0
+    assert _run_validator("--code", CALL_VAR_KWARGS).returncode == 0
+
+
+def test_validator_flags_too_many_positional_arguments():
+    proc = _run_validator("--code", CALL_TOO_MANY_POSITIONAL)
+    assert proc.returncode == 2
+    assert "positional arguments given" in proc.stderr
+
+
+def test_validator_checks_markdown_code_with_file_line_numbers(tmp_path):
+    doc = tmp_path / "skill.md"
+    doc.write_text(
+        "# A skill\n\n```python\n" + CALL_BAD_KWARG + "\n```\n\n"
+        "```bash\npython run.py --output_filename=x\n```\n",
+        encoding="utf-8",
+    )
+    proc = _run_validator("--file", str(doc))
+    assert proc.returncode == 2
+    assert "line 5" in proc.stderr  # the call sits on line 5 of the Markdown file
+    assert proc.stderr.count("STALE-CALL") == 1  # the bash block is not Python
+
+
+def test_hook_denies_unknown_keyword_argument():
+    snippet = CALL_BAD_KWARG.replace("\n", "; ").replace('"', "'")
+    assert _decision(_run_hook(f'python3 -c "{snippet}"')) == "deny"

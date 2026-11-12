@@ -132,6 +132,18 @@ agent is about to execute is checked for these idioms too. **Add an entry whenev
 "rewrite the construction", not "rename the symbol"** — the two audits are complementary. A file
 of intentional fixtures opts out with the `pyauto-api-gate: skip` marker.
 
+**Call arguments — the third blind spot.** A symbol can resolve and a construction be current
+while the *call* is still wrong: `aplt.subplot_fit_imaging(fit=fit, output_filename="fit")`
+names a real function but passes a keyword it does not take, a `TypeError` at run time. For
+every call whose callee is alias-rooted (`al.X(...)`, `aplt.f(...)`, `af.X.y(...)`), the audit
+resolves the callee, reads `inspect.signature`, and flags unknown keywords and surplus
+positional arguments, listing the accepted names as the hint. It is conservative: callees that
+take `**kwargs` / `*args`, `**mapping` unpacking, uninspectable callables and calls on runtime
+objects (`fit.foo(...)`) are never judged, and only Python is parsed (fenced blocks tagged
+`python`/`py` or untagged, inline spans containing a call, `.py` files). It runs in
+`--scope` reports (a "Call-argument mismatches" section; non-zero exit on any) and in the code
+gate (`STALE-CALL` lines).
+
 ### 5. Provenance — bind page content to the version it was validated against
 
 The version baseline hashes the API *surface*; the idiom lint catches dead *constructions*.
@@ -207,7 +219,7 @@ python autoassistant/audit_skill_apis.py --code "import autolens as al; al.FitIm
 python autoassistant/audit_skill_apis.py --file scripts/my_script.py                            # exit 0/2/3
 ```
 
-Exit 2 = stale symbol(s)/idiom(s) — the deny case. Exit 3 = the stack itself failed to
+Exit 2 = stale symbol(s)/call argument(s)/idiom(s) — the deny case. Exit 3 = the stack itself failed to
 import (broken env, or the workspace version check), reported once as an environment
 problem — the hook fails open on it, since the command would raise the same import
 error itself.

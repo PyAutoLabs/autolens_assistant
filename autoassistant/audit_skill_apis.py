@@ -3,8 +3,10 @@
 Walks every Markdown file in scope, extracts fully-qualified symbols cited under
 the standard aliases (`al`, `aplt`, `af`, `ag`, `aa` and the bare module names),
 resolves each one by importing the underlying module and walking attribute by
-attribute, and writes a Markdown report listing the misses with suggested
-replacements.
+attribute, checks the arguments of calls to resolvable callables against their
+installed `inspect.signature`, and writes a Markdown report listing the misses
+with suggested replacements. `--code` / `--file` run the same checks as the
+pre-execution code gate.
 
 This is the mechanical half of the `al_audit_skill_apis` skill. The skill drives
 interpretation and curates fixes; this script just produces the raw report.
@@ -23,12 +25,14 @@ Report lands at `autoassistant/audit/skill_api_audit_<YYYY-MM-DD>.md` by default
 from __future__ import annotations
 
 import argparse
+import ast
 import datetime as dt
 import difflib
 import hashlib
 import importlib
 import importlib.metadata
 import importlib.util
+import inspect
 import json
 import os
 import re
@@ -231,6 +235,20 @@ class Resolution:
     parent_repr: str = ""
     candidates: list[str] = field(default_factory=list)
     error: str = ""
+    # The resolved object itself (status "ok" only), kept so call-signature checks
+    # can inspect it without a second attribute walk. Excluded from repr/compare.
+    obj: object = field(default=None, repr=False, compare=False)
+
+
+@dataclass
+class CallIssue:
+    """A call to a resolvable PyAuto* callable whose arguments its installed
+    signature cannot accept (e.g. `aplt.subplot_fit_imaging(output_filename=...)`)."""
+
+    line_no: int
+    call: str  # dotted callable, e.g. "aplt.subplot_fit_imaging"
+    problem: str  # e.g. "unexpected keyword argument `output_filename`"
+    hint: str  # accepted names / closest match
 
 
 @dataclass
@@ -366,8 +384,165 @@ def resolve(sym: Symbol) -> Resolution:
             )
 
     return Resolution(
-        status="ok", resolved_depth=len(sym.chain), parent_repr=_short_repr(current)
+        status="ok",
+        resolved_depth=len(sym.chain),
+        parent_repr=_short_repr(current),
+        obj=current,
     )
+
+
+# ---------------------------------------------------------------------------
+# Call-signature checks
+#
+# Symbol resolution proves `aplt.subplot_fit_imaging` exists; it cannot see that
+# `aplt.subplot_fit_imaging(fit=fit, output_filename="fit")` passes a keyword the
+# installed function does not take (a TypeError at run time). For every call whose
+# callee is an alias-rooted dotted name (`al.X(...)`, `aplt.f(...)`, `af.X.y(...)`),
+# we resolve the callee, read `inspect.signature`, and flag
+#   - a keyword argument the signature does not name (unless it takes **kwargs), and
+#   - more positional arguments than it accepts (unless it takes *args).
+# Deliberately conservative: callees we cannot resolve, inspect, or that accept
+# **kwargs / *args are skipped, `**mapping` / `*seq` unpacking is never judged, and
+# calls on runtime objects (`fit.foo(...)`, `al.cosmo.Planck15().bar(...)`) are out of
+# reach of a static check. Source that does not parse as Python is skipped.
+# ---------------------------------------------------------------------------
+_MAX_ACCEPTED_LISTED = 10
+
+
+def _dotted_callee(node: ast.AST) -> Optional[Symbol]:
+    """`al.Mask2D.circular` -> Symbol("al", ("Mask2D", "circular")); else None."""
+    parts: list[str] = []
+    while isinstance(node, ast.Attribute):
+        parts.append(node.attr)
+        node = node.value
+    if isinstance(node, ast.Name) and node.id in ALIAS_TO_MODULE and parts:
+        return Symbol(node.id, tuple(reversed(parts)))
+    return None
+
+
+_signature_cache: dict[int, Optional[inspect.Signature]] = {}
+
+
+def _signature_of(obj: object) -> Optional[inspect.Signature]:
+    key = id(obj)
+    if key not in _signature_cache:
+        try:
+            _signature_cache[key] = inspect.signature(obj)  # type: ignore[arg-type]
+        except (TypeError, ValueError):  # builtins, C extensions, odd metaclasses
+            _signature_cache[key] = None
+        except Exception:  # noqa: BLE001 - never let introspection crash the audit
+            _signature_cache[key] = None
+    return _signature_cache[key]
+
+
+def _accepted_hint(names: list[str], bad: str) -> str:
+    close = difflib.get_close_matches(bad, names, n=2, cutoff=0.6)
+    shown = names[:_MAX_ACCEPTED_LISTED]
+    more = "" if len(names) <= _MAX_ACCEPTED_LISTED else f", … (+{len(names) - len(shown)})"
+    hint = "accepts: " + (", ".join(shown) + more if shown else "no keyword arguments")
+    if close:
+        hint = "did you mean " + " / ".join(f"`{c}`" for c in close) + "? " + hint
+    return hint
+
+
+def check_call_signatures(text: str, *, line_offset: int = 0) -> list[CallIssue]:
+    """Return argument mismatches for alias-rooted PyAuto* calls in Python `text`.
+
+    `line_offset` shifts reported line numbers (used for Markdown code blocks).
+    Returns [] for text that is not valid Python."""
+    try:
+        tree = ast.parse(text)
+    except (SyntaxError, ValueError):
+        return []
+    issues: list[CallIssue] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        sym = _dotted_callee(node.func)
+        if sym is None:
+            continue
+        res = resolve(sym)
+        # A missing symbol is reported by the symbol check; don't double-report it.
+        if res.status != "ok" or not callable(res.obj):
+            continue
+        sig = _signature_of(res.obj)
+        if sig is None:
+            continue
+        params = list(sig.parameters.values())
+        kinds = {p.kind for p in params}
+        line_no = getattr(node, "lineno", 0) + line_offset
+
+        if inspect.Parameter.VAR_KEYWORD not in kinds:
+            keyword_names = [
+                p.name
+                for p in params
+                if p.kind
+                in (inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY)
+            ]
+            for kw in node.keywords:
+                if kw.arg is None or kw.arg in keyword_names:
+                    continue  # `**mapping` unpacking is never judged
+                issues.append(
+                    CallIssue(
+                        line_no=line_no,
+                        call=sym.text,
+                        problem=f"unexpected keyword argument `{kw.arg}`",
+                        hint=_accepted_hint(keyword_names, kw.arg),
+                    )
+                )
+
+        starred = any(isinstance(a, ast.Starred) for a in node.args)
+        if inspect.Parameter.VAR_POSITIONAL not in kinds and not starred:
+            n_positional = sum(
+                p.kind
+                in (inspect.Parameter.POSITIONAL_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD)
+                for p in params
+            )
+            if len(node.args) > n_positional:
+                issues.append(
+                    CallIssue(
+                        line_no=line_no,
+                        call=sym.text,
+                        problem=(
+                            f"{len(node.args)} positional arguments given, "
+                            f"at most {n_positional} accepted"
+                        ),
+                        hint=f"signature: {sym.text}{sig}"[:240],
+                    )
+                )
+    return issues
+
+
+def iter_markdown_python(text: str) -> Iterable[tuple[int, str]]:
+    """Yield (line_offset, python_source) for the Python a Markdown file cites:
+    fenced blocks tagged `python`/`py` or untagged, plus inline code spans that
+    contain an alias-rooted call. Offsets make reported line numbers file-relative.
+    Blocks in other languages (bash, yaml, text, …) are not Python and are skipped."""
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        m = CODE_FENCE_RE.match(lines[i].rstrip())
+        if m:
+            lang = m.group(1).lower()
+            start = i + 1
+            j = start
+            while j < len(lines) and not CODE_FENCE_RE.match(lines[j].rstrip()):
+                j += 1
+            if lang in ("", "python", "py", "python3"):
+                yield start, "\n".join(lines[start:j])
+            i = j + 1
+            continue
+        for span in INLINE_CODE_RE.findall(lines[i]):
+            if "(" in span and ALIAS_RE.search(span):
+                yield i, span
+        i += 1
+
+
+def check_call_signatures_markdown(text: str) -> list[CallIssue]:
+    issues: list[CallIssue] = []
+    for offset, source in iter_markdown_python(text):
+        issues.extend(check_call_signatures(source, line_offset=offset))
+    return issues
 
 
 def _short_repr(obj) -> str:
@@ -506,7 +681,10 @@ def render_report(
     resolutions: dict[Symbol, Resolution],
     scope: str,
     root: Path,
+    call_issues_by_file: Optional[dict[Path, list[CallIssue]]] = None,
 ) -> str:
+    call_issues_by_file = call_issues_by_file or {}
+    n_call = sum(len(v) for v in call_issues_by_file.values())
     today = dt.date.today().isoformat()
     total_symbols = sum(len(d) for d in occurrences_by_file.values())
     unique_symbols = len(resolutions)
@@ -542,10 +720,33 @@ def render_report(
     lines.append(f"| ok | {unique_symbols - len(missing)} |")
     lines.append(f"| missing or import-failed | {len(missing)} |")
     lines.append(f"| files affected by misses | {len(files_with_misses)} |")
+    lines.append(f"| call-argument mismatches | {n_call} |")
     lines.append("")
 
+    if call_issues_by_file:
+        lines.append("## Call-argument mismatches")
+        lines.append("")
+        lines.append(
+            "Calls whose callee resolves but whose keyword or positional arguments the "
+            "installed signature does not accept (a `TypeError` at run time)."
+        )
+        lines.append("")
+        lines.append("| file:line | call | problem | hint |")
+        lines.append("|---|---|---|---|")
+        for f in sorted(call_issues_by_file):
+            rel = f.relative_to(root)
+            for issue in call_issues_by_file[f]:
+                hint = issue.hint.replace("|", "\\|")
+                lines.append(
+                    f"| `{rel}:{issue.line_no}` | `{issue.call}` | {issue.problem} | {hint} |"
+                )
+        lines.append("")
+
     if not missing:
-        lines.append("All cited symbols resolve cleanly. No drift detected.")
+        lines.append(
+            "All cited symbols resolve cleanly."
+            + ("" if n_call else " No drift detected.")
+        )
         lines.append("")
         return "\n".join(lines)
 
@@ -1440,11 +1641,26 @@ def run_code_gate(*, code: str | None, file: str | None) -> int:
             f"instead {hit.rule.replacement} ({hit.rule.citation})"
         )
 
-    n_bad = n_stale + len(idiom_hits)
+    # Call-signature check: every symbol can resolve while a call still passes a
+    # keyword the installed function does not take (`output_filename=` to
+    # `aplt.subplot_fit_imaging`). Same `STALE*` prefix so the hook denies it too.
+    call_issues = (
+        check_call_signatures_markdown(text)
+        if label.endswith(".md")
+        else check_call_signatures(text)
+    )
+    for issue in call_issues:
+        report.append(
+            f"STALE-CALL  {issue.call}(...) line {issue.line_no}  —  {issue.problem}; "
+            f"{issue.hint} (verify with inspect.signature)"
+        )
+
+    n_bad = n_stale + len(idiom_hits) + len(call_issues)
     if n_bad:
         print(
             f"[gate] {n_bad} stale PyAuto* reference(s) in {label} "
-            f"({n_stale} symbol(s), {len(idiom_hits)} idiom(s)) — "
+            f"({n_stale} symbol(s), {len(call_issues)} call(s), "
+            f"{len(idiom_hits)} idiom(s)) — "
             f"fix against the live API before running:",
             file=sys.stderr,
         )
@@ -1465,7 +1681,10 @@ def run_code_gate(*, code: str | None, file: str | None) -> int:
             file=sys.stderr,
         )
         return INSTALL_IMPORT_FAILED
-    print(f"[gate] {label}: all PyAuto* symbols and idioms resolve.", file=sys.stderr)
+    print(
+        f"[gate] {label}: all PyAuto* symbols, call arguments and idioms resolve.",
+        file=sys.stderr,
+    )
     return 0
 
 
@@ -1601,6 +1820,7 @@ def main() -> int:
 
     files = select_files(root, args.scope)
     occurrences_by_file: dict[Path, dict[Symbol, set[str]]] = {}
+    call_issues_by_file: dict[Path, list[CallIssue]] = {}
     all_symbols: set[Symbol] = set()
     skipped: list[Path] = []
     for f in files:
@@ -1618,6 +1838,13 @@ def main() -> int:
         )
         occurrences_by_file[f] = per_file
         all_symbols.update(per_file)
+        file_call_issues = (
+            check_call_signatures(text)
+            if f.suffix == ".py"
+            else check_call_signatures_markdown(text)
+        )
+        if file_call_issues:
+            call_issues_by_file[f] = file_call_issues
 
     if skipped:
         print(
@@ -1652,14 +1879,23 @@ def main() -> int:
         resolutions=resolutions,
         scope=args.scope,
         root=root,
+        call_issues_by_file=call_issues_by_file,
     )
     out_path.write_text(report, encoding="utf-8")
 
     n_missing = sum(1 for r in resolutions.values() if r.status != "ok")
+    n_call = sum(len(v) for v in call_issues_by_file.values())
     print(f"[audit] missing/broken: {n_missing}", file=sys.stderr)
+    print(f"[audit] call-argument mismatches: {n_call}", file=sys.stderr)
+    for f, issues in sorted(call_issues_by_file.items()):
+        for issue in issues:
+            print(
+                f"  {f.relative_to(root)}:{issue.line_no}  {issue.call}  {issue.problem}",
+                file=sys.stderr,
+            )
     print(f"[audit] report written to {out_path}", file=sys.stderr)
 
-    return 0 if n_missing == 0 else 1
+    return 0 if n_missing == 0 and n_call == 0 else 1
 
 
 if __name__ == "__main__":

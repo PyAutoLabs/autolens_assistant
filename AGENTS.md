@@ -60,8 +60,8 @@ deliberate refactor). Two are NEVER overridden: the real-data gate and never-rew
   compose the fit.** These are the questions every real-data run must ask, on every harness.
   Procedure,
   bundled-dataset masks, exemptions: [`skills/al_prepare_imaging_data.md`](./skills/al_prepare_imaging_data.md). Simulated data is exempt.
-- **Code gate.** A PreToolUse hook validates PyAuto* symbols against the installed library
-  and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
+- **Code gate.** A PreToolUse hook validates PyAuto* symbols — and the keyword/positional
+  arguments of calls to them — against the installed library and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
   `dir()`, then re-run. Claude Code and Codex both register this hook from their
   project config. In Codex, review and trust the current project-hook hash with `/hooks`;
   changed or untrusted hooks are skipped. **On any other harness (OpenCode, Gemini CLI,
