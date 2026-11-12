@@ -15,8 +15,9 @@ This hook closes that gap, independent of any version match:
      PyAuto* alias-rooted symbol. Everything else is a silent allow — zero latency.
   3. For each flagged source, run `autoassistant/audit_skill_apis.py --code/--file` using the SAME
      interpreter the command would use, so symbols resolve against the exact stack.
-  4. If any symbol does not resolve, DENY the call with the gate's report so the agent
-     re-grounds against the live API / skills. Otherwise allow.
+  4. If any symbol does not resolve, or a call passes arguments the installed signature
+     does not accept, DENY the call with the gate's report so the agent re-grounds
+     against the live API / skills. Otherwise allow.
 
 Fail-open by design: any internal error (unparseable command, missing validator, etc.)
 allows the call — the gate must never block legitimate work because of its own bugs. A
@@ -232,8 +233,9 @@ def main() -> None:
 
     if reports:
         _deny(
-            "Blocked: PyAuto* API symbols that do not exist in the installed stack "
-            "(these are the Kernel2D/FitImagingPlotter-style stale-from-memory errors).\n\n"
+            "Blocked: PyAuto* API symbols that do not exist in the installed stack, or "
+            "calls with arguments their installed signature does not accept (the "
+            "Kernel2D/FitImagingPlotter-style stale-from-memory errors).\n\n"
             + "\n\n".join(reports)
             + "\n\nGround the call against the live API: grep skills/ for the task "
             "(e.g. al_load_results.md uses `aplt.subplot_fit_imaging(fit=fit)`), or "

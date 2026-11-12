@@ -60,8 +60,8 @@ deliberate refactor). Two are NEVER overridden: the real-data gate and never-rew
   compose the fit.** These are the questions every real-data run must ask, on every harness.
   Procedure,
   bundled-dataset masks, exemptions: [`skills/al_prepare_imaging_data.md`](./skills/al_prepare_imaging_data.md). Simulated data is exempt.
-- **Code gate.** A PreToolUse hook validates PyAuto* symbols against the installed library
-  and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
+- **Code gate.** A PreToolUse hook validates PyAuto* symbols — and the keyword/positional
+  arguments of calls to them — against the installed library and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
   `dir()`, then re-run. Claude Code and Codex both register this hook from their
   project config. In Codex, review and trust the current project-hook hash with `/hooks`;
   changed or untrusted hooks are skipped. **On any other harness (OpenCode, Gemini CLI,
@@ -254,11 +254,11 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
   `subplot_fit_*` functions do not take it and write a fixed name
   (`subplot_fit_imaging` → `fit.png`), so give each such plot its own `output_path` or rename
   the file afterwards. Check with `inspect.signature(aplt.<function>)` when unsure.
-  **The object-oriented plotters (`aplt.FitImagingPlotter`, `ImagingPlotter`, `TracerPlotter`,
+  **The object-oriented plotters (`aplt.FitImagingPlotter`, `ImagingPlotter`, `TracerPlotter`, <!-- pyauto-api-gate: off -->
   …) and the `aplt.MatPlot2D` / `aplt.Output` objects have been removed — do not use them.
   They are the #1 stale-from-memory API error, especially on a harness without the code-gate
   hook.** Wrong:
-  `aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(...)).subplot_fit_imaging()`.
+  `aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(...)).subplot_fit_imaging()`. <!-- pyauto-api-gate: on -->
   Right:
   `aplt.subplot_fit_imaging(fit=fit, output_path="scripts/scratch/ring/", output_format="png")`
   (writes `scripts/scratch/ring/fit.png`).

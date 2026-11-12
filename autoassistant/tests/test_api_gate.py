@@ -335,3 +335,93 @@ def test_hook_allows_grep_piped_into_python(tmp_path):
     script.write_text(f"import autolens as al\n{STALE_PLOTTER}\n", encoding="utf-8")
     proc = _run_hook(f'grep -n autolens {script} | {sys.executable} -c "import io"')
     assert _decision(proc) is None
+
+
+# --- call-signature checks -------------------------------------------------------------
+# Every symbol resolves, yet the call passes a keyword the installed function does not
+# take: the `output_filename=` example once shipped in AGENTS.md and crashed at run time.
+CALL_BAD_KWARG = (
+    "import autolens.plot as aplt\n"
+    'aplt.subplot_fit_imaging(fit=fit, output_path="out", output_filename="fit")'
+)
+CALL_GOOD_KWARGS = (
+    "import autolens.plot as aplt\n"
+    'aplt.subplot_fit_imaging(fit=fit, output_path="out", output_format="png")'
+)
+# Never judged: `**mapping` unpacking, and callees that accept **kwargs (al.Galaxy).
+CALL_UNPACKED = "import autolens.plot as aplt\naplt.subplot_fit_imaging(fit=fit, **opts)"
+CALL_VAR_KWARGS = "import autolens as al\ng = al.Galaxy(redshift=0.5, anything_goes=1)"
+CALL_TOO_MANY_POSITIONAL = (
+    "import autolens.plot as aplt\naplt.subplot_fit_imaging(" + ", ".join(["x"] * 60) + ")"
+)
+
+
+def test_validator_flags_unknown_keyword_argument():
+    proc = _run_validator("--code", CALL_BAD_KWARG)
+    assert proc.returncode == 2
+    assert "STALE-CALL" in proc.stderr
+    assert "output_filename" in proc.stderr
+    assert "output_path" in proc.stderr  # the accepted names are listed as the hint
+
+
+def test_validator_passes_accepted_keyword_arguments():
+    assert _run_validator("--code", CALL_GOOD_KWARGS).returncode == 0
+
+
+def test_validator_does_not_judge_unpacking_or_var_kwargs():
+    assert _run_validator("--code", CALL_UNPACKED).returncode == 0
+    assert _run_validator("--code", CALL_VAR_KWARGS).returncode == 0
+
+
+def test_validator_flags_too_many_positional_arguments():
+    proc = _run_validator("--code", CALL_TOO_MANY_POSITIONAL)
+    assert proc.returncode == 2
+    assert "positional arguments given" in proc.stderr
+
+
+def test_validator_checks_markdown_code_with_file_line_numbers(tmp_path):
+    doc = tmp_path / "skill.md"
+    doc.write_text(
+        "# A skill\n\n```python\n" + CALL_BAD_KWARG + "\n```\n\n"
+        "```bash\npython run.py --output_filename=x\n```\n",
+        encoding="utf-8",
+    )
+    proc = _run_validator("--file", str(doc))
+    assert proc.returncode == 2
+    assert "line 5" in proc.stderr  # the call sits on line 5 of the Markdown file
+    assert proc.stderr.count("STALE-CALL") == 1  # the bash block is not Python
+
+
+def test_hook_denies_unknown_keyword_argument():
+    snippet = CALL_BAD_KWARG.replace("\n", "; ").replace('"', "'")
+    assert _decision(_run_hook(f'python3 -c "{snippet}"')) == "deny"
+
+
+# --- region opt-out + AGENTS.md scope ----------------------------------------------------
+REGION_OFF = (
+    "import autolens as al\n"
+    "# pyauto-api-gate: off  (deliberate removed-API example)\n"
+    "al.FitImagingPlotter\n"
+    "# pyauto-api-gate: on\n"
+)
+
+
+def test_gate_off_region_is_not_checked():
+    assert _run_validator("--code", REGION_OFF).returncode == 0
+
+
+def test_code_after_gate_on_is_checked_again():
+    proc = _run_validator("--code", REGION_OFF + "al.FitImagingPlotter\n")
+    assert proc.returncode == 2
+    assert "FitImagingPlotter" in proc.stderr
+
+
+def test_agents_md_is_in_scope_and_clean(tmp_path):
+    """AGENTS.md is the most-copied file in the repo: `--scope instructions` (and so
+    `--scope all`, which CI runs) audits it, and its only removed-API names sit inside
+    the "Wrong:" example's off/on region."""
+    proc = _run_validator("--scope", "instructions", "--out", str(tmp_path / "r.md"))
+    assert proc.returncode == 0, proc.stderr
+    assert "scanned 1 files" in proc.stderr
+    text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert "<!-- pyauto-api-gate: off -->" in text and "<!-- pyauto-api-gate: on -->" in text
