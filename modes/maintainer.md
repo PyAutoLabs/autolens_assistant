@@ -107,7 +107,7 @@ assets in `docs/` (COSMOS-Web Ring imagery + the `make_readme_figures.py`
 script that renders it — a newborn regrows its own), and the bundled science
 scripts in `scripts/` (`scripts/cosmos_web_ring/` — the ring fit script, its
 results and README, tied to a named lens; only `scripts/`'s own
-AGENTS/CLAUDE/README docs are generic), and the setup and
+AGENTS/README docs are generic), and the setup and
 evaluation pages under `docs/` (the agent-access mechanics read the same everywhere; the
 worked prompts and dataset names are domain). Profiling query examples in
 `docs/profiling/` describe PyAutoLens datasets and model families; they are domain
@@ -122,8 +122,8 @@ below.
 Generated `.codex/skills/*/SKILL.md` wrappers are **domain** for cloning: their
 namespace and targets belong to this assistant, so they must never be copied
 blind. Regenerate them from the newborn's adapted skill inventory with Brain's
-project-discovery installer. (`docs/archive/` is retired chat-era material and is not
-cloned at all.)
+project-discovery installer. Retired chat bundles and custom-GPT setup material are not
+part of the assistant template.
 
 **Per-clone data** (never copied to a newborn — each clone accumulates its own):
 `benchmarks/runs/` and the regenerated `benchmarks/RESULTS.md`. A newborn starts with
@@ -131,11 +131,12 @@ empty runs and regenerates `RESULTS.md` via `python autoassistant/benchmark.py r
 
 ## Harness compatibility smoke test
 
-The assistant is supported only inside a coding agent, and the support statements in the README
-are deliberately narrow: **Claude Code and Codex recommended; OpenCode experimental; Gemini CLI a
-candidate for evaluation; browser chats unsupported** (retired 2026-09-10 — the old routes and
-their smoke checks are archived under `docs/archive/`). Do not widen any of that from an
-impression; run the checks and record them.
+Execution, local-data inspection and fitting require a coding agent. Browser chats with a
+GitHub connector can support reading, discussion and planning; they do not satisfy this
+execution smoke test. Agent choices and chat setup live on the shared
+[AI options page](https://github.com/PyAutoLabs/PyAutoScientist/blob/main/AI_OPTIONS.md).
+The former custom GPT and pasted knowledge bundles remain retired. Before changing
+compatibility claims, run the checks and record them.
 
 The protocol is [`docs/evaluation/agent_evaluation.md`](../docs/evaluation/agent_evaluation.md)
 and the frozen card is `benchmarks/prompts/harness_smoke.md`: grounded answering, a small fit
