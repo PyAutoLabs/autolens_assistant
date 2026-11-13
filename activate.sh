@@ -42,6 +42,24 @@ $BASE/PyAutoLens
     export TRITON_CACHE_DIR="${TRITON_CACHE_DIR:-$PYAUTO_HPC_CACHE/triton}"
     export JAX_COMPILATION_CACHE_DIR="${JAX_COMPILATION_CACHE_DIR-$PYAUTO_HPC_CACHE/pyauto_jax}"
     export ASTROPY_CACHE_DIR="${ASTROPY_CACHE_DIR:-$PYAUTO_HPC_CACHE/astropy}"
+    # Temp files too: Python's tempfile, JAX and numba default to /tmp, which on RAL
+    # compute nodes sits on the same small local disk (RAL admin, 2026-11-12). Use a
+    # `tmp/` next to the cache instead.
+    # Slurm sets TMPDIR=/tmp itself when the job environment has none, so /tmp counts
+    # as unset here; any other TMPDIR (e.g. a job's own scratch dir) wins.
+    if [ -z "${TMPDIR:-}" ] || [ "$TMPDIR" = /tmp ]; then
+        export TMPDIR="$(dirname "$PYAUTO_HPC_CACHE")/tmp"
+    fi
+    mkdir -p "$TMPDIR" 2>/dev/null || true
+    # CPU jobs: the shared venv ships JAX's CUDA plugin, which on a GPU-less node fails
+    # cuInit and logs an ERROR + traceback before JAX falls back to the CPU (RAL,
+    # 2026-11-13). Pin the CPU when the job holds no GPU — Slurm sets SLURM_JOB_GPUS,
+    # SLURM_GPUS_ON_NODE and CUDA_VISIBLE_DEVICES for a --gres=gpu job — and an
+    # explicit JAX_PLATFORMS always wins.
+    if [ -z "${JAX_PLATFORMS:-}" ] && [ -z "${SLURM_JOB_GPUS:-}${SLURM_GPUS_ON_NODE:-}${CUDA_VISIBLE_DEVICES:-}" ]; then
+        export JAX_PLATFORMS=cpu
+        echo "activate.sh: no GPU in this job, JAX_PLATFORMS=cpu" >&2
+    fi
 else
     echo "No local .venv found (set PYAUTO_HPC_BASE for a shared/HPC PyAuto checkout)." >&2
 fi
