@@ -31,7 +31,10 @@ __Contents__
 - **Change The Model:** Optionally shift the Einstein radius or rescale the lens light.
 - **Summary:** Write `summary.json`.
 """
-from autonerves import jax_wrapper  # noqa: F401  Sets the JAX environment before other imports
+
+from autonerves import (
+    jax_wrapper,
+)  # noqa: F401  Sets the JAX environment before other imports
 
 import argparse
 import json
@@ -58,7 +61,9 @@ model leaves. Both default to "no change", in which case the experiment figure i
 """
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-parser = argparse.ArgumentParser(description="Evaluate the committed COSMOS-Web Ring models.")
+parser = argparse.ArgumentParser(
+    description="Evaluate the committed COSMOS-Web Ring models."
+)
 parser.add_argument(
     "--output-dir",
     type=Path,
@@ -79,7 +84,9 @@ committed models were evaluated on (`scripts/cosmos_web_ring/results/README.md`)
 radial light-profile over-sampling. Same preparation as `skills/al_prepare_imaging_data.md`
 and the Colab notebook's "Preparing The Data".
 """
-band_path = REPO_ROOT / "dataset" / "imaging" / "cosmos_web_ring" / "wavebands" / "F444W"
+band_path = (
+    REPO_ROOT / "dataset" / "imaging" / "cosmos_web_ring" / "wavebands" / "F444W"
+)
 results_path = REPO_ROOT / "scripts" / "cosmos_web_ring" / "results"
 info = json.loads((band_path / "info.json").read_text())
 pixel_scale = info["pixel_scale"]
@@ -100,7 +107,9 @@ mask_extra_galaxies = al.Mask2D.from_fits(
 )
 dataset = dataset.apply_noise_scaling(mask=mask_extra_galaxies)
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=mask_radius
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 dataset = dataset.apply_mask(mask=mask)
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
@@ -137,11 +146,15 @@ shear = tracer.fields[0].shear
 adapt_images = al.AdaptImages(
     galaxy_image_dict={source_galaxy: masked_array_from("source_adapt_image.fits")},
     galaxy_image_plane_mesh_grid_dict={
-        source_galaxy: al.from_json(file_path=results_path / "ansofi" / "source_mesh_grid.json")
+        source_galaxy: al.from_json(
+            file_path=results_path / "ansofi" / "source_mesh_grid.json"
+        )
     },
 )
 dataset_good = dataset.apply_over_sampling(
-    over_sample_size_pixelization=masked_array_from("over_sample_size_pixelization.fits")
+    over_sample_size_pixelization=masked_array_from(
+        "over_sample_size_pixelization.fits"
+    )
 )
 fit = al.FitImaging(dataset=dataset_good, tracer=tracer, adapt_images=adapt_images)
 reduced_chi_squared_good = float(fit.chi_squared) / n_masked_pixels
@@ -174,7 +187,9 @@ kpc_per_arcsec = float(cosmology.kpc_per_arcsec_from(redshift=redshift_lens))
 evaluation_grid = al.Grid2D.uniform(shape_native=(200, 200), pixel_scales=0.03)
 lens_calc = al.LensCalc.from_tracer(tracer)
 einstein_radius_effective = float(lens_calc.einstein_radius_from(grid=evaluation_grid))
-einstein_mass = sigma_crit * float(lens_calc.einstein_mass_angular_from(grid=evaluation_grid))
+einstein_mass = sigma_crit * float(
+    lens_calc.einstein_mass_angular_from(grid=evaluation_grid)
+)
 critical_curves = lens_calc.tangential_critical_curve_list_from(grid=evaluation_grid)
 einstein_radius_kpc = einstein_radius_effective * kpc_per_arcsec
 
@@ -211,16 +226,26 @@ plt.close(figure)
 model_max = float(np.max(fit.model_data))
 figure, axes = plt.subplots(2, 2, figsize=(12, 10))
 for row, (label, a_fit, chi2) in enumerate(
-    [("Good", fit, reduced_chi_squared_good), ("Poor", fit_poor, reduced_chi_squared_poor)]
+    [
+        ("Good", fit, reduced_chi_squared_good),
+        ("Poor", fit_poor, reduced_chi_squared_poor),
+    ]
 ):
     aplt.plot_array(
-        array=a_fit.model_data, title=f"{label} model",
-        use_log10=True, vmin=model_max / 1000, vmax=model_max, ax=axes[row, 0],
+        array=a_fit.model_data,
+        title=f"{label} model",
+        use_log10=True,
+        vmin=model_max / 1000,
+        vmax=model_max,
+        ax=axes[row, 0],
     )
     aplt.plot_array(
         array=a_fit.normalized_residual_map,
         title=f"{label}: residuals, reduced $\\chi^2$ {chi2:.2f}",
-        cb_unit=r"$\sigma$", vmin=-5.0, vmax=5.0, ax=axes[row, 1],
+        cb_unit=r"$\sigma$",
+        vmin=-5.0,
+        vmax=5.0,
+        ax=axes[row, 1],
     )
 plt.tight_layout()
 figure.savefig(output_dir / "good_vs_poor.png", dpi=150, facecolor="white")
@@ -239,17 +264,26 @@ if changed:
         raise ValueError("Choose a finite, non-negative lens light scale.")
     changed_tracer = deepcopy(tracer)
     changed_mass = changed_tracer.galaxies[0].mass
-    changed_mass.einstein_radius = float(mass.einstein_radius) + args.einstein_radius_offset
-    if not np.isfinite(changed_mass.einstein_radius) or changed_mass.einstein_radius <= 0:
+    changed_mass.einstein_radius = (
+        float(mass.einstein_radius) + args.einstein_radius_offset
+    )
+    if (
+        not np.isfinite(changed_mass.einstein_radius)
+        or changed_mass.einstein_radius <= 0
+    ):
         raise ValueError("Choose an offset that leaves the Einstein radius above zero.")
 
     mapper = fit.inversion.cls_list_from(cls=al.Mapper)[0]
     source_brightness = fit.inversion.reconstruction_dict[mapper]
-    traced_grid = changed_tracer.traced_grid_2d_list_from(grid=fit.grids.pixelization)[-1]
+    traced_grid = changed_tracer.traced_grid_2d_list_from(grid=fit.grids.pixelization)[
+        -1
+    ]
     mesh = source_galaxy.pixelization.mesh
     traced_grid = mesh.relocated_grid_from(
         border_relocator=(
-            dataset_good.grids.border_relocator if fit.settings.use_border_relocator else None
+            dataset_good.grids.border_relocator
+            if fit.settings.use_border_relocator
+            else None
         ),
         source_plane_data_grid=traced_grid,
     )
@@ -274,17 +308,35 @@ if changed:
     light_max = float(max(np.max(subtracted_original), np.max(subtracted_changed)))
 
     figure, axes = plt.subplots(2, 3, figsize=(15, 9))
-    for row, (label, model_image, light_scale, residuals) in enumerate([
-        ("Original", fit.model_data, 1.0, fit.normalized_residual_map),
-        ("Changed", changed_image, args.lens_light_scale, changed_residuals),
-    ]):
-        aplt.plot_array(array=model_image, title=f"{label}: model image",
-                        use_log10=True, vmin=model_max / 1000, vmax=model_max, ax=axes[row, 0])
-        aplt.plot_array(array=dataset.data - light_scale * lens_image,
-                        title=f"{label}: light subtracted",
-                        vmin=light_min, vmax=light_max, ax=axes[row, 1])
-        aplt.plot_array(array=residuals, title=f"{label}: residuals", cb_unit=r"$\sigma$",
-                        vmin=-5.0, vmax=5.0, ax=axes[row, 2])
+    for row, (label, model_image, light_scale, residuals) in enumerate(
+        [
+            ("Original", fit.model_data, 1.0, fit.normalized_residual_map),
+            ("Changed", changed_image, args.lens_light_scale, changed_residuals),
+        ]
+    ):
+        aplt.plot_array(
+            array=model_image,
+            title=f"{label}: model image",
+            use_log10=True,
+            vmin=model_max / 1000,
+            vmax=model_max,
+            ax=axes[row, 0],
+        )
+        aplt.plot_array(
+            array=dataset.data - light_scale * lens_image,
+            title=f"{label}: light subtracted",
+            vmin=light_min,
+            vmax=light_max,
+            ax=axes[row, 1],
+        )
+        aplt.plot_array(
+            array=residuals,
+            title=f"{label}: residuals",
+            cb_unit=r"$\sigma$",
+            vmin=-5.0,
+            vmax=5.0,
+            ax=axes[row, 2],
+        )
     plt.tight_layout()
     figure.savefig(output_dir / "changed_model.png", dpi=150, facecolor="white")
     plt.close(figure)
@@ -309,7 +361,9 @@ summary = {
     },
     "poor_model": {
         "source": "single linear Sersic",
-        "einstein_radius_parameter": float(tracer_poor.galaxies[0].mass.einstein_radius),
+        "einstein_radius_parameter": float(
+            tracer_poor.galaxies[0].mass.einstein_radius
+        ),
         "reduced_chi_squared": reduced_chi_squared_poor,
     },
     "einstein_radius_effective_arcsec": einstein_radius_effective,
