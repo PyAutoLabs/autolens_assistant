@@ -18,41 +18,43 @@ The public starting prompt reads, in full:
 > questions or change the analysis along the way.
 
 The person may be a journalist, a member of the public, a student or a lensing
-researcher. This skill makes the first two replies the same for all of them, then
-hands off by audience. Depth follows `skills/_style.md` "Adaptive depth" (the
-general-reader persona is the one most newcomers from the website need).
+researcher. The first two replies are the same for all of them; then route by audience.
+Depth follows `skills/_style.md` "Adaptive depth".
+
+- **No inference by default.** Curious readers and students explore lens models already
+  fitted and committed under `scripts/cosmos_web_ring/results/`, as the Colab notebook
+  (`docs/colab/cosmos_web_ring_colab.py`) does: seconds, not a long wait at the most
+  interesting moment. A live fit is opt-in (default only for researchers).
+- **Picture-led.** Every reply shows at least one image, viewed by you first, then put in
+  front of the person with the harness's file-display tool if it has one (e.g.
+  `SendUserFile`), otherwise its absolute path plus an offer to open it. One caption line
+  each: what to look for.
 
 ## Step 0 — be inside the checkout
 
-Every path below is relative to the repository root. The prompt may arrive in an agent
-opened in some other folder, and it now says so itself: "First clone that repository, cd
-into it and follow its AGENTS.md." An agent that has not cloned yet does that **before
-anything else — including before asking the background question**; the "ask me what my
-background is first" in the next paragraph of the prompt comes after the bootstrap. If
-`dataset/imaging/cosmos_web_ring` is not present relative to your working directory,
-bootstrap first, as the README and `AGENTS.md` describe: clone the repository if it is
-not already there, `cd` into it, read `AGENTS.md` in full and follow its session start
-(hooks and project settings do not load for a folder entered mid-session, so
-self-enforce the code gate with `python autoassistant/audit_skill_apis.py --code/--file`).
-If `python` is not on PATH, use `python3`. If `import autolens` fails, or `--check-version`
-exits 2 or 3, install PyAutoLens via [`al_setup_environment`](./al_setup_environment.md)
-before Step 1 (it needs Python 3.12 or newer).
+Every path below is relative to the repository root. An agent that has not cloned yet
+does that **before anything else — including before asking the background question**.
+If `dataset/imaging/cosmos_web_ring` is not present relative to your working directory,
+clone the repository, `cd` into it, read `AGENTS.md` in full and follow its session
+start (hooks do not load for a folder entered mid-session, so self-enforce the code gate
+with `python autoassistant/audit_skill_apis.py --code/--file`). If `python` is not on
+PATH, use `python3`. If `import autolens` fails, or `--check-version` exits 2 or 3,
+install PyAutoLens via [`al_setup_environment`](./al_setup_environment.md) (Python 3.12+).
 
-The bootstrap is part of the walkthrough, not a detour: tell the person what you are
-installing and why, one line each (for example "downloading the assistant, which
-includes the JWST image" and "installing PyAutoLens, the lens-modelling software"), and
-mention once that they can relaunch the agent inside the cloned folder later for the
-full setup. Then carry straight on to Step 1 in the same reply.
+Tell the person what you are installing and why, one line each, mention once that they
+can relaunch the agent inside the cloned folder, and carry on to Step 1 in the same reply.
 
-## Step 1 — show the picture (first reply)
+## Step 1 — show the pictures (first reply)
 
-Before any question, plot the **F444W** image — the band used throughout this
-greeting, the benchmark and the Colab notebook. Data:
-`dataset/imaging/cosmos_web_ring/wavebands/F444W/` (0.06"/pixel, `info.json` gives
-z_lens = 2.0 and z_source = 5.1043). Follow the conventions of
-[`al_prepare_imaging_data`](./al_prepare_imaging_data.md): load, apply the bundled
-extra-galaxy noise scaling (say so out loud), apply a **1.8"** circular mask, save the
-plot, never display interactively.
+**Picture 1:** `docs/images/cosmos_web_ring_rgb_labelled.png`, no code needed — JWST's
+colour image with arrows marking the lens galaxy, the ring and the extra galaxy. It is
+flipped vertically for presentation, so the extra galaxy sits on the other side in the
+data plots.
+
+**Picture 2:** the **F444W** data (`dataset/imaging/cosmos_web_ring/wavebands/F444W/`,
+0.06"/pixel, z_lens = 2.0, z_source = 5.1043), prepared per
+[`al_prepare_imaging_data`](./al_prepare_imaging_data.md): bundled extra-galaxy noise
+scaling (say so out loud) and a **1.8"** circular mask; save, never display interactively.
 
 ```python
 from autonerves import jax_wrapper  # set JAX env before other PyAuto* imports
@@ -87,22 +89,15 @@ aplt.subplot_imaging_dataset_intro(
 )
 ```
 
-The colormap, fonts, titles and ticks inherit the PyAutoLens configuration.
-The four panels are Image, Noise map, Signal-to-noise map and PSF. Briefly identify these
-as the observation, its uncertainty, its significance and the telescope's blur. Explain
-that the image colours encode brightness, not physical colour. Blank space marks the mask exterior and the down-weighted neighbour.
-Keep over-sampling calculations internal; do not show their panels in this introduction.
+Identify the four panels (Image, Noise map, Signal-to-noise map, PSF) as the
+observation, its uncertainty, its significance and the telescope's blur; colours encode
+brightness, not physical colour; blank space is the mask exterior and the down-weighted
+neighbour. Explain it in **two plain sentences**: a massive galaxy (redshift ≈ 2) bends
+the light of a much more distant galaxy (redshift ≈ 5.1, seen when the Universe was
+about a billion years old) into the ring around it.
 
-Show the image (quote the PNG path and view it yourself), then explain it in **two
-plain sentences**: a massive galaxy about 10 billion years back in time (redshift ≈ 2)
-sits in the middle, and its gravity bends the light of a much more distant galaxy
-(redshift ≈ 5.1, seen when the Universe was about a billion years old) into the ring
-around it. Point out the nearby extra galaxy (its light is down-weighted, not modelled)
-and the 1.8" circle that marks the region the model will fit.
-
-Then say that JWST imaged the ring in **four colours — F115W, F150W, F277W and F444W** —
-and that lensing is **achromatic**: gravity bends every colour of light by the same
-amount, so the ring has the same shape and size in every band. That sameness is itself
+Then say JWST imaged the ring in **four colours — F115W, F150W, F277W and F444W** — and
+lensing is **achromatic**: the ring has the same shape and size in every band, itself
 evidence that this is lensing and not a ring-shaped galaxy.
 
 ## Step 2 — ask exactly one question
@@ -111,26 +106,69 @@ End the first reply with this single question and nothing else to answer:
 
 "Are you a curious reader, a student, or a researcher who wants the code?"
 
-Do not start the fit until they answer. Record the answer in `wiki/project/profile.md`
-per the first-interaction protocol in `AGENTS.md` (copy `_profile_template.md` if no
-profile exists; fill "Lensing background", "PyAutoLens background" and "Interaction
-mode" only with what they said; set `last_touched`).
+Record the answer in `wiki/project/profile.md` per the first-interaction protocol in
+`AGENTS.md` (fill only what they said; set `last_touched`).
 
 ## Step 3 — route by the answer
 
-The fit is the same in every route: F444W, the mask and noise scaling above, **MGE lens
-light + `Isothermal` mass + external shear + MGE source**, fitted with
-`af.MultiStartProdigy` and `use_jax=True` on the analysis. The reference script is
-[`scripts/cosmos_web_ring/fit_cosmos_web_ring.py`](../scripts/cosmos_web_ring/fit_cosmos_web_ring.py);
-mirror it rather than composing from memory (model composition:
-[`al_build_imaging_model`](./al_build_imaging_model.md); search:
-[`al_configure_search`](./al_configure_search.md)).
+**Curious reader / journalist** → the general-reader persona; **student** → Teacher mode
+(`modes/teacher.md`), explaining the physics as each concept appears and letting them run
+each step. Both take the tour below. **Researcher who wants the code** → Assistant mode
+(`modes/assistant.md`): the live fit, then the tour's figures for comparison.
+
+### The tour
+
+Run, once (about 15 s on a laptop CPU):
+
+```bash
+python scripts/cosmos_web_ring/explore_committed_models.py
+```
+
+It evaluates two committed models on F444W (2.1" mask, the one they were fitted on) and
+writes figures plus `summary.json` (every number you quote) to
+`scripts/scratch/cosmos_web_ring/models/`. Good: MGE lens light, power-law mass, shear,
+1,250-pixel source (`results/ansofi/`); poor: a single Sérsic source. Say in one sentence
+that we explore a model the computer found earlier, and they can watch a live fit at the end.
+
+One or two pictures per reply, each with a plain explanation and a suggested follow-up
+they could type:
+
+1. `docs/images/strong_lens_schematic.png` — how light bends around the lens into arcs
+   and, with perfect alignment, a ring.
+2. `docs/images/cosmos_web_ring_bands.png` — F150W vs F444W: same ring, different
+   colours (achromatic).
+3. `docs/images/mercier2024_lens_model_f150w_f444w.png` — the published model (Mercier
+   et al. 2024): data, model, residuals, source; the diamond is the caustic.
+4. `models/source_good.png` — the ring with the lens light removed, the model ring, and
+   the **delensed source**: what the distant galaxy really looks like. Give it room.
+5. `models/good_vs_poor.png` — good residuals look like static; the poor model leaves
+   the bright knots. Quote both reduced χ² (1 = as good as the noise allows).
+6. `models/einstein_radius.png` — the Einstein radius in arcseconds and light-years,
+   and the mass inside it in Suns (stars, gas and dark matter). Mercier et al. 2024
+   measured 0.78 ± 0.04".
+7. Offer, don't push: *"What if the galaxy were heavier?"* (rerun with
+   `--einstein-radius-offset 0.1` or `--lens-light-scale 1.2` and
+   `--output-dir scripts/scratch/cosmos_web_ring/models_changed`; show
+   `changed_model.png`, source held fixed); *"Can you change the colour map and contrast
+   so I can see the lens galaxy and the ring more clearly?"* (`colormap`, e.g. `cividis`,
+   and `stretch` 0.01/0.03/0.1 on `aplt.subplot_imaging_dataset_intro`; only the display
+   changes); *"Can I watch the computer find the model itself?"* (the live fit).
+
+### Live fit
+
+F444W, Step 1's mask and noise scaling, **MGE lens light + `Isothermal` mass + external
+shear + MGE source**, `af.MultiStartProdigy` with `use_jax=True` on the analysis. Run the
+reference script
+[`scripts/cosmos_web_ring/fit_cosmos_web_ring.py`](../scripts/cosmos_web_ring/fit_cosmos_web_ring.py)
+rather than composing from memory, with
+`--results-dir scripts/scratch/cosmos_web_ring/fit_good` (don't overwrite the committed
+figures) and `--n-starts 8` for a quick look. About 7.5 min on a laptop GPU with 48
+starts; on CPU the first compile has taken from under 3 to over 20 min. Run it in the
+background and show tour pictures meanwhile.
 
 **Bound the mass priors.** With the library defaults (`einstein_radius` uniform over
-0-8") the maximum-likelihood optimiser falls into a degenerate basin: θ_E ≈ 2.4", the
-"source" sits on a neighbouring galaxy and the whole ring is left in the residuals.
-Set what a careful user would tell you the picture already shows — the ring is under
-an arcsecond across:
+0-8") the optimiser falls into a degenerate basin: θ_E ≈ 2.4", the "source" sits on a
+neighbour and the ring is left in the residuals. The script sets what the picture shows:
 
 ```python
 lens.mass.einstein_radius = af.UniformPrior(lower_limit=0.3, upper_limit=1.5)
@@ -140,40 +178,21 @@ shear.gamma_1 = af.UniformPrior(lower_limit=-0.15, upper_limit=0.15)
 shear.gamma_2 = af.UniformPrior(lower_limit=-0.15, upper_limit=0.15)
 ```
 
-Say so to the person in one sentence (for a general reader: "we tell the computer the
-ring is roughly an arcsecond across so it does not waste time on absurd answers").
-
-- **Curious reader / journalist** → the general-reader persona. You run the fit
-  yourself, narrating each step in one or two plain sentences (what the model is, why
-  the fit takes a few minutes, what the computer is trying). Show `subplot_fit` and
-  explain it in words: the model image should look like the data, and the residual
-  panel should be close to featureless noise. Then state the result in two ways: the
-  **Einstein radius** (the size of the ring, in arcseconds and in thousands of
-  light-years at the lens) and the **mass inside the ring**, as "about N times the mass
-  of the Sun" — computed from the fitted model, never quoted from memory. Offer, don't
-  push, a next step (e.g. "want to see what a worse model looks like?").
-- **Student** → Teacher mode (`modes/teacher.md`): step through the same analysis,
-  explain the physics as each concept appears, point at HowToLens and the wiki, let
-  them run each step.
-- **Researcher who wants the code** → Assistant mode (`modes/assistant.md`): show the
-  reference script, give the one-line pre-flight read-back, run it, and offer to change
-  the model (e.g. a power-law mass, a pixelized source) or the search.
-
-Once the person has answered the background question, offer an optional visual experiment:
-"We can change the colours and contrast to bring out the ring — would you like to try?"
-Suggest: "Can you change the colour map and contrast so I can see the lens galaxy and the
-ring more clearly?" Change `colormap` (for example `cividis`) and `stretch` (0.01, 0.03,
-0.1) on `aplt.subplot_imaging_dataset_intro`, then show the result. Explain that only the display changed.
-Do not add this as another question to the first reply or require it before continuing.
+Tell a general reader: "we tell the computer the ring is roughly an arcsecond across so
+it does not waste time on absurd answers". Show `fit_subplot.png` as in tour beat 5. A
+researcher gets the one-line pre-flight read-back first, then offers to change the model
+(the committed `ansofi` model is the power-law + pixelized-source upgrade) or the search.
 
 ## Numbers
 
-Never fabricate or recall fit results. Numbers come from the fit you just ran; the
-reference fit's numbers are recorded in `scripts/cosmos_web_ring/results/README.md`
-for comparison.
+Never fabricate or recall fit results: quote the `summary.json` of the script you ran.
+Reference numbers are in `scripts/cosmos_web_ring/results/README.md`. The committed model
+(2.1" mask) and the live fit (1.8" mask) are different models whose Einstein radii and
+masses differ by a few per cent; don't mix them in one sentence.
 
 ## Related
 
 - [`al_prepare_imaging_data`](./al_prepare_imaging_data.md) — loading, masking, extra-galaxy noise scaling.
 - [`al_plot_fit_residuals`](./al_plot_fit_residuals.md) — reading `subplot_fit`.
+- `docs/colab/cosmos_web_ring_colab.py` — the same story as a notebook; keep the two in step.
 - `wiki/literature/entities/cosmos-web-ring.md` — the lens's identity and literature.

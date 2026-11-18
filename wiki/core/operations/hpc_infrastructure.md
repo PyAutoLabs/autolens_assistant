@@ -33,6 +33,7 @@ hpc/
 │   └── stage              # one campaign stage for one manifest line (see Campaigns)
 ├── campaign.yaml.example  # an example campaign: three SLaM stages over a manifest
 ├── campaign/<name>/       # created by `hpc/sync status|plan|report`: the pulled digest
+├── results/<root>/        # created by `hpc/sync results`: the pulled results index
 ├── sync                   # sync, job control and campaign verbs (local ↔ HPC)
 ├── sync.conf.example      # template config for sync (copy to sync.conf, gitignored)
 ├── sync_jump.conf.example # example two-hop / relay-host config
@@ -142,6 +143,12 @@ upload via tar), `pull-full` (fast full output download), `status [dir ...]` (dr
 **Jobs:** `submit [gpu|cpu] <script> [sbatch arg ...]` (extra arguments go to `sbatch`,
 e.g. `--export=ALL,SAMPLE=my_sample`), `push-submit ...`, `jobs` (squeue), `sacct`,
 `cancel <job_id>`, `wait-and-pull [secs]`.
+
+**Results library:** `results [root ...]` indexes the result roots on the cluster
+(`python -m autofit.results index`), prints their states and pulls back only the index
+(into `hpc/results/<root>/`) and `inspect/` — never `output/`; `results check
+<library.yaml>` runs the completeness check there and pulls `<name>.missing.csv`. See
+[Results libraries](./results_library.md).
 
 **Campaigns** (each one ssh call running `python -m autofit.campaign` on the cluster, then a
 pull of the campaign's small files into `hpc/campaign/<name>/`):

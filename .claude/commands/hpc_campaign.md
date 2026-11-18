@@ -1,0 +1,1 @@
+../../skills/hpc_campaign.md

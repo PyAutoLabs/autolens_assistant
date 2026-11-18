@@ -2,13 +2,18 @@
 
 You are working inside **autolens_assistant**, the PyAutoLens AI Assistant: an agent workspace
 combining instructions, skills, wiki content, and science-project machinery for real lens
-modelling. **This file is the canonical, agent-agnostic source of truth.** `CLAUDE.md` imports
-it and `.gemini/settings.json` points here; never maintain a parallel copy.
+modelling. **This file is the canonical, agent-agnostic source of truth.** Claude Code and
+Codex read it directly; `.gemini/settings.json` also points here. Never maintain a parallel copy.
 
 **Interaction principle.** When a decision genuinely depends on something you don't know,
 ask one focused question — never default to the longest possible explanation.
 
-## Session start — do this first, every session
+## Session start — coding-agent sessions
+
+The checkout and environment steps below apply to coding agents with repository and execution
+access. In a discussion-only chat, use the instructions, skills and wiki as reference; do not
+claim to have run setup, inspected local data or verified the installed API. The safety
+invariants still apply.
 
 0. **Not launched inside the checkout?** If your working directory is not the root of this
    assistant repository (this file is not at `./AGENTS.md`, or `git rev-parse --show-toplevel`
@@ -55,8 +60,8 @@ deliberate refactor). Two are NEVER overridden: the real-data gate and never-rew
   compose the fit.** These are the questions every real-data run must ask, on every harness.
   Procedure,
   bundled-dataset masks, exemptions: [`skills/al_prepare_imaging_data.md`](./skills/al_prepare_imaging_data.md). Simulated data is exempt.
-- **Code gate.** A PreToolUse hook validates PyAuto* symbols against the installed library
-  and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
+- **Code gate.** A PreToolUse hook validates PyAuto* symbols — and the keyword/positional
+  arguments of calls to them — against the installed library and blocks ones written from memory. If blocked, don't guess — grep `skills/` or introspect
   `dir()`, then re-run. Claude Code and Codex both register this hook from their
   project config. In Codex, review and trust the current project-hook hash with `/hooks`;
   changed or untrusted hooks are skipped. **On any other harness (OpenCode, Gemini CLI,
@@ -242,15 +247,21 @@ When **not** in maintainer mode, commit at natural checkpoints (a script + its
 - **Working directories.** Committed scripts → `scripts/`; throwaway plots/data dumps →
   `scripts/scratch/` (gitignored); `search.fit(...)` output → `./output/`.
 - **Plot path announcement.** The plot API is **functional-only**: pass
-  `output_path="scripts/scratch/<context>/"`, `output_filename=...`, `output_format="png"`
-  straight to the `aplt.*` call (e.g. `aplt.subplot_imaging_dataset`, `aplt.subplot_fit_imaging`).
-  **The object-oriented plotters (`aplt.FitImagingPlotter`, `ImagingPlotter`, `TracerPlotter`,
+  `output_path="scripts/scratch/<context>/"` and `output_format="png"` straight to the
+  `aplt.*` call (e.g. `aplt.subplot_imaging_dataset`, `aplt.subplot_fit_imaging`).
+  `output_filename=...` is accepted only by some functions (`plot_array`,
+  `subplot_imaging_dataset`, `subplot_imaging_dataset_intro`); `subplot_tracer` and most
+  `subplot_fit_*` functions do not take it and write a fixed name
+  (`subplot_fit_imaging` → `fit.png`), so give each such plot its own `output_path` or rename
+  the file afterwards. Check with `inspect.signature(aplt.<function>)` when unsure.
+  **The object-oriented plotters (`aplt.FitImagingPlotter`, `ImagingPlotter`, `TracerPlotter`, <!-- pyauto-api-gate: off -->
   …) and the `aplt.MatPlot2D` / `aplt.Output` objects have been removed — do not use them.
   They are the #1 stale-from-memory API error, especially on a harness without the code-gate
   hook.** Wrong:
-  `aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(...)).subplot_fit_imaging()`.
+  `aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(...)).subplot_fit_imaging()`. <!-- pyauto-api-gate: on -->
   Right:
-  `aplt.subplot_fit_imaging(fit=fit, output_path="scripts/scratch/ring/", output_filename="fit", output_format="png")`.
+  `aplt.subplot_fit_imaging(fit=fit, output_path="scripts/scratch/ring/", output_format="png")`
+  (writes `scripts/scratch/ring/fit.png`).
   If unsure a PyAuto* symbol exists, ground it against `skills/` or `dir(aplt)` — never write it
   from memory. Then `print(...)` the absolute path, and after running **quote that absolute path**
   and offer to open it (platform opener: `open` on macOS, `xdg-open` on Linux,

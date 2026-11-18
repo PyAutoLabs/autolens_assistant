@@ -53,9 +53,8 @@ dataset = ...  # see al_prepare_imaging_data
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 aplt.subplot_fit_imaging(
-    fit=fit, output_path="scripts/scratch/debug/", output_filename="fit",
-    output_format="png",
-)
+    fit=fit, output_path="scripts/scratch/debug/", output_format="png",
+)  # writes scripts/scratch/debug/fit.png (this function takes no output_filename)
 ```
 
 Look at the residual map. Common signatures:

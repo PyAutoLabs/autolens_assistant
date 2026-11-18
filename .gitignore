@@ -69,3 +69,7 @@ scripts/slam_claude.md
 
 # Campaign files pulled by hpc/sync (digests, plans, reports) — regenerated from the cluster.
 hpc/campaign/
+
+# Results indexes and gap lists pulled by `hpc/sync results` — regenerated from the cluster.
+hpc/results/
+inspect/

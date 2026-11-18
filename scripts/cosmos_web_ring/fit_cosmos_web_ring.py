@@ -84,6 +84,12 @@ parser.add_argument(
     default=1.8,
     help='Circular mask radius in arcsec (1.8" default; the Colab notebook uses 2.1").',
 )
+parser.add_argument(
+    "--n-starts",
+    type=int,
+    default=48,
+    help="Number of multi-start gradient descents (48 for the reference fit; 8 for a quick look).",
+)
 parser.add_argument("--results-dir", type=Path, default=None)
 parser.add_argument("--output-dir", type=Path, default=SCRIPT_DIR / "output")
 args = parser.parse_args()
@@ -247,7 +253,7 @@ parameter spaces (the GIGA-Lens approach, Gu et al. 2022, arXiv:2202.07663); Pro
 posteriori optimiser: the fit gives one best model and no uncertainties
 (`skills/al_configure_search.md`).
 """
-n_starts, n_steps = (4, 20) if args.test_mode else (48, 300)
+n_starts, n_steps = (4, 20) if args.test_mode else (args.n_starts, 300)
 
 af.conf.instance.output_path = str(args.output_dir)
 
@@ -270,7 +276,7 @@ The first likelihood evaluation compiles the likelihood and its gradient with JA
 time below includes compilation. On an RTX 2060 GPU the good fit takes about 7.5 minutes, most
 of it compilation. On a CPU-only machine expect a much longer first compile (more than 20
 minutes on the 8-core laptop the reference fits were made on, see `results/README.md`); for a
-quick look, lower `n_starts` to 8.
+quick look, pass `--n-starts 8`.
 """
 start = time.perf_counter()
 result = search.fit(model=model, analysis=analysis)

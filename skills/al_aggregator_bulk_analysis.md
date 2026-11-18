@@ -5,6 +5,11 @@ description: Operate on many completed lens fits at once via PyAutoFit's `Aggreg
 
 # Bulk analysis across many completed fits
 
+> **Hundreds or thousands of fits — a survey sample, a cluster campaign, a catalogue
+> release?** Start with [`al_build_results_library`](./al_build_results_library.md):
+> it indexes every result, lists what is missing and why, and exports, packages and
+> verifies the catalogue. Use this skill for querying and plotting once you have it.
+
 `al_load_results` loads one fit. The aggregator loads N — every fit in a
 parent output directory, queryable by metadata, with lazy access to
 samples, models, fits, and derived quantities. It's the difference between
@@ -59,6 +64,8 @@ stacks (model image, residuals, source map) and PNG sets per fit.
 
 - [`al_load_results`](./al_load_results.md) — the single-fit primitive
   the aggregator generalises.
+- [`al_build_results_library`](./al_build_results_library.md) — completeness,
+  incremental exports and releases for large samples.
 - [`al_hierarchical_inference`](./al_hierarchical_inference.md) —
   population-level inference on top of bulk-loaded per-lens results.
 - [`al_sensitivity_mapping`](./al_sensitivity_mapping.md) — sensitivity

@@ -1,18 +1,20 @@
 # Evaluating coding agents against the assistant (maintainers)
 
-This page is the maintainer-facing protocol for deciding what the README may claim about an
-agent. It exists because the support statements are now deliberately narrow — **Claude Code
-and Codex recommended; OpenCode experimental; nothing else supported** — and every widening of
-that list should be backed by a recorded run, not an impression.
+This page is the maintainer-facing protocol for evaluating code execution, data inspection
+and fitting in a coding agent. Compatibility claims need a recorded run. Current agent
+choices and chat setup live on the shared
+[AI options page](https://github.com/PyAutoLabs/PyAutoScientist/blob/main/AI_OPTIONS.md).
+Browser chats can support reading, discussion and planning; they do not satisfy the
+execution checks below. The former custom GPT and pasted knowledge bundles remain retired.
 
-Vocabulary used throughout the assistants:
+Vocabulary for execution evaluations:
 
 | Word | Meaning |
 |---|---|
 | **Recommended / tested** | The agent the assistant is developed against day to day, and on which checks 1-3 below pass repeatedly. Claude Code and Codex. |
 | **Experimental / compatible** | The agent loads `AGENTS.md`, runs code and follows the skills in principle, but no configuration has passed the checks below on record. OpenCode today. |
 | **Candidate for evaluation** | Worth a look; not offered to users at all until it has a record. Gemini CLI today. |
-| **Unsupported** | Cannot meet the requirements (no execution, no data access) — the retired chat routes. |
+| **Unsupported for execution** | Cannot meet the execution or data-inspection requirements. Discussion-only browser chats fall outside this test. |
 
 "Compatible" is not a performance claim. Do not write "works brilliantly", "reliable" or
 "benchmarked" anywhere unless `benchmarks/RESULTS.md` carries the run that justifies it; as of

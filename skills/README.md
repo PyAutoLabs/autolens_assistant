@@ -56,7 +56,8 @@ them.
 
 - [`al_greeting_cosmos_web_ring.md`](./al_greeting_cosmos_web_ring.md) — the public
   starting prompt: show the JWST F444W COSMOS-Web Ring, explain it in plain words, ask the
-  reader's background (curious reader, student or researcher) and route the guided fit.
+  reader's background (curious reader, student or researcher), then a picture-led tour of
+  the committed lens models (no inference) with a live fit as an opt-in.
 
 ### Meta
 
