@@ -1,7 +1,7 @@
 ---
 title: Project state
 type: state
-last_touched: 2026-11-06
+last_touched: 2026-11-18
 ---
 
 # Project state
@@ -18,6 +18,11 @@ for a dark matter subhalo on the lensed arc, compared with single-band fits (cf.
   simulated by `scripts/simulators/jwst_pl_sersic_two_band.py` (0.03"/0.06" pixels, empirical COSMOS-Web
   PSFs, 3.5" mask, matched noise between the two dataset types). Truth: PowerLaw + shear +
   `NFWMCRLudlowSph` M_200 = 1e10 Msun at (-0.10", -1.90").
+- `dataset/imaging/jwst_pl_clumpy_smooth_two_band/{no_subhalo,subhalo_m8.5..m11.0}/wavebands/{F150W,F444W}/`
+  — phenomenological series case 1 (`scripts/simulators/jwst_pl_clumpy_smooth_two_band.py`, 2026-11-18):
+  same pixel scale (0.06"), Gaussian PSF, noise, lens light and source flux in both bands; F150W source
+  clumpy (25% in 5 clumps), F444W smooth (5%). Same mass/redshifts/subhalo position as the sibling.
+  Not committed (37 MB, deterministic, ~4 min to regenerate).
 
 ## Where we are now
 
@@ -41,6 +46,7 @@ for a dark matter subhalo on the lensed arc, compared with single-band fits (cf.
 ## Open, carried forward
 
 - Run the six arms ({subhalo_m10, no_subhalo} x {F150W, F444W, F150W+F444W}) on GPU, then `--compare`.
+- Run the clumpy/smooth mass sweep (7 dataset types x 3 band sets) with `DATASET=jwst_pl_clumpy_smooth_two_band`.
 
 ## Traps — don't repeat
 
@@ -73,3 +79,4 @@ for a dark matter subhalo on the lensed arc, compared with single-band fits (cf.
 ## Journal index
 
 - `2026-11-06-multiband-subhalo-pipeline.md` — pipeline written, sharing verified, upstream grid-search issues found.
+- `2026-11-18-clumpy-smooth-two-band-simulator.md` — phenomenological clumpy-vs-smooth simulator + subhalo mass sweep.
