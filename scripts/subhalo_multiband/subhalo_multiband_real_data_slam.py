@@ -1496,7 +1496,7 @@ __Command Line__
     --max_offset     half-width of the uniform grid-offset prior, arcsec (default 0.5)
     --max_rotation   half-width of the uniform grid-rotation prior, degrees (default 10.0)
     --no_sparse_operator  use the dense mapping-matrix inversion (needs far more GPU memory)
-    --n_batch        points per compiled likelihood batch (default 20; lower it to save GPU memory)
+    --n_batch        points per compiled likelihood batch (default 10; lower it to save GPU memory)
     --grid_steps     subhalo grid cells per dimension (default 2)
     --grid_dimension half-width of the subhalo grid in arcsec (default 3.0)
     --compare        print the table of completed runs and exit
