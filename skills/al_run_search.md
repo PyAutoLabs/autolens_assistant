@@ -63,15 +63,15 @@ field = af.Model(al.MassField, redshift=0.5, shear=af.Model(al.mp.ExternalShear)
 source = af.Model(al.Galaxy, redshift=1.0, bulge=af.Model(al.lp.SersicCore))
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source), fields=field)
 
-# --- Analysis ---
-analysis = al.AnalysisImaging(dataset=dataset)
+# --- Analysis (setup="auto": compute setup chosen at fit start, see al_configure_search) ---
+analysis = al.AnalysisImaging(dataset=dataset, setup="auto")
 
 # --- Search (from al_configure_search) ---
 search = af.Nautilus(
     path_prefix="imaging/<your_lens>",
     name="sie_sersic",
     n_live=200,
-    number_of_cores=4,
+    number_of_cores="auto",  # detected cores for numba, 1 for JAX
 )
 
 # --- Fit ---

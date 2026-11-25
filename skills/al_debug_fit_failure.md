@@ -22,6 +22,11 @@ Before diagnosing, get the user to describe the failure mode:
 - *"Have you compared against an `PYAUTO_TEST_MODE=1` smoke run?"* — sometimes the
   symptom is just a bug in the script that the smoke test would have caught.
 
+If the complaint is that the fit is **slow** rather than wrong, start with
+[`al_explain_setup`](./al_explain_setup.md). It reads the fit's `files/setup.json` and
+`files/parallel.json` and shows whether the compute setup, the worker count or the
+estimate explains the run time.
+
 ## Branch — search crashed mid-run
 
 Read the search log: `output/<path>/.../search.log`. Common causes:

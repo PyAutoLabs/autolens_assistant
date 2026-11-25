@@ -100,7 +100,9 @@ jobs:
           git clone --quiet --depth 1 https://github.com/PyAutoLabs/PyAutoHands sources/PyAutoHands
           git clone --quiet --depth 1 --filter=blob:none --sparse \
             https://github.com/PyAutoLabs/autolens_profiling sources/autolens_profiling
-          git -C sources/autolens_profiling sparse-checkout set catalogue
+          # wiki/: the day-zero pages (wiki/day_zero.md, wiki/campaigns/*/*/day_zero.md)
+          # that al_explain_setup and al_configure_search cite.
+          git -C sources/autolens_profiling sparse-checkout set catalogue wiki
 
       # Paired-PR support (same trade-off as the Brain-ref hatch, PyAutoBrain#186):
       # on PR events, any cited source repo with a branch matching this PR's head

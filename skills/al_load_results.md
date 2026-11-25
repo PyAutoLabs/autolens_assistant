@@ -31,6 +31,11 @@ The common file-to-object mappings:
 | `files/samples.csv` | `Samples` | Full posterior |
 | `image/dataset.fits` | `Imaging` / `Interferometer` | The dataset |
 | `image/fit.fits` | arrays | Model image, residuals, chi-squared map |
+| `files/setup.json` | dict (`json`) | Compute setup and who chose it (only when a `setup` was given) |
+| `files/parallel.json` | dict (`json`) | Worker count, its reason, and the run-time estimate line |
+
+[`al_explain_setup`](./al_explain_setup.md) explains the two setup files. The aggregator
+reapplies `setup.json` when it reloads a dataset, so a reloaded fit uses the same operator.
 
 Loaded objects can be recombined into a fit on demand. For example
 `al.FitImaging(dataset=dataset, tracer=tracer)` rebuilds the full `FitImaging` so you
@@ -176,6 +181,8 @@ output/imaging/<dataset>/modeling/<unique_hash>/
         search.json
         cosmology.json
         covariance.csv
+        setup.json        # compute setup (when setup= was given)
+        parallel.json     # worker resolution + estimate line
     image/
         dataset.fits
         fit.fits

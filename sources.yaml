@@ -49,6 +49,16 @@ projects:
     role: profiling-evidence
     git: https://github.com/PyAutoLabs/autolens_profiling
 
+  - name: autolens_inference
+    import: null
+    role: inference-evidence # sampler benchmarks and the wall-time validation of run-time estimates
+    git: https://github.com/PyAutoLabs/autolens_inference
+
+  - name: PyAutoPulse
+    import: null
+    role: setup-decisions  # profiling dashboard; decisions/<decision_id>.md are the setup designations
+    git: https://github.com/PyAutoLabs/PyAutoPulse
+
   - name: autolens_assistant
     import: null
     role: assistant        # this repo — PyAutoLens AI Assistant
