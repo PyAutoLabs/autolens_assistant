@@ -77,12 +77,16 @@ for a dark matter subhalo on the lensed arc, compared with single-band fits (cf.
   `export LD_LIBRARY_PATH=...` line onto it (PYTHONPATH gains a junk `export` entry). Works by accident.
 - RAL worker nodes have tiny OS disks (/home and /tmp): caches/TMPDIR go to /mnt/ral/c4072114/.cache
   (done in `hpc/batch_gpu/subhalo_multiband_batch.sh`, and in the mgl repo's `mgl_batch.sh` / `submit_mgl`, commit 2792b1e).
-- The env (fixed 2026-11-25): `source activate.sh` (`.venv` is a symlink to `~/venvs/PyAutoJAX`). The
-  five checkouts (`../PyAutoNerves`, `../PyAutoFit`, `../PyAutoArray`, `../PyAutoGalaxy`,
-  `../PyAutoLens`) are registered by `site-packages/pyauto_checkouts.pth`; do NOT export
-  `PYTHONPATH`. Before, `bin/activate` pointed `PYTHONPATH` at a dead `Documents/` path and Python
-  silently loaded stale pip copies (2026.4); those are uninstalled, so a broken path now fails loudly.
-  The venv is Python 3.11, and current PyAuto warns that it wants >= 3.12 (the RAL venv was rebuilt on 3.12).
+- The env (rebuilt 2026-11-25): `source activate.sh`; `.venv` is a symlink to `~/venvs/PyAutoJAX312`
+  (uv-managed Python 3.12.16 in `~/.local/share/uv/python`, JAX 0.12.1 CPU; WSL sees no GPU). The five
+  checkouts (`../PyAutoNerves`, `../PyAutoFit`, `../PyAutoArray`, `../PyAutoGalaxy`, `../PyAutoLens`)
+  are registered by `site-packages/pyauto_checkouts.pth`; do NOT export `PYTHONPATH`. Third-party deps
+  = the five pyproject.toml `dependencies` + `optional` + `test` extras + `mcp`. The old
+  `~/venvs/PyAutoJAX` (Python 3.11, JAX 0.4.38, too old for the checkouts' jax>=0.12) is kept as a
+  fallback. Its `bin/activate` used to point `PYTHONPATH` at a dead `Documents/` path, so Python
+  silently loaded stale pip copies (2026.4).
+- Code gate false positive: `al.Grid2D.uniform(..., over_sample_size=1)` in the steep/smooth simulator
+  is flagged with `PointSolver.for_grid`'s argument list; the real signature has `over_sample_size`.
 - `af.SearchGridSearch` on a `FactorGraphModel` needs the per-cell graph rebuild in the script
   (`FactorGraphSearchGridSearch`); the workspace `simultaneous.py` grid search fits only one band.
 
