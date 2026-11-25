@@ -91,8 +91,16 @@ The two bands are identical except for `noise_seed`: independent detectors give 
 Each band's seed is fixed, so all dataset types of a band share the same noise realisation and
 differences between dataset types are due to the subhalo alone.
 
-The sky level (0.9 e-/s per 0.06" pixel) and exposure time (1500 s) are the F444W values of
-`jwst_pl_sersic_two_band.py`.
+The sky level (0.9 e-/s per 0.06" pixel) is the F444W value of `jwst_pl_sersic_two_band.py`. The
+exposure time is cut from that script's 1500 s to 55 s so that the brightest pixel (the F150W arc on
+top of the lens) has S/N ~ 50, not ~ 260. Every S/N map scales as sqrt(exposure_time), so this
+lowers both bands, the lens and the subhalo signal by the same factor (sqrt(55 / 1500) = 0.19) and
+leaves their ratios unchanged. Noise-free peak S/N per pixel at 55 s:
+
+| band  | arc (lens subtracted) | lens | brightest pixel |
+|-------|-----------------------|------|-----------------|
+| F150W | 48                    | 37   | 50              |
+| F444W | 16                    | 37   | 37              |
 """
 pixel_scales = 0.06
 shape_native = (201, 201)
@@ -102,7 +110,7 @@ waveband_dict = {
     "F444W": {"noise_seed": 2},
 }
 
-exposure_time = 1500.0
+exposure_time = 55.0
 background_sky_level = 0.9
 
 mask_radius = 3.5

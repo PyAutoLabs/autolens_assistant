@@ -1,7 +1,7 @@
 ---
 title: Project state
 type: state
-last_touched: 2026-11-18
+last_touched: 2026-11-24
 ---
 
 # Project state
@@ -23,7 +23,9 @@ for a dark matter subhalo on the lensed arc, compared with single-band fits (cf.
   same pixel scale (0.06"), Gaussian PSF, noise, lens light and source flux in both bands; only the
   source profile differs: F150W steep (cored Sersic n=4, r_e 0.10" -> thin arc), F444W smooth (n=1,
   r_e 0.30" -> thick arc). Same mass/redshifts/subhalo position as the sibling. Not committed
-  (deterministic, ~4 min to regenerate). The user wants interpretable, not realistic, sources.
+  (deterministic, ~10 min to regenerate). The user wants interpretable, not realistic, sources.
+  Exposure time cut 1500 s -> 55 s (2026-11-24) for brightest-pixel S/N ~ 50 (user's target): peak
+  arc S/N F150W 48, F444W 16; lens 37. Any fits/HPC output on the 1500 s mocks (S/N ~ 260) are stale.
 
 ## Where we are now
 
