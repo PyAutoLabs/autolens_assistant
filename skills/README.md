@@ -70,6 +70,7 @@ them.
 
 - [`al_profiling_setup.md`](./al_profiling_setup.md) — query a pinned setup catalogue, cite exact records and distinguish matching configurations, analogues and absent evidence; no jobs or baseline acceptance.
 - [`al_inference_setup.md`](./al_inference_setup.md) — read pinned inference v2 setup/problem evidence with qualified matches, baseline/start/hardware/cost diagnostics and immutable citations; no jobs or sampler ranking.
+- [`al_explain_setup.md`](./al_explain_setup.md) — explain the compute setup, worker count and run-time estimate a fit used (`files/setup.json`, `files/parallel.json`) or will use (`al.estimate_runtime`): the rule sentence, its day-zero evidence and Pulse decision, and the untested branches that apply.
 
 ### Setup & maintenance
 

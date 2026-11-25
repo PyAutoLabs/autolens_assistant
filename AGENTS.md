@@ -276,6 +276,16 @@ For setup performance, hardware or likelihood-runtime questions, use
 report exact match, approximate analogue or no applicable evidence. Keep archive
 acceptance, measurement methods and fit-time assumptions explicit.
 
+## Compute setup
+
+Recommend `setup="auto"` on the analysis and `number_of_cores="auto"` on the search
+(opt-in this release); override only as [`al_configure_search`](./skills/al_configure_search.md)
+"Compute setup: auto unless…" says. To explain which setup, worker count or estimate a fit
+used or will use, use [`al_explain_setup`](./skills/al_explain_setup.md): read
+`files/setup.json` and `files/parallel.json`, quote the rule from
+`PyAutoArray:autoarray/config/setup_rules.yaml`, cite its day-zero page and Pulse decision,
+and name the untested branches that apply (laptop, non-A100 GPU, unmeasured sizes).
+
 ## Inference setup advice
 
 For sampler/setup evidence questions, use

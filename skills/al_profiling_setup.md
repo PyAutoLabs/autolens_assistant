@@ -107,6 +107,11 @@ Do not sum setup and compile from unrelated records or infer missing costs to be
 
 ## Combine
 
+The automatic setup (`setup="auto"`) applies the human designations derived from this
+evidence: one optimal setup per likelihood and hardware class, listed in
+`autolens_profiling:wiki/day_zero.md`. To explain which designation a fit used, and its
+estimate, use [al_explain_setup](al_explain_setup.md).
+
 Use [al_run_search](al_run_search.md) for an already chosen inference workflow, or
 [HPC guidance](../wiki/core/operations/hpc.md) for execution planning when that skill applies. Neither
 lookup nor an archived recommendation authorizes a profiling campaign, baseline promotion,

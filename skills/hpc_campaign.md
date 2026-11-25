@@ -56,12 +56,14 @@ Then validate it on the cluster after a push: `hpc/sync push --no-data` and
 
 | Stage | `dataset_type` | `variant` | notes |
 |---|---|---|---|
-| SOURCE LP (parametric source) | `imaging` | `mge` | JAX on CPU is the fast path |
-| SOURCE PIX, LIGHT, MASS (pixelised) | `imaging` | `delaunay` or `rectangular` | sparse operators on CPU |
+| SOURCE LP (parametric source) | `imaging` | `mge` | designated `jax_cpu_dense_fp64` (CPU), `jax_gpu_dense_fp64` (A100) |
+| SOURCE PIX, LIGHT, MASS (pixelised) | `imaging` | `delaunay` or `rectangular` | designated `numba_cpu_sparse_fp64` (CPU), `jax_gpu_dense_fp64` (A100) |
 
 Add `instrument` (`hst`, `jwst`, `euclid`, ...) and, if the user knows it, `regime`,
 `setup_id` or `host_class`. A missing key widens the match; the grade on each number says
-how close the evidence really is.
+how close the evidence really is. The designations are the setups `setup="auto"` picks
+(`PyAutoArray:autoarray/config/setup_rules.yaml`). Give each stage script `setup="auto"`
+and `number_of_cores="auto"` ([`al_configure_search`](./al_configure_search.md)).
 
 ## Branch — plan, then pilot
 
@@ -158,6 +160,8 @@ says so.
 - [`init-slam`](./init-slam.md) writes the per-stage pipeline scripts a campaign runs.
 - [`al_profiling_setup`](./al_profiling_setup.md) explains the profiling evidence `plan`
   grades against.
+- [`al_explain_setup`](./al_explain_setup.md) explains the setup, workers and estimate a
+  pilot fit printed, from its `files/setup.json` and `files/parallel.json`.
 - [`al_aggregator_bulk_analysis`](./al_aggregator_bulk_analysis.md) turns the finished
   results into tables and figures.
 - [`euclid_hpc_runs`](./euclid_hpc_runs.md) is the Euclid pipeline's own array workflow.
