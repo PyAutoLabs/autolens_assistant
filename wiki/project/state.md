@@ -77,9 +77,12 @@ for a dark matter subhalo on the lensed arc, compared with single-band fits (cf.
   `export LD_LIBRARY_PATH=...` line onto it (PYTHONPATH gains a junk `export` entry). Works by accident.
 - RAL worker nodes have tiny OS disks (/home and /tmp): caches/TMPDIR go to /mnt/ral/c4072114/.cache
   (done in `hpc/batch_gpu/subhalo_multiband_batch.sh`, and in the mgl repo's `mgl_batch.sh` / `submit_mgl`, commit 2792b1e).
-- The env: `source ~/venvs/PyAutoJAX/bin/activate` plus the PyAuto source checkouts
-  (`../PyAutoNerves`, `../PyAutoFit`, `../PyAutoArray`, `../PyAutoGalaxy`, `../PyAutoLens`) on
-  `PYTHONPATH`; the project `activate.sh` finds no `.venv`.
+- The env (fixed 2026-11-25): `source activate.sh` (`.venv` is a symlink to `~/venvs/PyAutoJAX`). The
+  five checkouts (`../PyAutoNerves`, `../PyAutoFit`, `../PyAutoArray`, `../PyAutoGalaxy`,
+  `../PyAutoLens`) are registered by `site-packages/pyauto_checkouts.pth`; do NOT export
+  `PYTHONPATH`. Before, `bin/activate` pointed `PYTHONPATH` at a dead `Documents/` path and Python
+  silently loaded stale pip copies (2026.4); those are uninstalled, so a broken path now fails loudly.
+  The venv is Python 3.11, and current PyAuto warns that it wants >= 3.12 (the RAL venv was rebuilt on 3.12).
 - `af.SearchGridSearch` on a `FactorGraphModel` needs the per-cell graph rebuild in the script
   (`FactorGraphSearchGridSearch`); the workspace `simultaneous.py` grid search fits only one band.
 
