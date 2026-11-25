@@ -15,8 +15,9 @@ experiment; only `--bands` and `--dataset_type` change.
 
 The stage structure follows the multi-galaxy-lens SLaM pipeline of `autolens_assistant_mgl`
 (`scripts/mgl/mgl_slam_pipeline.py`: Hilbert image mesh + Delaunay mesh with zeroed edge points,
-`AdaptSplit` regularization, S/N-adaptive pixelization over-sampling, the capped image-mesh adapt data
-in `source_pix[2]`) reduced to a single lens galaxy, and the multi-dataset machinery follows
+`AdaptSplit` regularization, S/N-adaptive pixelization over-sampling) reduced to a single lens galaxy.
+As in the workspace SLaM scripts, the source adapt image is capped at S/N 3 in both pixelized stages,
+for the image mesh and the regularization alike. The multi-dataset machinery follows
 `autolens_workspace:scripts/multi_dataset/features/slam/simultaneous.py`.
 
 `subhalo_multiband_mock_data_slam.py` is its mock-data variant: the same SLaM stages (sharing their
@@ -34,7 +35,7 @@ __Contents__
 **Helpers:** Factor-graph fitting, adapt images, band container and the grid-search result wrapper.
 **SOURCE LP PIPELINE:** Lens MGE light + `Isothermal` + shear, with a per-band MGE source.
 **SOURCE PIX PIPELINE 1:** Swaps each band's parametric source for a Hilbert / Delaunay pixelization.
-**SOURCE PIX PIPELINE 2:** Refits only the pixelizations, with the image-mesh adapt data S/N-capped.
+**SOURCE PIX PIPELINE 2:** Refits only the pixelizations, on a mesh rebuilt from `source_pix[1]`.
 **LIGHT LP PIPELINE:** Refits the shared lens light against the pixelized sources.
 **MASS TOTAL PIPELINE:** Upgrades the lens mass to a `PowerLaw`; its evidence is the no-subhalo baseline.
 **SUBHALO PIPELINE 1:** Grid search of non-linear searches over the subhalo's (y, x) position.
@@ -324,17 +325,22 @@ def _adapt_from(
     dataset: al.Imaging,
     adapt_result,
     mask_radius: float,
-    cap_image_mesh_adapt_data: bool = False,
 ):
     """
     Build one band's Hilbert image mesh and `AdaptImages` from its child result, and return that
     band's dataset re-sampled with S/N-adaptive pixelization over-sampling (sub-size 4 above
     `SIGNAL_TO_NOISE_THRESHOLD`, 2 elsewhere).
 
-    Identical to `_adapt_from` in `mgl_slam_pipeline.py`, applied band by band: each band's source
-    has its own morphology, so each gets its own mesh and adapt image. `cap_image_mesh_adapt_data`
-    clips only the data fed to the image mesh (the `source_pix[2]` behaviour); the `AdaptImages` and
-    the over-sampling always use the uncapped image.
+    Adapted from `_adapt_from` in `mgl_slam_pipeline.py`, applied band by band: each band's source
+    has its own morphology, so each gets its own mesh and adapt image.
+
+    The source adapt image is capped at `SIGNAL_TO_NOISE_THRESHOLD` and the capped copy is written
+    back into the adapt-image dict, so both the Hilbert image mesh and `AdaptSplit` regularization
+    use it, as in every pixelized stage of the workspace SLaM scripts
+    (`autolens_workspace:scripts/imaging/features/pixelization/slam.py`). Without the cap the
+    brightest part of the arc dominates the mesh density and the regularization weights, and faint
+    arcs lose resolution. Only the over-sampling map reads the uncapped image, because it needs to
+    know where the source is actually bright.
 
     The workspace's `simultaneous.py` keeps a uniform pixelization sub-size because, under JAX, the
     adaptive map roughly triples each stage's compile time. That is a one-off cost per search (and per
@@ -344,13 +350,9 @@ def _adapt_from(
 
     source_image = galaxy_image_name_dict[SOURCE_ADAPT_KEY]
 
-    if cap_image_mesh_adapt_data:
-        image_mesh_adapt_data = source_image.copy()
-        image_mesh_adapt_data[image_mesh_adapt_data > SIGNAL_TO_NOISE_THRESHOLD] = (
-            SIGNAL_TO_NOISE_THRESHOLD
-        )
-    else:
-        image_mesh_adapt_data = source_image
+    source_adapt_image = source_image.copy()
+    source_adapt_image[source_adapt_image > SIGNAL_TO_NOISE_THRESHOLD] = SIGNAL_TO_NOISE_THRESHOLD
+    galaxy_image_name_dict[SOURCE_ADAPT_KEY] = source_adapt_image
 
     image_mesh = al.image_mesh.Hilbert(
         pixels=al.model_util.hilbert_pixels_from_pixel_scale(band.pixel_scale),
@@ -359,7 +361,7 @@ def _adapt_from(
     )
 
     image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
-        mask=band.mask, adapt_data=image_mesh_adapt_data
+        mask=band.mask, adapt_data=source_adapt_image
     )
 
     image_plane_mesh_grid = al.image_mesh.append_with_circle_edge_points(
@@ -696,8 +698,8 @@ def source_pix_1(
 __SOURCE PIX PIPELINE 2__
 
 Equivalent to `source_pix_2` in `mgl_slam_pipeline.py`: each band's image mesh is rebuilt from its
-`source_pix[1]` reconstruction with the mesh adapt data capped at `SIGNAL_TO_NOISE_THRESHOLD`, and
-everything except the per-band pixelizations (regularization parameters) is fixed. The bands share no
+`source_pix[1]` reconstruction (adapt image capped at `SIGNAL_TO_NOISE_THRESHOLD`, as in every
+pixelized stage), and everything except the per-band pixelizations (regularization parameters) is fixed. The bands share no
 free parameter here, so this joint fit is equivalent to independent per-band fits.
 """
 
@@ -721,7 +723,6 @@ def source_pix_2(
             dataset=band.dataset,
             adapt_result=pix1_child,
             mask_radius=mask_radius,
-            cap_image_mesh_adapt_data=True,
         )
 
         model_list.append(

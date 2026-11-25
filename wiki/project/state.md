@@ -39,6 +39,10 @@ for a dark matter subhalo on the lensed arc, compared with single-band fits (cf.
   `--max_rotation` 10 deg, `--fixed_alignment`). Meant for any simulated multi-band dataset in the
   `wavebands/` layout, not only the JWST two-band one. Smoke-tested in `PYAUTO_TEST_MODE=2`; no real
   fits run yet.
+- Adapt-image cap fixed (2026-11-25) in both pipelines: the source adapt image is capped at S/N 3 in
+  `source_pix[1]` and `[2]`, and the capped copy goes into `AdaptImages` (so `AdaptSplit` sees it), as
+  in the workspace SLaM scripts. Before, only the `source_pix[2]` mesh was capped. Runs before this used
+  uncapped regularization. A collaborator is testing capped vs uncapped on real lenses.
 
 ## In flight
 
