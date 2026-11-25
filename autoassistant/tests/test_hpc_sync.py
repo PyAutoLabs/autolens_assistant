@@ -456,3 +456,44 @@ def test_stage_reads_a_windows_manifest(stage_project):
     assert process.returncode == 0, process.stderr
     args = (tmp_path / "args.txt").read_text()
     assert args == "--sample=imaging --dataset=lens_b --use_cpu --number_of_cores=4"
+
+
+def _zip(path: Path, member="model.results"):
+    import zipfile
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr(member, "done\n")
+
+
+def test_pull_extracts_every_new_archive_across_all_roots(cluster):
+    """`(( zip_count++ ))` returned 1 at zero and `set -e` stopped the pull after one archive."""
+    project = cluster["project"]
+    # As if rsync had just delivered them (the fake rsync copies nothing).
+    archives = [
+        project / "output" / "lens_a" / "search_a.zip",
+        project / "output" / "lens_b" / "search_b.zip",
+        project / "results" / "lens_c" / "search_c.zip",
+    ]
+    for archive in archives:
+        _zip(archive)
+
+    process = cluster["run"]("pull", extra_env={"PYAUTO_PULL_DIRS": "results"})
+
+    assert process.returncode == 0, process.stdout + process.stderr
+    for archive in archives:
+        assert (archive.with_suffix("") / "model.results").is_file()
+    assert "extracted 3 archive(s)" in process.stdout
+    assert "Done." in process.stdout
+
+
+def test_pull_full_extracts_every_new_archive(cluster):
+    for name in ("search_a", "search_b"):
+        _zip(cluster["remote"] / "output" / "lens" / f"{name}.zip")
+
+    process = cluster["run"]("pull-full")
+
+    assert process.returncode == 0, process.stdout + process.stderr
+    for name in ("search_a", "search_b"):
+        assert (cluster["project"] / "output" / "lens" / name / "model.results").is_file()
+    assert "extracted 2 archive(s)" in process.stdout

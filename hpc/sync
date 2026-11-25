@@ -352,7 +352,15 @@ pull() {
             while IFS= read -r -d '' zipfile; do
                 local target="${zipfile%.zip}"
                 if [[ ! -d "$target" ]]; then
-                    unzip -q -o "$zipfile" -d "$target" && (( zip_count++ ))
+                    # Not `&& (( zip_count++ ))`: at zip_count=0 that arithmetic returns 1
+                    # and `set -e` aborts the whole pull after the first archive, so later
+                    # archives and later PULL_DIRS roots are never reached. `|| true` would
+                    # hide a real unzip failure instead, so branch explicitly and say so.
+                    if unzip -q -o "$zipfile" -d "$target"; then
+                        zip_count=$(( zip_count + 1 ))
+                    else
+                        echo "        WARNING: could not unzip ${zipfile}"
+                    fi
                 fi
             done < <(find "${PROJECT_ROOT}/${dir}" -name '*.zip' -print0 2>/dev/null)
         fi
@@ -388,7 +396,15 @@ pull_full() {
         while IFS= read -r -d '' zipfile; do
             local target="${zipfile%.zip}"
             if [[ ! -d "$target" ]]; then
-                unzip -q -o "$zipfile" -d "$target" && (( zip_count++ ))
+                # Not `&& (( zip_count++ ))`: at zip_count=0 that arithmetic returns 1
+                # and `set -e` aborts the whole pull after the first archive, so later
+                # archives and later PULL_DIRS roots are never reached. `|| true` would
+                # hide a real unzip failure instead, so branch explicitly and say so.
+                if unzip -q -o "$zipfile" -d "$target"; then
+                    zip_count=$(( zip_count + 1 ))
+                else
+                    echo "        WARNING: could not unzip ${zipfile}"
+                fi
             fi
         done < <(find "${PROJECT_ROOT}/${dir}" -name '*.zip' -print0 2>/dev/null)
         echo "    extracted ${zip_count} archive(s)"
