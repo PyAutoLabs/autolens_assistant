@@ -18,9 +18,11 @@
 #
 # Copy or edit this file for your science case. Fill in the job name, --array
 # range, SCRIPT, sample and datasets below. The SLURM array runs one dataset
-# per task. JAX is forced onto the CPU and thread counts are pinned to the
-# allocated cores; the script is run with --use_cpu so Nautilus uses multicore
-# parallelism instead of JAX/GPU.
+# per task. The script is run with --setup=cpu --number_of_cores=auto: each
+# fit picks the designated CPU setup for its likelihood (JAX for a parametric
+# source, the Numba sparse route for a pixelized one) and PyAutoFit picks its
+# Nautilus workers (one for JAX, one per allocated CPU for Numba). Each fit logs
+# its choice as its `Setup:` and `Parallel:` lines.
 # -------------------------------
 
 # -------------------------------
@@ -35,18 +37,20 @@ fi
 
 source $PROJECT_PATH/activate.sh
 
-# Force JAX to use CPU only (no GPU)
-export JAX_PLATFORM_NAME=cpu
+# Kept: JAX must never reach for a GPU this CPU job was not allocated.
 export JAX_PLATFORMS=cpu
 
-# Pin thread counts to the allocated CPUs
-THREADS=$SLURM_CPUS_PER_TASK
-export OPENBLAS_NUM_THREADS=$THREADS
-export MKL_NUM_THREADS=$THREADS
-export OMP_NUM_THREADS=$THREADS
-export VECLIB_MAXIMUM_THREADS=$THREADS
-export NUMEXPR_NUM_THREADS=$THREADS
-export NPROC=$THREADS
+# Kept: one thread per process. With --number_of_cores=auto a pixelized (Numba)
+# stage runs one Nautilus worker per allocated CPU, so each worker must stay
+# single-threaded or the node is oversubscribed; Numba prange must not run inside
+# the workers, and OMP_NUM_THREADS does not cap Numba, hence NUMBA_NUM_THREADS.
+# A JAX stage runs one process on its own thread pool. Set BLAS_THREADS to
+# the allocated CPUs only for a NumPy/Numba run with --number_of_cores=1.
+BLAS_THREADS=${BLAS_THREADS:-1}
+export OPENBLAS_NUM_THREADS=$BLAS_THREADS
+export MKL_NUM_THREADS=$BLAS_THREADS
+export OMP_NUM_THREADS=$BLAS_THREADS
+export NUMBA_NUM_THREADS=$BLAS_THREADS
 
 # -------------------------------
 # Modeling script
@@ -92,7 +96,7 @@ date
 # Dataset-specific values (pixel_scale, n_batch, ...) are read from
 # dataset/$sample/$dataset/info.json automatically.
 # -------------------------------
-python3 $PROJECT_PATH/scripts/$SCRIPT --sample=$sample --dataset=$dataset --use_cpu --number_of_cores=$THREADS
+python3 $PROJECT_PATH/scripts/$SCRIPT --sample=$sample --dataset=$dataset --setup=cpu --number_of_cores=auto
 
 echo "Finished dataset: $dataset"
 date

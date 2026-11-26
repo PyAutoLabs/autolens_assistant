@@ -29,7 +29,10 @@
 #   MANIFEST         manifest file, one object per line, relative to the project root
 #                    (required); the 0-based line number is the campaign index
 #   STAGE_SCRIPT     the pipeline in scripts/ to run (default: <STAGE>.py)
-#   STAGE_ARGS       extra arguments for it (default: --use_cpu --number_of_cores=<cpus>)
+#   STAGE_ARGS       extra arguments for it (default: --setup=cpu --number_of_cores=auto;
+#                    auto resolves to the allocated CPUs for a Numba fit, 1 for JAX)
+#   BLAS_THREADS     threads per process for OpenBLAS / MKL / OpenMP / Numba
+#                    (default: 1, see the pins below)
 #   MANIFEST_FIELDS  names of a line's whitespace-separated fields, passed as
 #                    --<name>=<value> (default: "sample dataset")
 #   CAMPAIGN_INDEX   set directly, or CAMPAIGN_OFFSET + SLURM_ARRAY_TASK_ID
@@ -75,8 +78,8 @@ STATUS_ROOT="${STATUS_ROOT:-output}"
 STAGE_SCRIPT="${STAGE_SCRIPT:-${STAGE}.py}"
 MANIFEST_FIELDS="${MANIFEST_FIELDS:-sample dataset}"
 CAMPAIGN_INDEX="${CAMPAIGN_INDEX:-$(( ${CAMPAIGN_OFFSET:-0} + ${SLURM_ARRAY_TASK_ID:-0} ))}"
-THREADS="${SLURM_CPUS_PER_TASK:-1}"
-STAGE_ARGS="${STAGE_ARGS:---use_cpu --number_of_cores=${THREADS}}"
+BLAS_THREADS="${BLAS_THREADS:-1}"
+STAGE_ARGS="${STAGE_ARGS:---setup=cpu --number_of_cores=auto}"
 
 for name in "${CAMPAIGN}" "${STAGE}"; do
     if [[ ! "${name}" =~ ^[A-Za-z0-9_.-]+$ ]]; then
@@ -152,15 +155,16 @@ done
 
 [[ -f "${ROOT}/activate.sh" ]] && source "${ROOT}/activate.sh"
 
-# Force JAX onto the CPU and pin thread counts to the allocated cores.
-export JAX_PLATFORM_NAME=cpu
+# Kept: JAX must never reach for a GPU this CPU job was not allocated.
 export JAX_PLATFORMS=cpu
-export OPENBLAS_NUM_THREADS=${THREADS}
-export MKL_NUM_THREADS=${THREADS}
-export OMP_NUM_THREADS=${THREADS}
-export VECLIB_MAXIMUM_THREADS=${THREADS}
-export NUMEXPR_NUM_THREADS=${THREADS}
-export NPROC=${THREADS}
+# Kept: one thread per process, set before Python starts. A pixelized (Numba) stage
+# runs one Nautilus worker per allocated CPU, so each must stay single-threaded and no
+# worker may inherit a live OpenMP pool across fork(); OMP_NUM_THREADS does not cap
+# Numba, hence NUMBA_NUM_THREADS. A JAX stage runs one process on its own thread pool.
+export OPENBLAS_NUM_THREADS=${BLAS_THREADS}
+export MKL_NUM_THREADS=${BLAS_THREADS}
+export OMP_NUM_THREADS=${BLAS_THREADS}
+export NUMBA_NUM_THREADS=${BLAS_THREADS}
 
 echo "=========================================="
 echo "Campaign ${CAMPAIGN}  stage ${STAGE}  index ${CAMPAIGN_INDEX}: ${line}"

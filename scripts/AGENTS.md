@@ -16,7 +16,8 @@ The standard interface between the HPC batch templates and Python modeling code 
 `hpc/batch_gpu/template`. It includes:
 
 - **`parse_fit_args()`** — parses `--sample`, `--dataset`, `--iterations_per_quick_update`,
-  `--number_of_cores`, and `--use_cpu` from the command line
+  `--number_of_cores <auto|int>` and `--setup <auto|cpu|gpu|setup_id>` (both default
+  `auto`; `--use_cpu` is a deprecated alias for `--setup cpu`) from the command line
 - **`fit()`** — receives these parameters and sets up config, dataset loading, and
   `SettingsSearch`. The body raises `NotImplementedError` where the science-specific
   model, analysis, and search steps go
@@ -24,9 +25,9 @@ The standard interface between the HPC batch templates and Python modeling code 
 
 To create a pipeline for HPC array runs, copy `hpc/template.py` into this folder (e.g.
 `scripts/imaging.py`) and fill in the `fit()` body with science code from
-`autolens_workspace/scripts/`. The HPC interface (`parse_fit_args`, `__main__`, `use_cpu`,
-`number_of_cores`) must be preserved — the batch templates run `scripts/$SCRIPT` and depend
-on it.
+`autolens_workspace/scripts/`. Pass `setup=analysis_setup_from(setup)` to every analysis.
+The HPC interface (`parse_fit_args`, `__main__`, `--setup`, `--number_of_cores`) must be
+preserved — the batch templates run `scripts/$SCRIPT` and depend on it.
 
 ## Adding Scripts via /init-slam
 

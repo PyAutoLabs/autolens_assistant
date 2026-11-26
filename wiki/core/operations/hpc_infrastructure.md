@@ -10,7 +10,7 @@ sources:
       - hpc/campaign.yaml.example
       - hpc/sync
     pinned_commit: main
-last_updated: 2026-10-30
+last_updated: 2026-11-26
 ---
 
 # HPC infrastructure shipped with the assistant
@@ -44,12 +44,34 @@ hpc/
 
 The interface between the batch scripts and PyAutoLens modeling code. Copy it into
 `scripts/` (e.g. `scripts/imaging.py`) and fill in the `Model, Analysis & Search` section
-of `fit()`; the [`init-slam`](../../../skills/init-slam.md) skill automates this. It parses
-`--sample`, `--dataset`, `--iterations_per_quick_update`, `--number_of_cores`, `--use_cpu`,
-loads `config/`+`output/` paths, and reads the dataset's `info.json` via
-`info.get(key, default)` (see [`operations/dataset`](./dataset.md)). The HPC interface
-(`parse_fit_args`, `__main__`, `--use_cpu`, `--number_of_cores`) must be preserved — the
-batch templates depend on it.
+of `fit()`; the [`init-slam`](../../../skills/init-slam.md) skill automates this. It loads
+`config/`+`output/` paths and reads the dataset's `info.json` via `info.get(key, default)`
+(see [`operations/dataset`](./dataset.md)). It parses:
+
+| Argument | Values | Default |
+|---|---|---|
+| `--sample`, `--dataset` | the sample and dataset subdirectories of `dataset/` | none (`--dataset` required) |
+| `--iterations_per_quick_update` | int | 5000 |
+| `--setup` | `auto`, `cpu`, `gpu` or a setup_id such as `numba_cpu_sparse_fp64` | `auto` |
+| `--number_of_cores` | `auto` or an int ≥ 1 | `auto` |
+
+`--setup` is the compute setup of every analysis. `auto` chooses the designated setup for each
+fit's likelihood and the machine when the fit starts; `cpu` and `gpu` choose it for that
+hardware class (the template exports them as `PYAUTO_SETUP`); a setup_id is used as given.
+What `auto` picks, and why, is in [`operations/hpc`](./hpc.md) "Compute setup". The template's
+`analysis_setup_from(setup)` turns the flag into the analyses' `setup=` input; pass it to
+every analysis explicitly, because releases up to 2026.11.25.1 default to `setup=None`. A CPU
+request also pins JAX to the CPU when `JAX_PLATFORMS` is unset.
+
+`--number_of_cores auto` is resolved by PyAutoFit when the fit starts: one process for a JAX
+analysis, the cores the job may use (`SLURM_CPUS_PER_TASK`) for a NumPy/Numba one. Each fit
+logs its choices as its `Setup:` and `Parallel:` lines.
+
+`--use_cpu` is still accepted as a deprecated spelling of `--setup cpu` (it prints a
+deprecation line); do not write it into new scripts. The HPC interface (`parse_fit_args`,
+`__main__`, `--setup`, `--number_of_cores`) must be preserved — the batch templates and
+`hpc/batch_cpu/stage` depend on it. It is the same contract as the Euclid pipeline's
+`util.parse_fit_args`.
 
 ## Submit templates — GPU vs CPU
 
@@ -64,13 +86,21 @@ Differences:
 | CPUs | `--cpus-per-task=1` | `--cpus-per-task=4` |
 | Memory | `--mem=32gb` | `--mem=64gb` |
 | Wall time | `--time=08:00:00` | `-t 18:00:00` |
-| JAX | uses GPU by default | forces `JAX_PLATFORM_NAME=cpu` |
-| Thread pinning | none | `OPENBLAS/MKL/OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK` |
+| JAX | uses the GPU | `JAX_PLATFORMS=cpu` |
+| Thread pinning | none | `OPENBLAS/MKL/OMP/NUMBA_NUM_THREADS=$BLAS_THREADS` (default 1) |
 | Echo block | includes `nvidia-smi` | no `nvidia-smi` |
-| Python args | `--sample --dataset` | adds `--use_cpu --number_of_cores=$THREADS` |
+| Python args | `--sample --dataset --setup=gpu` | `--sample --dataset --setup=cpu --number_of_cores=auto` |
 
-The CPU template also exports `JAX_PLATFORMS=cpu`, `VECLIB_MAXIMUM_THREADS`,
-`NUMEXPR_NUM_THREADS`, and `NPROC`, all pinned to `$SLURM_CPUS_PER_TASK`.
+On a GPU node `--setup=gpu` is what the default `auto` chooses; the template states it for
+the reader. The CPU template keeps two pins, each for a reason the setup cannot cover:
+
+- **`JAX_PLATFORMS=cpu`**: JAX must never reach for a GPU the job was not allocated.
+- **One thread per process** (`BLAS_THREADS`, default 1, exported before Python starts): with
+  `--number_of_cores=auto` a pixelized (Numba) fit runs one Nautilus worker per allocated
+  CPU, so each worker must stay single-threaded or the node is oversubscribed. Numba
+  `prange` must not run inside the workers, and `OMP_NUM_THREADS` does not cap Numba, so
+  `NUMBA_NUM_THREADS` is pinned too. A JAX fit runs one process on its own thread pool. Set
+  `BLAS_THREADS` to the allocated CPUs only for a NumPy/Numba run with `--number_of_cores=1`.
 
 ### Partition rule — CPU arrays never go on `gpu` (human rule, 2026-09-30)
 
@@ -114,8 +144,10 @@ lets PyAutoFit (`python -m autofit.campaign`) submit it, follow it and report on
   path on the cluster, `$HPC_BASE/$PROJECT_NAME`.
 - **`hpc/batch_cpu/stage`**: what each stage runs. It reads its manifest line, calls
   `scripts/<STAGE_SCRIPT>` with `--sample=... --dataset=...` (names from
-  `MANIFEST_FIELDS`), pins threads, forwards the pre-timeout `USR1` signal to the fit so it
-  saves its checkpoint, and writes a small **task record**
+  `MANIFEST_FIELDS`) and the default `STAGE_ARGS` `--setup=cpu --number_of_cores=auto`,
+  pins JAX to the CPU and one thread per process (as the CPU template does), forwards the
+  pre-timeout `USR1` signal to the fit so it saves its checkpoint, and writes a small
+  **task record**
   (`output/.campaign_tasks/<campaign>/<stage>/<index>.status.json`) before Python starts.
   The record is removed when the stage succeeds and becomes a `failed` record when it does
   not, so a task that died before the fit could write its own status (a missing manifest
