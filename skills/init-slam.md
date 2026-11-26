@@ -61,17 +61,23 @@ For each chosen option, copy the source file from `autolens_workspace/scripts/` 
 using the destination filename from the table above.
 
 If the script is destined for HPC array runs, preserve the command-line interface from
-`hpc/template.py` (`parse_fit_args`, `__main__`, `--sample`, `--dataset`, `--use_cpu`,
+`hpc/template.py` (`parse_fit_args`, `__main__`, `--sample`, `--dataset`, `--setup`,
 `--number_of_cores`) — the `hpc/batch_cpu/template` and `hpc/batch_gpu/template` submit
-scripts run `scripts/$SCRIPT` and depend on it.
+scripts and the campaign stage entry `hpc/batch_cpu/stage` run `scripts/$SCRIPT` and depend
+on it. `--setup <auto|cpu|gpu|setup_id>` and `--number_of_cores <auto|int>` both default to
+`auto`; the CPU scripts pass `--setup=cpu --number_of_cores=auto`, the GPU template
+`--setup=gpu`. `--use_cpu` is still accepted as a deprecated alias for `--setup cpu`; do not
+write it into new scripts. Hand every analysis `setup=analysis_setup_from(setup)` (the
+template's helper) and every search `number_of_cores=number_of_cores`.
 
 **Give every stage's analysis `setup="auto"` and its search `number_of_cores="auto"`.** A
 SLaM pipeline spans two compute regimes, and getting them wrong on CPU costs days. SOURCE LP
 is parametric and runs best with JAX (1 worker). Every pixelised stage after it runs best with
 the numba sparse operator and one worker per core. With `setup="auto"`, each stage picks its
 own setup from its model at fit start, so one `af.SettingsSearch(..., number_of_cores="auto")`
-serves every stage. `setup` is opt-in in this release, so the workspace SLaM scripts do **not**
-pass it by default; add it. To override, or on a release without `setup=`, use the explicit
+serves every stage. Up to release 2026.11.25.1 the analyses default to `setup=None` (opt-in),
+and from the next release to `setup="auto"`; pass it explicitly so the script behaves the same
+on both. To override, or on a release without `setup=`, use the explicit
 route: two `af.SettingsSearch` objects and two datasets (`dataset.apply_sparse_operator_cpu()`
 + `use_jax=False` + `number_of_cores=N` for the pixelised stages). See
 [`al_configure_search`](./al_configure_search.md) "Compute setup: auto unless…" and

@@ -319,8 +319,31 @@ def test_stage_runs_the_manifest_line_and_removes_its_record_on_success(stage_pr
 
     assert process.returncode == 0, process.stderr
     args = (tmp_path / "args.txt").read_text()
-    assert args == "--sample=imaging --dataset=lens_b --use_cpu --number_of_cores=4"
+    assert args == "--sample=imaging --dataset=lens_b --setup=cpu --number_of_cores=auto"
     assert not _record(project, 1).exists()
+
+
+def test_stage_pins_jax_to_the_cpu_and_one_thread_per_process(stage_project):
+    """Numba workers (one per allocated CPU under --number_of_cores=auto) must stay
+    single-threaded; BLAS_THREADS overrides the per-process count."""
+    _, tmp_path, run = stage_project
+    env_out = tmp_path / "env.txt"
+    # A shell stand-in for the interpreter, so a site hook of the local Python cannot
+    # rewrite the variables before they are read.
+    python = tmp_path / "python"
+    python.write_text(
+        '#!/bin/bash\n'
+        'echo -n "$JAX_PLATFORMS $OMP_NUM_THREADS $NUMBA_NUM_THREADS" > "$ENV_OUT"\n'
+    )
+    python.chmod(0o755)
+
+    process = run(1, ENV_OUT=str(env_out), PYTHON=str(python))
+    assert process.returncode == 0, process.stderr
+    assert env_out.read_text() == "cpu 1 1"
+
+    process = run(1, ENV_OUT=str(env_out), PYTHON=str(python), BLAS_THREADS="4")
+    assert process.returncode == 0, process.stderr
+    assert env_out.read_text() == "cpu 4 4"
 
 
 def test_stage_failure_leaves_a_failed_record_the_collector_reads(stage_project):
@@ -455,7 +478,7 @@ def test_stage_reads_a_windows_manifest(stage_project):
 
     assert process.returncode == 0, process.stderr
     args = (tmp_path / "args.txt").read_text()
-    assert args == "--sample=imaging --dataset=lens_b --use_cpu --number_of_cores=4"
+    assert args == "--sample=imaging --dataset=lens_b --setup=cpu --number_of_cores=auto"
 
 
 def _zip(path: Path, member="model.results"):
