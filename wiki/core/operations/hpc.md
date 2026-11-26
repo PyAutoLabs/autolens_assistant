@@ -23,7 +23,7 @@ sources:
       - autofit/non_linear/parallel/pool.py
     pinned_commit: 67164d229030bc8dbfc27ab68e5bf2fbfbf1f1cb
 last_updated: 2026-11-26
-content_sha256: c18e32936bd909cf1794f8929a34a3b87fb076124f0be0ce641e28a6dfeecb84
+content_sha256: 76b0329226334069a2424acb1b11af7f61bacddba162fb518d3ac02120840ada
 ---
 
 # HPC and cluster runs
