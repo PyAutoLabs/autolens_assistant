@@ -103,10 +103,10 @@ A **SLaM pipeline spans both regimes**: SOURCE LP is parametric, every stage aft
 pixelized. With `setup="auto"` each stage resolves its own setup from its model, so one
 dataset and one `af.SettingsSearch(..., number_of_cores="auto")` serve every stage.
 
-**Which release.** Up to release 2026.11.25.1 the analyses default to `setup=None` (JAX on,
-nothing chosen automatically), so pass `setup="auto"` explicitly. From the next release
-`setup="auto"` and `number_of_cores="auto"` are the defaults, and an explicit `use_jax=`
-with no `setup` opts out.
+**Which release.** From release 2026.11.26.1 `setup="auto"` and `number_of_cores="auto"`
+are the defaults, and an explicit `use_jax=` with no `setup` opts out. Up to release
+2026.11.25.1 the analyses default to `setup=None` (JAX on, nothing chosen automatically),
+so pass `setup="auto"` explicitly on those.
 
 **Overrides.** `setup="<setup_id>"` uses that setup as given. The `PYAUTO_SETUP` environment
 variable steers `setup="auto"`: `cpu` or `gpu` forces that hardware class, and a full
