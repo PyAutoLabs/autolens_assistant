@@ -75,9 +75,9 @@ SLaM pipeline spans two compute regimes, and getting them wrong on CPU costs day
 is parametric and runs best with JAX (1 worker). Every pixelised stage after it runs best with
 the numba sparse operator and one worker per core. With `setup="auto"`, each stage picks its
 own setup from its model at fit start, so one `af.SettingsSearch(..., number_of_cores="auto")`
-serves every stage. Up to release 2026.11.25.1 the analyses default to `setup=None` (opt-in),
-and from the next release to `setup="auto"`; pass it explicitly so the script behaves the same
-on both. To override, or on a release without `setup=`, use the explicit
+serves every stage. From release 2026.11.26.1 the analyses default to `setup="auto"`; up to
+2026.11.25.1 they default to `setup=None` (opt-in), so pass it explicitly when a script must
+also run on older releases. To override, or on a release without `setup=`, use the explicit
 route: two `af.SettingsSearch` objects and two datasets (`dataset.apply_sparse_operator_cpu()`
 + `use_jax=False` + `number_of_cores=N` for the pixelised stages). See
 [`al_configure_search`](./al_configure_search.md) "Compute setup: auto unless…" and

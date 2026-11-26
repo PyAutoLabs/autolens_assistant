@@ -23,7 +23,7 @@ sources:
       - autofit/non_linear/parallel/pool.py
     pinned_commit: 67164d229030bc8dbfc27ab68e5bf2fbfbf1f1cb
 last_updated: 2026-11-26
-content_sha256: c18e32936bd909cf1794f8929a34a3b87fb076124f0be0ce641e28a6dfeecb84
+content_sha256: 76b0329226334069a2424acb1b11af7f61bacddba162fb518d3ac02120840ada
 ---
 
 # HPC and cluster runs
@@ -103,10 +103,10 @@ A **SLaM pipeline spans both regimes**: SOURCE LP is parametric, every stage aft
 pixelized. With `setup="auto"` each stage resolves its own setup from its model, so one
 dataset and one `af.SettingsSearch(..., number_of_cores="auto")` serve every stage.
 
-**Which release.** Up to release 2026.11.25.1 the analyses default to `setup=None` (JAX on,
-nothing chosen automatically), so pass `setup="auto"` explicitly. From the next release
-`setup="auto"` and `number_of_cores="auto"` are the defaults, and an explicit `use_jax=`
-with no `setup` opts out.
+**Which release.** From release 2026.11.26.1 `setup="auto"` and `number_of_cores="auto"`
+are the defaults, and an explicit `use_jax=` with no `setup` opts out. Up to release
+2026.11.25.1 the analyses default to `setup=None` (JAX on, nothing chosen automatically),
+so pass `setup="auto"` explicitly on those.
 
 **Overrides.** `setup="<setup_id>"` uses that setup as given. The `PYAUTO_SETUP` environment
 variable steers `setup="auto"`: `cpu` or `gpu` forces that hardware class, and a full
