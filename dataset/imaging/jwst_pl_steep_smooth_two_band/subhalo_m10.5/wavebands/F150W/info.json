@@ -1,0 +1,20 @@
+{
+    "pixel_scale": 0.06,
+    "mask_radius": 3.5,
+    "redshift_lens": 0.5,
+    "redshift_source": 1.0,
+    "waveband": "F150W",
+    "exposure_time": 55.0,
+    "background_sky_level": 0.9,
+    "psf_fwhm": 0.145,
+    "source_morphology": "steep",
+    "source_sersic_index": 4.0,
+    "source_effective_radius": 0.1,
+    "source_radius_break": 0.02,
+    "source_total_flux": 500.0,
+    "subhalo_mass_at_200": 31622776601.683792,
+    "subhalo_centre": [
+        -0.1,
+        -1.9
+    ]
+}
